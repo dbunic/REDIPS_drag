@@ -1,0 +1,95 @@
+/*
+
+Darko Bunic
+http://www.redips.net/
+Feb, 2010.
+
+*/
+
+body{
+	font-family: arial;
+	margin: 0px; /* for IE6 / IE7 */
+}
+
+/* main container */
+#main_container{
+	margin: auto;
+	width: 350px;
+}
+		/* container for the left table */
+		#main_container #left{
+			float: left;
+		}
+		/* container for the right table */
+		#main_container #right{
+			width: 100px;
+			height: 200px;
+			/* align container to the right */
+			margin-left: auto;
+		}
+
+/* drag objects (DIV elements inside table cells) */
+.drag{
+	cursor: move;
+	margin: auto;
+	z-index: 10;
+	background-color: white;
+	text-align: center;
+	font-size: 25pt; /* needed for cloned object */
+	opacity: 0.7;
+	filter: alpha(opacity=70);
+	/* without width, IE6/7 will not apply filter/opacity to the element ?! */
+	/* IE needs element layout */
+	width: 87px;
+	height: 35px;
+	line-height: 35px;
+}
+
+/* drag area */
+#drag{
+	display: table;
+	width: 350px;
+}
+
+/* table cells */
+div#drag td {
+	height: 50px;
+	text-align: center;
+	font-size: 10pt;
+	padding: 2px;
+}
+
+/* styles for left table */
+#table1, #table2 {
+	background-color: #eee;
+	border-collapse: collapse;
+}
+	/* border for table1 */
+	#table1 td {
+		border: 1px solid #DDC5B5;
+	}
+
+/* green objects */
+.green {
+	border: 2px solid #499B33;
+}
+
+/* orange objects */
+.orange {
+	border: 2px solid #BF6A30;
+}
+
+/* message line */
+#message{
+	color: white;
+	background-color: #aaa;
+	text-align: center;
+	margin-top: 10px;
+}
+
+
+/* cells from the right table (forbidden cells) */
+.mark{
+	color: #444;
+	background-color: #e0e0e0;
+}

@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+	<head>
+		<meta name="author" content="Darko Bunic"/>
+		<meta name="description" content="Drag and drop table content with JavaScript"/>
+		<link rel="stylesheet" href="style.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../redips-drag.js"></script>
+		<!-- initialize drag and drop -->
+		<script type="text/javascript">
+			window.onload = function () {
+				var rd = REDIPS.drag;	// reference to the REDIPS.drag class
+				// initialization
+				rd.init();
+				// dragged elements can be placed to the empty cells only
+				rd.drop_option = 'single';
+				// define A and B source elements for the last row only (element ID and class name of the last row)
+				rd.only.div.a = 'last';
+				rd.only.div.b = 'last';
+				// A and B elements can't be placed to other table cells (this is default value)
+				rd.only.other = 'deny';
+				// set hover color
+				rd.hover_color = '#9BB3DA';
+				// after element is cloned define dropping for last row - only for clones of element A or element B
+				rd.myhandler_cloned = function () {
+					// define variables
+					var cloned_id = rd.obj.id; // cloned id
+					// if cloned if begins with a or b define dropping only for last row
+					if (cloned_id.substr(0, 1) === 'a' || cloned_id.substr(0, 1) === 'b') {   
+						rd.only.div[cloned_id] = 'last';
+					}
+				}
+				// or cloned elements can be defined one by one
+//				rd.only.div.ac0 = 'last';
+//				rd.only.div.bc0 = 'last';
+			}
+		</script>
+		<title>www.redips.net</title>
+	</head>
+	<body>
+		<center>
+			<h1><a href="http://www.redips.net/javascript/drag-and-drop-table-content/">www.redips.net</a></h1>
+			<h2>Example 7: A B C D</h2>
+		</center>
+		<div id="main_container">
+			<!-- tables inside this DIV could have draggable content -->
+			<div id="drag">
+	
+				<!-- left container -->
+				<div id="left">
+					<table id="table1">
+						<colgroup>
+							<col width="100"/>
+						</colgroup>
+						<tbody>
+							<!-- clone 2 elements + last element -->
+							<tr><td class="dark"><div id="a" class="drag orange clone climit1_1">A</div></td></tr>
+							<tr><td class="dark"><div id="b" class="drag orange clone climit1_1">B</div></td></tr>
+							<tr><td class="dark"><div id="c" class="drag green clone climit1_2">C</div></td></tr>
+							<tr><td class="dark"><div id="d" class="drag green clone climit1_2">D</div></td></tr>
+						</tbody>
+					</table>
+				</div><!-- left container -->
+				
+				<!-- right container -->
+				<div id="right">
+					<table id="table2">
+						<colgroup>
+							<col width="100"/>
+							<col width="100"/>
+							<col width="100"/>
+							<col width="100"/>
+						</colgroup>
+						<tbody>
+							<tr>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td class="upper_right"></td>
+							</tr>
+							<tr>
+								<td></td>
+								<td></td>
+								<td></td>
+								<th></th>
+							</tr>
+							<tr>
+								<td></td>
+								<td></td>
+								<td></td>
+								<th></th>
+							</tr>
+							<tr>
+								<td class="lower_left only last"></td>
+								<th class="only last"></th>
+								<th class="only last"></th>
+								<th class="only last"></th>
+							</tr>
+						</tbody>
+					</table>
+				</div><!-- right container -->
+			</div><!-- drag container -->
+			<div id="message">Only A and B elements can be placed to the last row</div>
+		</div><!-- main container -->
+	</body>
+</html>

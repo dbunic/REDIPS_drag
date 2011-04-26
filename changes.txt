@@ -1,0 +1,207 @@
+Changes for REDIPS.drag library
+
+4.0.0
+- added support for drag and drop table rows
+- added example15 to show drag rows functionality
+- private method set_color() renamed to set_position()
+- created private method set_bgcolor() - accepts color as array
+- created private method get_bgcolor() - returns color as array
+- added public parameter "mode" (readonly) with values "cell" and "row" (REDIPS.drag working mode)
+- added private methods row_clone() and row_drop()
+- added event handlers for drag-n-drop table rows
+    myhandler_row_clicked()
+    myhandler_row_moved()
+    myhandler_row_notmoved()
+    myhandler_row_dropped()
+    myhandler_row_dropped_source()
+    myhandler_row_changed()
+- added special class name "rowhandler" to enable highlighting rows when dragging row across row handler column (but disable when dragging table content)
+- special class names are: drag, row, mark, only, single, rowhandler
+- enable_drag() modified to accept DIV id or DIV object
+- when row is moved then obj is reference to the cloned row, while obj_old is reference to the source row
+- added property redips_rowspan to the table nodeList to mark tables that contains rowspaned cells
+- redips_rowspan is defined inside init_tables()
+- optimization in set_trc() method
+    1) search for rowspaned cells only if table contains rowspaned cells
+    2) after cell is found, test if Y is inside current cell - this should prevent case where TD border > 1px and upper colspaned row like in example15
+       (loop unnecessary went up to the top table top)
+- fixed BUG - when table cell has shrunk, forbidden cell in the last row was lit (example15)
+- added public method row_opacity(el, opacity, color)
+
+3.2.1
+- fixing example03: School timetable
+  * fixing div.sort()
+  * added cloning with pressed SHIFT key
+ - added script.js in example06 to show how to identify scrollable container after element is dropped
+
+3.2.0
+- code optimization in handler_onmousemove()
+  set current table, row and cell:
+    1) if mouse pointer is inside DIV id="drag"
+    2) and autoscroll is not working
+    3) and current table contains nested table or cursor is outside of current cell
+ - added example14 - Sort elements in long table
+ - fixed bug in "switching" mode (two entries are merging or there appears a gap in between)
+ - fixed settings of "current cell" in autoscroll mode (modified autoscrollX() and autoscrollY())
+ - evt.clientX/evt.clientY replaced with local variables X/Y in handlers
+ - added pointer object with pointer.x and pointer.y properties (properties are set in handlers)
+ - modified set_trc() - removed input parameter (uses pointer object instead)
+ - fixed bug with adding events in IE8
+ - fixed bug for case where moved element changed cell dimensions
+
+3.1.3
+- problem with calling REDIPS.drag.init() twice (bug fix) - thanks to Alan Jhu
+  added line "top_position = 0;" in init_tables()
+
+3.1.2
+- internal cleaning and CTRL cloning replaced with SHIFT key
+
+3.1.1
+- changed table.idx to table.redips_idx
+- changed table.nested to table.redips_table_type with values 2, 1, 0 (this is order for tables array)
+  2 - "clean" table (table is not nested and doesn't contain nested tables)
+  1 - nested table
+  0 - table contains nested tables
+- table type 2 will be sorted to the array top
+- ctrlKey changed to shiftKey (using the ctrl-key for cloning was a problem on the mac) - fixed thanks to Peter
+  
+3.1.0
+- adding reference of scrollable area to the contained tables (modified enable_drag())
+- changed order of calling enable_drag('init') and init_tables() in init() function
+- changed set_trc() - tos[] (table offsets are compared with scrollable container offsets)
+- in handler_onmousemove() added sca.autoscroll in if condition
+- added noautoscroll option for scrollable container (only needed to add class name "noautoscroll")
+- fixed overlapping of tables inside scrollable container with other tables
+- added "reset old positions" before set_trc() in handler_onmousedown() function
+
+3.0.0
+- added support for nested tables
+- added example13 (Nested tables)
+- added private parameter "top_position" (number of nested tables)
+- changes inside init_tables(), top_table(), handler_onmousemove(), set_trc() and save_content()
+- nested tables are placed to the array top (main array in REDIPS.drag is "tables")
+- cell containing nested table is marked with "table" property (see line "element.table = true;" in init_tables())
+- added currentCell.containTable property (needed for testing inside handler_onmousemove()
+
+2.8.2
+- added example12 (Select and move more elements)
+
+2.8.1
+- changed elementControl() function
+* if element has "nodrag" class, then dragging will not be able
+* useful for content of DIV element
+- added example11 to show custom drag handle on titlebar
+
+2.8.0
+- REDIPS namespace created if is not already defined in another REDIPS package (var REDIPS = REDIPS || {};)
+- added cross browser add / remove event handlers instead of traditional event registration model
+- traditional event registration model used on DIV object for onmousedown event (otherwise problems with dragging selection)
+- added REDIPS.event at the bottom
+- drag.js renamed to redips-drag.js
+! known problem with FF3 and padding/border style on dragging container (DIV element jumps when clicked for that padding/border width)
+
+2.7.1
+- table_top() function improved (used indexOf instead of idx property)
+- tables.idx property reused for sorting tables to original order
+- save_content() fixed - function first sorts tables array to original order using sort function
+- bug in save_content() fixed thanks to Harrison
+- enabled basic select inside drag region for IE browser
+- div_drag.onselectstart moved from init() to handler_onmousedown()
+- in handler_onmouseup() detached div_drag.onselectstart handler
+
+2.7.0
+- added support for fixed table or table container - position:fixed 
+- added "position" variable in handler_onmousedown() - needed for exclusion "scroll offset" if table or table container box has position fixed
+- box_offset() and calculate_cells() modification - added local variable "position"
+- local variable "position" added to enable_drag() function
+- added table_top() function to pick up "tables" array member to the top (in a moment when DIV element is clicked)
+- added example 10 (Sticky tables)
+
+2.6.3
+- if user has used a mouse event to increase the dimensions of the table - call calculate_cells() in handler_onmousedown, thanks to Mark Jacobs
+
+2.6.2
+- custom element properties renamed from "enabled" and "container" to "redips_enabled" and "redips_container"
+- added example9 (Single and switching mode)
+
+2.6.1
+- added public property REDIPS.drag.border (style for enabled element) - default is 'solid'
+- fixed "enabled" property for DIV elements
+
+2.6.0
+- enabled existence more than 1 DIV container
+- added example0 (Minimal steps)
+- added example8 (Tables in separated DIV containers)
+- main DIV container could have any id (it should'n be id="drag")
+- new private method init_tables() 
+- code cleaning
+- fixing example3 - School timetable (set reference to the DIV container in cloned elements)
+
+2.5.0
+- added myhandler_changed() - called after target cell changes
+- added public object current_cell - can be used in myhandler_changed()
+- added public object previous_cell - can be used in myhandler_changed()
+- added public method move_object()
+- obj_new_div exposed as private variable
+- obj_new_offset new private variable
+- private method relocate_object() not needed - deleted
+- private method in_scrollable() not needed - deleted
+- private parameters mouseX & mouseY not needed - deleted
+- save_content() method now returns content from all tables if input parameter is undefined
+- style definition "position: relative" for drag element is not needed  
+
+2.3.2
+- added example with scrollable and fixed DIV containers
+
+2.3.1
+- fixed issue with nested DIVS in case of "switch" drop option, thanks to Doony
+
+2.3.0
+- added "overwrite" drop option
+
+2.2.2
+- examples are modified with "body{margin:0px;}" due to wrong offset calculation in IE6 / IE7
+
+2.2.1
+- fixed zIndex for cloned objects
+
+2.2.0
+- added property "only" to enable defined DIV elements for marked table cell with class name 'only'
+- properties "mark_cname", "marked_cell" and "marked_exception" replaced with object "mark" 
+
+2.1.1
+- enabled textarea to be editable inside a dragable div
+- fixed marked_cell property
+
+2.1.0
+- scrollable_container() renamed to in_scrollable()
+- added sca[] - scrollable container areas
+- box_offset() now accepts and "type" parameter to exclude scrollLeft / scrollTop from calculation
+- fixed autoscroll bug (autoscroll didn't stop after releasing mouse button during the scrolling)
+- created "edge" private object
+- removed autoscrollX_flag and autoscrollY_flag global variables (edge.flag.x and edge.flag.y used instead)
+- added autoscrolling for div containers
+
+2.0.0
+- document.selection.clear() added in init() to prevent text selection for IE8 in case when leftmouse button was clicked and CTRL key was pressed
+- box_offset() now considers scrollTop value of elements "above" table
+ 	* element should have something other than default static in "position" style - see example5
+ 	* if not, offsetParent will be NULL and box_offset() will not calculate scroll value
+ - added get_style() function
+ - added setCapture / releaseCapture to allow dragging outside the window for the IE family
+ - added scrollable_container() function
+ - fixed bug for the first column in set_trc()
+ 	* before:
+ 	if (currentCell[3] <= evt.clientX && evt.clientX < currentCell[1])
+ 	* after:
+ 	if (currentCell[3] <= evt.clientX && evt.clientX <= currentCell[1])
+ 
+1.9.8
+- enable/disable single DIV dragging (enable_drag property)
+
+1.9.7
+- new feature "clone_ctrlKey" - if true elements could be cloned with CTRL key
+
+1.9.6
+- fixing save_content()
+- fixing event handler calling

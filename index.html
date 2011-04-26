@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+	<head>
+		<meta name="author" content="Darko Bunic"/>
+		<meta name="description" content="Drag and drop table content/rows with JavaScript"/>
+		<link rel="stylesheet" href="style.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="redips-drag.js"></script>
+		<!-- initialize drag and drop -->
+		<script type="text/javascript">
+			// after page is loaded, initialize DIV elements inside tables
+			window.onload = function () {
+				// initialization
+				REDIPS.drag.init();
+				// set hover color
+				REDIPS.drag.hover_color = '#E7C7B2';
+				// set drop option to 'switching'
+				REDIPS.drag.drop_option = 'switching';
+				// display action in the message line (list of all event handlers can be found at the drag.js bottom)
+				REDIPS.drag.myhandler_clicked	= function () {document.getElementById('message').innerHTML = 'Element is clicked'}
+				REDIPS.drag.myhandler_moved		= function () {document.getElementById('message').innerHTML = 'Element is moved'}
+				REDIPS.drag.myhandler_notmoved	= function () {document.getElementById('message').innerHTML = 'Element is not moved'}
+				REDIPS.drag.myhandler_dropped	= function () {document.getElementById('message').innerHTML = 'Element is dropped'}
+			}
+		</script>
+		<title>www.redips.net</title>
+	</head>
+	<body>
+		<center>
+			<h1><a href="http://www.redips.net/javascript/drag-and-drop-table-content/">www.redips.net</a></h1>
+			<h2>Drag and drop table content/rows with JavaScript - Version 4.0.0</h2>
+		</center>
+		<!-- tables inside this DIV could have draggable content -->
+		<div id="drag">
+			<table id="table1">
+				<!-- define table columns -->
+				<colgroup>
+					<col width="320"/>
+					<col width="320"/>
+				</colgroup>
+				<tr>
+					<td><div id="link1" class="drag t1">Example 00: <a href="example00/">Minimal steps</a></div></td>
+					<td><div id="link1" class="drag t1">Example 09: <a href="example09/">Single and switching mode</a></div></td>
+				</tr>
+				<tr>
+					<td><div id="link1" class="drag t1">Example 01: <a href="example01/">Three tables</a></div></td>
+					<td><div id="link1" class="drag t1">Example 10: <a href="example10/">Sticky tables</a></div></td>
+				</tr>
+				<tr>
+					<td><div id="link1" class="drag t1">Example 02: <a href="example02/">Green and orange elements</a></div></td>
+					<td><div id="link1" class="drag t1">Example 11: <a href="example11/">Drag handle on titlebar</a></div></td>
+				</tr>
+				<tr>
+					<td><div id="link1" class="drag t1">Example 03: <a href="example03/index.php">School timetable</a> (<a href="example03/index_static.html">static</a>)</div></td>
+					<td><div id="link1" class="drag t1">Example 12: <a href="example12/">Select and move more elements</a></div></td>
+				</tr>
+				<tr>
+					<td><div id="link1" class="drag t1">Example 04: <a href="example04/">Tic Tac Toe</a></div></td>
+					<td><div id="link1" class="drag t1">Example 13: <a href="example13/">Nested tables</a></div></td>
+				</tr>
+				<tr>
+					<td><div id="link1" class="drag t1">Example 05: <a href="example05/">Scrollable DIV containers</a></div></td>
+					<td><div id="link1" class="drag t1">Example 14: <a href="example14/">Sort elements in long table</a></div></td>
+				</tr>
+				<tr>
+					<td><div id="link1" class="drag t1">Example 06: <a href="example06/">Scrollable and fixed containers</a></div></td>
+					<td><div id="link1" class="drag t1">Example 15: <a href="example15/">Drag and drop table rows</a></div></td>
+				</tr>
+				<tr>
+					<td><div id="link1" class="drag t1">Example 07: <a href="example07/">A B C D</a></div></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td><div id="link1" class="drag t1">Example 08: <a href="example08/">Tables in separated containers</a></div></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td colspan="2" id="message" class="mark" title="Message line">Message line</td>
+				</tr>
+			</table>
+		</div>
+	</body>
+</html>

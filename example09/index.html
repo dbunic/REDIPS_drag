@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+	<head>
+		<meta name="author" content="Darko Bunic"/>
+		<meta name="description" content="Drag and drop table content with JavaScript"/>
+		<link rel="stylesheet" href="style.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../redips-drag.js"></script>
+		<!-- initialize drag and drop -->
+		<script type="text/javascript">
+			// reference to the REDIPS.drag lib (global variable)
+			var rd = REDIPS.drag;
+
+			// startup 
+			window.onload = function () {
+				// initialization
+				rd.init();
+				// "moved" event handler uses reference of the moved element
+				rd.myhandler_moved = function () {
+					set_drop_option(rd.obj);
+				}
+				// "cloned" event handler uses reference of the source element (not cloned element)
+				rd.myhandler_cloned	= function () {
+					set_drop_option(rd.obj_old);
+				}
+			}
+
+			// set drop option regarding to the table where DIV element belongs
+			function set_drop_option (el) {
+				// loop up until found table
+				while (el && el.nodeName !== 'TABLE') {
+					el = el.parentNode;
+				}
+				// loop ends and "el" position should be table
+				if (el.id === 'table1') {
+					rd.drop_option = 'switching';
+				}
+				else {
+					rd.drop_option = 'single';
+				}
+			}
+		</script>
+		<title>www.redips.net</title>
+	</head>
+	<body>
+		<center>
+			<h1><a href="http://www.redips.net/javascript/drag-and-drop-table-content/">www.redips.net</a></h1>
+			<h2>Example 9: Single and switching mode</h2>
+		</center>
+		<div id="main_container">
+			<!-- tables inside this DIV could have draggable content -->
+			<div id="drag">
+	
+				<!-- left container -->
+				<div id="left">
+					<table id="table1">
+						<colgroup>
+							<col width="200"/>
+						</colgroup>
+						<tbody>
+							<tr><td></td></tr>
+							<tr><td></td></tr>
+							<tr><td></td></tr>
+							<tr><td></td></tr>
+							<tr><td></td></tr>
+							<tr><td></td></tr>
+						</tbody>
+					</table>
+				</div><!-- left container -->
+				
+				<!-- right container -->
+				<div id="right">
+					<table id="table2">
+						<colgroup>
+							<col width="100"/>
+						</colgroup>
+						<tbody>
+							<!-- clone 2 elements + last element -->
+							<tr><td class="mark"><div id="c" class="drag green clone climit1_1">3</div></td></tr>
+							<tr><td class="mark"><div id="b" class="drag orange">2</div></td></tr>
+							<tr><td class="mark"><div id="a" class="drag orange">1</div></td></tr>
+							<tr><td class="mark"><div id="d" class="drag green clone climit1_1">4</div></td></tr>
+						</tbody>
+					</table>
+				</div><!-- right container -->
+			</div><!-- drag container -->
+			<div id="message">Sort elements from the right table</div>
+		</div><!-- main container -->
+	</body>
+</html>

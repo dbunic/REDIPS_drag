@@ -1,0 +1,98 @@
+/*
+
+Darko Bunic
+http://www.redips.net/
+Jan, 2010.
+
+*/
+
+body{
+	font-family: arial;
+	margin: 0px; /* for IE6 / IE7 */
+}
+
+/* drag container*/
+#drag{
+	/* make drag div visible */
+	/* border: 2px solid lime; */
+	
+	/* I had problems with FF3 and this settings for DIV id="drag" */	
+	/*
+	margin: auto;
+  	display: table;
+    table-layout: auto;
+    */
+}
+
+/* drag objects (DIV inside table cells) */
+.drag{
+	cursor: move;
+	margin: auto;
+	z-index: 10;
+	background-color: white;
+	text-align: center;
+	font-size: 10pt; /* needed for cloned object */
+	opacity: 0.7;
+	filter: alpha(opacity=70);
+	/* without width, IE6/7 will not apply filter/opacity to the element ?! */
+	/* IE needs element layout */
+	width: 82px;
+}
+
+/* tables */
+div#drag table{
+	background-color: #eee;
+	border-collapse: collapse;
+	margin: auto;
+}
+
+/* table cells */
+div#drag td{
+	height: 32px;
+	border: 1px solid white;
+	text-align: center;
+	font-size: 10pt;
+	padding: 2px;
+}
+
+/* green objects */
+.green {
+	border: 2px solid #499B33;
+}
+
+/* orange objects */
+.orange {
+	border: 2px solid #BF6A30;
+}
+
+/* blank cells (to create gap between left column and message row) */
+.blank {
+	background-color: white;
+}
+
+/* green cell */
+.green_cell{
+	background-color: #AFD0A7;
+}
+
+/* orange cell */
+.orange_cell{
+	background-color: #DDC5B5;
+}
+
+/* message line */
+#message{
+	color: white;
+	background-color: #aaa
+}
+
+/* left column and corners in main table */
+.dark{
+	background-color: #e0e0e0;
+}
+
+/* append here cloned object before placing to the target table cell */
+#obj_new{
+	height: 23px;
+	width: 10px;
+}

@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+	<head>
+		<meta name="author" content="Darko Bunic"/>
+		<meta name="description" content="Drag and drop table content with JavaScript"/>
+		<link rel="stylesheet" href="style.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../redips-drag.js"></script>
+		<!-- initialize drag and drop -->
+		<script type="text/javascript">
+			window.onload = function () {
+				var rd = REDIPS.drag;	// reference to the REDIPS.drag class
+				// DIV container initialization
+				rd.init('drag1');
+				rd.init('drag2');
+				// elements could be cloned with pressed SHIFT key (for demo)
+				rd.clone_shiftKey = true;
+			}
+		</script>
+		<title>www.redips.net</title>
+	</head>
+	<body>
+		<center>
+			<h1><a href="http://www.redips.net/javascript/drag-and-drop-table-content/">www.redips.net</a></h1>
+			<h2>Example 8: Tables in separated containers</h2>
+
+			<!-- drag1 DIV container -->
+			<div id="drag1">
+				<table>
+					<colgroup>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="100"/>
+					</colgroup>
+					<tbody>
+						<tr>
+							<td><div class="drag">A</div></td>
+							<td></td>
+							<td></td>
+						</tr>
+						<tr>
+							<td></td>
+							<td><div class="drag">A</div></td>
+							<td></td>
+						</tr>
+						<tr>
+							<td></td>
+							<td></td>
+							<td><div class="drag">A</div></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			
+			<br/>
+			<br/>
+			
+			<!-- drag2 DIV container -->
+			<div id="drag2">
+				<table>
+					<colgroup>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="100"/>
+					</colgroup>
+					<tbody>
+						<tr>
+							<td></td>
+							<td></td>
+							<td><div class="drag">B</div></td>
+						</tr>
+						<tr>
+							<td></td>
+							<td><div class="drag">B</div></td>
+							<td></td>
+						</tr>
+						<tr>
+							<td><div class="drag">B</div></td>
+							<td></td>
+							<td></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			
+		</center>
+	</body>
+</html>

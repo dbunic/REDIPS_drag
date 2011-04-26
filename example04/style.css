@@ -1,0 +1,144 @@
+/*
+
+Darko Bunic
+http://www.redips.net/
+Feb, 2010.
+
+*/
+
+body{
+	font-family: arial;
+	margin: 0px; /* for IE6 / IE7 */
+}
+
+
+/* drag container */
+#main_container{
+	margin: auto;
+	width: 470px;
+}
+		/* container for the left table */
+		#main_container #left{
+			width: 100px;
+			height: 110px;
+			float: left;
+			margin-right: 20px;
+		}
+		/* container for the right table */
+		#main_container #right{
+		  	display: table;
+		    table-layout: auto;
+			padding-left: auto;
+			padding-right: 0px;
+			/* align div to the right */
+			margin-left: auto;
+		}
+
+
+/* drag objects (DIV inside table cells) */
+.drag{
+	cursor: move;
+	margin: auto;
+	z-index: 10;
+	background-color: white;
+	text-align: center;
+	font-size: 25pt; /* needed for cloned object */
+	opacity: 0.7;
+	filter: alpha(opacity=70);
+	/* without width, IE6/7 will not apply filter/opacity to the element ?! */
+	width: 87px;
+	height: 40px;
+	line-height: 40px;
+}
+
+
+/* tables */
+div#drag table {
+	background-color: #eee;
+	border-collapse: collapse;
+}
+		/* timetable */
+		div#drag #table2 {
+			/* align table to the right */
+			margin-left: auto;
+		}
+
+
+/* table cells */
+div#drag td,th{
+	border-style: solid;
+	height: 50px;
+	text-align: center;
+	font-size: 10pt;
+	padding: 2px;
+}
+		/* left table - td */
+		div#drag #table1 td{
+			border-width: 0px 0px 1px 0px;
+			border-color: white;
+		}
+		
+		/* right table - td */
+		div#drag #table2 td{
+			border-width: 0px 3px 3px 0px;
+			border-color: #DDC5B5;
+			font-weight: normal;
+		}
+
+		/* right table - th */
+		div#drag #table2 th{
+			border-width: 3px 0px 0px 3px;
+			border-color: #DDC5B5;
+			font-weight: normal;
+		}
+		
+		/* right table - upper right cell */
+		div#drag #table2 .upper_right{
+			border-width: 0px;
+		}
+
+		/* right table - lower left cell */
+		div#drag #table2 .lower_left{
+			border-width: 0px;
+		}
+
+
+
+/* last row and last column without border */
+.noborder{
+	border-width: 0px;
+}
+
+/* green objects */
+.green {
+	border: 2px solid #499B33;
+}
+
+
+/* blank cells (upper left corner) */
+.blank {
+	background-color: white;
+}
+
+
+/* message line */
+#message{
+	color: white;
+	background-color: #aaa;
+	text-align: center;
+	margin-top: 10px;
+}
+
+
+/* dark cells (first column and table header) */
+.dark{
+	color: #444;
+	background-color: #e0e0e0;
+}
+
+
+/* append here cloned object before placing to the target table cell */
+#obj_new{
+	height: 32px;
+	width: 100px;
+}

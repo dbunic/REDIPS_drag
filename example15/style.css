@@ -1,0 +1,114 @@
+/*
+
+Darko Bunic
+http://www.redips.net/
+Apr, 2011.
+
+*/
+
+body {
+	font-family: arial;
+	margin: 0px;
+}
+
+/* make drag container visible */
+#drag {
+	border: 2px dashed LightBlue;
+	width: 580px;
+	padding: 10px;
+	margin: 0px auto;
+}
+
+/* set border-collapse */
+div#drag table {
+	border-collapse: collapse;
+	width: 580px;
+}
+	/* define margin below first table */
+	.tbl1 {
+		margin-bottom: 17px;
+	}
+
+/* set table row height */
+div#drag table tr {
+	height: 32px;
+}
+
+/* table cells */
+div#drag td {
+	/* IE8 BUG - applying alpha filter on TD will overwrite TD border - thank you MicroSoft for tearing my hair :P */
+	/* I also tried with outline and that was fine, but Opera11 place high zIndex to outline grid and that looks wierd */
+	/* so, I paint TR to white with JavaScript and applying aplha filter to table content (DIV elements) */
+	border: 1px solid white;
+}
+
+/* table titles */
+div#drag th {
+	font-size: 14pt;
+}
+
+/* drag object (DIV inside table cell) */
+.drag {
+	margin: auto;
+	margin-bottom: 1px;
+	margin-top: 1px;
+	text-align: center;
+	font-size: 10pt;
+	width: 70px;
+	height: 20px;
+	line-height: 20px;
+	border-width: 2px;
+	border-style: solid;
+	background-color: white;
+	/* round corners */
+	border-radius: 4px; /* Opera, Chrome */
+	-moz-border-radius: 4px; /* FF */
+}
+
+/* blue DIV elements */
+.blue {
+	border-color: SteelBlue;
+}
+
+/* orange DIV elements */
+.orange {
+	border-color: #FF8A58;
+}
+
+/* DIV row handlers (blue left column) */
+.row {
+	width: 20px;
+	margin: 2px;
+	border-color: SteelBlue;
+	background-color: SteelBlue;
+	/* round corners */
+	border-radius: 14px; /* Opera, Chrome */
+	-moz-border-radius: 14px; /* FF */
+}
+
+/* row handler TD background color */
+.rowhandler {
+	background-color: #76ACDA;
+}
+
+/* marked cells (forbidden access for header and message line) */
+.mark {
+	color: white;
+	background-color: #aaa;
+	text-align: center;
+}
+
+/* row dark */
+.rd {
+	background-color: #ddd;
+}
+
+/* row light */
+.rl {
+	background-color: #eee;
+}
+
+/* cell dark */
+.cdark {
+	background-color: #C6C8CB;
+}

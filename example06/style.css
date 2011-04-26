@@ -1,0 +1,178 @@
+/*
+
+Darko Bunic
+http://www.redips.net/
+May, 2010.
+
+*/
+
+body{
+	font-family: arial;
+	margin: 0px; /* for IE6 / IE7 */
+}
+
+
+/* drag container */
+#main_container{
+	margin: auto;
+	width: 630px;
+}
+	/* container for left and right div */
+	#drag{
+		/* make it visible */
+		border: 2px dashed SteelBlue;
+		width: 620px;
+		height: 304px;
+		padding: 3px;
+	}
+
+		/* container for the left table */
+		#main_container #left{
+			width: 233px;
+			height: 300px;
+			float: left;
+			margin-right: 20px;
+			/* make it visible */
+			border: 2px solid SlateGray;
+			background-color: #eee;
+		}
+		/* container for the right table */
+		#main_container #middle{
+			width: 145px;
+			height: auto;
+			float: left;
+			margin-right: 20px;
+			margin-top: 50px;
+			/* make it visible */
+			border: 2px solid SlateGray;
+			background-color: #eee;
+		}
+		/* container for the right table */
+		#main_container #right{
+			width: 188px;
+			height: 300px;
+			float: right;
+			/* make it visible */
+			border: 2px solid SlateGray;
+			background-color: #eee;
+		}
+
+
+		/* make left and right DIV container scrollable */
+		#main_container #left,#right{
+			/*  http://www.howtocreate.co.uk/tutorials/javascript/browserspecific (Element position with scrolling offsets)
+			make sure that every element with an overflow of anything other than "visible" also has a position
+			style set to something other than the default "static". This way, they will all appear in the offsetParent
+			chain, and can be easily subtracted in the same loop that adds the offsetLeft and offsetTop. */
+			overflow: auto;
+			position: relative;
+		}
+
+
+
+/* drag objects (DIV inside table cells) */
+.drag{
+	cursor: move;
+	margin: auto;
+	z-index: 10;
+	background-color: white;
+	text-align: center;
+	font-size: 20pt; /* needed for cloned object */
+	opacity: 0.7;
+	filter: alpha(opacity=70);
+	/* without width, IE6/7 will not apply filter/opacity to the element ?! */
+	/* IE needs element layout */
+	width: 52px;
+	height: 35px;
+	line-height: 35px;
+}
+
+
+/* tables */
+div#drag table {
+	background-color: #eee;
+	border-collapse: collapse;
+	/* center tables */
+	margin: 0px auto;
+}
+		/* timetable */
+		div#drag #table2 {
+			/* align table to the right */
+			margin-left: auto;
+			width: 430px;
+		}
+
+
+/* table cells */
+div#drag table td,th{
+	border-style: double;
+	height: 50px;
+	text-align: center;
+	font-size: 10pt;
+}
+
+		/* td */
+		div#drag table td{
+			border-width: 0px 3px 3px 0px;
+			border-color: #DDC5B5;
+			font-weight: normal;
+		}
+
+		/* th */
+		div#drag table th{
+			border-width: 3px 0px 0px 3px;
+			border-color: #DDC5B5;
+			font-weight: normal;
+		}
+		
+		/* upper right cell */
+		div#drag table .upper_right{
+			border-width: 0px;
+		}
+
+		/* lower left cell */
+		div#drag table .lower_left{
+			border-width: 0px;
+		}
+
+
+
+/* last row and last column without border */
+.noborder{
+	border-width: 0px;
+}
+
+/* green objects */
+.blue {
+	border: 2px solid CornflowerBlue;
+}
+
+
+/* blank cells (upper left corner) */
+.blank {
+	background-color: white;
+}
+
+
+/* append here cloned object before placing to the target table cell */
+#obj_new{
+	/* make obj_new div visible */
+	/* border: 1px solid red; */
+	height: 10px;
+	width: 100px;
+}
+
+/* message line */
+#message{
+	color: white;
+	background-color: #aaa;
+	text-align: center;
+	/* top margin is made with unvisible obj_new DIV */
+	/* margin-top: 10px; */
+}
+
+/* dark cells (first column and table header) */
+.dark{
+	color: #444;
+	background-color: #e0e0e0;
+}

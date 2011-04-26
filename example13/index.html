@@ -1,0 +1,159 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+	<head>
+		<meta name="author" content="Darko Bunic"/>
+		<meta name="description" content="Drag and drop table content with JavaScript"/>
+		<link rel="stylesheet" href="style.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../redips-drag.js"></script>
+		<title>www.redips.net</title>
+		<!-- initialize drag and drop -->
+		<script type="text/javascript">
+		// onload event
+		window.onload = function () {
+			// reference to the REDIPS.drag object
+			var rd = REDIPS.drag;
+			// initialization
+			rd.init();
+			// handler clicked - set hover color
+			rd.myhandler_clicked = function () {
+				set_hover_color(REDIPS.drag.current_cell);
+			}
+			// handler changed - set hover color
+			rd.myhandler_changed = function () {
+				set_hover_color(REDIPS.drag.current_cell);
+			}
+			
+		}
+
+		// set hover color
+		function set_hover_color(e) {
+			// loop up until table found
+			while (e && e.nodeName !== 'TABLE') {
+				e = e.parentNode;
+			}
+			// set color for nested tables (blue)
+			// redips_tableType === 2 -> "clean" table (table is not nested and doesn't contain nested tables)
+			// redips_tableType === 1 -> nested table
+			// redips_tableType === 0 -> table contains nested tables
+			if (e.redips_tableType === 1) {
+				REDIPS.drag.hover_color = '#9BB3DA';
+			}
+			// set color for other tables (orange)
+			else {
+				REDIPS.drag.hover_color = '#FFCFAE';
+			}
+		}
+		</script>
+	</head>
+	<body>
+		<center>
+			<h1><a href="http://www.redips.net/javascript/drag-and-drop-table-content/">www.redips.net</a></h1>
+			<h2>Example 13: Nested tables</h2>
+
+			<!-- tables inside this DIV could contain drag-able content  -->
+			<div id="drag">
+				<table>
+					<colgroup>
+						<col width="200"/>
+						<col width="100"/>
+						<col width="100"/>
+					</colgroup>
+					<tbody>
+						<tr>
+							<!-- cell containing nested table -->
+							<td>
+								<table class="my_nested_table">
+									<colgroup>
+										<col width="50"/>
+										<col width="50"/>
+										<col width="50"/>
+									</colgroup>
+									<tbody>
+										<tr>
+											<td></td>
+											<td></td>
+											<td></td>
+										</tr>
+										<tr>
+											<td></td>
+											<td><div class="drag">A</div></td>
+											<td></td>
+										</tr>
+										<tr>
+											<td>
+											</td>
+											<td></td>
+											<td></td>
+										</tr>
+									</tbody>
+								</table>
+							</td>
+							<td></td>
+							<td></td>
+						</tr>
+						<tr>
+							<td></td>
+							<td><div class="drag">B</div></td>
+							<td></td>
+						</tr>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+					</tbody>
+				</table>
+				<table>
+					<colgroup>
+						<col width="200"/>
+						<col width="100"/>
+						<col width="100"/>
+					</colgroup>
+					<tbody>
+						<tr>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+						<tr>
+							<td></td>
+							<td><div class="drag">C</div></td>
+							<td></td>
+						</tr>
+						<tr>
+							<!-- nested table is accessible (container is not) -->
+							<td class="mark">
+								<table class="my_nested_table">
+									<colgroup>
+										<col width="50"/>
+										<col width="50"/>
+										<col width="50"/>
+									</colgroup>
+									<tbody>
+										<tr>
+											<td></td>
+											<td></td>
+											<td></td>
+										</tr>
+										<tr>
+											<td></td>
+											<td><div class="drag">D</div></td>
+											<td></td>
+										</tr>
+										<tr>
+											<td>
+											</td>
+											<td></td>
+											<td></td>
+										</tr>
+									</tbody>
+								</table>
+							</td>
+							<td></td>
+							<td></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</center>
+	</body>
+</html>

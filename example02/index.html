@@ -1,0 +1,107 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+	<head>
+		<meta name="author" content="Darko Bunic"/>
+		<meta name="description" content="Drag and drop table content with JavaScript"/>
+		<link rel="stylesheet" href="style.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../redips-drag.js"></script>
+		<!-- initialize drag and drop -->
+		<script type="text/javascript" src="script.js"></script>
+		<title>www.redips.net</title>
+	</head>
+	<body>
+		<center>
+			<h1><a href="http://www.redips.net/javascript/drag-and-drop-table-content/">www.redips.net</a></h1>
+			<h2>Example 2: Green and orange elements</h2>
+		</center>
+		<!-- tables inside this DIV could have draggable content -->
+		<div id="drag">
+			<table id="table1">
+				<colgroup>
+					<col width="100"/>
+					<col width="50"/>
+					<col width="100"/>
+					<col width="100"/>
+					<col width="100"/>
+					<col width="100"/>
+					<col width="100"/>
+				</colgroup>
+				<tr>
+					<td class="dark"></td>
+					<td class="mark blank"></td>
+					<td class="dark single" title="Single content cell"></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td class="dark single" title="Single content cell"></td>
+				</tr>
+				<tr>
+					<td class="dark"></td>
+					<td class="mark blank"></td>
+					<td></td>
+					<td></td>
+					<td class="mark green_cell single"></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<!-- define green clone element (2 cloned elements + last element) -->
+					<td class="dark"><div id="green" class="drag green clone climit1_2">Green</div></td>
+					<td class="mark blank"></td>
+					<td></td>
+					<td class="mark orange_cell single"></td>
+					<td></td>
+					<td class="mark orange_cell single"></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td class="dark"></td>
+					<td class="mark blank"></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<!-- define orange clone element (2 cloned elements + last element) -->
+					<td class="dark"><div id="orange" class="drag orange clone climit1_2">Orange</div></td>
+					<td class="mark blank"></td>
+					<td></td>
+					<td class="mark green_cell single"></td>
+					<td></td>
+					<td class="mark green_cell single"></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td class="dark"></td>
+					<td class="mark blank"></td>
+					<td></td>
+					<td></td>
+					<td class="mark orange_cell single"></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td class="dark"></td>
+					<td class="mark blank"></td>
+					<td class="dark single" title="Single content cell"></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td class="dark single" title="Single content cell"></td>
+				</tr>
+				<!-- empty row -->
+				<tr>
+					<td colspan="7" class="mark blank"></td>
+				</tr>
+				<!-- message row -->
+				<tr>
+					<td class="mark blank"></td>
+					<td class="mark blank"></td>
+					<td id="message" colspan="5" class="mark dark2">Set green and orange elements to the green and orange cells, respectively.</td>
+				</tr>
+			</table>
+		</div>
+	</body>
+</html>

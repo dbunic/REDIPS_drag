@@ -1,0 +1,94 @@
+/*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
+/*global window: false, REDIPS: true */
+
+/* enable strict mode */
+"use strict";
+
+window.onload = function () {
+	// reference to the REDIPS.drag library and message line
+	var	rd = REDIPS.drag,
+		msg = document.getElementById('message');
+	// initialization
+	rd.init();
+	// only "smile" can be placed to the marked cell
+	rd.mark.exception.d8 = 'smile';
+	// prepare handlers
+	rd.myhandler_clicked = function () {
+		msg.innerHTML = 'Clicked';
+	};
+	rd.myhandler_moved  = function () {
+		msg.innerHTML = 'Moved';
+	};
+	rd.myhandler_notmoved = function () {
+		msg.innerHTML = 'Not moved';
+	};
+	rd.myhandler_dropped = function () {
+		msg.innerHTML = 'Dropped';
+	};
+	rd.myhandler_switched = function () {
+		msg.innerHTML = 'Switched';
+	};
+	rd.myhandler_clonedend1 = function () {
+		msg.innerHTML = 'Cloned end1';
+	};
+	rd.myhandler_clonedend2 = function () {
+		msg.innerHTML = 'Cloned end2';
+	};
+	rd.myhandler_notcloned = function () {
+		msg.innerHTML = 'Not cloned';
+	};
+	rd.myhandler_deleted = function () {
+		msg.innerHTML = 'Deleted';
+	};
+	rd.myhandler_undeleted = function () {
+		msg.innerHTML = 'Undeleted';
+	};
+	rd.myhandler_cloned = function () {
+		// display message
+		msg.innerHTML = 'Cloned';
+		// append 'd' to the element text (Clone -> Cloned)
+		rd.obj.innerHTML += 'd';
+	};
+	rd.myhandler_changed = function () {
+		// define current row and current cell
+		var ri = REDIPS.drag.current_cell.parentNode.rowIndex,
+			ci = REDIPS.drag.current_cell.cellIndex;
+		// display current row and current cell
+		msg.innerHTML = 'Changed: ' + ri + ' ' + ci;
+	};
+};
+
+// toggles trash_ask parameter defined at the top
+function toggle_confirm(chk) {
+	REDIPS.drag.trash_ask = chk.checked;
+}
+
+// toggles delete_cloned parameter defined at the top
+function toggle_delete_cloned(chk) {
+	REDIPS.drag.delete_cloned = chk.checked;
+}
+
+// enables / disables dragging
+function toggle_dragging(chk) {
+	REDIPS.drag.enable_drag(chk.checked);
+}
+
+// function sets drop_option parameter defined at the top
+function set_drop_option(radio_button) {
+	REDIPS.drag.drop_option = radio_button.value;
+}
+
+// show prepared content for saving
+function save() {
+	// scan first table
+	var content = REDIPS.drag.save_content(0);
+	// if content doesn't exist
+	if (content === '') {
+		alert('Table is empty!');
+	}
+	// display query string
+	else {
+		//window.open('/my/multiple-parameters.php?' + content, 'Mypop', 'width=350,height=160,scrollbars=yes');
+		window.open('multiple-parameters.php?' + content, 'Mypop', 'width=350,height=260,scrollbars=yes');
+	}
+}

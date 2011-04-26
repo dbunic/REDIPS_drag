@@ -1,0 +1,116 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+	<head>
+		<meta name="author" content="Darko Bunic"/>
+		<meta name="description" content="Drag and drop table content with JavaScript"/>
+		<link rel="stylesheet" href="style.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../redips-drag.js"></script>
+		<!-- initialize drag and drop -->
+		<script type="text/javascript">
+			window.onload = function () {
+				var rd = REDIPS.drag,	// reference to the REDIPS.drag class
+					div_drag = document.getElementById('drag'); // reference to the drag region
+				// DIV container initialization
+				rd.init();
+				// this function (event handler) is called after element is dropped
+				rd.myhandler_dropped = function () {
+					var div1,		// DIV elements inside DIV id="drag" (collection)
+						div2 = [],	// references of DIV elements prepared from collection
+						cb, i, j;	// checkbox and loop variables
+					// collect DIV elements from drag region
+					div1 = div_drag.getElementsByTagName('div');
+					// loop through collected DIV elements
+					for (i = 0, j = 0; i < div1.length; i++) {
+						// locate checkbox inside DIV element
+						cb = div1[i].getElementsByTagName('input');
+						// if checkbox inside DIV element is checked
+						if (cb.length > 0 && cb[0].checked === true) {
+							// uncheck checkbox
+							cb[0].checked = false;
+							// save reference of DIV element to the div2 array
+							div2[j] = div1[i];
+							// increment counter j
+							j++;
+						}
+						
+					}
+					// loop through div2 array and move elements to the target table cell
+					for (i = 0; i < div2.length; i++) {
+						rd.target_cell.appendChild(div2[i]); 
+					}
+				}
+			}
+		</script>
+		<title>www.redips.net</title>
+	</head>
+	<body>
+		<center>
+			<h1><a href="http://www.redips.net/javascript/drag-and-drop-table-content/">www.redips.net</a></h1>
+			<h2>Example 12: Select and move more elements</h2>
+
+			<!-- drag1 DIV container -->
+			<div id="drag">
+				<table>
+					<colgroup>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="100"/>
+					</colgroup>
+					<tbody>
+						<tr>
+							<td><div class="drag">A<input type="checkbox"/></div></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+						<tr>
+							<td></td>
+							<td><div class="drag">B<input type="checkbox"/></div></td>
+							<td></td>
+							<td><div class="drag">D<input type="checkbox"/></div></td>
+						</tr>
+						<tr>
+							<td></td>
+							<td></td>
+							<td><div class="drag">C<input type="checkbox"/></div></td>
+							<td></td>
+						</tr>
+					</tbody>
+				</table>
+			
+				<br/>
+				<br/>
+			
+				<table>
+					<colgroup>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="100"/>
+					</colgroup>
+					<tbody>
+						<tr>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+						<tr>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+						<tr>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</center>
+	</body>
+</html>

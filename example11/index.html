@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+	<head>
+		<meta name="author" content="Darko Bunic"/>
+		<meta name="description" content="Drag and drop table content with JavaScript"/>
+		<link rel="stylesheet" href="style.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../redips-drag.js"></script>
+		<!-- initialize drag and drop -->
+		<script type="text/javascript">
+			// onload event
+			window.onload = function () {
+				// define border style
+				REDIPS.drag.border = 'none';
+				// initialization
+				REDIPS.drag.init();
+				// dragged elements can be placed to the empty cells only
+				REDIPS.drag.drop_option = 'single';
+			};
+			
+		</script>
+		<title>www.redips.net</title>
+	</head>
+	<body>
+		<center>
+			<h1><a href="http://www.redips.net/javascript/drag-and-drop-table-content/">www.redips.net</a></h1>
+			<h2>Example 11: Drag handle on titlebar</h2>
+		</center>
+		<div id="main_container">
+			<!-- tables inside this DIV could have draggable content -->
+			<div id="drag">
+	
+				<!-- left container -->
+				<div id="left">
+					<table id="table1">
+						<colgroup>
+							<col width="100"/>
+						</colgroup>
+						<tbody>
+							<tr>
+								<td class="dark">
+									<div id="a" class="drag clone">
+										<div class="nodrag">redips</div>
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td class="dark">
+									<div id="o" class="drag clone">
+										<div class="nodrag">spider</div>
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div><!-- left container -->
+				
+				<!-- right container -->
+				<div id="right">
+					<table id="table2">
+						<colgroup>
+							<col width="100"/>
+							<col width="100"/>
+							<col width="100"/>
+						</colgroup>
+						<tbody>
+							<tr>
+								<td></td>
+								<td></td>
+								<td class="upper_right"></td>
+							</tr>
+							<tr>
+								<td></td>
+								<td></td>
+								<th></th>
+							</tr>
+							<tr>
+								<td class="lower_left"></td>
+								<th></th>
+								<th></th>
+							</tr>
+						</tbody>
+					</table>
+				</div><!-- right container -->
+			</div><!-- drag container -->
+			<div id="message">Custom drag handle on titlebar</div>
+		</div><!-- main container -->
+	</body>
+</html>
