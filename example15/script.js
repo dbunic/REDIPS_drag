@@ -38,7 +38,7 @@ function last_row() {
 }
 
 
-// initialization -  after page is loaded
+// initialization -  after page is fully loaded
 window.onload = function () {
 	// reference to the REDIPS.drag library and message line
 	var	rd = REDIPS.drag,
