@@ -30,6 +30,8 @@ body{
 .drag{
 	cursor: move;
 	margin: auto;
+	margin-bottom: 1px;
+	margin-top: 1px;
 	z-index: 10;
 	background-color: white;
 	text-align: center;
@@ -39,6 +41,9 @@ body{
 	/* without width, IE6/7 will not apply filter/opacity to the element ?! */
 	/* IE needs element layout */
 	width: 87px;
+	/* round corners */
+	border-radius: 4px; /* Opera, Chrome */
+	-moz-border-radius: 4px; /* FF */
 }
 
 
