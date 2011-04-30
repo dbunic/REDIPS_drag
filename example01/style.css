@@ -25,6 +25,11 @@ body{
 	width: 530px;
 }
 
+/* set border for images inside DRAG region - exclude image margin inheritance */
+/* my WordPress theme had some funny margin settings */
+#drag img {
+	margin: 1px;
+}
 
 /* drag objects (DIV inside table cells) */
 .drag{
