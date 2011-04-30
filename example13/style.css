@@ -42,10 +42,24 @@ div#drag td{
 /* drag object (DIV inside table cell) */
 .drag{
 	margin: auto;
+	margin-bottom: 1px;
+	margin-top: 1px;
 	text-align: center;
-	width: 40px;
+	width: 35px;
 	height: 35px;
 	line-height: 35px;
 	border: 2px solid SteelBlue;
 	background-color: white;
+
+}
+
+/* circle */
+.circle {
+	/* round corners */
+	border-radius: 20px; /* Opera, Chrome */
+	-moz-border-radius: 20px; /* FF */
+}
+
+/* square */
+.square {
 }

@@ -16,6 +16,9 @@ window.onload = function () {
 	rd.myhandler_clicked = function () {
 		msg.innerHTML = 'Clicked';
 	};
+	rd.myhandler_dblclicked = function () {
+		msg.innerHTML = 'Dblclicked';
+	};
 	rd.myhandler_moved  = function () {
 		msg.innerHTML = 'Moved';
 	};

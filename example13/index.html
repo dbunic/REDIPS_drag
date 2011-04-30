@@ -14,6 +14,8 @@
 			var rd = REDIPS.drag;
 			// initialization
 			rd.init();
+			// elements could be cloned with pressed SHIFT key
+			rd.clone_shiftKey = true;
 			// handler clicked - set hover color
 			rd.myhandler_clicked = function () {
 				set_hover_color(REDIPS.drag.current_cell);
@@ -76,7 +78,7 @@
 										</tr>
 										<tr>
 											<td></td>
-											<td><div class="drag">A</div></td>
+											<td><div class="drag circle">A</div></td>
 											<td></td>
 										</tr>
 										<tr>
@@ -93,7 +95,7 @@
 						</tr>
 						<tr>
 							<td></td>
-							<td><div class="drag">B</div></td>
+							<td><div class="drag square">B</div></td>
 							<td></td>
 						</tr>
 							<td></td>
@@ -116,7 +118,7 @@
 						</tr>
 						<tr>
 							<td></td>
-							<td><div class="drag">C</div></td>
+							<td><div class="drag circle">C</div></td>
 							<td></td>
 						</tr>
 						<tr>
@@ -136,7 +138,7 @@
 										</tr>
 										<tr>
 											<td></td>
-											<td><div class="drag">D</div></td>
+											<td><div class="drag square">D</div></td>
 											<td></td>
 										</tr>
 										<tr>

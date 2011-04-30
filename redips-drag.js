@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 4.0.0
-Apr 06, 2011.
+Version 4.0.1
+Apr 30, 2011.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -24,6 +24,7 @@ REDIPS.drag = (function () {
 		enable_drag,				// function attaches / detaches onmousedown and onscroll event handlers for DIV elements
 		img_onmousemove,			// needed to set onmousemove event handler for images
 		handler_onmousedown,		// onmousedown handler
+		handler_ondblclick,			// ondblclick handler (calls public myhandler_dblclicked)
 		table_top,					// set current table in "tables" array to the array top
 		handler_onmouseup,			// onmouseup handler
 		handler_onmousemove,		// onmousemove handler for the document level
@@ -364,6 +365,14 @@ REDIPS.drag = (function () {
 
 
 
+	// ondblclick handler
+	handler_ondblclick = function (e) {
+		// call custom event handler
+		REDIPS.drag.myhandler_dblclicked();
+	};
+
+
+
 	// set current table in "tables" array to the array top
 	// clicked object belongs to the table and this table should go to the array top
 	// "clean" tables and nested tables will be placed to the array top, while other tables will be placed to the top position
@@ -452,9 +461,10 @@ REDIPS.drag = (function () {
 				div2[i].redips_enabled = div1[i].redips_enabled;
 				div2[i].redips_container = div1[i].redips_container;
 				// cloneNode() does not clone event handlers too
-				// set onmousedown event handler if source element is enabled
+				// set onmousedown/ondblclick event handler if source element is enabled
 				if (div1[i].redips_enabled) {
 					div2[i].onmousedown = handler_onmousedown;
+					div2[i].ondblclick = handler_ondblclick;
 				}
 			}
 			// add div_drag container to the DIV wrapper (needed in onmousedown event handler)
@@ -1541,10 +1551,11 @@ REDIPS.drag = (function () {
 		offset = box_offset(obj);
 		offset_dragged = box_offset(obj_new);
 		// calculate top and left offset of the new object
-		obj_new.style.top   = (offset[0] - offset_dragged[0]) + "px";
-		obj_new.style.left  = (offset[3] - offset_dragged[3]) + "px";
-		// set onmouse down event for the new object
+		obj_new.style.top   = (offset[0] - offset_dragged[0]) + 'px';
+		obj_new.style.left  = (offset[3] - offset_dragged[3]) + 'px';
+		// set onmousedown/ondblclick event handler for the new object
 		obj_new.onmousedown = handler_onmousedown;
+		obj_new.ondblclick = handler_ondblclick;
 		// remove clone from the class name of the new object
 		obj_new.className = obj_new.className.replace('clone', '');
 		// if counter is undefined, set 0
@@ -1725,19 +1736,23 @@ REDIPS.drag = (function () {
 			autoscroll,		// boolean - if scrollable container will have autoscroll option (default is true)
 			enabled,		// enabled property (true or false) 
 			cb,				// box offset for container box (cb)
-			handler,		// onmousedown or null event handler 
+			handler1,		// onmousedown or null event handler
+			handler2,		// ondblclick or null event handler
 			position,		// if table container has position:fixed then "page scroll" offset should not be added
 			regex_drag = /\bdrag\b/i,	// regular expression to search "drag" class name
 			regex_noautoscroll = /\bnoautoscroll\b/i;	// regular expression to search "noautoscroll" class name
-		// define onmousedown handler and styles or null
+		// define onmousedown/ondblclick handlers and styles
 		if (enable_flag === true || enable_flag === 'init') {
-			handler = handler_onmousedown;
+			handler1 = handler_onmousedown;
+			handler2 = handler_ondblclick;
 			borderStyle = REDIPS.drag.border;
 			cursor = 'move';
 			enabled = true;
 		}
+		// else remove event handlers
 		else {
-			handler = null;
+			handler1 = null;
+			handler2 = null;
 			borderStyle = REDIPS.drag.border_disabled;
 			cursor = 'auto';
 			enabled = false;
@@ -1759,10 +1774,10 @@ REDIPS.drag = (function () {
 		// allow other div elements inside <div id="drag" ...
 		for (i = 0, j = 0; i < divs.length; i++) { 
 			if (regex_drag.test(divs[i].className)) {
-				// DIV elements should have only onmousedown attached so here will be used
-				// traditional event registration model
-				// using advanced model has problems with text selection and dragging text selection
-				divs[i].onmousedown = handler;
+				// DIV elements should have only onmousedown/ondblclick attached (using traditional event registration model)
+				// I had problems with using advanced event registration model regarding text selection and dragging text selection
+				divs[i].onmousedown = handler1;
+				divs[i].ondblclick = handler2;
 				divs[i].style.borderStyle = borderStyle;
 				divs[i].style.cursor = cursor;
 				// add enabled property to the DIV element (true or false)
@@ -1994,6 +2009,7 @@ REDIPS.drag = (function () {
 		 * Note: for the first dragging, REDIPS.drag.obj_old === REDIPS.drag.obj because REDIPS.drag.obj_old does not exist yet
 		 */
 		myhandler_clicked				: function () {},
+		myhandler_dblclicked			: function () {},
 		myhandler_moved					: function () {},
 		myhandler_notmoved				: function () {},
 		myhandler_dropped				: function () {},

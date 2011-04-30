@@ -1,5 +1,10 @@
 Changes for REDIPS.drag library
 
+4.0.1
+- added public myhandler_dblclicked() event handler
+    event is attached to the DIV object
+- changing styles in example13
+
 4.0.0
 - added support for drag and drop table rows
 - added example15 to show drag rows functionality
