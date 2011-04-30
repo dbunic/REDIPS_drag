@@ -2,8 +2,11 @@ Changes for REDIPS.drag library
 
 4.0.1
 - added public myhandler_dblclicked() event handler
-    event is attached to the DIV object
+    ondblclick event is attached to the DIV object
 - changing styles in example13
+- fixing example03 (attached ondblclick event to the cloned objects)
+- removed target_cell.appendChild(obj) line in case when DIV element was not moved
+    click&release mouse button will not place element to the bottom (if table cell contains more than one element)
 
 4.0.0
 - added support for drag and drop table rows

@@ -2,7 +2,7 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 4.0.1
+Version 4.0.2
 Apr 30, 2011.
 */
 
@@ -310,8 +310,8 @@ REDIPS.drag = (function () {
 		else {
 			mouseButton = evt.button;
 		}
-		// activate onmousemove and onmouseup event handlers on document level
-		// if left mouse button is pressed
+		// activate onmousemove and onmouseup event handlers on document object
+		// if left mouse button is clicked
 		if (mouseButton === 1) {
 			moved_flag  = 0; // reset moved_flag (needed for clone object in handler_onmousemove)
 			cloned_flag = 0; // reset cloned_flag
@@ -341,6 +341,7 @@ REDIPS.drag = (function () {
 		if (position !== 'fixed') {
 			position = get_style(tables[table_source].parentNode, 'position');
 		}
+
 		// define object offset
 		offset = box_offset(obj, position);
 		// calculate offset from the clicked point inside element to the
@@ -553,7 +554,6 @@ REDIPS.drag = (function () {
 		scroll_height = document.documentElement.scrollHeight;	
 		// reset autoscroll flags
 		edge.flag.x = edge.flag.y = 0;
-
 		// this could happen if 'clone' element is placed in unmovable table cell
 		if (cloned_flag === 1 && (table === null || row === null || cell === null)) {
 			obj.parentNode.removeChild(obj);
@@ -596,9 +596,9 @@ REDIPS.drag = (function () {
 				r_table = table_old;
 				r_row = row_old;
 			}
-			// if mode is dragging table row
+			// if dragging mode is table row
 			if (mode === 'row') {
-				// row was clicked and mouse button was released (not moved)
+				// row was clicked and mouse button was released right away (row was not moved)
 				if (moved_flag === 0) {
 					REDIPS.drag.myhandler_row_notmoved();
 				}
@@ -627,11 +627,10 @@ REDIPS.drag = (function () {
 					}	
 				}
 			}
-			// element was not moved - button was clicked and released
-			// call myhandler_notmoved handler and place clicked element to the bottom of TD (if table cell contains more than one element)
+			// clicked element was not moved - mouse button was clicked and released
+			// just call myhandler_notmoved public event handler
 			else if (moved_flag === 0) {
 				REDIPS.drag.myhandler_notmoved();
-				target_cell.appendChild(obj);
 			}
 			// delete cloned object if dropped on the start position
 			else if (cloned_flag === 1 && table_source === table && row_source === row && cell_source === cell) {
@@ -2000,12 +1999,13 @@ REDIPS.drag = (function () {
 		autoscrollX			: autoscrollX,
 		autoscrollY			: autoscrollY,
 
-		// needed for setting onmousedown event in myhandler actions  
+		// needed for setting onmousedown/ondblclick event in myhandler actions  
 		handler_onmousedown	: handler_onmousedown,
+		handler_ondblclick	: handler_ondblclick,
 
 		/*
 		 * Action handlers
-		 * Each handler sees REDIPS.drag.obj, REDIPS.drag.obj_old, REDIPS.drag.target_cell ... reference
+		 * Each handler sees REDIPS.drag.obj, REDIPS.drag.obj_old, REDIPS.drag.target_cell ... references
 		 * Note: for the first dragging, REDIPS.drag.obj_old === REDIPS.drag.obj because REDIPS.drag.obj_old does not exist yet
 		 */
 		myhandler_clicked				: function () {},
