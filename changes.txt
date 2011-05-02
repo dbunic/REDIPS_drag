@@ -1,5 +1,11 @@
 Changes for REDIPS.drag library
 
+4.0.3
+- added public myhandler_dropped_before() event handler
+    * handler is similar to the myhandler_dropped()
+    * myhandler_dropped_before() is called before element is dropped
+    * myhandler_dropped() is called after element is dropped
+    
 4.0.2
 - added public myhandler_dblclicked() event handler
     ondblclick event is attached to the DIV object

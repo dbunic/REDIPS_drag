@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 4.0.2
-Apr 30, 2011.
+Version 4.0.3
+May 02, 2011.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -341,7 +341,6 @@ REDIPS.drag = (function () {
 		if (position !== 'fixed') {
 			position = get_style(tables[table_source].parentNode, 'position');
 		}
-
 		// define object offset
 		offset = box_offset(obj, position);
 		// calculate offset from the clicked point inside element to the
@@ -676,6 +675,8 @@ REDIPS.drag = (function () {
 						source_cell.appendChild(target_elements[0]); // '0', not 'i' because NodeList objects in the DOM are live
 					}
 				}
+				// call myhandler_dropped_before()
+				REDIPS.drag.myhandler_dropped_before(target_cell);
 				// and finaly, append dragged object to the destination table cell
 				target_cell.appendChild(obj);
 				// if destination element exists, than elements are switched
@@ -708,6 +709,8 @@ REDIPS.drag = (function () {
 					// remove child DIV elements from target cell
 					target_cell.removeChild(target_elements[0]); // '0', not 'i' because NodeList objects in the DOM are live
 				}
+				// call myhandler_dropped_before()
+				REDIPS.drag.myhandler_dropped_before(target_cell);
 				// append object to the target cell
 				target_cell.appendChild(obj);
 				// call myhandler_dropped because clone_limit could call myhandler_clonedend1 or myhandler_clonedend2
@@ -717,8 +720,10 @@ REDIPS.drag = (function () {
 					clone_limit();
 				}
 			}
-			// else append object to the cell and call myhandler_dropped 
+			// else call myhandler_dropped_before(), append object to the cell and call myhandler_dropped() 
 			else {
+				// call myhandler_dropped_before()
+				REDIPS.drag.myhandler_dropped_before(target_cell);
 				// append object to the target cell
 				target_cell.appendChild(obj);
 				// call myhandler_dropped because clone_limit could call myhandler_clonedend1 or myhandler_clonedend2
@@ -2012,7 +2017,8 @@ REDIPS.drag = (function () {
 		myhandler_dblclicked			: function () {},
 		myhandler_moved					: function () {},
 		myhandler_notmoved				: function () {},
-		myhandler_dropped				: function () {},
+		myhandler_dropped				: function () {},	// after element is dropped to the table
+		myhandler_dropped_before		: function () {},	// before element is dropped to the table
 		myhandler_switched				: function () {},
 		myhandler_changed				: function () {},
 		myhandler_cloned				: function () {},
@@ -2026,7 +2032,7 @@ REDIPS.drag = (function () {
 		myhandler_row_moved				: function () {},
 		myhandler_row_notmoved			: function () {},
 		myhandler_row_dropped			: function () {},
-		myhandler_row_dropped_source	: function () {},
+		myhandler_row_dropped_source	: function () {},	// row dropped to the source location
 		myhandler_row_changed			: function () {}
 		
 	}; // end of public (return statement)	
