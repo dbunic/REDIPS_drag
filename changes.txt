@@ -1,5 +1,8 @@
 Changes for REDIPS.drag library
 
+4.0.4
+- getScrollPosition() and get_style() methods exposed as public
+
 4.0.3
 - added public myhandler_dropped_before() event handler
     * handler is similar to the myhandler_dropped()

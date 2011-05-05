@@ -1,4 +1,4 @@
-REDIPS.drag 4.0.3
+REDIPS.drag 4.0.4
 ============
 
 ## What's REDIPS.drag?
@@ -20,6 +20,16 @@ REDIPS.drag is a JavaScript drag and drop library focused on dragging table cont
 * support for scrollable DIV containers
 * nested tables support
 * dropping rules (like allowed and forbidden table cells)
+
+## Public methods
+
+* REDIPS.drag.init() - initialization
+* REDIPS.drag.enable_drag - enable / disable one or all DIV elements in tables
+* REDIPS.drag.save_content - scans table content and prepare URL needed for saving
+* REDIPS.drag.move_object - moves object from source cell to the target cell (source and target cells are input parameters)
+* REDIPS.drag.row_opacity - sets opacity to table row (el, opacity, color)
+* REDIPS.drag.getScrollPosition - returns scroll positions in array [ scrollX, scrollY ]
+* REDIPS.drag.get_style() - returns style value of requested object and style name
 
 ## Demos
 

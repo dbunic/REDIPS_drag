@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 4.0.3
-May 02, 2011.
+Version 4.0.4
+May 05, 2011.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -1833,7 +1833,7 @@ REDIPS.drag = (function () {
 
 
 
-	// function returns style value of requested object and style name
+	// method returns style value of requested object and style name
 	// http://www.quirksmode.org/dom/getstyles.html
 	get_style = function (el, style_name) {
 		var val; // value of requested object and property
@@ -1997,13 +1997,15 @@ REDIPS.drag = (function () {
 		init				: init,
 		enable_drag			: enable_drag,
 		save_content		: save_content,
-		move_object			: move_object,		// move object from source cell to the target cell (source and target cells are input parameters)
-		row_opacity			: row_opacity,		// function sets opacity to table row (el, opacity, color)
+		move_object			: move_object,		// method moves object from source cell to the target cell (source and target cells are input parameters)
+		row_opacity			: row_opacity,		// method sets opacity to table row (el, opacity, color)
+		getScrollPosition	: getScrollPosition,// method returns scroll positions in array [ scrollX, scrollY ]
+		get_style			: get_style,		// method returns style value of requested object and style name
 		
 		// autoscroll should be public because of setTimeout recursive call in autoscroll
 		autoscrollX			: autoscrollX,
 		autoscrollY			: autoscrollY,
-
+		
 		// needed for setting onmousedown/ondblclick event in myhandler actions  
 		handler_onmousedown	: handler_onmousedown,
 		handler_ondblclick	: handler_ondblclick,
