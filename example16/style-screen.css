@@ -1,0 +1,120 @@
+/*
+
+Darko Bunic
+http://www.redips.net/
+May, 2011.
+
+*/
+
+body{
+	font-family: arial;
+	margin: 0px; /* for IE6 / IE7 */
+}
+
+/* drag objects (DIV inside table cells) */
+.drag{
+	cursor: move;
+	margin: auto;
+	z-index: 10;
+	background-color: white;
+	text-align: center;
+	font-size: 10pt; /* needed for cloned object */
+	opacity: 0.7;
+	filter: alpha(opacity=70);
+	/* without width, IE6/7 will not apply filter/opacity to the element ?! */
+	/* IE needs element layout */
+	width: 50px;
+	border: 2px solid #BF6A30;
+	/* round corners */
+	border-radius: 4px; /* Opera, Chrome */
+	-moz-border-radius: 4px; /* FF */
+}
+
+/* drag container*/
+#drag{
+	margin: auto;
+	width: 870px;
+	display: table;
+}
+		/* container for the left table */
+		#left_container{
+			width: 260px;
+			float: left;
+			margin-right: 20px;
+			/* needed for IE8 to calculate width of left container */
+			border-bottom: 1px solid white;
+		}
+			#left {
+				width: 260px;
+			}
+		/* container for the right table */
+		#right{
+			/* align div to the right */
+			float: right;
+			background-color: #eee;
+		}
+
+
+
+/* tables general */
+div#drag table{
+	background-color: #eee;
+	border-collapse: collapse;
+}
+	/* table cells */
+	div#drag td{
+		height: 22px;
+		border: 1px solid white;
+		/* needed for FF3/FF4 because highlighting left table cell was working strange */
+		/* if DIV element was dragged fast then left table cell was properly highlighted */
+		/* otherwise was not ... setting border-left to 0px solved this problem */
+		border-left: 0px;
+		text-align: center;
+		font-size: 10pt;
+		padding: 2px;
+	}
+
+/* right tables */
+#right table {
+	background-color: #808EA3;
+}
+	#right table td{
+		background-color: #808EA3;
+		height: 50px;
+	}
+
+/* hover div (initially this DIV is hidden on the page top) */
+#hover_div {
+	width: 240px;
+	z-index: 20;
+	border: 2px solid #cfcf3d;
+	background-color: #ffffbf;
+	font-family: arial;
+	font-size: 11px;
+	/* round corners */
+	border-radius: 4px; /* Opera, Chrome */
+	-moz-border-radius: 4px; /* FF */
+}
+
+/* append here cloned object before placing to the target table cell */
+#obj_new{
+	height: 23px;
+	width: 10px;
+}
+
+/* style tooltip content and content in dropped element */
+.content {
+	margin: 5px;
+	text-align: left;
+}
+
+	.content h3 {
+		text-align: center;
+	}
+	.content img {
+		marign: auto;
+		border: 1px solid #ddd;
+	}
+
+
+

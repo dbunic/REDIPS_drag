@@ -1,0 +1,58 @@
+/*
+
+Darko Bunic
+http://www.redips.net/
+May, 2011.
+
+*/
+
+body {
+	font-family: arial;
+}
+
+/* drag container*/
+#drag {
+	width:100%;
+}
+
+/* drag objects (DIV inside table cells) */
+.drag {
+	margin: auto;
+	border: 0px;
+}
+
+/* container for the right table */
+#right {
+	width: 100%;
+	font-size: 12px;
+}
+	/* align p text */
+	#right p {
+		text-align: left;
+	}
+
+	/* tables general */
+	div#right table {
+		margin: auto;
+		background-color: #808EA3;
+		empty-cells: hide;
+	}
+		/* table cells */
+		div#right td {
+			background-color: #808EA3;
+			page-break-inside: avoid;
+			border: 1px solid #ddd;
+			height: 22px;
+		}
+
+/* hide needless DIV containers and buttons */
+div#left,
+div#left_container,
+div#obj_new,
+input {
+	width: 0px;
+	height: 0px;
+	display: none;
+}
+
+
