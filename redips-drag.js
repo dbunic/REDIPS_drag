@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 4.0.4
-May 05, 2011.
+Version 4.0.5
+May 07, 2011.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -760,59 +760,72 @@ REDIPS.drag = (function () {
 		// define X and Y position (pointer.x and pointer.y are needed in set_trc() and autoscroll methods)
 		X = pointer.x = evt.clientX;
 		Y = pointer.y = evt.clientY;
-		// if moved_flag isn't set and object has clone in class name or clone_shiftKey is enabled and shift key is pressed
-		// then duplicate object, set cloned flag and call myhandler_cloned
-		if (moved_flag === 0 && (obj.className.indexOf('clone') > -1 || (REDIPS.drag.clone_shiftKey === true && evt.shiftKey))) {
-			clone_object();
-			cloned_flag = 1;
-			REDIPS.drag.myhandler_cloned();
-			// set color for the current table cell and remembers previous position and color
-			set_position();
-		}
-		// object is moved
-		else if (moved_flag === 0) {
-			// if mode is row then remember reference of the source row, clone source row and set obj as reference to the current row
-			if (mode === 'row') {
-				// remember reference to the source row
-				REDIPS.drag.obj_old = obj_old = obj;
-				// clone source row and set as obj
-				REDIPS.drag.obj = obj = row_clone(obj);
-				// set high z-index for cloned mini table
-				obj.style.zIndex = 999;
+		// if moved_flag isn't set (this is the first moment when object is moved)
+		if (moved_flag === 0) {
+			// if moved object has clone in class name or clone_shiftKey is enabled and shift key is pressed
+			// then duplicate object, set cloned flag and call myhandler_cloned
+			if (obj.className.indexOf('clone') > -1 || (REDIPS.drag.clone_shiftKey === true && evt.shiftKey)) {
+				clone_object();
+				cloned_flag = 1;
+				REDIPS.drag.myhandler_cloned();
+				// set color for the current table cell and remember previous position and color
+				set_position();
 			}
-			// get IE (all versions) to allow dragging outside the window (?!)
-			// this was needed here also - despite setCaputure in onmousedown
-			if (obj.setCapture) {
-				obj.setCapture();
-			}
-			// set style to fixed to allow dragging DIV object
-			obj.style.position = 'fixed';
-			// call calculate cells for case where moved element changed cell dimension
-			// place 3 elements in the same cell in example08 and try to move one out of the table cell
-			calculate_cells();
-			// set current table, row and column
-			set_trc();
-			// call myhandler_moved for table content or row
-			if (mode === 'cell') {
-				REDIPS.drag.myhandler_moved();
-			}
+			// else ordinary object is moved
 			else {
-				REDIPS.drag.myhandler_row_moved();
+				// if mode is row then remember reference of the source row, clone source row and set obj as reference to the current row
+				if (mode === 'row') {
+					// remember reference to the source row
+					REDIPS.drag.obj_old = obj_old = obj;
+					// clone source row and set as obj
+					REDIPS.drag.obj = obj = row_clone(obj);
+					// set high z-index for cloned mini table
+					obj.style.zIndex = 999;
+				}
+				// get IE (all versions) to allow dragging outside the window (?!)
+				// this was needed here also - despite setCaputure in onmousedown
+				if (obj.setCapture) {
+					obj.setCapture();
+				}
+				// set style to fixed to allow dragging DIV object
+				obj.style.position = 'fixed';
+				// call calculate cells for case where moved element changed cell dimension
+				// place 3 elements in the same cell in example08 and try to move one out of the table cell
+				calculate_cells();
+				// set current table, row and column
+				set_trc();
+				// call myhandler_moved for table content or row
+				if (mode === 'cell') {
+					REDIPS.drag.myhandler_moved();
+				}
+				else {
+					REDIPS.drag.myhandler_row_moved();
+				}
+				// set color for the current table cell and remember previous position and color
+				// set_position() must go after calling myhandler_moved() and myhandler_row_moved() if user wants to
+				// change color of source row
+				set_position();
 			}
-			// set color for the current table cell and remember previous position and color
-			// set_position() must go after calling myhandler_moved() and myhandler_row_moved() if user wants to
-			// change color of source row
-			set_position();
+			// if element is far away on the right side of page, set possible right position (window_width - object width)
+			// obj_margin[1] + obj_margin[3] = object width
+			if (X > window_width - obj_margin[1]) {
+				obj.style.left = (window_width - (obj_margin[1] +  obj_margin[3])) + 'px';
+			}
+			// if element is below page bottom, set possible lower position (window_width - object height)
+			// obj_margin[0] + obj_margin[2] = object height
+			if (Y > window_height - obj_margin[2]) {
+				obj.style.top  = (window_height - (obj_margin[0] + obj_margin[2])) + 'px';
+			}
 		}
 		// set moved_flag
 		moved_flag = 1;
 		// set left and top styles for the moved element if element is inside window
 		// this conditions will stop element on window bounds
 		if (X > obj_margin[3] && X < window_width - obj_margin[1]) {
-			obj.style.left = (X - obj_margin[3]) + "px";
+			obj.style.left = (X - obj_margin[3]) + 'px';
 		}
 		if (Y > obj_margin[0] && Y < window_height - obj_margin[2]) {
-			obj.style.top  = (Y - obj_margin[0]) + "px";
+			obj.style.top  = (Y - obj_margin[0]) + 'px';
 		}
 		// set current table, row and cell (this condition should spare CPU):
 		// 1) if mouse pointer is inside DIV id="drag"

@@ -1,7 +1,10 @@
 Changes for REDIPS.drag library
 
+4.0.5
+- fixed bug: in a moment of moving (big) DIV element at page bottom, element jumped to the top instead of staying at the page bottom
+
 4.0.4
-- getScrollPosition() and get_style() methods exposed as public
+- getScrollPosition() and get_style() methods exposed as public methods
 
 4.0.3
 - added public myhandler_dropped_before() event handler
