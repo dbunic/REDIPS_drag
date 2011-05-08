@@ -2,7 +2,7 @@
 
 Darko Bunic
 http://www.redips.net/
-Nov, 2010.
+May, 2011.
 
 */
 
@@ -14,25 +14,52 @@ body{
 /* make drag container visible */
 #drag{
 	border: 2px dashed LightBlue;
-	display: table;
-	width: 800px;
-	margin: 5px;
-	padding-left: 5px;
-}
-
-/* table */
-div#drag table {
-	border-collapse: collapse;
-}
-
-/* table cells */
-div#drag td{
-	border: 1px solid navy;
-	height: 50px;
-	text-align: center;
-	font-size: 10pt;
 	padding: 2px;
+	display: table;
+	width: 650px;
+	margin: auto;
 }
+	/* table */
+	div#drag table {
+		border-collapse: collapse;
+		background-color: #eee;
+	}
+	
+	/* table cells */
+	div#drag td{
+		border: 1px solid navy;
+		height: 50px;
+	}
+	
+/* left container */
+#left {
+	float: left;
+	display: table;
+}
+
+/* container for the right table */
+#right {
+	float: right;
+	display: table;
+	width: 300px;
+}
+	
+	#sticky_table {
+		width: 300px;
+		height: 155px;
+		margin-bottom: 10px;
+	}
+	#sticky_table table {
+		position: fixed;
+	}
+
+	/* scrollable drag container */
+	#scrollable {
+		position: fixed;
+		overflow: auto;
+		width: 220px;
+		height: 300px;
+	}
 
 /* drag object (DIV inside table cell) */
 .drag{
@@ -40,31 +67,11 @@ div#drag td{
 	text-align: center;
 	width: 87px;
 	height: 35px;
+	font-size: 10pt;
 	line-height: 35px;
 	border: 2px solid SteelBlue;
 	background-color: white;
 }
 
-/* fixed table */
-#fixed_table{
-	position: fixed;
-	top: 134px;
-	left: 351px;
-	background-color: #eee;
-}
 
-/* fixed table container */
-#fixed_container{
-	position: fixed;
-	top: 133px;
-	left: 575px;
-	width: 218px;
-	height: 300px;
-	/* make it visible */
-	border: 2px solid SlateGray;
-	overflow: auto;
-}
-	#fixed_container table{
-		margin: 0px auto;
-		background-color: #eee;
-	}
+

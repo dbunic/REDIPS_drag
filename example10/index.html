@@ -20,287 +20,127 @@
 		</script>
 	</head>
 	<body>
+
+		<center>
+			<h1><a href="http://www.redips.net/javascript/drag-and-drop-table-content/">www.redips.net</a></h1>
+			<h2>Example 10: Sticky tables</h2>
+		</center>
+	
 		<!-- tables inside this DIV could have draggable content -->
-		<div id="drag">
-			<center>
-				<h1><a href="http://www.redips.net/javascript/drag-and-drop-table-content/">www.redips.net</a></h1>
-				<h2>Example 10: Sticky tables</h2>
-			</center>
-	
-			<table id="table1">
-				<colgroup>
-					<col width="100"/>
-					<col width="100"/>
-					<col width="100"/>
-				</colgroup>
-				<tbody>
-					<tr>
-						<td></td>
-						<td></td>
-						<td></td>
-					</tr>
-					<tr>
-						<td></td>
-						<td><div class="drag">A</div></td>
-						<td></td>
-					</tr>
-					<tr>
-						<td></td>
-						<td></td>
-						<td></td>
-					</tr>
-				</tbody>
-			</table>
-			
-			<br/>
-			<br/>
-	
-			<table id="table2">
-				<colgroup>
-					<col width="100"/>
-					<col width="100"/>
-					<col width="100"/>
-				</colgroup>
-				<tbody>
-					<tr>
-						<td></td>
-						<td></td>
-						<td></td>
-					</tr>
-					<tr>
-						<td></td>
-						<td><div class="drag">A</div></td>
-						<td></td>
-					</tr>
-					<tr>
-						<td></td>
-						<td></td>
-						<td></td>
-					</tr>
-				</tbody>
-			</table>
-	
-			<br/>
-			<br/>
-	
-			<table id="table3">
-				<colgroup>
-					<col width="100"/>
-					<col width="100"/>
-					<col width="100"/>
-				</colgroup>
-				<tbody>
-					<tr>
-						<td></td>
-						<td></td>
-						<td></td>
-					</tr>
-					<tr>
-						<td></td>
-						<td><div class="drag">A</div></td>
-						<td></td>
-					</tr>
-					<tr>
-						<td></td>
-						<td></td>
-						<td></td>
-					</tr>
-				</tbody>
-			</table>
-			
-			<br/>
-			<br/>
-	
-			<table id="table4">
-				<colgroup>
-					<col width="100"/>
-					<col width="100"/>
-					<col width="100"/>
-				</colgroup>
-				<tbody>
-					<tr>
-						<td></td>
-						<td></td>
-						<td></td>
-					</tr>
-					<tr>
-						<td></td>
-						<td><div class="drag">A</div></td>
-						<td></td>
-					</tr>
-					<tr>
-						<td></td>
-						<td></td>
-						<td></td>
-					</tr>
-				</tbody>
-			</table>
-	
-			<br/>
-			<br/>
-	
-			<table id="table5">
-				<colgroup>
-					<col width="100"/>
-					<col width="100"/>
-					<col width="100"/>
-				</colgroup>
-				<tbody>
-					<tr>
-						<td></td>
-						<td></td>
-						<td></td>
-					</tr>
-					<tr>
-						<td></td>
-						<td><div class="drag">A</div></td>
-						<td></td>
-					</tr>
-					<tr>
-						<td></td>
-						<td></td>
-						<td></td>
-					</tr>
-				</tbody>
-			</table>
-			
-			<br/>
-			<br/>
-	
-			<table id="table6">
-				<colgroup>
-					<col width="100"/>
-					<col width="100"/>
-					<col width="100"/>
-				</colgroup>
-				<tbody>
-					<tr>
-						<td></td>
-						<td></td>
-						<td></td>
-					</tr>
-					<tr>
-						<td></td>
-						<td><div class="drag">A</div></td>
-						<td></td>
-					</tr>
-					<tr>
-						<td></td>
-						<td></td>
-						<td></td>
-					</tr>
-				</tbody>
-			</table>
-	
-			<!-- fixed table -->
-			<table id="fixed_table">
-				<colgroup>
-					<col width="100"/>
-					<col width="100"/>
-				</colgroup>
-				<tbody>
-					<tr>
-						<td><div class="drag">B</div></td>
-						<td></td>
-					</tr>
-					<tr>
-						<td></td>
-						<td><div class="drag">B</div></td>
-					</tr>
-					<tr>
-						<td></td>
-						<td></td>
-					</tr>
-				</tbody>
-			</table>
-	
-			<!-- fixed container -->
-			<div id="fixed_container">
-				<table id="table7">
-					<colgroup>
-						<col width="100"/>
-						<col width="100"/>
-					</colgroup>
+		<div id="drag">	
+			<div id="left">
+				<table>
+					<colgroup><col width="100"/><col width="100"/><col width="100"/></colgroup>
 					<tbody>
-						<tr>
-							<td></td>
-							<td></td>
-						</tr>
-						<tr>
-							<td></td>
-							<td><div class="drag">C</div></td>
-						</tr>
-						<tr>
-							<td><div class="drag">C</div></td>
-							<td></td>
-						</tr>
-						<tr>
-							<td></td>
-							<td></td>
-						</tr>
-						<tr>
-							<td></td>
-							<td></td>
-						</tr>
-						<tr>
-							<td></td>
-							<td></td>
-						</tr>
-						<tr>
-							<td></td>
-							<td></td>
-						</tr>
-						<tr>
-							<td></td>
-							<td></td>
-						</tr>
-						<tr>
-							<td></td>
-							<td></td>
-						</tr>
-						<tr>
-							<td></td>
-							<td></td>
-						</tr>
-						<tr>
-							<td></td>
-							<td></td>
-						</tr>
-						<tr>
-							<td></td>
-							<td></td>
-						</tr>
-						<tr>
-							<td></td>
-							<td></td>
-						</tr>
-						<tr>
-							<td></td>
-							<td></td>
-						</tr>
-						<tr>
-							<td></td>
-							<td></td>
-						</tr>
-						<tr>
-							<td></td>
-							<td></td>
-						</tr>
-						<tr>
-							<td></td>
-							<td></td>
-						</tr>
-						<tr>
-							<td></td>
-							<td></td>
-						</tr>
-						<tr>
-							<td></td>
-							<td></td>
-						</tr>
+						<tr><td></td><td></td><td></td></tr>
+						<tr><td></td><td><div class="drag">A</div></td><td></td></tr>
+						<tr><td></td><td></td><td></td></tr>
 					</tbody>
-				</table>				
-			</div><!-- fixed container -->
+				</table>
+				
+				<br/>
+				<br/>
+		
+				<table>
+					<colgroup><col width="100"/><col width="100"/><col width="100"/></colgroup>
+					<tbody>
+						<tr><td></td><td></td><td></td></tr>
+						<tr><td></td><td><div class="drag">A</div></td><td></td></tr>
+						<tr><td></td><td></td><td></td></tr>
+					</tbody>
+				</table>
+		
+				<br/>
+				<br/>
+		
+				<table>
+					<colgroup><col width="100"/><col width="100"/><col width="100"/></colgroup>
+					<tbody>
+						<tr><td></td><td></td><td></td></tr>
+						<tr><td></td><td><div class="drag">A</div></td><td></td></tr>
+						<tr><td></td><td></td><td></td></tr>
+					</tbody>
+				</table>
+				
+				<br/>
+				<br/>
+		
+				<table>
+					<colgroup><col width="100"/><col width="100"/><col width="100"/></colgroup>
+					<tbody>
+						<tr><td></td><td></td><td></td></tr>
+						<tr><td></td><td><div class="drag">A</div></td><td></td></tr>
+						<tr><td></td><td></td><td></td></tr>
+					</tbody>
+				</table>
+		
+				<br/>
+				<br/>
+		
+				<table>
+					<colgroup><col width="100"/><col width="100"/><col width="100"/></colgroup>
+					<tbody>
+						<tr><td></td><td></td><td></td></tr>
+						<tr><td></td><td><div class="drag">A</div></td><td></td></tr>
+						<tr><td></td><td></td><td></td></tr>
+					</tbody>
+				</table>
+				
+				<br/>
+				<br/>
+		
+				<table>
+					<colgroup><col width="100"/><col width="100"/><col width="100"/></colgroup>
+					<tbody>
+						<tr><td></td><td></td><td></td></tr>
+						<tr><td></td><td><div class="drag">A</div></td><td></td></tr>
+						<tr><td></td><td></td><td></td></tr>
+					</tbody>
+				</table>
+			</div>
+	
+			<!-- right container -->
+			<div id="right">
+
+					<div id="sticky_table">
+						<table>
+							<colgroup><col width="100"/><col width="100"/><col width="100"/></colgroup>
+							<tbody>
+								<tr><td><div class="drag">B</div></td><td></td><td></td></tr>
+								<tr><td><div class="drag">B</div></td><td></td><td></td></tr>
+								<tr><td></td><td></td><td></td></tr>
+							</tbody>
+						</table>
+					</div>
+					<!-- scrollable DIV container -->
+					<div id="scrollable">
+						<table>
+							<colgroup><col width="100"/><col width="100"/></colgroup>
+							<tbody>
+								<tr><td></td><td></td></tr>
+								<tr><td><div class="drag">C</div></td><td></td></tr>
+								<tr><td><div class="drag">C</div></td><td></td></tr>
+								<tr><td></td><td></td></tr>
+								<tr><td></td><td></td></tr>
+								<tr><td></td><td></td></tr>
+								<tr><td></td><td></td></tr>
+								<tr><td></td><td></td></tr>
+								<tr><td></td><td></td></tr>
+								<tr><td></td><td></td></tr>
+								<tr><td></td><td></td></tr>
+								<tr><td></td><td></td></tr>
+								<tr><td></td><td></td></tr>
+								<tr><td></td><td></td></tr>
+								<tr><td></td><td></td></tr>
+								<tr><td></td><td></td></tr>
+								<tr><td></td><td></td></tr>
+								<tr><td></td><td></td></tr>
+								<tr><td></td><td></td></tr>
+							</tbody>
+						</table>
+					</div><!-- drag container -->
+
+			</div><!-- right -->
 		</div><!-- div drag -->
 	</body>
 </html>

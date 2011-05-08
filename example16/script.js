@@ -36,7 +36,7 @@ window.onload = function () {
 	set_events();
 	// create XMLHttp request object
 	request = initXMLHttpClient();
-	// set fixed position of the left container
+	// set fixed position for the left container
 	document.getElementById('left').style.position = 'fixed';
 	// initialization
 	rd.init();
