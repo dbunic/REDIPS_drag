@@ -18,7 +18,7 @@ $lorem_ipsum = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
 				'deserunt mollit anim id est laborum.';
 
 // calculate string length from DIV id (use only first two digits and multiply with 10)
-// this only for demo purpose to show text length variation in DIV boxes - don't think too much about it
+// this is only for demo purpose to show text length variation in DIV boxes - don't think too much about it
 $len = substr(preg_replace('/[^\d]+/i', '', $id), 0, 2) * 10;
 
 // prepare substring from "Lorem ipsum" string
