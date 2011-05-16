@@ -5,11 +5,15 @@
 "use strict";
 
 
-var request,						// XMLHttp request object
-	hover_div,						// reference to the hover_div object
-	size = {w: 0, h: 0},			// size of DIV elements in question table
+var hover1 = '#9BB3DA',				// hover color for original elements
+	hover2 = '#FFCFAE',				// hover color for cloned elements
 	width = '240px',				// width of DIV element dropped to the right table
 	content_url = 'get-content.php',// get-content URL
+	// global parameters
+	request,						// XMLHttp request object
+	hover_div,						// reference to the hover_div object
+	size = {w: 0, h: 0},			// size of DIV elements in question table
+	tc,								// target container (defined in myhandler_dropped_before() and used in myhandler_dropped())
 	// functions
 	initXMLHttpClient,				// create XMLHttp request object in a cross-browser manner
 	send_request,					// send request to the server and display response in obj.innerHTML
@@ -18,8 +22,8 @@ var request,						// XMLHttp request object
 	toggle,							// function shows/hides tables in right container
 	hide_tables,					// initially hide all tables but first table (also set pageBreakBefore style)
 	single_content,					// set class="single" to all cells in question table (left table)
-	set_events,						// set onmouseover & onmouseout to all div elements inside DIV id="drag"
-	tc;								// target container (defined in myhandler_dropped_before() and used in myhandler_dropped())
+	set_events;						// set onmouseover & onmouseout to all div elements inside DIV id="drag"
+	
 	
 	
 // initialization
@@ -41,13 +45,37 @@ window.onload = function () {
 	// initialization
 	rd.init();
 	// set hover color
-	rd.hover_color = '#9BB3DA';
+	
 	// define 'switch' drop option (content can be exchanged)
 	rd.drop_option = 'switch';
 	// in a moment when dragging starts, remove mouseover event and hide hover tooltip
 	rd.myhandler_moved = function () {
 		REDIPS.event.remove(rd.obj, 'mouseover', show_tooltip);
 		hide_tooltip();
+	};
+	// enable cloning option only for DIV elements in right table 
+	rd.myhandler_clicked = function () {
+		// set start position to find container
+		// it should be parentNode because clicked object is DIV element
+		var c = rd.obj.parentNode;
+		// loop up until found target DIV container 
+		while (c && c.nodeName !== 'DIV') {
+			c = c.parentNode;
+		}
+		// set cloning option with shiftKey only for right DIV container
+		if (c.id === 'right') {
+			rd.clone_shiftKey = true;
+		}
+		else {
+			rd.clone_shiftKey = false;
+		}
+		// set hover color for original DIV elements and for cloned DIV elements
+		if (rd.obj.className.indexOf('clnd') === -1) {
+			rd.hover_color = hover1;
+		}
+		else {
+			rd.hover_color = hover2;
+		}
 	};
 	// event handler called before DIV element is dropped to the table
 	// in case when DIV element changes location from left to right DIV container or vice versa 
@@ -79,12 +107,29 @@ window.onload = function () {
 			rd.obj.style.height = size.h;
 		}
 	};
-	// after DIV element is dropped, return mouseover event (needed for tooltip in left table)
+	// after DIV element is dropped, 
 	rd.myhandler_dropped = function (target_cell) {
 		// target container is defined in myhandler_dropped_before()
 		if (tc.id === 'left') {
-			REDIPS.event.add(rd.obj, 'mouseover', show_tooltip);
+			// if cloned element is dropped to the left table then delete it
+			if (rd.obj.className.indexOf('clnd') !== -1) {
+				// remove child from DOM (node still exists in memory)
+				rd.obj.parentNode.removeChild(rd.obj);
+			}
+			// else return mouseover event (needed for tooltip in left table)
+			else {
+				REDIPS.event.add(rd.obj, 'mouseover', show_tooltip);
+			}
 		}
+	};
+	// add "clnd" (cloned) class name to the cloned elements
+	// needed to delete cloned elements in case when dropped to the left table
+	rd.myhandler_cloned = function () {
+		if (rd.obj.className.indexOf('clnd') === -1) {
+			rd.obj.className += ' clnd';
+		}
+		// set hover color for cloned elements
+		rd.hover_color = hover2;
 	};
 };
 
