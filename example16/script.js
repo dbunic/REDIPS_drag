@@ -8,6 +8,8 @@
 var hover1 = '#9BB3DA',				// hover color for original elements
 	hover2 = '#FFCFAE',				// hover color for cloned elements
 	width = '240px',				// width of DIV element dropped to the right table
+	left = 'left',					// id of left DIV container
+	right = 'right',				// id of right DIV container
 	content_url = 'get-content.php',// get-content URL
 	// global parameters
 	request,						// XMLHttp request object
@@ -20,7 +22,7 @@ var hover1 = '#9BB3DA',				// hover color for original elements
 	show_tooltip,					// show tooltip (when mouse is over element in question table)
 	hide_tooltip,					// hide tooltip
 	toggle,							// function shows/hides tables in right container
-	hide_tables,					// initially hide all tables but first table (also set pageBreakBefore style)
+	hide_tables,					// initially hide all tables but first table
 	single_content,					// set class="single" to all cells in question table (left table)
 	set_events;						// set onmouseover & onmouseout to all div elements inside DIV id="drag"
 	
@@ -32,7 +34,7 @@ window.onload = function () {
 	var rd = REDIPS.drag;
 	// set reference to the hover_div
 	hover_div = document.getElementById('hover_div');
-	// initially hide all tables but first table
+	// initially hide all tables in right container except first table
 	hide_tables();
 	// set class="single" to the table cells question table (left table)
 	single_content();
@@ -41,12 +43,10 @@ window.onload = function () {
 	// create XMLHttp request object
 	request = initXMLHttpClient();
 	// set fixed position for the left container
-	document.getElementById('left').style.position = 'fixed';
+	document.getElementById(left).style.position = 'fixed';
 	// initialization
 	rd.init();
-	// set hover color
-	
-	// define 'switch' drop option (content can be exchanged)
+	// drop option is switch - content can be exchanged
 	rd.drop_option = 'switch';
 	// in a moment when dragging starts, remove mouseover event and hide hover tooltip
 	rd.myhandler_moved = function () {
@@ -59,11 +59,11 @@ window.onload = function () {
 		// it should be parentNode because clicked object is DIV element
 		var c = rd.obj.parentNode;
 		// loop up until found target DIV container 
-		while (c && c.nodeName !== 'DIV') {
+		while (c && c.id !== left && c.id !== right) {
 			c = c.parentNode;
 		}
 		// set cloning option with shiftKey only for right DIV container
-		if (c.id === 'right') {
+		if (c.id === right) {
 			rd.clone_shiftKey = true;
 		}
 		else {
@@ -85,23 +85,23 @@ window.onload = function () {
 		// define start point of target container (global variable)
 		tc = target_cell;
 		// loop up until found target DIV container 
-		while (tc && tc.nodeName !== 'DIV') {
+		while (tc && tc.id !== left && tc.id !== right) {
 			tc = tc.parentNode;
 		}
 		// loop up until found source DIV container
-		while (sc && sc.nodeName !== 'DIV') {
+		while (sc && sc.id !== left && sc.id !== right) {
 			sc = sc.parentNode;
 		}
 		// if element is dropped from question table to the one of right tables
 		// (right tables doesn't have id)
-		if (sc.id === 'left' && tc.id === 'right') {
+		if (sc.id === left && tc.id === right) {
 			// send request (input parameter is object reference)
 			send_request(rd.obj, id);
 			rd.obj.style.width = width; // width parameter is set as global variable
 			rd.obj.style.height = '';
 		}
 		// if element is dropped from right table to the question table
-		else if (sc.id === 'right' && tc.id === 'left') {
+		else if (sc.id === right && tc.id === left) {
 			rd.obj.innerHTML = id;
 			rd.obj.style.width = size.w;
 			rd.obj.style.height = size.h;
@@ -110,7 +110,7 @@ window.onload = function () {
 	// after DIV element is dropped, 
 	rd.myhandler_dropped = function (target_cell) {
 		// target container is defined in myhandler_dropped_before()
-		if (tc.id === 'left') {
+		if (tc.id === left) {
 			// if cloned element is dropped to the left table then delete it
 			if (rd.obj.className.indexOf('clnd') !== -1) {
 				// remove child from DOM (node still exists in memory)
@@ -219,17 +219,17 @@ hide_tooltip = function () {
 };
 
 
-// function shows/hides tables in right container
-// input parameters are button reference (to change button label) and id of table to show/hide
-toggle = function (btn, tbl_id) {
-	var tbl = document.getElementById(tbl_id);
-	if (tbl.style.display === '') {
+// function shows/hides tables in page containers
+// input parameters are button reference (to change button label) and id of page container
+toggle = function (btn, page_id) {
+	var page = document.getElementById(page_id);
+	if (page.style.display === '') {
 		btn.value = 'Table';
-		tbl.style.display = 'none';
+		page.style.display = 'none';
 	}
 	else {
 		btn.value = 'Hide';
-		tbl.style.display = '';
+		page.style.display = '';
 	}
 };
 
@@ -254,17 +254,15 @@ set_events = function () {
 };
 
 
-// initially hide all tables but first table
-// hide them and set pageBreakBefore to 'always'
-// every table should be printed on separate paper
+// initially hide all page containers but first page container
+// tables are closed in DIV block - page container
 hide_tables = function () {
-	var tbl, i;
-	// collect tables from right DIV container
-	tbl = document.getElementById('right').getElementsByTagName('table');
-	// hide all tables but first and set pageBreakBefore style
-	for (i = 1; i < tbl.length; i++) {
-		tbl[i].style.display = 'none';
-		tbl[i].style.pageBreakBefore = 'always';
+	var div, i;
+	// collect page containers in right DIV container
+	div = document.getElementById(right).getElementsByTagName('div');
+	// hide all page containers but first
+	for (i = 1; i < div.length; i++) {
+		div[i].style.display = 'none';
 	}
 };
 

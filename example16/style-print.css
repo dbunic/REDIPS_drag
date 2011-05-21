@@ -33,7 +33,8 @@ body {
 
 	/* tables general */
 	div#right table {
-		margin: auto;
+		float: left;
+		width: 300px;
 		background-color: #808EA3;
 		empty-cells: hide;
 	}
@@ -44,8 +45,21 @@ body {
 			border: 1px solid #ddd;
 			height: 22px;
 		}
+		/* page container has two tables (to make the columns independent because of the different element sizes) */
+		.page {
+			margin: auto;
+			display: table;
+			/* this was needed to display left and right table propery */
+			/* otherwise only right table has been displayed (?!) */
+			border: 1px solid white;
+		}
+			/* tables in right container after first table should be printed on separated page */
+			.other {
+				page-break-before: always;
+			}
 
-/* hide needless DIV containers and buttons */
+/* hide needless title, DIV containers and buttons */
+.title,
 div#left,
 div#left_container,
 div#obj_new,
@@ -54,5 +68,4 @@ input {
 	height: 0px;
 	display: none;
 }
-
 

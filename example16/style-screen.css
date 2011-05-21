@@ -11,6 +11,13 @@ body{
 	margin: 0px; /* for IE6 / IE7 */
 }
 
+/* page title */
+.title{
+	margin: auto;
+	display: table;
+	text-align: center;
+}
+
 /* drag objects (DIV inside table cells) */
 .drag{
 	cursor: move;
@@ -76,11 +83,17 @@ div#drag table{
 
 /* right tables */
 #right table {
+	float: left;
 	background-color: #808EA3;
+	width: 300px;
 }
 	#right table td{
 		background-color: #808EA3;
 		height: 50px;
+	}
+	/* page container has two tables (to make the columns independent because of the different element sizes) */
+	.page {
+		display: table;
 	}
 
 /* hover div (initially this DIV is hidden on the page top) */

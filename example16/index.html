@@ -14,10 +14,10 @@
     	<div id="hover_div" style="visibility:hidden; position:absolute; top:0; left:0;"></div>
     	
     	<!-- title -->
-		<center>
+    	<div class="title">
 			<h1><a href="http://www.redips.net/javascript/drag-and-drop-table-row/">www.redips.net</a></h1>
 			<h2>Example 16: AJAX, hover, sticky, dragging</h2>
-		</center>
+		</div>
 		
 		<!-- tables inside this DIV could have draggable content -->
 		<div id="drag">
@@ -34,8 +34,8 @@
 						</colgroup>
 						
 						<tr>
-							<td><div id="ns1.1" class="drag">ns1.1</div></td>
-							<td><div id="ns1.1a" class="drag">ns1.1a</div></td>
+							<td><div id="ns0.9" class="drag">ns0.9</div></td>
+							<td><div id="ns1.0a" class="drag">ns1.0a</div></td>
 							<td><div id="ns1.1b" class="drag">ns1.1b</div></td>
 							<td><div id="ns1.2" class="drag">ns1.2</div></td>
 							
@@ -76,18 +76,17 @@
 							
 						</tr>
 						<tr>
-							<td><div id="ns4.2" class="drag">ns4.2</div></td>
-							<td><div id="ns4.2a" class="drag">ns4.2a</div></td>
-							<td><div id="ns4.2b" class="drag">ns4.2b</div></td>
-							<td><div id="ns4.4" class="drag">ns4.4</div></td>
+							<td><div id="ns4.7" class="drag">ns4.7</div></td>
+							<td><div id="ns4.7a" class="drag">ns4.7a</div></td>
+							<td><div id="ns4.8b" class="drag">ns4.8b</div></td>
+							<td><div id="ns4.9" class="drag">ns4.9</div></td>
 							
 						</tr>
 						<tr>
-							<td><div id="ns4.4a" class="drag">ns4.4a</div></td>
+							<td><div id="ns5.4a" class="drag">ns5.4a</div></td>
 							<td><div id="af1.1" class="drag">af1.1</div></td>
 							<td><div id="af1.2" class="drag">af1.2</div></td>
 							<td><div id="af1.2a1" class="drag">af1.2a1</div></td>
-							
 						</tr>
 						<tr>
 							<td><div id="af1.2b" class="drag">af1.2b</div></td>
@@ -122,87 +121,81 @@
 			
 			<!-- right container -->
 			<div id="right">
-				<table cellspacing="0" cellpadding="0">
-					<colgroup>
-						<col width="300"/>
-						<col width="300"/>
-					</colgroup>
-					<tr><td></td><td></td></tr>
-					<tr><td></td><td></td></tr>
-					<tr><td></td><td></td></tr>
-					<tr><td></td><td></td></tr>
-					<tr><td></td><td></td></tr>
-				</table>
-				<br/>
+				<div class="page">
+					<table cellspacing="0" cellpadding="0">
+						<colgroup><col width="300"/></colgroup>
+						<tr><td></td></tr><tr><td></td></tr><tr><td></td></tr><tr><td></td></tr><tr><td></td></tr>
+					</table>
+					<table cellspacing="0" cellpadding="0">
+						<colgroup><col width="300"/></colgroup>
+						<tr><td></td></tr><tr><td></td></tr><tr><td></td></tr><tr><td></td></tr><tr><td></td></tr>
+					</table>
+				</div>
 
-				<input type="button" value="Table" onclick="javascript:toggle(this, 'tbl2')"/>
-				<table cellspacing="0" cellpadding="0" id="tbl2">
-					<colgroup>
-						<col width="300"/>
-						<col width="300"/>
-					</colgroup>
-					<tr><td></td><td></td></tr>
-					<tr><td></td><td></td></tr>
-					<tr><td></td><td></td></tr>
-					<tr><td></td><td></td></tr>
-					<tr><td></td><td></td></tr>
-				</table>
 				<br/>
+				<input type="button" value="Table" onclick="javascript:toggle(this, 'page2')"/>
+				<div id="page2" class="page other">
+					<table cellspacing="0" cellpadding="0">
+						<colgroup><col width="300"/></colgroup>
+						<tr><td></td></tr><tr><td></td></tr><tr><td></td></tr><tr><td></td></tr><tr><td></td></tr>
+					</table>
+					<table cellspacing="0" cellpadding="0">
+						<colgroup><col width="300"/></colgroup>
+						<tr><td></td></tr><tr><td></td></tr><tr><td></td></tr><tr><td></td></tr><tr><td></td></tr>
+					</table>
+				</div>
 
-				<input type="button" value="Table" onclick="javascript:toggle(this, 'tbl3')"/>
-				<table cellspacing="0" cellpadding="0" id="tbl3">
-					<colgroup>
-						<col width="300"/>
-						<col width="300"/>
-					</colgroup>
-					<tr><td></td><td></td></tr>
-					<tr><td></td><td></td></tr>
-					<tr><td></td><td></td></tr>
-					<tr><td></td><td></td></tr>
-					<tr><td></td><td></td></tr>
-				</table>
 				<br/>
+				<input type="button" value="Table" onclick="javascript:toggle(this, 'page3')"/>
+				<div id="page3" class="page other">
+					<table cellspacing="0" cellpadding="0">
+						<colgroup><col width="300"/></colgroup>
+						<tr><td></td></tr><tr><td></td></tr><tr><td></td></tr><tr><td></td></tr><tr><td></td></tr>
+					</table>
+					<table cellspacing="0" cellpadding="0">
+						<colgroup><col width="300"/></colgroup>
+						<tr><td></td></tr><tr><td></td></tr><tr><td></td></tr><tr><td></td></tr><tr><td></td></tr>
+					</table>
+				</div>
 
-				<input type="button" value="Table" onclick="javascript:toggle(this, 'tbl4')"/>
-				<table cellspacing="0" cellpadding="0" id="tbl4">
-					<colgroup>
-						<col width="300"/>
-						<col width="300"/>
-					</colgroup>
-					<tr><td></td><td></td></tr>
-					<tr><td></td><td></td></tr>
-					<tr><td></td><td></td></tr>
-					<tr><td></td><td></td></tr>
-					<tr><td></td><td></td></tr>
-				</table>
 				<br/>
+				<input type="button" value="Table" onclick="javascript:toggle(this, 'page4')"/>
+				<div id="page4" class="page other">
+					<table cellspacing="0" cellpadding="0">
+						<colgroup><col width="300"/></colgroup>
+						<tr><td></td></tr><tr><td></td></tr><tr><td></td></tr><tr><td></td></tr><tr><td></td></tr>
+					</table>
+					<table cellspacing="0" cellpadding="0">
+						<colgroup><col width="300"/></colgroup>
+						<tr><td></td></tr><tr><td></td></tr><tr><td></td></tr><tr><td></td></tr><tr><td></td></tr>
+					</table>
+				</div>
 
-				<input type="button" value="Table" onclick="javascript:toggle(this, 'tbl5')"/>
-				<table cellspacing="0" cellpadding="0" id="tbl5">
-					<colgroup>
-						<col width="300"/>
-						<col width="300"/>
-					</colgroup>
-					<tr><td></td><td></td></tr>
-					<tr><td></td><td></td></tr>
-					<tr><td></td><td></td></tr>
-					<tr><td></td><td></td></tr>
-					<tr><td></td><td></td></tr>
-				</table>
 				<br/>
+				<input type="button" value="Table" onclick="javascript:toggle(this, 'page5')"/>
+				<div id="page5" class="page other">
+					<table cellspacing="0" cellpadding="0">
+						<colgroup><col width="300"/></colgroup>
+						<tr><td></td></tr><tr><td></td></tr><tr><td></td></tr><tr><td></td></tr><tr><td></td></tr>
+					</table>
+					<table cellspacing="0" cellpadding="0">
+						<colgroup><col width="300"/></colgroup>
+						<tr><td></td></tr><tr><td></td></tr><tr><td></td></tr><tr><td></td></tr><tr><td></td></tr>
+					</table>
+				</div>
 
-				<input type="button" value="Table" onclick="javascript:toggle(this, 'tbl6')"/>
-				<table cellspacing="0" cellpadding="0" id="tbl6">
-					<colgroup>
-						<col width="300"/>
-						<col width="300"/>
-					</colgroup>
-					<tr><td></td><td></td></tr>
-					<tr><td></td><td></td></tr>
-					<tr><td></td><td></td></tr>
-					<tr><td></td><td></td></tr>
-					<tr><td></td><td></td></tr>
-				</table>
+				<br/>
+				<input type="button" value="Table" onclick="javascript:toggle(this, 'page6')"/>
+				<div id="page6" class="page other">
+					<table cellspacing="0" cellpadding="0">
+						<colgroup><col width="300"/></colgroup>
+						<tr><td></td></tr><tr><td></td></tr><tr><td></td></tr><tr><td></td></tr><tr><td></td></tr>
+					</table>
+					<table cellspacing="0" cellpadding="0">
+						<colgroup><col width="300"/></colgroup>
+						<tr><td></td></tr><tr><td></td></tr><tr><td></td></tr><tr><td></td></tr><tr><td></td></tr>
+					</table>
+				</div>
 			</div>
 		</div>
 	</body>
