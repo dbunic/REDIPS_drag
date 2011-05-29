@@ -1587,7 +1587,7 @@ REDIPS.drag = (function () {
 		// I assumed that custom properties will be automatically cloned - but not(?!)
 		obj_new.redips_container = obj.redips_container;
 		obj_new.redips_enabled = obj.redips_enabled;
-		// remember previous object (this is clone object)
+		// remember previous object (original element)
 		REDIPS.drag.obj_old = obj_old = obj;
 		// set reference to the cloned object	
 		REDIPS.drag.obj = obj = obj_new;
