@@ -7,45 +7,7 @@
 		<script type="text/javascript" src="../redips-drag.js"></script>
 		<title>www.redips.net</title>
 		<!-- initialize drag and drop -->
-		<script type="text/javascript">
-		// onload event
-		window.onload = function () {
-			// reference to the REDIPS.drag object
-			var rd = REDIPS.drag;
-			// initialization
-			rd.init();
-			// elements could be cloned with pressed SHIFT key
-			rd.clone_shiftKey = true;
-			// handler clicked - set hover color
-			rd.myhandler_clicked = function () {
-				set_hover_color(REDIPS.drag.current_cell);
-			}
-			// handler changed - set hover color
-			rd.myhandler_changed = function () {
-				set_hover_color(REDIPS.drag.current_cell);
-			}
-			
-		}
-
-		// set hover color
-		function set_hover_color(e) {
-			// loop up until table found
-			while (e && e.nodeName !== 'TABLE') {
-				e = e.parentNode;
-			}
-			// set color for nested tables (blue)
-			// redips_tableType === 2 -> "clean" table (table is not nested and doesn't contain nested tables)
-			// redips_tableType === 1 -> nested table
-			// redips_tableType === 0 -> table contains nested tables
-			if (e.redips_tableType === 1) {
-				REDIPS.drag.hover_color = '#9BB3DA';
-			}
-			// set color for other tables (orange)
-			else {
-				REDIPS.drag.hover_color = '#FFCFAE';
-			}
-		}
-		</script>
+		<script type="text/javascript" src="script.js"></script>
 	</head>
 	<body>
 		<center>
@@ -56,7 +18,7 @@
 			<div id="drag">
 				<table>
 					<colgroup>
-						<col width="200"/>
+						<col width="300"/>
 						<col width="100"/>
 						<col width="100"/>
 					</colgroup>
@@ -64,27 +26,57 @@
 						<tr>
 							<!-- cell containing nested table -->
 							<td>
-								<table class="my_nested_table">
+								<!-- second level -->
+								<table class="nested_table1">
 									<colgroup>
-										<col width="50"/>
+										<col width="150"/>
 										<col width="50"/>
 										<col width="50"/>
 									</colgroup>
 									<tbody>
 										<tr>
-											<td></td>
+											<td>
+												<!-- third level of nested table -->
+												<table class="nested_table2">
+													<colgroup>
+														<col width="55"/>
+														<col width="55"/>
+													</colgroup>
+													<tbody>
+														<tr>
+															<td><div class="drag circle">A</div></td>
+															<td></td>
+														</tr>
+														<tr>
+															<!-- table cell contains nested table (table cell is not allowed) -->
+															<td colspan="2" class="mark">
+																<table class="nested_table3">
+																	<colgroup>
+																		<col width="50"/>
+																		<col width="50"/>
+																	</colgroup>
+																	<tbody>
+																		<tr>
+																			<td><div class="drag circle">A</div></td>
+																			<td></td>
+																		</tr>
+																		<tr>
+																			<td></td>
+																			<td></td>
+																		</tr>
+																	</tbody>
+																</table>
+															</td>
+														</tr>
+													</tbody>
+												</table>
+											</td>
 											<td></td>
 											<td></td>
 										</tr>
 										<tr>
 											<td></td>
 											<td><div class="drag circle">A</div></td>
-											<td></td>
-										</tr>
-										<tr>
-											<td>
-											</td>
-											<td></td>
 											<td></td>
 										</tr>
 									</tbody>
@@ -96,10 +88,6 @@
 						<tr>
 							<td></td>
 							<td><div class="drag square">B</div></td>
-							<td></td>
-						</tr>
-							<td></td>
-							<td></td>
 							<td></td>
 						</tr>
 					</tbody>
@@ -124,7 +112,7 @@
 						<tr>
 							<!-- nested table is accessible (container is not) -->
 							<td class="mark">
-								<table class="my_nested_table">
+								<table class="nested_table1">
 									<colgroup>
 										<col width="50"/>
 										<col width="50"/>
@@ -150,6 +138,60 @@
 									</tbody>
 								</table>
 							</td>
+							<td></td>
+							<td>
+								<table class="nested_table1">
+									<colgroup>
+										<col width="50"/>
+									</colgroup>
+									<tbody>
+										<tr>
+											<td></td>
+										</tr>
+										<tr>
+											<td><div class="drag square">D</div></td>
+										</tr>
+										<tr>
+											<td></td>
+										</tr>
+									</tbody>
+								</table>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<!-- table is not nested and doesn't contain nested tables -->
+				<table>
+					<colgroup>
+						<col width="50"/>
+						<col width="50"/>
+						<col width="50"/>
+						<col width="50"/>
+						<col width="50"/>
+						<col width="50"/>
+					</colgroup>
+					<tbody>
+						<tr>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+						<tr>
+							<td></td>
+							<td><div class="drag square">D</div></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+						<tr>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
 							<td></td>
 							<td></td>
 						</tr>

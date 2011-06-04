@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 4.0.5
-May 07, 2011.
+Version 4.1.0
+Jun 04, 2011.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -25,7 +25,7 @@ REDIPS.drag = (function () {
 		img_onmousemove,			// needed to set onmousemove event handler for images
 		handler_onmousedown,		// onmousedown handler
 		handler_ondblclick,			// ondblclick handler (calls public myhandler_dblclicked)
-		table_top,					// set current table in "tables" array to the array top
+		table_top,					// set current table group in "tables" array to the array top
 		handler_onmouseup,			// onmouseup handler
 		handler_onmousemove,		// onmousemove handler for the document level
 		cell_changed,				// private method called from handler_onmousemove(), autoscrollX(), autoscrollY()
@@ -63,6 +63,7 @@ REDIPS.drag = (function () {
 		bgcolor_old,				// (array) old cell background color
 		scrollable_container = [],	// scrollable container areas (contains autoscroll areas, reference to the container and scroll direction)
 		tables = [],				// table offsets and row offsets (initialized in onload event)
+		sort_idx,					// sort index needed for sorting tables in table_top()
 		moved_flag = 0,				// if object is moved, flag gets value 1  
 		cloned_flag = 0,			// if object is cloned, flag gets value 1
 		cloned_id = [],				// needed for increment ID of cloned elements
@@ -70,7 +71,6 @@ REDIPS.drag = (function () {
 		div_drag = null,			// reference to the div drag
 		div_box = null,				// div drag box: top, right, bottom and left margin (decrease number calls of set_trc)
 		pointer = {x: 0, y: 0},		// mouse pointer position (this properties are set in handler_onmousemove() - needed for autoscroll)
-		top_position,				// top position in tables array ("clean" tables and nested tables are placed to the top of the tables array)
 		
 		// selected, previous and source table, row and cell (private parameters too)
 		table = null,
@@ -152,6 +152,8 @@ REDIPS.drag = (function () {
 		// attach onscroll event to the window (needed for recalculating table cells positions)
 		REDIPS.event.add(window, 'scroll', calculate_cells);
 		// indexOf of needed for IE browsers ?!
+		// this code is not longer needed (but I left it here for some time)
+		/*
 		if (!Array.prototype.indexOf) {
 			Array.prototype.indexOf = function (el) {
 				var i; // local variable
@@ -163,63 +165,47 @@ REDIPS.drag = (function () {
 				return -1;
 			};
 		}
+		*/
 	};
 
 
 
 	// table initialization
 	init_tables = function () {
-		var	i, j,				// loop variable
+		var	i, j,				// loop variables
 			element,			// used in searhing parent nodes of found tables below div id="drag"
-			table_type,			// (integer) 2 - "clean" table; 1 - nested table; 0 - table contains nested tables
-			tables_nodeList,	// live nodelist of tables found inside div=drag
-			contain_nested,		// test if table contains nested tables
+			level,				// (integer) 0 - ground table, 1 - nested table, 2 - nested nested table, 3 - nested nested nested table ...
+			group_idx,			// tables group index (ground table and its nested tables will have the same group)
+			tables_nodeList,	// live nodelist of tables found inside DIV="drag"
+			nested_tables,		// nested tables nodelist (search for nested tables for every "ground" table)
 			td,					// td nodeList (needed for search rowspan attribute)
 			rowspan;			// flag to set if table contains rowspaned cells
-		// set top_position to 0
-		top_position = 0;
-		// collect tables inside DIV id=drag and make static nodeList
+		// collect tables inside DIV id="drag" and make static nodeList
 		tables_nodeList = div_drag.getElementsByTagName('table');
-		// loop through tables and define table types - 0, 1, 2
+		// loop through tables and define table sort parameter
 		for (i = 0; i < tables_nodeList.length; i++) {
+			// set start element for "do" loop
 			element = tables_nodeList[i].parentNode;
-			// go up through DOM and search for DIV id="drag" (dragging container)
+			// set initial value for nested level
+			level = 0;
+			// go up through DOM until DIV id="drag" found (drag container)
 			do {
-				// DIV id="drag" is found - normal table, but this table can contain nested tables
-				if (element === div_drag) {
-					// search for tables beneath current table
-					contain_nested = tables_nodeList[i].getElementsByTagName('table');
-					// if table doesn't contain nested tables then this is "clean" table and it can go to the top of the tables array
-					// "clean" table - table is not nested and doesn't contain nested tables
-					if (contain_nested.length === 0) {
-						// set table type (this table will be sorted to the array top)
-						table_type = 2;
-						// update top_position value (needed inside table_top function)
-						top_position++;
-					}
-					// table contains nested tables (will be sorted to the table bottom)
-					else {
-						table_type = 0;
-					}
-					break;
-				}
-				// huh, nested table
+				// if "TD" found then this is nested table
 				if (element.nodeName === 'TD') {
-					table_type = 1;
+					// increase nested level
+					level++;
 					// mark table cell that contains table (needed for settings currentCell.containTable property in set_trc() - see around line 800)
 					element.table = true;
-					// update top_position value (needed inside table_top function)
-					top_position++;
-					break;
 				}
 				// go one level up
 				element = element.parentNode;
-			} while (element);
+			} while (element && element !== div_drag);
 			// copy table reference to the static list
 			tables[i] = tables_nodeList[i];
-			// set table type (needed for sorting tables array)
-			tables[i].redips_tableType = table_type;
-			// add table index (needed for sorting tables array to original order in save_content() function)
+			// set nested level (needed for sorting in "tables" array)
+			// level === 0 - means that this is "ground" table ("ground" table may contain nested tables)
+			tables[i].redips_nestedLevel = level;
+			// set original table index (needed for sorting "tables" array to the original order in save_content() function)
 			tables[i].redips_idx = i;
 			// prepare td nodeList of current table
 			td = tables[i].getElementsByTagName('td');
@@ -234,10 +220,42 @@ REDIPS.drag = (function () {
 			// set redips_rowspan flag (needed in set_trc())
 			tables[i].redips_rowspan = rowspan;
 		}
-		// sort "clean" tables and nested tables to the array top
-		tables.sort(function (a, b) {
-			return b.redips_tableType - a.redips_tableType;
-		});
+		/*
+		 * define "redips_nestedGroup" and initial "redips_sort" parameter for each table
+		 * 
+		 * for example if drag area contains two tables and one of them has nested tables then this code will create two groups
+		 * with the following redips_sort values: 100, 200, and 201
+		 * 100 - "ground" table of the first group
+		 * 200 - "ground" table of the second group
+		 * 201 - nested table of the second table group
+		 * 
+		 * this means that nested table of second group will always be sorted before its "ground" table
+		 * after clicking on DIV element in "ground" table of second group or nested table in second group array order will be: 201, 200 and 100
+		 * after clicking on DIV element in "ground" table of first group array order will be: 100, 201, 200
+		 * 
+		 * actually, sort_idx will be increased and sorted result will be: 300, 201, 200
+		 * and again clicking on element in nested table sorted result will be: 401, 400, 300 
+		 * and so on ...
+		 */
+		for (i = 0, group_idx = sort_idx = 1; i < tables.length; i++) {
+			// if table is "ground" table (lowest level) search for nested tables
+			if (tables[i].redips_nestedLevel === 0) {
+				// set group index for ground table and initial sort index
+				tables[i].redips_nestedGroup = group_idx;
+				tables[i].redips_sort = sort_idx * 100;
+				// search for nested tables (if there is any)
+				nested_tables = tables[i].getElementsByTagName('table');
+				// open loop for every nested table
+				for (j = 0; j < nested_tables.length; j++) {
+					// set group index and initial sort index
+					nested_tables[j].redips_nestedGroup = group_idx;
+					nested_tables[j].redips_sort = sort_idx * 100 + nested_tables[j].redips_nestedLevel;
+				}
+				// increase group index and sort index (sort_idx is private parameter of REDIPS.drag)
+				group_idx++;
+				sort_idx++;
+			}
+		}
 	};
 
 
@@ -267,8 +285,8 @@ REDIPS.drag = (function () {
 		REDIPS.drag.obj_old = obj_old = obj || this;
 		// set reference to the clicked object
 		REDIPS.drag.obj = obj = this;
-		// set current table in "tables" array to the array top
-		// table top should be before definition of "mode" property 
+		// set current table group in "tables" array to the array top
+		// table_top() should go before definition of "mode" property 
 		table_top(obj);
 		// if clicked element doesn't belong to the current container than environment should be changed
 		if (div_drag !== obj.redips_container) {
@@ -373,43 +391,35 @@ REDIPS.drag = (function () {
 
 
 
-	// set current table in "tables" array to the array top
-	// clicked object belongs to the table and this table should go to the array top
-	// "clean" tables and nested tables will be placed to the array top, while other tables will be placed to the top position
-	// top position is the highest position below set of "clean" and nested tables
+	// set current table group in "tables" array to the array top
+	// clicked object belongs to the table and this table group ("ground" table + its nested tables) should go to the array top
 	table_top = function (obj) {
-		var e,		// element
-			idx,	// local variable (element position in array)
-			tmp;	// temporary storage (needed for exchanging array members)
+		var	e,		// element
+			i,		// loop variable
+			tmp,	// temporary storage (needed for exchanging array members)
+			group;	// tables group
 		// set start element position
 		e = obj.parentNode;
-		// loop up until found table
+		// loop up until table found for clicked DIV element
 		while (e && e.nodeName !== 'TABLE') {
 			e = e.parentNode;
 		}
-		// set table index from found table
-		idx = tables.indexOf(e);
-		// if current table is type of 1 or 2 then place table to the array top
-		// type 1 - nested table
-		// type 2 - "clean" table (table is not nested and doesn't contain nested tables)
-		if (e.redips_tableType > 0 && idx !== 0) {
-			// save first array member to the temporary storage
-			tmp = tables[0];
-			// place found table to the array top
-			tables[0] = tables[idx];
-			// return old member to the found position
-			tables[idx] = tmp;
+		// set tables group
+		group = e.redips_nestedGroup;
+		// set highest "redips_sort" parameter to the current table group
+		for (i = 0; i < tables.length; i++) {
+			// "ground" table is table with lowest level hierarchy and with its nested tables creates table group
+			// nested table will be sorted before "ground" table
+			if (tables[i].redips_nestedGroup === group) {
+				tables[i].redips_sort = sort_idx * 100 + tables[i].redips_nestedLevel; // sort = sort_idx * 100 + level
+			}
 		}
-		// if table type 0 isn't on the highest possible position in the array
-		// type 0 - table contains nested tables
-		else if (e.redips_tableType === 0 && idx !== top_position) {
-			// save member from top position to the temporary storage
-			tmp = tables[top_position];
-			// place found table to the top position
-			tables[top_position] = tables[idx];
-			// return old member to the found position
-			tables[idx] = tmp;			
-		}
+		// sort "tables" array according to redips_sort (tables with higher redips_sort parameter will go to the array top)
+		tables.sort(function (a, b) {
+			return b.redips_sort - a.redips_sort;
+		});
+		// increase sort_idx
+		sort_idx++;
 	};
 
 
@@ -1872,7 +1882,7 @@ REDIPS.drag = (function () {
 			cells,			// number of cells in the current row
 			tbl_cell,		// reference to the table cell		
 			t, r, c, d;		// variables used in for loops
-		// first sort tables array to it's original order
+		// sort "tables" array to the original order
 		tables.sort(function (a, b) {
 			return a.redips_idx - b.redips_idx;
 		});
@@ -1917,9 +1927,10 @@ REDIPS.drag = (function () {
 		}
 		// cut last '&' from query string
 		query = query.substring(0, query.length - 1);
-		// sort "clean" tables and nested tables to the array top (otherwise nested tables will not work after saving content)
+		// sort "tables" array according to redips_sort (tables with higher redips_sort parameter will go to the array top)
+		// otherwise nested tables will not work after saving content
 		tables.sort(function (a, b) {
-			return b.redips_tableType - a.redips_tableType;
+			return b.redips_sort - a.redips_sort;
 		});
 		// return prepared parameters (if tables are empty, returned value could be empty too) 
 		return query;

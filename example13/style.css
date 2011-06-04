@@ -19,21 +19,31 @@ body{
 
 /* tables */
 div#drag table {
-	background-color: #eee;
+	background-color: #f8f8f8;
 	border-collapse: collapse;
-	margin: 7px;	
+	margin: 10px;	
 }
 
-	/* nested tables */
-	div#drag .my_nested_table {
-		background-color: #ddd;
+	/* nested tables level 1 */
+	div#drag .nested_table1 {
+		background-color: #e0e0e0;
+		margin: 7px auto;
+	}
+	/* nested tables level 2 */
+	div#drag .nested_table2 {
+		background-color: #bbb;
+		margin: 7px auto;
+	}
+	/* nested tables level 3 */
+	div#drag .nested_table3 {
+		background-color: #888;
 		margin: 7px auto;
 	}
 
 /* table cells */
 div#drag td{
 	border: 1px solid navy;
-	height: 50px;
+	height: 40px;
 	text-align: center;
 	font-size: 10pt;
 	padding: 2px;
@@ -45,9 +55,9 @@ div#drag td{
 	margin-bottom: 1px;
 	margin-top: 1px;
 	text-align: center;
-	width: 35px;
-	height: 35px;
-	line-height: 35px;
+	width: 27px;
+	height: 27px;
+	line-height: 27px;
 	border: 2px solid SteelBlue;
 	background-color: white;
 

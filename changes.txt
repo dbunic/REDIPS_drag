@@ -1,5 +1,10 @@
 Changes for REDIPS.drag library
 
+4.1.0
+- added unlimit nest table support
+- modification in init_tables() and table_top()
+- modified example13
+
 4.0.5
 - fixed bug: in a moment of moving (big) DIV element at page bottom, element jumped to the top instead of staying at the page bottom
 
