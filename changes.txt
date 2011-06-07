@@ -1,5 +1,9 @@
 Changes for REDIPS.drag library
 
+4.1.1
+- fixed bug: in case of multiple dragging containers and enabling/disabling DIV element redips_container property was changed (and that was wrong)
+  (added "if" case in enable_drag() method)
+
 4.1.0
 - added unlimit nest table support
 - modification in init_tables() and table_top()

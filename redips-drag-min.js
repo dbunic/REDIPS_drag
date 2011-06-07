@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 4.1.0
-Jun 04, 2011.
+Version 4.1.1
+Jun 07, 2011.
 */
 "use strict";var REDIPS=REDIPS||{};REDIPS.drag=(function(){var init,init_tables,enable_drag,img_onmousemove,handler_onmousedown,handler_ondblclick,table_top,handler_onmouseup,handler_onmousemove,cell_changed,handler_onresize,set_trc,set_position,set_bgcolor,get_bgcolor,box_offset,calculate_cells,getScrollPosition,autoscrollX,autoscrollY,clone_object,clone_limit,elementControl,trash_delete,get_style,save_content,move_object,row_opacity,row_clone,row_drop,obj_margin=null,window_width=0,window_height=0,scroll_width=null,scroll_height=null,edge={page:{x:0,y:0},div:{x:0,y:0},flag:{x:0,y:0}},scroll_object,bgcolor_old,scrollable_container=[],tables=[],sort_idx,moved_flag=0,cloned_flag=0,cloned_id=[],currentCell=[],div_drag=null,div_box=null,pointer={x:0,y:0},table=null,table_old=null,table_source=null,row=null,row_old=null,row_source=null,cell=null,cell_old=null,cell_source=null,obj=false,obj_old=false,mode='cell',hover_color='#E7AB83',bound=25,speed=20,only={div:[],cname:'only',other:'deny'},mark={action:'deny',cname:'mark',exception:[]},border='solid',border_disabled='dotted',trash='trash',trash_ask=true,drop_option='multiple',delete_cloned=true,source_cell=null,current_cell=null,previous_cell=null,target_cell=null,clone_shiftKey=false;init=function(dd){var self=this,i,imgs,obj_new_div;if(dd===undefined){dd='drag';}
 div_drag=document.getElementById(dd);if(!document.getElementById('obj_new')){obj_new_div=document.createElement('div');obj_new_div.id='obj_new';obj_new_div.style.width=obj_new_div.style.height='1px';div_drag.appendChild(obj_new_div);}
@@ -155,7 +155,7 @@ else{handler1=null;handler2=null;borderStyle=REDIPS.drag.border_disabled;cursor=
 if(div_id===undefined){divs=div_drag.getElementsByTagName('div');}
 else if(typeof(div_id)==='string'){divs[0]=document.getElementById(div_id);}
 else{divs[0]=div_id;}
-for(i=0,j=0;i<divs.length;i++){if(regex_drag.test(divs[i].className)){divs[i].onmousedown=handler1;divs[i].ondblclick=handler2;divs[i].style.borderStyle=borderStyle;divs[i].style.cursor=cursor;divs[i].redips_enabled=enabled;divs[i].redips_container=div_drag;}
+for(i=0,j=0;i<divs.length;i++){if(regex_drag.test(divs[i].className)){divs[i].onmousedown=handler1;divs[i].ondblclick=handler2;divs[i].style.borderStyle=borderStyle;divs[i].style.cursor=cursor;divs[i].redips_enabled=enabled;if(enable_flag==='init'){divs[i].redips_container=div_drag;}}
 else if(enable_flag==='init'){overflow=get_style(divs[i],'overflow');if(overflow!=='visible'){REDIPS.event.add(divs[i],'scroll',calculate_cells);position=get_style(divs[i],'position');cb=box_offset(divs[i],position,false);if(regex_noautoscroll.test(divs[i].className)){autoscroll=false;}
 else{autoscroll=true;}
 scrollable_container[j]={div:divs[i],offset:cb,midstX:(cb[1]+cb[3])/2,midstY:(cb[0]+cb[2])/2,autoscroll:autoscroll};tbls=divs[i].getElementsByTagName('table');for(k=0;k<tbls.length;k++){tbls[k].sca=scrollable_container[j];}
