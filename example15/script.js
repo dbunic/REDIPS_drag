@@ -27,7 +27,7 @@ function last_row() {
 		divs = tables[i].getElementsByTagName('div');
 		// loop through DIV elements
 		for (j = 0; j < divs.length; j++) {
-			// if DIV element is row handler set enable/disable and Grey/Blue color
+			// if DIV element is row handler set enable/disable and Gray/Blue color
 			if (divs[j].className.indexOf('row') !== -1) {
 				REDIPS.drag.enable_drag(enabled, divs[j]);
 				divs[j].style.backgroundColor = color;
