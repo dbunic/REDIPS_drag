@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 4.1.1
-Jun 07, 2011.
+Version 4.2.0
+Jun 16, 2011.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -45,7 +45,12 @@ REDIPS.drag = (function () {
 		trash_delete,				// delete DIV object
 		get_style,					// function returns style value of requested object and style name
 		save_content,				// scan tables, prepare query string and sent to the multiple-parameters.php
-		move_object,				// move object from source cell to the target cell (source and target cells are input parameters)
+		relocate,					// relocate objects from source cell to the target cell (source and target cells are input parameters)
+		move_object,				// method moves object to the destination table, row and cell
+		animation,
+		animation_pause = 40,
+		animation_step = 2,
+		location,					// returns location in format: tableIndex, rowIndex and cellIndex (input parameter is optional)
 		row_opacity,				// function sets opacity to table row (el, opacity, color)
 		row_clone,					// clone table row - input parameter is DIV with class name "row" -> DIV class="drag row"
 		row_drop,					// function drops (delete old & insert new) table row (input parameters are current table and row)
@@ -288,7 +293,7 @@ REDIPS.drag = (function () {
 		// set current table group in "tables" array to the array top
 		// table_top() should go before definition of "mode" property 
 		table_top(obj);
-		// if clicked element doesn't belong to the current container than environment should be changed
+		// if clicked element doesn't belong to the current container then environment should be changed
 		if (div_drag !== obj.redips_container) {
 			div_drag = obj.redips_container;
 			init_tables();
@@ -983,7 +988,7 @@ REDIPS.drag = (function () {
 				// if drop option is 'switching' then replace content from current cell to the previous cell
 				if (REDIPS.drag.drop_option === 'switching') {
 					// move objects from current cell to the previous cell
-					move_object(current_cell, previous_cell);
+					relocate(current_cell, previous_cell);
 					// recalculate table cells again (because cell content could change row dimensions) 
 					calculate_cells();
 					// set current table cell again (because cell content can be larger then cell itself)
@@ -1032,7 +1037,7 @@ REDIPS.drag = (function () {
 
 
 	
-	// function sets current table, row and cell
+	// method sets current table, row and cell
 	set_trc = function () {
 		var cell_current,	// define current cell (needed for some test at the function bottom)
 			row_offset,		// row offsets for the selected table (row box bounds)
@@ -1941,8 +1946,9 @@ REDIPS.drag = (function () {
 
 
 
+	// relocate all objects from source cell to the destination table cell
 	// if input parameter is not defined, function will prepare parameters for the first table
-	move_object = function (from, to) {
+	relocate = function (from, to) {
 		var i, // local variable
 			childnodes_length; // number of child nodes 
 		// test if "from" cell is equal to "to" cell then do nothing
@@ -1955,6 +1961,195 @@ REDIPS.drag = (function () {
 		for (i = 0; i < childnodes_length; i++) {
 			to.appendChild(from.childNodes[0]); // '0', not 'i' because NodeList objects in the DOM are live
 		}	
+	};
+
+
+
+	// method will prepare parameters for object animation to the destination table, row and cell
+	// input parameter "target" is array: [ tableIndex, rowIndex, cellIndex ]
+	// if "target" parameter is undefined then use current location 
+	move_object = function (obj_id, target) {
+		var p = {'direction': 1},	// param object (with default direction)
+			x1, y1,	w1, h1,			// coordinates and width/height of object to animate
+			x2, y2,	w2, h2,			// coordinates and width/height of target cell
+			row, col,				// destination index of row and cell
+			dx, dy,					// delta x and delta y
+			pos, i;					// local variables needed for calculation coordinates and settings of first point
+		// set reference to the object to animate
+		p.obj = document.getElementById(obj_id);
+		// set high z-index
+		p.obj.style.zIndex = 999;
+		// if clicked element doesn't belong to the current container then context should be changed
+		if (div_drag !== p.obj.redips_container) {
+			div_drag = p.obj.redips_container;
+			init_tables();
+		}
+		// set width, height and coordinates for current position of object
+		pos = box_offset(p.obj);
+		w1 = pos[1] - pos[3];
+		h1 = pos[2] - pos[0];
+		x1 = pos[3];
+		y1 = pos[0];
+		// if target parameted is undefined then use current location 
+		if (target === undefined) {
+			target = location();
+		}
+		// find table index beacuse tables array is sorted on every element click (target[0] contains original table index)
+		for (i = 0; i < tables.length; i++) {
+			if (tables[i].redips_idx === target[0]) {
+				break;
+			}
+		}
+		// set index for row and cell (target input parameter is array)
+		row = target[1];
+		col = target[2];
+		// set reference to the target cell
+		p.target_cell = tables[i].rows[row].cells[col];
+		// set width, height and target cell coordinates
+		// target coordinates are cell center including object dimensions
+		pos = box_offset(p.target_cell);
+		w2 = pos[1] - pos[3];
+		h2 = pos[2] - pos[0];
+		x2 = pos[3] + (w2 - w1) / 2;
+		y2 = pos[0] + (h2 - h1) / 2;
+		// calculate delta x and delta y
+		dx = x2 - x1;
+		dy = y2 - y1;
+		// set style to fixed to allow dragging DIV object
+		p.obj.style.position = 'fixed';
+		// if line is more horizontal
+		if (Math.abs(dx) > Math.abs(dy)) {
+			// set path type
+			p.type = 'horizontal';
+			// set slope (m) and y-intercept (b)
+			// y = m * x + b
+			p.m = dy / dx;
+			p.b = y1 - p.m * x1;
+			// parameters needed for delay calculation (based on parabola)
+			p.k1 = (x1 + x2) / (x1 - x2);
+			p.k2 = 2 / (x1 - x2);
+			// define animation direction
+			if (x1 > x2) {
+				p.direction = -1;
+			}
+			// set first and last point
+			i = x1;
+			p.last = x2;
+		}
+		// line is more vertical
+		else {
+			// set path type
+			p.type = 'vertical';
+			// set slope (m) and y-intercept (b)
+			// y = m * x + b
+			p.m = dx / dy;
+			p.b = x1 - p.m * y1;
+			// parameters needed for delay calculation (based on parabola)
+			p.k1 = (y1 + y2) / (y1 - y2);
+			p.k2 = 2 / (y1 - y2);
+			// define animation direction
+			if (y1 > y2) {
+				p.direction = -1;
+			}
+			// set first and last point
+			i = y1;
+			p.last = y2;
+		}
+		// start animation
+		animation(i, p);
+	};
+
+
+
+	// object animation
+	// input parameters are first (current) point and 'p' object with following properties: 
+	// obj: object to animate
+	// target_cell: target table cell
+	// last: last point
+	// m:, b:  slope and y-intercept (needed for y = m * x + b)
+	// k1:, k2:  needed for calculation 1 -> 0 -> 1 parameter (regarding current position)
+	// direction: animation direction
+	// type: line type (horizontal or vertical)
+	animation = function (i, p) {
+		// calculate parameter k (k goes 1 -> 0 -> 1 for start and end step)
+		var k = (p.k1 - p.k2 * i) * (p.k1 - p.k2 * i),
+			f;
+		// calculate step and function of step (y = m * x + b)
+		i = i + animation_step * (4 - k * 3) * p.direction;
+		f = p.m * i + p.b;
+		// set element position
+		if (p.type === 'horizontal') {
+			p.obj.style.left = i + 'px';
+			p.obj.style.top  = f + 'px';			
+		}
+		else {
+			p.obj.style.left = f + 'px';
+			p.obj.style.top  = i + 'px';
+		}
+		// if line is not finished then make recursive call
+		if ((i < p.last && p.direction > 0) || ((i > p.last) && p.direction < 0)) {
+			// recursive call for next step
+			setTimeout(function () {
+				animation(i, p);
+			}, animation_pause * k);
+		}
+		// animation is finished
+		else {
+			// return z-index and position style to 'static' (this is default element position) 
+			p.obj.style.zIndex = -1;
+			p.obj.style.position = 'static';
+			// append element to the target cell
+			p.target_cell.appendChild(p.obj);
+		}
+	};
+
+
+
+	// method returns location as array with members tableIndex, rowIndex and cellIndex
+	// input parameter is reference to the target cell (optional)
+	// if input parameter is undefined then function will return array with current and source locations
+	location = function (tc) {
+		var toi,		// table original index (because tables are sorted on every element click)
+			toi_source,	// table original index (source table)
+			ci, ri, ti,	// cellIndex, rowIndex and table index (needed for case if input parameter exists)
+			tbl,
+			arr = [];	// array to return
+		// if table cell is undefined, then return current location and source location (array will contain 6 elements)
+		if (tc === undefined) {
+			// table original index (because tables are sorted on every element click)
+			if (table < tables.length) {
+				toi = tables[table].redips_idx;
+			}
+			// if any level of old position is undefined, then use source location
+			else if (table_old === null || row_old === null || cell_old === null) {
+				toi = tables[table_source].redips_idx;
+			}
+			// or use the previous location
+			else {
+				toi = tables[table_old].redips_idx;
+			}
+			// table source original index
+			toi_source = tables[table_source].redips_idx;
+			// prepare array to return (row, cell and row_source, cell_source are global variables)
+			arr = [toi, row, cell, toi_source, row_source, cell_source];
+		}
+		else {
+			// define cellIndex and rowIndex 
+			ci = tc.cellIndex;
+			ri = tc.parentNode.rowIndex;
+			// prepare start node for table search
+			tbl = tc.parentNode;
+			// find table
+			while (tbl && tbl.nodeName !== 'TABLE') {
+				tbl = tbl.parentNode;
+		    }
+			// define table index
+			ti = tbl.redips_idx;
+			// prepare array with tableIndex, rowIndex and cellIndex (3 elements)
+			arr = [ti, ri, ci];
+		}
+		// return result array
+		return arr;
 	};
 
 
@@ -1999,6 +2194,7 @@ REDIPS.drag = (function () {
 	//
 
 	return {
+		// public properties
 		obj					: obj,				// (object) moved object
 		obj_old				: obj_old,			// (object) previously moved object (before clicked or cloned)
 		mode				: mode,				// (string) drag mode: "cell" or "row" (default is cell)
@@ -2019,12 +2215,16 @@ REDIPS.drag = (function () {
 		delete_cloned		: delete_cloned,	// (boolean) delete cloned div if the cloned div is dragged outside of any table
 		cloned_id			: cloned_id,		// (array) needed for increment ID of cloned elements
 		clone_shiftKey		: clone_shiftKey,	// (boolean) if true, elements could be cloned with pressed SHIFT key
+		animation_pause		: animation_pause,
+		animation_step		: animation_step,
 
-		// assign public pointers
+		// public methods
 		init				: init,
 		enable_drag			: enable_drag,
 		save_content		: save_content,
-		move_object			: move_object,		// method moves object from source cell to the target cell (source and target cells are input parameters)
+		relocate			: relocate,			// method relocates objects from source cell to the target cell (source and target cells are input parameters)
+		move_object			: move_object,		// method moves object to the destination table, row and cell
+		location			: location,			// method returns location in format: tableIndex, rowIndex and cellIndex (input parameter is optional)
 		row_opacity			: row_opacity,		// method sets opacity to table row (el, opacity, color)
 		getScrollPosition	: getScrollPosition,// method returns scroll positions in array [ scrollX, scrollY ]
 		get_style			: get_style,		// method returns style value of requested object and style name

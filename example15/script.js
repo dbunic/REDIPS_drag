@@ -16,7 +16,7 @@ function last_row() {
 		// if table has only 3 rows than disable row handler (last row can not be moved)
 		if (tables[i].rows.length <= 3) {
 			enabled = false;
-			color = 'grey';
+			color = 'Gray';
 		}
 		// else enable row handler
 		else {
@@ -27,7 +27,7 @@ function last_row() {
 		divs = tables[i].getElementsByTagName('div');
 		// loop through DIV elements
 		for (j = 0; j < divs.length; j++) {
-			// if DIV element is row handler set enable/disable and grey/blue color
+			// if DIV element is row handler set enable/disable and Grey/Blue color
 			if (divs[j].className.indexOf('row') !== -1) {
 				REDIPS.drag.enable_drag(enabled, divs[j]);
 				divs[j].style.backgroundColor = color;
@@ -38,7 +38,7 @@ function last_row() {
 }
 
 
-// initialization -  after page is fully loaded
+// initialization - after page is fully loaded
 window.onload = function () {
 	// reference to the REDIPS.drag library and message line
 	var	rd = REDIPS.drag,
@@ -74,7 +74,7 @@ window.onload = function () {
 		rd.row_opacity(rd.obj, 85);
 		// set opacity for source row and change source row background color
 		// obj.obj_old is reference of source row
-		rd.row_opacity(rd.obj_old, 20, 'white');
+		rd.row_opacity(rd.obj_old, 20, 'White');
 		// display message
 		msg.innerHTML = 'Row moved';
 	};

@@ -41,12 +41,17 @@ div#drag td{
 /* drag object (DIV inside table cell) */
 .drag{
 	margin: auto;
+	margin-bottom: 1px;
+	margin-top: 1px;
 	text-align: center;
 	width: 87px;
 	height: 25px;
 	line-height: 25px;
 	border: 2px solid SteelBlue;
 	background-color: white;
+	/* round corners */
+	border-radius: 4px; /* Opera, Chrome */
+	-moz-border-radius: 4px; /* FF */
 }
 	/* checkbox inside DIV element */
 	.drag input{

@@ -1,5 +1,15 @@
 Changes for REDIPS.drag library
 
+4.2.0
+- added animation functionality
+- move_object() is renamed to relocate()
+- move_object() has new meaning
+- added animation() method
+- added location method
+- added public properties animation_pause and animation_step
+- added example17
+- modified example12
+
 4.1.1
 - fixed bug: in case of multiple dragging containers and enabling/disabling DIV element redips_container property was changed (and that was wrong)
   (added "if" case in enable_drag() method)

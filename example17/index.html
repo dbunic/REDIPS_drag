@@ -1,0 +1,167 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+	<head>
+		<meta name="author" content="Darko Bunic"/>
+		<meta name="description" content="Drag and drop table rows with JavaScript"/>
+		<link rel="stylesheet" href="style.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../redips-drag.js"></script>
+		<script type="text/javascript" src="script.js"></script>
+		<title>www.redips.net</title>
+	</head>
+	<body>
+		<center>
+			<h1><a href="http://www.redips.net/javascript/drag-and-drop-table-row/">www.redips.net</a></h1>
+			<h2>Example 17: Move object (animation)</h2>
+
+			<!-- first drag region -->
+			<div id="drag1">
+				<table>
+					<colgroup>
+						<col width="30"/>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="100"/>
+					</colgroup>
+					<tbody>
+						<tr>
+							<th colspan="6" class="mark">Table 1</th>
+						</tr>
+						<tr class="rl">
+							<td class="rowhandler"><div id="r1_1" class="drag row"></div></td>
+							<td class="cdark"></td>
+							<td></td>
+							<td><div id="d1_1" class="drag blue">Drag</div></td>
+							<td></td>
+							<td class="cdark"></td>
+						</tr>
+						<tr class="rd">
+							<td class="rowhandler"><div id="r2_1" class="drag row"></div></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+						<tr class="rl">
+							<td class="rowhandler"><div id="r3_1" class="drag row"></div></td>
+							<td><div id="d2_1" class="drag blue">and</div></td>
+							<td class="cdark"></td>
+							<td><div id="d3_1" class="drag blue">drop</div></td>
+							<td class="cdark"></td>
+							<td><div id="d4_1" class="drag blue">table</div></td>
+						</tr>
+						<tr class="rd">
+							<td class="rowhandler"><div id="r4_1" class="drag row"></div></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+						<tr class="rl">
+							<td class="rowhandler"><div id="r5_1" class="drag row"></div></td>
+							<td><div id="d5_1" class="drag blue">rows</div></td>
+							<td class="cdark"></td>
+							<td><div id="d6_1" class="drag blue">with</div></td>
+							<td class="cdark"></td>
+							<td><div id="d7_1" class="drag blue">REDIPS</div></td>
+						</tr>
+						<tr class="rd">
+							<td class="rowhandler"><div id="r6_1" class="drag row"></div></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+						<tr class="rl">
+							<td class="rowhandler"><div id="r7_1" class="drag row"></div></td>
+							<td class="cdark"></td>
+							<td></td>
+							<td><div id="d8_1" class="drag blue">lib</div></td>
+							<td></td>
+							<td class="cdark"></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+			<!-- second drag region -->
+			<div id="drag2">
+				<table>
+					<colgroup>
+						<col width="30"/>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="100"/>
+					</colgroup>
+					<tbody>
+						<tr>
+							<th colspan="6" class="mark">Table 2</th>
+						</tr>
+						<tr class="rl">
+							<td class="rowhandler"><div id="r1_2" class="drag row"></div></td>
+							<td class="cdark"></td>
+							<td></td>
+							<td><div id="d1_2" class="drag orange">Drag</div></td>
+							<td></td>
+							<td class="cdark"></td>
+						</tr>
+						<tr class="rd">
+							<td class="rowhandler"><div id="r2_2" class="drag row"></div></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+						<tr class="rl">
+							<td class="rowhandler"><div id="r3_2" class="drag row"></div></td>
+							<td><div id="d2_2" class="drag orange">and</div></td>
+							<td class="cdark"></td>
+							<td><div id="d3_2" class="drag orange">drop</div></td>
+							<td class="cdark"></td>
+							<td><div id="d4_2" class="drag orange">table</div></td>
+						</tr>
+						<tr class="rd">
+							<td class="rowhandler"><div id="r4_2" class="drag row"></div></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+						<tr class="rl">
+							<td class="rowhandler"><div id="r5_2" class="drag row"></div></td>
+							<td><div id="d5_2" class="drag orange">rows</div></td>
+							<td class="cdark"></td>
+							<td><div id="d6_2" class="drag orange">with</div></td>
+							<td class="cdark"></td>
+							<td><div id="d7_2" class="drag orange">REDIPS</div></td>
+						</tr>
+						<tr class="rd">
+							<td class="rowhandler"><div id="r6_2" class="drag row"></div></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+						<tr class="rl">
+							<td class="rowhandler"><div id="r7_2" class="drag row"></div></td>
+							<td class="cdark"></td>
+							<td></td>
+							<td><div id="d8_2" class="drag orange">lib</div></td>
+							<td></td>
+							<td class="cdark"></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</center>
+	</body>
+</html>
