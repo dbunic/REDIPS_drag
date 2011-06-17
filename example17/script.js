@@ -5,13 +5,23 @@
 "use strict";
 
 
+	// properties
+var	rd = REDIPS.drag,	// reference to the REDIPS.drag library
+	loc = {},			// initial locations of DIV elements
+
+	// methods
+	locations,			// remember locations of all DIV elements
+	reset;				// reset to initial state
+
+
 // initialization -  after page is fully loaded
 window.onload = function () {
-	// reference to the REDIPS.drag library
-	var	rd = REDIPS.drag;
 	// initialize dragging containers (each table is placed in separate container)
 	rd.init('drag1');
 	rd.init('drag2');
+	// save locations of all DIV elements to the "loc" object
+	// it should go after initialization
+	locations();
 	// row was clicked - set hover color for "row" mode
 	rd.myhandler_row_clicked = function () {
 		rd.hover_color = '#9BB3DA';
@@ -40,7 +50,7 @@ window.onload = function () {
 	};
 
 
-	// element was dropped - move element from other table
+	// element was dropped - move element in other table
 	rd.myhandler_dropped = function () {
 		var	ri = {1: 2, 2: 1},						// needed for reverse id (like d2_1 -> d2_2 or d4_2 -> d4_1)
 			id = rd.obj.id,							// element id
@@ -50,4 +60,39 @@ window.onload = function () {
 		// because each table is closed within its own dragging area tableIndex for both tables is 0
 		rd.move_object(id_new);
 	};
+};
+
+
+
+// function scans all DIV elements and save their positions to the pos object
+locations = function () {
+	var divs = [], id, i, j;
+	// collect DIV elements for both dragging area
+	divs[0] = document.getElementById('drag1').getElementsByTagName('div');
+	divs[1] = document.getElementById('drag2').getElementsByTagName('div');
+	// open loop for each dragging area
+	for (i = 0; i < divs.length; i++) {
+		// open loop for each div element
+		for (j = 0; j < divs[i].length; j++) {
+			id = divs[i][j].id;
+			loc[id] = rd.location(divs[i][j]);
+		}
+	}
+}
+
+
+
+// method returns element to initial positions
+reset = function () {
+	var id,
+		pos1;
+	// loop goes through every "id" in loc object
+	for (id in loc) {
+		// get current position of element
+		pos1 = rd.location(id);
+		// if current position is different then initial position the return element to the initial position
+		if (loc[id].toString() !== pos1.toString()) {
+			rd.move_object(id, loc[id]);
+		}
+	}
 };

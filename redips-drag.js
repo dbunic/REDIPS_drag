@@ -2106,16 +2106,17 @@ REDIPS.drag = (function () {
 
 
 	// method returns location as array with members tableIndex, rowIndex and cellIndex
-	// input parameter is reference to the target cell (optional)
+	// input parameter is optional and can be: element id/reference, cell id/reference
 	// if input parameter is undefined then function will return array with current and source locations
-	location = function (tc) {
+	location = function (ip) {
 		var toi,		// table original index (because tables are sorted on every element click)
 			toi_source,	// table original index (source table)
 			ci, ri, ti,	// cellIndex, rowIndex and table index (needed for case if input parameter exists)
-			tbl,
+			el,			// element reference
+			tbl,		// table reference
 			arr = [];	// array to return
-		// if table cell is undefined, then return current location and source location (array will contain 6 elements)
-		if (tc === undefined) {
+		// if input parameter is is undefined, then return current location and source location (array will contain 6 elements)
+		if (ip === undefined) {
 			// table original index (because tables are sorted on every element click)
 			if (table < tables.length) {
 				toi = tables[table].redips_idx;
@@ -2133,20 +2134,36 @@ REDIPS.drag = (function () {
 			// prepare array to return (row, cell and row_source, cell_source are global variables)
 			arr = [toi, row, cell, toi_source, row_source, cell_source];
 		}
+		// input parameter is defined (id or reference of table cell or any child of table cell) 
 		else {
-			// define cellIndex and rowIndex 
-			ci = tc.cellIndex;
-			ri = tc.parentNode.rowIndex;
-			// prepare start node for table search
-			tbl = tc.parentNode;
-			// find table
-			while (tbl && tbl.nodeName !== 'TABLE') {
-				tbl = tbl.parentNode;
+			// if input parameter is string (this should be element id), then set element reference
+			if (typeof(ip) === 'string') {
+				el = document.getElementById(ip);
+			}
+			// else, input parameter is reference
+			else {
+				el = ip;
+			}
+			// loop up until TD element (because "ip" could be the child element of table cell - DIV drag)
+			while (el && el.nodeName !== 'TD') {
+				el = el.parentNode;
 		    }
-			// define table index
-			ti = tbl.redips_idx;
-			// prepare array with tableIndex, rowIndex and cellIndex (3 elements)
-			arr = [ti, ri, ci];
+			// node should be table cell
+			if (el && el.nodeName === 'TD') {
+				// define cellIndex and rowIndex 
+				ci = el.cellIndex;
+				ri = el.parentNode.rowIndex;
+				// prepare start node for table search
+				tbl = el.parentNode;
+				// find table
+				while (tbl && tbl.nodeName !== 'TABLE') {
+					tbl = tbl.parentNode;
+			    }
+				// define table index
+				ti = tbl.redips_idx;
+				// prepare array with tableIndex, rowIndex and cellIndex (3 elements)
+				arr = [ti, ri, ci];
+			}
 		}
 		// return result array
 		return arr;
