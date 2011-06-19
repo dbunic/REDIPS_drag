@@ -1,11 +1,15 @@
 Changes for REDIPS.drag library
 
+4.2.1
+- fixed BUG when row was dropped to the last row position in table
+- added redips_dragrow_id property to the cloned row (needed for dropped row identification)
+
 4.2.0
 - added animation functionality
 - move_object() is renamed to relocate()
-- move_object() has new meaning
+- move_object() has new meaning - move (animate) objects to specified table positions
 - added animation() method
-- added location method
+- added get_position method
 - added public properties animation_pause and animation_step
 - added example17
 - modified example12

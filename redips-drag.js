@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 4.2.0
-Jun 16, 2011.
+Version 4.2.1
+Jun 20, 2011.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -50,7 +50,7 @@ REDIPS.drag = (function () {
 		animation,
 		animation_pause = 40,
 		animation_step = 2,
-		location,					// returns location in format: tableIndex, rowIndex and cellIndex (input parameter is optional)
+		get_position,				// returns position in format: tableIndex, rowIndex and cellIndex (input parameter is optional)
 		row_opacity,				// function sets opacity to table row (el, opacity, color)
 		row_clone,					// clone table row - input parameter is DIV with class name "row" -> DIV class="drag row"
 		row_drop,					// function drops (delete old & insert new) table row (input parameters are current table and row)
@@ -443,6 +443,7 @@ REDIPS.drag = (function () {
 			row_index,	// row index
 			div1, div2,	// collection of DIV elements in source TR and in cloned TR
 			row_last,	// last row in cloned table
+			id,			// id of <DIV class="drag row">
 			i;			// loop variable
 		// clone current row (needed in onmousemove)
 		if (el.tagName === 'TR') {
@@ -484,6 +485,8 @@ REDIPS.drag = (function () {
 			}
 			// add div_drag container to the DIV wrapper (needed in onmousedown event handler)
 			table_mini.redips_container = div_drag;
+			// add id of <DIV class="drag row" id="row1"> (needed for dropped row identification)
+			table_mini.redips_dragrow_id = row_obj.redips_dragrow_id;
 			// append cloned mini table to the DIV id="obj_new"
 			document.getElementById('obj_new').appendChild(table_mini);
 			// include scroll position in offset
@@ -500,10 +503,15 @@ REDIPS.drag = (function () {
 		// input parameter is DIV class="row"
 		// return reference of the current row (needed in onmousedown)
 		else {
+			// remember id of <DIV class="drag row">
+			id = el.id;
 		    // loop up until TR element found
 			while (el && el.nodeName !== 'TR') {
 				el = el.parentNode;
 		    }
+			// save id to the table row as redips_dragrow_id
+			el.redips_dragrow_id = id;
+			// return reference to the TR
 			return el;
 		}
 	};
@@ -513,15 +521,21 @@ REDIPS.drag = (function () {
 	// function drops (delete old & insert new) table row
 	// input parameters are current table and current row
 	row_drop = function (r_table, r_row) {
-		// reference to the table row
-		var tr;
+		// local variable definition
+		var tr = obj.getElementsByTagName('tr')[0],	// set reference to the TR in mini table (mini table has only one row - first row)
+			ts = tables[r_table].rows[0].parentNode;// reference to the table section element (where row will be inserted / appended)
 		// delete source row
 		tables[table_source].deleteRow(row_source);
-		// set reference to the TR in mini table
-		// mini table has only one row (and that is the first row)
-		tr = obj.getElementsByTagName('tr')[0];
-		// insert table row
-		tables[r_table].rows[r_row].parentNode.insertBefore(tr, tables[r_table].rows[r_row]);
+		// if row is not dropped to the last row position
+		if (r_row < tables[r_table].rows.length) {
+			// insert table row
+			ts.insertBefore(tr, tables[r_table].rows[r_row]);
+		}
+		// row is dropped to the last row position
+		else {
+			// row should be appended
+			ts.appendChild(tr);
+		}
 		// destroy mini table
 		obj.parentNode.removeChild(obj);
 	};
@@ -1975,8 +1989,19 @@ REDIPS.drag = (function () {
 			row, col,				// destination index of row and cell
 			dx, dy,					// delta x and delta y
 			pos, i;					// local variables needed for calculation coordinates and settings of first point
+		// set dragging mode
+		p.mode = mode;
 		// set reference to the object to animate
 		p.obj = document.getElementById(obj_id);
+		// if dragging mode is "row"
+		if (mode === 'row') {
+			// loop up until TR element is found
+			while (p.obj && p.obj.nodeName !== 'TR') {
+				p.obj = p.obj.parentNode;
+		    }
+			p.obj = row_clone(p.obj);
+		}
+
 		// set high z-index
 		p.obj.style.zIndex = 999;
 		// if clicked element doesn't belong to the current container then context should be changed
@@ -1990,9 +2015,9 @@ REDIPS.drag = (function () {
 		h1 = pos[2] - pos[0];
 		x1 = pos[3];
 		y1 = pos[0];
-		// if target parameted is undefined then use current location 
+		// if target parameted is undefined then use current position in table 
 		if (target === undefined) {
-			target = location();
+			target = get_position();
 		}
 		// find table index beacuse tables array is sorted on every element click (target[0] contains original table index)
 		for (i = 0; i < tables.length; i++) {
@@ -2105,10 +2130,10 @@ REDIPS.drag = (function () {
 
 
 
-	// method returns location as array with members tableIndex, rowIndex and cellIndex
+	// method returns position as array with members tableIndex, rowIndex and cellIndex
 	// input parameter is optional and can be: element id/reference, cell id/reference
-	// if input parameter is undefined then function will return array with current and source locations
-	location = function (ip) {
+	// if input parameter is undefined then function will return array with current and source positions
+	get_position = function (ip) {
 		var toi,		// table original index (because tables are sorted on every element click)
 			toi_source,	// table original index (source table)
 			ci, ri, ti,	// cellIndex, rowIndex and table index (needed for case if input parameter exists)
@@ -2241,7 +2266,7 @@ REDIPS.drag = (function () {
 		save_content		: save_content,
 		relocate			: relocate,			// method relocates objects from source cell to the target cell (source and target cells are input parameters)
 		move_object			: move_object,		// method moves object to the destination table, row and cell
-		location			: location,			// method returns location in format: tableIndex, rowIndex and cellIndex (input parameter is optional)
+		get_position		: get_position,		// method returns position in format: tableIndex, rowIndex and cellIndex (input parameter is optional)
 		row_opacity			: row_opacity,		// method sets opacity to table row (el, opacity, color)
 		getScrollPosition	: getScrollPosition,// method returns scroll positions in array [ scrollX, scrollY ]
 		get_style			: get_style,		// method returns style value of requested object and style name
