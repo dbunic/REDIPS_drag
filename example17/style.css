@@ -76,7 +76,7 @@ th {
 .row {
 	width: 20px;
 	margin: 2px;
-	border-color: SteelBlue;
+	border: 3px solid lime;
 	background-color: SteelBlue;
 	/* round corners */
 	border-radius: 14px; /* Opera, Chrome */

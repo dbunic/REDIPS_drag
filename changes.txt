@@ -3,6 +3,7 @@ Changes for REDIPS.drag library
 4.2.1
 - fixed BUG when row was dropped to the last row position in table
 - added redips_dragrow_id property to the cloned row (needed for dropped row identification)
+- added opacity_disabled property - (integer) opacity level for disabled elements
 
 4.2.0
 - added animation functionality
