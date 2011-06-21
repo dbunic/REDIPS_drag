@@ -35,7 +35,7 @@ REDIPS.drag = (function () {
 		set_bgcolor,				// function sets background color for the input parameters table, row, cell and background color (color is array)
 		get_bgcolor,				// function returns background as array color for the input parameters table, row and cell
 		box_offset,					// calculates object (box) offset (top, right, bottom, left)
-		calculate_cells,			// calculates table colums and row offsets (cells dimensions)
+		calculate_cells,			// calculates table columns and row offsets (cells dimensions)
 		getScrollPosition,			// returns scroll positions in array
 		autoscrollX,				// horizontal auto scroll function
 		autoscrollY,				// vertical auto scroll function
@@ -1789,12 +1789,16 @@ REDIPS.drag = (function () {
 
 
 
-	// function attached / detached onmousedown event and attaches onscroll event for DIV elements
-	// first parameter can be (string)'init', (boolean)true or (boolean)false
-	// if first parameter is (string)'init' and second parameter isn't defined then DIV elements will be enabled and onscroll attached to the DIV class="scroll"
-	// if first parameter is (boolean)true or (boolean)false and second parameter isn't defined then DIV elements will be enabled / disabled
-	// second parameter is optional and defines particular DIV element to enable / disable
-	enable_drag = function (enable_flag, div_id) {
+	/**
+	 * Method attaches/detaches onmousedown, ondblclick events and attaches onscroll event for DIV elements.
+	 * First parameter can be (string)"init", (boolean)true or (boolean)false.
+	 * If first parameter is (string)"init" then DIV elements will be enabled and onscroll attached to the DIV class="scroll".
+	 * If first parameter is (boolean)true or (boolean)false and second parameter isn't defined then DIV elements in current container will be enabled/disabled.
+	 * @param {String/Boolean} Enable_flag enable/disable element (or dragging container).
+	 * @param {String/HTMLElement} [div_id] Element id (or dragging area) to enable/disable. Parameter is optional and defines DIV object or DIV id of element to enable/disable.
+	 * @param {String} [type] Definition if div_id is element or dragging container. Parameter is optional and defines enable/disable for elements in container (div_id in this context is id of drag container).
+	 */
+	enable_drag = function (enable_flag, div_id, type) {
 		// define local variables
 		var i, j, k,		// local variables used in loop
 			divs = [],		// collection of div elements contained in tables or one div element
@@ -1811,7 +1815,7 @@ REDIPS.drag = (function () {
 			position,		// if table container has position:fixed then "page scroll" offset should not be added
 			regex_drag = /\bdrag\b/i,	// regular expression to search "drag" class name
 			regex_noautoscroll = /\bnoautoscroll\b/i;	// regular expression to search "noautoscroll" class name
-		// set opacity from public property 
+		// set opacity for disabled elements from public property "opacity_disabled" 
 		opacity = REDIPS.drag.opacity_disabled;
 		// define onmousedown/ondblclick handlers and styles
 		if (enable_flag === true || enable_flag === 'init') {
@@ -1823,22 +1827,28 @@ REDIPS.drag = (function () {
 		}
 		// else remove event handlers
 		else {
-			handler1 = null;
-			handler2 = null;
+			handler1 = handler2 = null;
 			borderStyle = REDIPS.drag.border_disabled;
 			cursor = 'auto';
 			enabled = false;
 		}
-		// collect all DIV elements inside drag area
+		// collect DIV elements inside current drag area (drag elements and scrollable containers)
+		// e.g. enable_drag(true)
 		if (div_id === undefined) {
-			// collect div elements inside DIV id="drag" (drag elements and scrollable containers)
 			divs = div_drag.getElementsByTagName('div');
 		}
-		// or prepare array with only one div element for element id
+		// collect div elements inside container
+		// e.g. enable_drag(true, 'drag1', 'container')
+		else if (typeof(div_id) === 'string' && type === 'container') {
+			divs = document.getElementById(div_id).getElementsByTagName('div');
+		}
+		// "type" parameter is not "container" and "div_id" is string - assuming div_id is id of one element to enable/disable
+		// e.g. enable_drag(true, 'drag1')
 		else if (typeof(div_id) === 'string') {
 			divs[0] = document.getElementById(div_id);
 		}
-		// or prepare array with only one div element
+		// prepare array with one div element
+		// e.g. enable_drag(true, el)
 		else {
 			divs[0] = div_id;
 		}
@@ -2016,8 +2026,9 @@ REDIPS.drag = (function () {
 
 
 	// method will prepare parameters for object animation to the destination table, row and cell
+	// ip (input parameter) is object
 	// input parameter "target" is array: [ tableIndex, rowIndex, cellIndex ]
-	// if "target" parameter is undefined then use current location
+	// if "target" parameter is undefined then current location will be used
 	// method returns references to obj and obj_old elements
 	move_object = function (ip) {
 		var p = {'direction': 1},	// param object (with default direction)
@@ -2026,11 +2037,12 @@ REDIPS.drag = (function () {
 			row, col,				// destination index of row and cell
 			dx, dy,					// delta x and delta y
 			pos, i,					// local variables needed for calculation coordinates and settings of first point
-			obj_id, target;
-		obj_id = ip.id;
-		target = ip.target;
+			target;
+		// set callback function - it will be called after animation is finished
+		p.callback = ip.callback;
 		// define obj and obj_old (reference of the object to animate - DIV element or row handler
-		p.obj = p.obj_old = document.getElementById(obj_id);
+		// ip.id - input parameter obj_id
+		p.obj = p.obj_old = document.getElementById(ip.id);
 		// test if element is row handler
 		if (p.obj.className.indexOf('row') === -1) {
 			p.mode = 'cell';
@@ -2061,21 +2073,21 @@ REDIPS.drag = (function () {
 		x1 = pos[3];
 		y1 = pos[0];
 		// if target parameted is undefined then use current position in table 
-		if (target === undefined) {
-			target = get_position();
+		if (ip.target === undefined) {
+			ip.target = get_position();
 		}
 		// set target table, row and cell indexes (needed for moving table row)
 		// table index is index from array not original table index
-		p.target = target;
+		p.target = ip.target;
 		// find table index beacuse tables array is sorted on every element click (target[0] contains original table index)
 		for (i = 0; i < tables.length; i++) {
-			if (tables[i].redips_idx === target[0]) {
+			if (tables[i].redips_idx === ip.target[0]) {
 				break;
 			}
 		}
 		// set index for row and cell (target input parameter is array)
-		row = target[1];
-		col = target[2];
+		row = ip.target[1];
+		col = ip.target[2];
 		// set reference to the target cell
 		p.target_cell = tables[i].rows[row].cells[col];
 		// set width, height and coordinates of target cell
@@ -2197,6 +2209,10 @@ REDIPS.drag = (function () {
 			// else element is row
 			else {
 				row_drop(p.target[0], p.target[1], p.obj);
+			}
+			// execute callback function if callback is defined
+			if (typeof(p.callback) === 'function') {
+				p.callback();
 			}
 		}
 	};
