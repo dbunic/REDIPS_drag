@@ -1,26 +1,22 @@
 /*
-
 Darko Bunic
 http://www.redips.net/
-Nov, 2009.
-
+Jun, 2011.
 */
 
-body{
+body {
 	font-family: arial;
 	margin: 0px; /* for IE6 / IE7 */
 }
 
-
 /* add bottom margin between tables */
 #table1,
-#table2{
+#table2 {
 	margin-bottom: 20px;
 }
 
-
 /* drag container */
-#drag{
+#drag {
 	margin: auto;
 	width: 530px;
 }
@@ -32,7 +28,7 @@ body{
 }
 
 /* drag objects (DIV inside table cells) */
-.drag{
+.drag {
 	cursor: move;
 	margin: auto;
 	margin-bottom: 1px;
@@ -41,11 +37,9 @@ body{
 	background-color: white;
 	text-align: center;
 	font-size: 10pt; /* needed for cloned object */
-	opacity: 0.7;
-	filter: alpha(opacity=70);
-	/* without width, IE6/7 will not apply filter/opacity to the element ?! */
-	/* IE needs element layout */
 	width: 87px;
+	height: 20px;
+	line-height: 20px;
 	/* round corners */
 	border-radius: 4px; /* Opera, Chrome */
 	-moz-border-radius: 4px; /* FF */
@@ -53,31 +47,43 @@ body{
 
 
 /* drag objects border for the first table */
-.t1 {border: 2px solid #499B33;}
+.t1 {
+	border: 2px solid #499B33;
+}
 /* drag object border for the second table */
-.t2 {border: 2px solid #2D4B7A;}
+.t2 {
+	border: 2px solid SteelBlue;
+}
 /* cloned objects - third table */
-.t3 {border: 2px solid #BF6A30;}
+.t3 {
+	border: 2px solid #FF8A58;
+}
 /* allow / deny access to cells marked with 'mark' class name */
-.mark{color: white; background-color: #9B9EA2;}
+.mark {
+	color: white;
+	background-color: #9B9EA2;
+}
 /* trash cell */
-.trash{color: white; background-color: #2D4B7A;}
+.trash {
+	color: white;
+	background-color: #2D4B7A;
+}
 
 /* tables */
-div#drag table{
+div#drag table {
 	background-color: #e0e0e0;
 	border-collapse: collapse;
 }
 
 
-/* needed for IE6 because cursor "move" shown on radio button and checckbox ?! */
-div#drag input{
+/* styles for input elements */
+div#drag input {
 	cursor: auto;
+	height: 13px;
 }
 
-
 /* table cells */
-div#drag td{
+div#drag td {
 	height: 32px;
 	border: 1px solid white;
 	text-align: center;
@@ -85,9 +91,8 @@ div#drag td{
 	padding: 2px;
 }
 
-
 /* "Click" button */
-.button{
+.button {
 	background-color: #6A93D4;
 	color: white; 
 	border-width: 1px;
@@ -97,15 +102,15 @@ div#drag td{
 
 
 /* toggle checkboxes at the bottom */
-.checkbox{
+.checkbox {
 	margin-left: 13px;
 	margin-right: 14px;
 	width: 13px; /* needed for IE ?! */
 }
 
 
-/* button message */
-.message_line{
+/* message cell */
+.message_line {
 	padding-left: 10px;
 	margin-bottom: 3px;
 	font-size: 10pt;

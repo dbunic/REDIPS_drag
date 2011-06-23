@@ -12,15 +12,15 @@ var	rd = REDIPS.drag,	// reference to the REDIPS.drag library
 	start_positions,	// remembera start positions of DIV elements
 	reset,				// returns elements to their initial positions
 	shuffle,			// shuffles (randomizes the order of the elements on table)
-	enable,				// enables/disables all elements on page
+	enable_elements,	// enables/disables elements on page
+	enable_rows,		// enables/disables rows (row handler - blue circles) on page
 	get_id;				// returns id of element in opposite table
 
 
-// initialization -  after page is fully loaded
+// REDIPS.drag initialization and definition of event handlers
 window.onload = function () {
-	// (string) border style for disabled element
-	rd.border_disabled = 'solid';
-	rd.opacity_disabled = 70;
+	rd.border_disabled = 'solid';	// border style for disabled element will not be changed
+	rd.opacity_disabled = 70;		// disabled elements will have opacity effect
 	// initialize dragging containers (each table is placed in separate container)
 	rd.init('drag1');
 	rd.init('drag2');
@@ -40,21 +40,19 @@ window.onload = function () {
 		rd.row_opacity(rd.obj, 85);
 		// set opacity for source row and change source row background color (obj.obj_old is reference of source row)
 		rd.row_opacity(rd.obj_old, 20, 'white');
-		// disable elements in current container
-		//rd.enable_drag(false);
 	};
-	// row was dropped - move row in other table
+	// row was dropped - move row in opposite table
 	rd.myhandler_row_dropped = function () {
 		var	id_new = get_id(rd.obj),	// id of element from opposite table
 			row = [];					// returned value from move_object method
-		// disable elements in both container (enable is local function)
-		enable(false);
+		// disable elements in both containers ("enable_elements" is local function)
+		enable_elements(false);
 		// move row in other table (method returns reference to the mini table and source row)
-		// after animation is finished, enable elements in both containers
+		// after animation is finished, callback function "enable_elements" will enable elements in both containers
 		row = rd.move_object({
 			id: id_new,
 			callback: function () {
-				enable(true);
+				enable_elements(true);
 			}
 		});
 		// set opacity for moved row (row[0] is reference of cloned row - mini table)
@@ -62,36 +60,41 @@ window.onload = function () {
 		// set opacity for source row and change source row background color (row[1] is reference of source row)
 		rd.row_opacity(row[1], 20, 'White');
 	};
-	// row was dropped to the source (mini table (cloned row) will be removed and source row should return to original state)
+	// row was dropped to the source row (mini table - cloned row, will be removed and source row will return to original state)
 	rd.myhandler_row_dropped_source = function () {
 		// make source row completely visible (no opacity)
 		rd.row_opacity(rd.obj_old, 100);
-		// enable both containers (this is local function)
-		enable(true);
+		// enable both containers
+		enable_elements(true);
 	};
-	// element was dropped - move element in other table
+	// element was dropped - move element in opposite table
 	rd.myhandler_dropped = function () {
 		var	obj = rd.obj,			// reference to the current element
 			id_new = get_id(obj);	// id of element from opposite table
 		// disable current element
 		rd.enable_drag(false, obj);
-		// element with id_new will be moved to the dropped table cell
-		// because each table is closed within its own dragging container (tableIndex for both tables is 0)
+		// disable row handlers - blue circles ("enable_rows" is local function)
+		enable_rows(false);
+		// element from opposite table with id_new will be moved to the dropped table cell
+		// tableIndex for both tables is 0 because each table is closed in separate dragging container
+		// after animation is finished, callback function will enable previously disabled element and row handlers (blue circles)
 		rd.move_object({
 			id: id_new,
 			callback: function () {
 				rd.enable_drag(true, obj);
+				enable_rows(true);
 			}
 		});
 	};
 };
 
 
-
-// function scans all DIV elements and save their positions to the pos object
+/**
+ * Function scans all DIV elements and save their positions to the pos object.
+ */
 start_positions = function () {
 	var divs = [], id, i, j, position;
-	// collect DIV elements for both dragging area
+	// collect DIV elements from both dragging area
 	divs[0] = document.getElementById('drag1').getElementsByTagName('div');
 	divs[1] = document.getElementById('drag2').getElementsByTagName('div');
 	// open loop for each dragging area
@@ -114,8 +117,9 @@ start_positions = function () {
 };
 
 
-
-// method returns element to initial positions
+/**
+ * Function returns element to initial positions.
+ */
 reset = function () {
 	var id,
 		pos1;
@@ -138,20 +142,32 @@ reset = function () {
 };
 
 
-
-// method shuffles elements on table
+/**
+ * Function shuffles elements on both tables. Random positions are unique and different then current element positions.
+ */
 shuffle = function () {
 	var id,			// element id
 		rowIndex,	// row index (random number from 1 to 7)
-		cellIndex;	// cell index (random number from 1 to 5)
+		cellIndex,	// cell index (random number from 1 to 5)
+		rnd,		// random position
+		pos,		// current position as array (returned from get_position method)
+		pos1,		// current position in format rowIndex + '_' + cellIndex
+		arr = [];	// generated values will be saved in array (to avoid duplicate positions)
 	// loop goes through every "id" in loc object
 	for (id in loc) {
 		// test the property (filter properties of the prototype) and if element id begins with "d"
 		// other DIV elements are row handlers
 		if (loc.hasOwnProperty(id) && id.substring(0, 1) === 'd') {
-			// generate random row and cell indexs
-			rowIndex = Math.floor(Math.random() * 7) + 1;
-			cellIndex = Math.floor(Math.random() * 5) + 1;
+			pos = rd.get_position(id);		// set current position
+			pos1 = pos[1] + '_' + pos[2];	// prepare current position in format rowIndex + '_' + cellIndex
+			// generate random positions (must be unique and different then current position)
+			do {
+				rowIndex = Math.floor(Math.random() * 7) + 1;
+				cellIndex = Math.floor(Math.random() * 5) + 1;
+				rnd = rowIndex + '_' + cellIndex;
+			} while (arr.indexOf(rnd) > -1 || rnd === pos1);
+			// push generated value to the array (to avoid duplicate positions)
+			arr.push(rnd);
 			// move object to the random position
 			rd.move_object({
 				id: id,
@@ -162,29 +178,58 @@ shuffle = function () {
 };
 
 
-
 /**
- * Function will return id of element in opposite table.
+ * Function returns "id" of element in opposite table.
  * e.g. d2_1 -> d2_2 or d4_2 -> d4_1
- * @param {HTMLElement} DIV element.
+ * @param {HTMLElement} DIV element or TABLE element (in case when dragging row) - mini table. 
  * @return {String} Id of element in opposite table. 
  */
 get_id = function (obj) {
 	var	ri = {1: 2, 2: 1},						// needed for reverse 1 -> 2 or 2 -> 1
-		lc = obj.id.charAt(obj.id.length - 1),	// last character of id that should be reversed (1 -> 2 or 2 -> 1)
-		id_new = obj.id.slice(0, -1) + ri[lc];	// id of element from opposite table
+		id = obj.id || obj.redips_dragrow_id,	// define DIV id or mini table
+		lc = id.charAt(id.length - 1),			// last character of id that should be reversed (1 -> 2 or 2 -> 1)
+		id_new = id.slice(0, -1) + ri[lc];		// id of element from opposite table
 	// return new id
 	return id_new;
 };
 
 
-
 /**
- * Function enables all elements on page after row in other table is dropped (this is callback function).
+ * Function enables/disables all elements on page. In case when user drops row, elements (and rows) are disabled until animation finishes.
  * @param {Boolean} Flag enable or disable elements in both dragging containers.
  */
-enable = function (flag) {
-	// enable elements
+enable_elements = function (flag) {
 	rd.enable_drag(flag, 'drag1', 'container');
 	rd.enable_drag(flag, 'drag2', 'container');
 };
+
+
+/**
+ * Function enables/disables rows on page. In case when user drops element, row handlers are disabled until animation finishes.
+ * @param {Boolean} Flag enable or disable rows in both dragging containers.
+ */
+enable_rows = function (flag) {
+	var id;
+	// loop goes through every "id" in loc object
+	for (id in loc) {
+		// test the property (filter properties of the prototype) and if element id begins with "r"
+		// other DIV elements are DIV elements
+		if (loc.hasOwnProperty(id) && id.substring(0, 1) === 'r') {
+			rd.enable_drag(flag, id);
+		}
+	}
+};
+
+
+// indexOf of needed for IE browsers ?!
+if (!Array.prototype.indexOf) {
+	Array.prototype.indexOf = function (el) {
+		var i; // local variable
+		for (i = 0; i < this.length; i++) {
+			if (this[i] === el) {
+				return i;
+			}
+		}
+		return -1;
+	};
+}

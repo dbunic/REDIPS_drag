@@ -2201,9 +2201,8 @@ REDIPS.drag = (function () {
 			// return z-index and position style to 'static' (this is default element position) 
 			p.obj.style.zIndex = -1;
 			p.obj.style.position = 'static';
-			// if moved element is cell
-			if (p.mode === 'cell') {
-				// append element to the target cell
+			// if moved element is cell then append element to the target cell
+			if (p.mode === 'cell') { 
 				p.target_cell.appendChild(p.obj);
 			}
 			// else element is row

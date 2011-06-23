@@ -8,6 +8,9 @@ window.onload = function () {
 	// reference to the REDIPS.drag library and message line
 	var	rd = REDIPS.drag,
 		msg = document.getElementById('message');
+	// how to display disabled elements
+	rd.border_disabled = 'solid';	// border style for disabled element will not be changed (default is dotted)
+	rd.opacity_disabled = 60;		// disabled elements will have opacity effect
 	// initialization
 	rd.init();
 	// only "smile" can be placed to the marked cell
