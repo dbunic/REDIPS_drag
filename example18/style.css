@@ -12,8 +12,7 @@ body {
 }
 
 /* make drag containers visible */
-#drag1,
-#drag2,
+#drag,
 #buttons {
 	border: 2px dashed LightBlue;
 	width: 580px;
@@ -45,6 +44,7 @@ td {
 	/* I also tried with outline and that was fine, but Opera11 place high zIndex to outline grid and that looks wierd */
 	/* so, I paint TR to white with JavaScript and applying aplha filter to table content (DIV elements) */
 	border: 1px solid white;
+	height: 22px;
 }
 
 /* table titles */
@@ -59,9 +59,9 @@ th {
 	margin-top: 1px;
 	text-align: center;
 	font-size: 10pt;
-	width: 70px;
-	height: 20px;
-	line-height: 20px;
+	width: 60px;
+	height: 18px;
+	line-height: 18px;
 	border-width: 2px;
 	border-style: solid;
 	background-color: white;
@@ -70,37 +70,9 @@ th {
 	-moz-border-radius: 4px; /* FF */
 }
 
-/* blue DIV elements */
-.blue {
-	border-color: SteelBlue;
-}
-
 /* orange DIV elements */
 .orange {
 	border-color: #FF8A58;
-}
-
-/* DIV row handlers (blue left column) */
-.row {
-	width: 20px;
-	margin: 2px;
-	border: 2px solid LightBlue;
-	background-color: SteelBlue;
-	/* round corners */
-	border-radius: 14px; /* Opera, Chrome */
-	-moz-border-radius: 14px; /* FF */
-}
-
-/* row handler TD background color */
-.rowhandler {
-	background-color: #76ACDA;
-}
-
-/* marked cells (forbidden access for header and message line) */
-.mark {
-	color: white;
-	background-color: #aaa;
-	text-align: center;
 }
 
 /* row dark */
@@ -111,11 +83,6 @@ th {
 /* row light */
 .rl {
 	background-color: #eee;
-}
-
-/* cell dark */
-.cdark {
-	background-color: #C6C8CB;
 }
 
 /* blue button */

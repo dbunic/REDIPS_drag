@@ -1,5 +1,10 @@
 Changes for REDIPS.drag library
 
+4.3.0
+- added private method get_table_index
+- fixed BUG with public properties animation_pause and animation_step
+- added example18
+
 4.2.1
 - fixed BUG when row was dropped to the last row position in table
 - added redips_dragrow_id property to the cloned row (needed for dropped row identification)

@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 4.2.1
-Jun 20, 2011.
+Version 4.3.0
+Jun 24, 2011.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -47,9 +47,8 @@ REDIPS.drag = (function () {
 		save_content,				// scan tables, prepare query string and sent to the multiple-parameters.php
 		relocate,					// relocate objects from source cell to the target cell (source and target cells are input parameters)
 		move_object,				// method moves object to the destination table, row and cell
-		animation,
-		animation_pause = 40,
-		animation_step = 2,
+		animation,					// object animation
+		get_table_index,			// find table index - because tables array is sorted on every element click
 		get_position,				// returns position in format: tableIndex, rowIndex and cellIndex (input parameter is optional)
 		row_opacity,				// method sets opacity to table row (el, opacity, color)
 		row_clone,					// clone table row - input parameter is DIV with class name "row" -> DIV class="drag row"
@@ -112,6 +111,8 @@ REDIPS.drag = (function () {
 		current_cell = null,		// (object) current table cell (defined in onmousemove)
 		previous_cell = null,		// (object) previous table cell (defined in onmousemove)
 		target_cell = null,			// (object) target table cell (defined in onmouseup)
+		animation_pause = 40,		// animation pause (lower values mean the animation plays faster)
+		animation_step = 2,			// animation step (minimum is 1)
 		
 		clone_shiftKey = false;		// (boolean) if true, elements could be cloned with pressed SHIFT key
 
@@ -2034,21 +2035,31 @@ REDIPS.drag = (function () {
 		var p = {'direction': 1},	// param object (with default direction)
 			x1, y1,	w1, h1,			// coordinates and width/height of object to animate
 			x2, y2,	w2, h2,			// coordinates and width/height of target cell
-			row, col,				// destination index of row and cell
+			row, col,				// row and cell indexes
 			dx, dy,					// delta x and delta y
-			pos, i,					// local variables needed for calculation coordinates and settings of first point
+			pos, i,					// local variables needed for calculation coordinates and settings the first point
 			target;
 		// set callback function - it will be called after animation is finished
 		p.callback = ip.callback;
-		// define obj and obj_old (reference of the object to animate - DIV element or row handler
+		// define obj and obj_old (reference of the object to animate - DIV element or row handler)
 		// ip.id - input parameter obj_id
-		p.obj = p.obj_old = document.getElementById(ip.id);
-		// test if element is row handler
-		if (p.obj.className.indexOf('row') === -1) {
-			p.mode = 'cell';
+		if (typeof(ip.id) === 'string') {
+			p.obj = p.obj_old = document.getElementById(ip.id);
 		}
-		// dragging mode is "row"
-		else {
+		// test if animation mode is "row" (mode, source and target properties should be defined)
+		if (ip.mode === 'row') {
+			p.mode = 'row';
+			// find table index for source table (source[0] contains original table index)
+			i = get_table_index(ip.source[0]);
+			// define source row index from input parameter object
+			row = ip.source[1];
+			// define source row
+			p.obj_old = tables[i].rows[row];
+			// set reference to the mini table - cloned from source row (TABLE element)
+			p.obj = row_clone(p.obj_old);
+		}
+		// test if element is row handler
+		else if (p.obj.className.indexOf('row') > -1) {
 			p.mode = 'row';
 			// loop up until TR element is found
 			while (p.obj && p.obj.nodeName !== 'TR') {
@@ -2058,6 +2069,10 @@ REDIPS.drag = (function () {
 			p.obj_old = p.obj;
 			// set reference to the mini table - cloned from source row (TABLE element)
 			p.obj = row_clone(p.obj_old);
+		}
+		// animation mode is "cell"
+		else {
+			p.mode = 'cell';
 		}
 		// set high z-index
 		p.obj.style.zIndex = 999;
@@ -2079,12 +2094,8 @@ REDIPS.drag = (function () {
 		// set target table, row and cell indexes (needed for moving table row)
 		// table index is index from array not original table index
 		p.target = ip.target;
-		// find table index beacuse tables array is sorted on every element click (target[0] contains original table index)
-		for (i = 0; i < tables.length; i++) {
-			if (tables[i].redips_idx === ip.target[0]) {
-				break;
-			}
-		}
+		// find table index because tables array is sorted on every element click (target[0] contains original table index)
+		i = get_table_index(ip.target[0]);
 		// set index for row and cell (target input parameter is array)
 		row = ip.target[1];
 		col = ip.target[2];
@@ -2178,7 +2189,7 @@ REDIPS.drag = (function () {
 		var k = (p.k1 - p.k2 * i) * (p.k1 - p.k2 * i),
 			f;
 		// calculate step and function of step (y = m * x + b)
-		i = i + animation_step * (4 - k * 3) * p.direction;
+		i = i + REDIPS.drag.animation_step * (4 - k * 3) * p.direction;
 		f = p.m * i + p.b;
 		// set element position
 		if (p.type === 'horizontal') {
@@ -2194,7 +2205,7 @@ REDIPS.drag = (function () {
 			// recursive call for next step
 			setTimeout(function () {
 				animation(i, p);
-			}, animation_pause * k);
+			}, REDIPS.drag.animation_pause * k);
 		}
 		// animation is finished
 		else {
@@ -2281,7 +2292,21 @@ REDIPS.drag = (function () {
 		// return result array
 		return arr;
 	};
+	
 
+	/**
+	 * Find table index - because tables array is sorted on every element click.
+	 * @param {Integer} Table index of initial table order.
+	 */
+	get_table_index = function (idx) {
+		var i;
+		for (i = 0; i < tables.length; i++) {
+			if (tables[i].redips_idx === idx) {
+				break;
+			}
+		}
+		return i;
+	};
 
 
 	// function sets opacity to table row
@@ -2354,8 +2379,8 @@ REDIPS.drag = (function () {
 		delete_cloned		: delete_cloned,	// (boolean) delete cloned div if the cloned div is dragged outside of any table
 		cloned_id			: cloned_id,		// (array) needed for increment ID of cloned elements
 		clone_shiftKey		: clone_shiftKey,	// (boolean) if true, elements could be cloned with pressed SHIFT key
-		animation_pause		: animation_pause,
-		animation_step		: animation_step,
+		animation_pause		: animation_pause,	// animation pause (lower values mean the animation plays faster)
+		animation_step		: animation_step,	// animation step (minimum is 1)
 
 		// public methods
 		init				: init,

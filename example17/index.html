@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta name="author" content="Darko Bunic"/>
-		<meta name="description" content="Drag and drop table rows with JavaScript"/>
+		<meta name="description" content="Drag and drop table content/rows with JavaScript"/>
 		<link rel="stylesheet" href="style.css" type="text/css" media="screen" />
 		<script type="text/javascript" src="../redips-drag.js"></script>
 		<script type="text/javascript" src="script.js"></script>
@@ -10,12 +10,12 @@
 	</head>
 	<body>
 		<center>
-			<h1><a href="http://www.redips.net/javascript/drag-and-drop-table-row/">www.redips.net</a></h1>
+			<h1><a href="http://www.redips.net/javascript/drag-and-drop-animation/">www.redips.net</a></h1>
 			<h2>Example 17: Move object (animation)</h2>
-			<!-- reset button -->
-			<div>
-				<input type="button" value="Reset" onclick="javascript:reset()"/>
-				<input type="button" value="Shuffle" onclick="javascript:shuffle()"/>
+			<!-- buttons -->
+			<div id="buttons">
+				<input type="button" value="Reset" class="button" onclick="javascript:reset()"/>
+				<input type="button" value="Shuffle" class="button" onclick="javascript:shuffle()"/>
 			</div>
 			<!-- first drag region -->
 			<div id="drag1">

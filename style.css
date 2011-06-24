@@ -17,7 +17,7 @@ body {
 /* drag container (contains two tables) */
 #drag {
 	margin: auto;
-	width: 645px;
+	width: 730px;
 }
 
 /* drag objects (DIV inside table cells) */
@@ -28,12 +28,9 @@ body {
 	z-index: 10;
 	background-color: #f0f0f0;
 	text-align: left;
-	padding-left: 3px;
+	padding: 5px;
 	font-size: 12px;
-	width: 280px;
-	height: 33px;
-	/* needed for vertical text align */
-	line-height: 33px;
+	width: 190px;
 	/* round corners for FF, Chrome, Safari (except IE) */
 	-moz-border-radius: 10px;
 	-webkit-border-radius: 10px;

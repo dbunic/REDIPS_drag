@@ -8,12 +8,14 @@
 	// properties
 var	rd = REDIPS.drag,	// reference to the REDIPS.drag library
 	loc = {},			// initial locations of DIV elements
+	lock = 0,			// needed for enable/disable element synchronization (used in enable_rows)
 	// methods
-	start_positions,	// remembera start positions of DIV elements
+	start_positions,	// remember a start positions of DIV elements
 	reset,				// returns elements to their initial positions
-	shuffle,			// shuffles (randomizes the order of the elements on table)
+	shuffle,			// shuffles (randomizes the order of the elements on tables)
 	enable_elements,	// enables/disables elements on page
 	enable_rows,		// enables/disables rows (row handler - blue circles) on page
+	enable_buttons,		// enables/disables buttons (called from enable elements and enable_rows)
 	get_id;				// returns id of element in opposite table
 
 
@@ -73,7 +75,7 @@ window.onload = function () {
 			id_new = get_id(obj);	// id of element from opposite table
 		// disable current element
 		rd.enable_drag(false, obj);
-		// disable row handlers - blue circles ("enable_rows" is local function)
+		// disable row handlers - blue circles ("enable_rows" is a local function)
 		enable_rows(false);
 		// element from opposite table with id_new will be moved to the dropped table cell
 		// tableIndex for both tables is 0 because each table is closed in separate dragging container
@@ -82,7 +84,7 @@ window.onload = function () {
 			id: id_new,
 			callback: function () {
 				rd.enable_drag(true, obj);
-				enable_rows(true);
+				enable_rows();
 			}
 		});
 	};
@@ -132,9 +134,13 @@ reset = function () {
 			pos1 = rd.get_position(id);
 			// if current position is different then initial position the return element to the initial position
 			if (loc[id].toString() !== pos1.toString()) {
+				// disable row handlers - blue circles
+				enable_rows(false);
+				// move object to the initial position
 				rd.move_object({
-					id: id,
-					target: loc[id]
+					id: id,					// id of object to move
+					target: loc[id],		// target position
+					callback: enable_rows	// function to call after moving is over
 				});
 			}
 		}
@@ -152,15 +158,15 @@ shuffle = function () {
 		rnd,		// random position
 		pos,		// current position as array (returned from get_position method)
 		pos1,		// current position in format rowIndex + '_' + cellIndex
-		arr = [];	// generated values will be saved in array (to avoid duplicate positions)
+		arr = [];	// generated positions will be saved in array (to avoid duplicates)
 	// loop goes through every "id" in loc object
 	for (id in loc) {
 		// test the property (filter properties of the prototype) and if element id begins with "d"
 		// other DIV elements are row handlers
 		if (loc.hasOwnProperty(id) && id.substring(0, 1) === 'd') {
-			pos = rd.get_position(id);		// set current position
+			pos = rd.get_position(id);		// set current position for DIV element with defined id
 			pos1 = pos[1] + '_' + pos[2];	// prepare current position in format rowIndex + '_' + cellIndex
-			// generate random positions (must be unique and different then current position)
+			// generate random position (must be unique and different then current position)
 			do {
 				rowIndex = Math.floor(Math.random() * 7) + 1;
 				cellIndex = Math.floor(Math.random() * 5) + 1;
@@ -168,10 +174,13 @@ shuffle = function () {
 			} while (arr.indexOf(rnd) > -1 || rnd === pos1);
 			// push generated value to the array (to avoid duplicate positions)
 			arr.push(rnd);
+			// disable row handlers - blue circles
+			enable_rows(false);
 			// move object to the random position
 			rd.move_object({
-				id: id,
-				target: [0, rowIndex, cellIndex]
+				id: id,								// id of object to move
+				target: [0, rowIndex, cellIndex],	// target position
+				callback: enable_rows				// function to call after moving is over 
 			});
 		}
 	}
@@ -195,33 +204,70 @@ get_id = function (obj) {
 
 
 /**
- * Function enables/disables all elements on page. In case when user drops row, elements (and rows) are disabled until animation finishes.
+ * Function enables/disables buttons and all elements on page. In case when user drops row, elements (and rows) are disabled until animation finishes.
  * @param {Boolean} Flag enable or disable elements in both dragging containers.
  */
 enable_elements = function (flag) {
 	rd.enable_drag(flag, 'drag1', 'container');
 	rd.enable_drag(flag, 'drag2', 'container');
+	// enable/disable buttons "Reset" and "Shuffle"
+	enable_buttons(flag);
 };
 
 
 /**
- * Function enables/disables rows on page. In case when user drops element, row handlers are disabled until animation finishes.
+ * Function enables/disables rows and buttons on page. In case when user drops element, row handlers are disabled until all animations are finishes.
+ * "lock" variable is used for animation synchronization.
  * @param {Boolean} Flag enable or disable rows in both dragging containers.
  */
 enable_rows = function (flag) {
 	var id;
-	// loop goes through every "id" in loc object
-	for (id in loc) {
-		// test the property (filter properties of the prototype) and if element id begins with "r"
-		// other DIV elements are DIV elements
-		if (loc.hasOwnProperty(id) && id.substring(0, 1) === 'r') {
-			rd.enable_drag(flag, id);
+	// input parameter is optional (default value is true)
+	if (flag === undefined) {
+		flag = true;
+	}
+	// enable element - decrease lock variable
+	if (flag) {
+		lock--;
+	}
+	// if lock variable is 0 (condition "lock === 0" will be fine)
+	if (lock <= 0) {
+		// set lock variable to 0 (just to be sure - it should be 0 anyway)
+		lock = 0;
+		// enable/disable buttons "Reset" and "Shuffle"
+		enable_buttons(flag);
+		// loop goes through every "id" in loc object
+		for (id in loc) {
+			// test the property (filter properties of the prototype) and if element id begins with "r"
+			// other DIV elements are DIV elements
+			if (loc.hasOwnProperty(id) && id.substring(0, 1) === 'r') {
+				rd.enable_drag(flag, id);
+			}
 		}
+	}
+	// after element is dropped, it will be disabled first (so this code is executed first in enable_rows() function)
+	if (!flag) {
+		lock++;
 	}
 };
 
 
-// indexOf of needed for IE browsers ?!
+/**
+ * Function enables/disables buttons (it's called from enable_elements() and enable_rows() functions)
+ * @param {Boolean} Flag enable or disable buttons.
+ */
+enable_buttons = function (flag) {
+	var buttons, i;
+	// collect buttons from buttons area
+	buttons = document.getElementById('buttons').getElementsByTagName('input');
+	// open loop
+	for (i = 0; i < buttons.length; i++) {
+		buttons[i].disabled = !flag;
+	}
+};
+
+
+// indexOf method - needed for IE browsers ?!
 if (!Array.prototype.indexOf) {
 	Array.prototype.indexOf = function (el) {
 		var i; // local variable

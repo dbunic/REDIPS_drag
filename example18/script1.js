@@ -1,0 +1,62 @@
+/*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
+/*global window: false, REDIPS: true */
+
+/* enable strict mode */
+"use strict";
+
+/* Simple row animation */
+
+var	rd = REDIPS.drag,	// reference to the REDIPS.drag library
+	move,				// moves object to the random position
+	enable_button;		// enables/disables button and DIV element
+
+
+// REDIPS.drag initialization
+window.onload = function () {
+	rd.init();
+	// animation pause (lower values mean the animation plays faster)
+	rd.animation_pause = 40;
+	// animation step (minimum is 1)
+	rd.animation_step = 2;
+};
+
+
+/**
+ * Function moves first row to the last position.
+ */
+move = function () {
+	// returned value from move_object method (array with source row and mini table reference)
+	var	row = [];
+	// disable "Move" button
+	enable_button(false);
+	// move object to the random position
+	row = rd.move_object({
+			mode: 'row',			// animation mode - row
+			source: [0, 0],			// source position (table index and row index)
+			target: [0, 6],			// target position
+			callback: enable_button	// function to call after animation is over
+			//callback: move		// try to comment line above and uncomment this line (refresh page and click on "Move" button)
+		});
+	// set opacity for moved row (row[0] is reference of cloned row - mini table)
+	rd.row_opacity(row[0], 85);
+	// set opacity for source row and change source row background color (row[1] is reference of source row)
+	rd.row_opacity(row[1], 20, 'LightBlue');
+};
+
+
+/**
+ * Function enables/disables button and DIV element.
+ * @param {Boolean} Flag enable or disable buttons.
+ */
+enable_button = function (flag) {
+	var button = document.getElementById('btn_move');
+	// input parameter is optional (default value is true)
+	if (flag === undefined) {
+		flag = true;
+	}
+	// enable/disable button
+	button.disabled = !flag;
+	// enable/disable DIV element
+	rd.enable_drag(flag, 'd1');
+};
+
