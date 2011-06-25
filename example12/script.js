@@ -37,8 +37,9 @@ window.onload = function () {
 			// define id of element to move
 			id = div2[i].id;
 			// element will be moved to the dropped table cell
-			rd.move_object(id);
-			//rd.target_cell.appendChild(div2[i]); 
+			rd.move_object({id: id});
+			// try to comment upper line and uncomment this line (elements will be relocated without animation)
+			//rd.target_cell.appendChild(div2[i]);
 		}
 	};
 };

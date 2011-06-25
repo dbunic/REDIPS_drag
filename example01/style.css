@@ -76,11 +76,18 @@ div#drag table {
 }
 
 
-/* styles for input elements */
+/* input elements in dragging container */
 div#drag input {
 	cursor: auto;
-	height: 13px;
 }
+	/* height for input text in DIV element */
+	div#drag #d13 input {
+		height: 13px;
+	}
+	/* height for dropdown menu in DIV element */
+	div#drag #d5 select {
+		height: 20px;
+	}
 
 /* table cells */
 div#drag td {

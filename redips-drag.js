@@ -1795,9 +1795,9 @@ REDIPS.drag = (function () {
 	 * First parameter can be (string)"init", (boolean)true or (boolean)false.
 	 * If first parameter is (string)"init" then DIV elements will be enabled and onscroll attached to the DIV class="scroll".
 	 * If first parameter is (boolean)true or (boolean)false and second parameter isn't defined then DIV elements in current container will be enabled/disabled.
-	 * @param {String/Boolean} Enable_flag enable/disable element (or dragging container).
+	 * @param {String/Boolean} enable_flag Enable/disable element (or element container like table, dragging container ...).
 	 * @param {String/HTMLElement} [div_id] Element id (or dragging area) to enable/disable. Parameter is optional and defines DIV object or DIV id of element to enable/disable.
-	 * @param {String} [type] Definition if div_id is element or dragging container. Parameter is optional and defines enable/disable for elements in container (div_id in this context is id of drag container).
+	 * @param {String} [type] Definition if div_id is element or element container. Parameter is optional and defines enable/disable for elements in container (div_id in this context is id of element container).
 	 */
 	enable_drag = function (enable_flag, div_id, type) {
 		// define local variables
@@ -2296,7 +2296,8 @@ REDIPS.drag = (function () {
 
 	/**
 	 * Find table index - because tables array is sorted on every element click.
-	 * @param {Integer} Table index of initial table order.
+	 * @param {Integer} idx Table index of initial table order.
+	 * @return {Integer} Returns current index from tables array.
 	 */
 	get_table_index = function (idx) {
 		var i;

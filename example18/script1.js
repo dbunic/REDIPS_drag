@@ -8,7 +8,7 @@
 
 var	rd = REDIPS.drag,	// reference to the REDIPS.drag library
 	move,				// moves object to the random position
-	enable_button;		// enables/disables button and DIV element
+	enable_button;		// enables/disables button and DIV elements
 
 
 // REDIPS.drag initialization
@@ -45,8 +45,8 @@ move = function () {
 
 
 /**
- * Function enables/disables button and DIV element.
- * @param {Boolean} Flag enable or disable buttons.
+ * Function enables/disables "Move" button and DIV elements.
+ * @param {Boolean} Flag enable or disable buttons and DIV elements.
  */
 enable_button = function (flag) {
 	var button = document.getElementById('btn_move');
@@ -56,7 +56,6 @@ enable_button = function (flag) {
 	}
 	// enable/disable button
 	button.disabled = !flag;
-	// enable/disable DIV element
-	rd.enable_drag(flag, 'd1');
+	// enable/disable DIV elements in dragging container
+	rd.enable_drag(flag, 'drag', 'container');
 };
-
