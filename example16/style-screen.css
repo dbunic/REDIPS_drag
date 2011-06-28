@@ -109,11 +109,6 @@ div#drag table{
 	-moz-border-radius: 4px; /* FF */
 }
 
-/* append here cloned object before placing to the target table cell */
-#obj_new{
-	height: 23px;
-	width: 10px;
-}
 
 /* style tooltip content and content in dropped element */
 .content {

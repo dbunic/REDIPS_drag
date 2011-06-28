@@ -1,5 +1,10 @@
 Changes for REDIPS.drag library
 
+4.3.1
+- id name "obj_new" changed to "redips_clone"
+- added private method "form_elements"
+  fixed reseting dropdown menu, checkboxes and so on in case of dragging table rows - thanks to Greg Palmer
+
 4.3.0
 - added private method get_table_index
 - fixed BUG with public properties animation_pause and animation_step

@@ -155,8 +155,8 @@ div#drag table td,th{
 
 
 /* append here cloned object before placing to the target table cell */
-#obj_new{
-	/* make obj_new div visible */
+#redips_clone{
+	/* make redips_clone div visible */
 	/* border: 1px solid red; */
 	height: 10px;
 	width: 100px;
@@ -167,7 +167,7 @@ div#drag table td,th{
 	color: white;
 	background-color: #aaa;
 	text-align: center;
-	/* top margin is made with unvisible obj_new DIV */
+	/* top margin is made with unvisible redips_clone DIV */
 	/* margin-top: 10px; */
 }
 

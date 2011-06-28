@@ -58,9 +58,3 @@ div#drag td{
 		float: right;
 		margin: 0px 0px auto auto;
 	}
-
-/* append here cloned object before placing to the target table cell */
-#obj_new{
-	height: 32px;
-	width: 100px;
-}

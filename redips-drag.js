@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 4.3.0
-Jun 24, 2011.
+Version 4.3.1
+Jun 29, 2011.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -17,6 +17,14 @@ Jun 24, 2011.
 // create REDIPS namespace (if is not already defined in another REDIPS package)
 var REDIPS = REDIPS || {};
 
+
+/**
+ * @namespace
+ * @name REDIPS.drag
+ * @author Darko Bunic
+ * @see Demo <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">http://www.redips.net/javascript/drag-and-drop-table-content/</a>
+ * @version 4.3.1
+ */
 REDIPS.drag = (function () {
 		// methods
 	var	init,						// initialization
@@ -42,7 +50,6 @@ REDIPS.drag = (function () {
 		clone_object,				// clone object
 		clone_limit,				// clone limit (after cloning object, take care about climit1_X or climit2_X classnames)
 		elementControl,				// function returns true or false if element needs to have control
-		trash_delete,				// delete DIV object
 		get_style,					// function returns style value of requested object and style name
 		save_content,				// scan tables, prepare query string and sent to the multiple-parameters.php
 		relocate,					// relocate objects from source cell to the target cell (source and target cells are input parameters)
@@ -53,6 +60,7 @@ REDIPS.drag = (function () {
 		row_opacity,				// method sets opacity to table row (el, opacity, color)
 		row_clone,					// clone table row - input parameter is DIV with class name "row" -> DIV class="drag row"
 		row_drop,					// function drops (delete old & insert new) table row (input parameters are current table and row)
+		form_elements,				// set form values in cloned row (to prevent reset values of form elements)
 	
 		// private parameters
 		obj_margin = null,			// space from clicked point to the object bounds (top, right, bottom, left)
@@ -103,7 +111,7 @@ REDIPS.drag = (function () {
 		border = 'solid',			// (string) border style for enabled elements
 		border_disabled = 'dotted',	// (string) border style for disabled elements
 		opacity_disabled,			// (integer) set opacity for disabled elements
-		trash = 'trash',			// (string) cell class name where draggable element will be destroyed
+		trash_cname = 'trash',			// (string) cell class name where draggable element will be destroyed
 		trash_ask = true,			// (boolean) confirm object deletion (ask a question "Are you sure?" before delete)
 		drop_option = 'multiple',	// (string) drop_option has the following options: multiple, single, switch, switching and overwrite
 		delete_cloned = true,		// (boolean) delete cloned div if the cloned div is dragged outside of any table
@@ -118,13 +126,13 @@ REDIPS.drag = (function () {
 
 
 
-	// initialization of div drag
+	// drag container initialization 
 	init = function (dd) {
 		// define local variables
 		var self = this,		// assign reference to current object to "self"
 			i,					// used in local for loops
 			imgs,				// collect images inside div=drag
-			obj_new_div;		// reference to the DIV element needed for cloned elements 
+			redips_clone;		// reference to the DIV element needed for cloned elements 
 
 		// if input parameter is undefined, then set reference to the DIV element with id=drag
 		if (dd === undefined) {
@@ -132,14 +140,14 @@ REDIPS.drag = (function () {
 		}
 		// set reference to the div_drag
 		div_drag = document.getElementById(dd);
-		// append DIV id="obj_new" if DIV doesn't exist (needed for cloning DIV elements)
-		// if automatic creation isn't precise enough, user can manually create and place element with id="obj_new" to prevent window expanding
+		// append DIV id="redips_clone" if DIV doesn't exist (needed for cloning DIV elements)
+		// if automatic creation isn't precise enough, user can manually create and place element with id="redips_clone" to prevent window expanding
 		// (then this code will be skipped)
-		if (!document.getElementById('obj_new')) {
-			obj_new_div = document.createElement('div');
-			obj_new_div.id = 'obj_new';
-			obj_new_div.style.width = obj_new_div.style.height = '1px';
-			div_drag.appendChild(obj_new_div);
+		if (!document.getElementById('redips_clone')) {
+			redips_clone = document.createElement('div');
+			redips_clone.id = 'redips_clone';
+			redips_clone.style.width = redips_clone.style.height = '1px';
+			div_drag.appendChild(redips_clone);
 		}
 		// attach onmousedown event handler to the DIV elements
 		// attach onscroll='calculate_cells' for DIV elements with 'scroll' in class name (prepare scrollable container areas)
@@ -471,6 +479,8 @@ REDIPS.drag = (function () {
 					table_mini.deleteRow(i);
 				}
 			}
+			// set form values in cloned row (to prevent reset values of form elements)
+			form_elements(row_obj, table_mini.rows[0]);
 			// collect div elements from the source row
 			// needed for setting of custom properties redips_enabled and redips_container in cloned row
 			div1 = row_obj.getElementsByTagName('div');
@@ -494,8 +504,8 @@ REDIPS.drag = (function () {
 			table_mini.redips_container = el.redips_container;
 			// add id of <DIV class="drag row" id="row1"> (needed for dropped row identification)
 			table_mini.redips_dragrow_id = row_obj.redips_dragrow_id;
-			// append cloned mini table to the DIV id="obj_new"
-			document.getElementById('obj_new').appendChild(table_mini);
+			// append cloned mini table to the DIV id="redips_clone"
+			document.getElementById('redips_clone').appendChild(table_mini);
 			// include scroll position in offset
 			offset = box_offset(row_obj, 'fixed');
 			// set position and position type
@@ -565,6 +575,57 @@ REDIPS.drag = (function () {
 	};
 
 
+	/**
+	 * Method sets form values after cloning table row. Method is called from row_clone.
+	 * cloneNode() should take care about form values when performing deep cloning - but some browsers have a problem.
+	 * This method will fix checkboxes, selected indexes and so on when dragging table row (values in form elements will be preserved).
+	 * @param {HTMLElement} source Source table row.
+	 * @param {HTMLElement} cloned Cloned table row. Table row is cloned in a moment of dragging.
+	 * @private
+	 * @memberOf REDIPS.drag#
+	 * @see <a href="#row_clone">row_clone</a>
+	 */
+	form_elements = function (source, cloned) {
+		// local variables
+		var i, j, k, type,
+			src = [],	// collection of form elements from source row
+			cld = [];	// collection of form elements from cloned row
+		// collect form elements from source row
+		src[0] = source.getElementsByTagName('input');
+		src[1] = source.getElementsByTagName('textarea');
+		src[2] = source.getElementsByTagName('select');
+		// collect form elements from cloned row
+		cld[0] = cloned.getElementsByTagName('input');
+		cld[1] = cloned.getElementsByTagName('textarea');
+		cld[2] = cloned.getElementsByTagName('select');
+		// loop through found form elements in source row
+		for (i = 0; i < src.length; i++) {
+			for (j = 0; j < src[i].length; j++) {
+				// define element type
+				type = src[i][j].type;
+				switch (type) {
+				case 'text':
+				case 'textarea':
+				case 'password':
+					cld[i][j].value = src[i][j].value;
+					break;
+				case 'radio':
+				case 'checkbox':
+					cld[i][j].checked = src[i][j].checked;
+					break;
+				case 'select-one':
+					cld[i][j].selectedIndex = src[i][j].selectedIndex;
+					break;
+				case 'select-multiple':
+					for (k = 0; k < src[i][j].options.length; k++) {
+						cld[i][j].options[k].selected = src[i][j].options[k].selected;
+					}
+					break;
+				} // end switch
+			} // end for j
+		} // end for i
+	};
+
 
 	// onmouseup handler
 	handler_onmouseup = function (e) {
@@ -606,14 +667,14 @@ REDIPS.drag = (function () {
 		scroll_height = document.documentElement.scrollHeight;	
 		// reset autoscroll flags
 		edge.flag.x = edge.flag.y = 0;
-		// this could happen if 'clone' element is placed in unmovable table cell
+		// this could happen if "clone" element is placed inside unmovable table cell
 		if (cloned_flag === 1 && (table === null || row === null || cell === null)) {
 			obj.parentNode.removeChild(obj);
 			// decrease cloned_id counter
 			cloned_id[obj_old.id] -= 1;
 			REDIPS.drag.myhandler_notcloned();
 		}
-		// if ordinary element was clicked and left button was released, but element is placed inside unmovable table cell
+		// if DIV element was clicked and left button was released, but element is placed inside unmovable table cell
 		else if (table === null || row === null || cell === null) {
 			REDIPS.drag.myhandler_notmoved();
 		}		
@@ -684,14 +745,14 @@ REDIPS.drag = (function () {
 			else if (moved_flag === 0) {
 				REDIPS.drag.myhandler_notmoved();
 			}
-			// delete cloned object if dropped on the start position
+			// delete cloned element if dropped on the start position
 			else if (cloned_flag === 1 && table_source === table && row_source === row && cell_source === cell) {
 				obj.parentNode.removeChild(obj);
 				// decrease cloned_id counter
 				cloned_id[obj_old.id] -= 1;
 				REDIPS.drag.myhandler_notcloned();
 			}
-			// delete cloned object if dropped outside current table and delete_cloned flag is true
+			// delete cloned element if dropped outside current table and delete_cloned flag is true
 			else if (cloned_flag === 1 && REDIPS.drag.delete_cloned === true &&
 					(X < target_table.offset[3] || X > target_table.offset[1] || Y < target_table.offset[0] || Y > target_table.offset[2])) {
 				obj.parentNode.removeChild(obj);
@@ -700,12 +761,34 @@ REDIPS.drag = (function () {
 				REDIPS.drag.myhandler_notcloned();
 			}
 			// remove object if destination cell has "trash" in class name
-			else if (target_cell.className.indexOf(REDIPS.drag.trash) > -1) {
+			else if (target_cell.className.indexOf(REDIPS.drag.trash_cname) > -1) {
 				// remove child from DOM (node still exists in memory)
 				obj.parentNode.removeChild(obj);
 				// if parameter trash_ask is "true", confirm deletion (function trash_delete is at bottom of this script)
 				if (REDIPS.drag.trash_ask) {
-					setTimeout(trash_delete, 10);
+					setTimeout(function () {
+						// Are you sure?
+						if (confirm('Are you sure you want to delete?')) {
+							// yes, call myhandler_deleted event handler
+							REDIPS.drag.myhandler_deleted();
+							// if object is cloned, update climit1_X or climit2_X classname
+							if (cloned_flag === 1) {
+								clone_limit();
+							}
+						}
+						// no, do undelete
+						else {
+							// undelete DIV element
+							if (cloned_flag !== 1) {
+								// append removed object to the source table cell
+								tables[table_source].rows[row_source].cells[cell_source].appendChild(obj);
+								// and recalculate table cells because undelete can change row dimensions 
+								calculate_cells();
+							}
+							// call undeleted event handler
+							REDIPS.drag.myhandler_undeleted();	
+						}
+					}, 20);
 				}
 				// else call myhandler_deleted handler (reference to the obj still exists)
 				else {
@@ -732,7 +815,7 @@ REDIPS.drag = (function () {
 				REDIPS.drag.myhandler_dropped_before(target_cell);
 				// and finaly, append dragged object to the destination table cell
 				target_cell.appendChild(obj);
-				// if destination element exists, than elements are switched
+				// if destination element exists, then elements are switched
 				if (target_elements_length) {
 					// call myhandler_switched because clone_limit could call myhandler_clonedend1 or myhandler_clonedend2
 					REDIPS.drag.myhandler_switched();
@@ -1178,7 +1261,7 @@ REDIPS.drag = (function () {
 					currentCell.containTable = 0;
 				}
 				// if current cell isn't trash cell, then search for marks in class name
-				if (cell_current.className.indexOf(REDIPS.drag.trash) === -1) {
+				if (cell_current.className.indexOf(REDIPS.drag.trash_cname) === -1) {
 					// search for 'only' class name
 					only_found = cell_current.className.indexOf(REDIPS.drag.only.cname) > -1 ? true : false;
 					// if current cell is marked with 'only' class name
@@ -1423,8 +1506,13 @@ REDIPS.drag = (function () {
 	};
 
 
-
-	// function returns scroll positions in array
+	/**
+	 * Method returns current page scroll position as array.
+	 * @return {Array} Returns array with two members [ scrollX, scrollY ].
+	 * @public
+	 * @function
+	 * @name REDIPS.drag#getScrollPosition
+	 */
 	getScrollPosition = function () {
 		// define local scroll position variables
 		var scrollX, scrollY;
@@ -1600,14 +1688,20 @@ REDIPS.drag = (function () {
 	};
 	
 
-
-	// clone object
+	/**
+	 * Clone current DIV element.
+	 * If class name of DIV element contains "clone" or "clone_shiftKey" is set to true, then current DIV element will be cloned (and attached to the "redips_clone" element).
+	 * This method is called from handler_onmousemove.
+	 * @private
+	 * @memberOf REDIPS.drag#
+	 * @see <a href="#handler_onmousemove">handler_onmousemove</a>
+	 */
 	clone_object = function () {
 		var obj_new = obj.cloneNode(true),	// clone object 
 			offset,							// offset of the original object
 			offset_dragged;					// offset of the new object (cloned)
-		// append cloned element to the DIV id="obj_new"
-		document.getElementById('obj_new').appendChild(obj_new);
+		// append cloned element to the DIV id="redips_clone"
+		document.getElementById('redips_clone').appendChild(obj_new);
 		// get IE (all versions) to allow dragging outside the window (?!)
 		// this was needed here also -  despite setCaputure in onmousedown
 		if (obj_new.setCapture) {
@@ -1645,7 +1739,6 @@ REDIPS.drag = (function () {
 		// set reference to the cloned object	
 		REDIPS.drag.obj = obj = obj_new;
 	};
-
 
 
 	// after cloning object, take care about climit1_X or climit2_X classnames
@@ -1738,66 +1831,22 @@ REDIPS.drag = (function () {
 				flag = false;
 			}
 		}
-		// return flag flag
+		// return true/false flag
 		return flag;
-	};
-
-
-	
-	// delete DIV object
-	trash_delete = function () {
-		var div_text = 'element',	// div content (inner text)
-			border;					// border color (green or blue)
-		// find the border color of DIV element (t1 - green, t2 - blue, t3 - orange)
-		if (obj.className.indexOf('t1') > 0) {
-			border = 'green';
-		}
-		else if (obj.className.indexOf('t2') > 0) {
-			border = 'blue';
-		}
-		else {
-			border = 'orange';
-		}
-		// set div text (cross browser)
-		if (obj.getElementsByTagName('INPUT').length || obj.getElementsByTagName('SELECT').length) {
-			div_text = 'form element';
-		}
-		else if (obj.innerText || obj.textContent) {
-			div_text = '"' + (obj.innerText || obj.textContent) + '"';
-		}
-		// ask if user is sure
-		if (confirm('Delete ' + div_text + ' (' + border + ') from\n table ' + table_source + ', row ' + row_source + ' and column ' + cell_source + '?')) {
-			// yes, user is sure only call myhandler_deleted function
-			REDIPS.drag.myhandler_deleted();
-			// if object is cloned, update climit1_X or climit2_X classname
-			if (cloned_flag === 1) {
-				clone_limit();
-			}
-		}
-		// user is unsure - do undelete
-		else {
-			// undelete ordinary movable element
-			if (cloned_flag !== 1) {
-				// append removed object to the source table cell
-				tables[table_source].rows[row_source].cells[cell_source].appendChild(obj);
-				// and recalculate table cells because undelete can change row dimensions 
-				calculate_cells();
-			}
-			// call undeleted handler
-			REDIPS.drag.myhandler_undeleted();	
-		}
 	};
 
 
 
 	/**
-	 * Method attaches/detaches onmousedown, ondblclick events and attaches onscroll event for DIV elements.
-	 * First parameter can be (string)"init", (boolean)true or (boolean)false.
-	 * If first parameter is (string)"init" then DIV elements will be enabled and onscroll attached to the DIV class="scroll".
-	 * If first parameter is (boolean)true or (boolean)false and second parameter isn't defined then DIV elements in current container will be enabled/disabled.
-	 * @param {String/Boolean} enable_flag Enable/disable element (or element container like table, dragging container ...).
-	 * @param {String/HTMLElement} [div_id] Element id (or dragging area) to enable/disable. Parameter is optional and defines DIV object or DIV id of element to enable/disable.
-	 * @param {String} [type] Definition if div_id is element or element container. Parameter is optional and defines enable/disable for elements in container (div_id in this context is id of element container).
+	 * Method attaches / detaches onmousedown, ondblclick events to DIV elements and attaches onscroll event to the scrollable containers in initialization phase.
+	 * @example enable_drag(true, 'el_id') - enables element with id="el_id"
+	 * @example enable_drag(false, 'drag1', 'container') - disables all elements in drag1 container
+	 * @param {String|Boolean} enable_flag Enable / disable element (or element container like table, dragging container ...).
+	 * @param {String|HTMLElement} [div_id] Element id (or dragging area) to enable / disable. Parameter defines DIV object or DIV id of element(s) to enable / disable.
+	 * @param {String} [type] Type definition for the second parameter div_id - element or container.
+	 * @public
+	 * @function
+	 * @name REDIPS.drag#enable_drag
 	 */
 	enable_drag = function (enable_flag, div_id, type) {
 		// define local variables
@@ -1924,9 +1973,16 @@ REDIPS.drag = (function () {
 	};
 
 
-
-	// method returns style value of requested object and style name
-	// http://www.quirksmode.org/dom/getstyles.html
+	/**
+	 * Method returns style value for requested HTML element and style name.
+	 * @param {HTMLElement} el Requested HTML element.
+	 * @param {String} style_name Asked style name.
+	 * @return {String} Returns style value.
+	 * @see <a href="http://www.quirksmode.org/dom/getstyles.html">http://www.quirksmode.org/dom/getstyles.html</a>
+	 * @public
+	 * @function
+	 * @name REDIPS.drag#get_style
+	 */
 	get_style = function (el, style_name) {
 		var val; // value of requested object and property
 		if (el && el.currentStyle) {
@@ -2006,9 +2062,14 @@ REDIPS.drag = (function () {
 	};
 
 
-
-	// relocate all objects from source cell to the destination table cell
-	// if input parameter is not defined, function will prepare parameters for the first table
+	/**
+	 * Method relocates all child nodes from source table cell to the target table cell.
+	 * @param {HTMLElement} from Source table cell.
+	 * @param {HTMLElement} to Target table cell.
+	 * @public
+	 * @function
+	 * @name REDIPS.drag#relocate
+	 */
 	relocate = function (from, to) {
 		var i, // local variable
 			childnodes_length; // number of child nodes 
@@ -2228,10 +2289,15 @@ REDIPS.drag = (function () {
 	};
 
 
-
-	// method returns position as array with members tableIndex, rowIndex and cellIndex
-	// input parameter is optional and can be: element id/reference, cell id/reference
-	// if input parameter is undefined then function will return array with current and source positions
+	/**
+	 * Method returns position as array with members tableIndex, rowIndex and cellIndex (array length is 3).
+	 * If input parameter is not defined then method will return array with current and source positions (array length will be 6).
+	 * @param {String|HTMLElement} [ip] DIV element id / reference or table cell id / reference.
+	 * @return {Array} Returns array with members tableIndex, rowIndex and cellIndex.
+	 * @public
+	 * @function
+	 * @name REDIPS.drag#get_position
+	 */
 	get_position = function (ip) {
 		var toi,		// table original index (because tables are sorted on every element click)
 			toi_source,	// table original index (source table)
@@ -2298,6 +2364,8 @@ REDIPS.drag = (function () {
 	 * Find table index - because tables array is sorted on every element click.
 	 * @param {Integer} idx Table index of initial table order.
 	 * @return {Integer} Returns current index from tables array.
+	 * @private
+	 * @memberOf REDIPS.drag#
 	 */
 	get_table_index = function (idx) {
 		var i;
@@ -2353,30 +2421,133 @@ REDIPS.drag = (function () {
 	};
 
 
-	//
-	// public properties and methods
-	//
 
 	return {
-		// public properties
-		obj					: obj,				// (object) moved object
-		obj_old				: obj_old,			// (object) previously moved object (before clicked or cloned)
-		mode				: mode,				// (string) drag mode: "cell" or "row" (default is cell)
-		source_cell			: source_cell,		// (object) source table cell (defined in onmousedown)
-		previous_cell		: previous_cell,	// (object) previous table cell (defined in onmousemove)
-		current_cell		: current_cell,		// (object) current table cell (defined in onmousemove)
-		target_cell			: target_cell,		// (object) target table cell (defined in onmouseup)
-		hover_color			: hover_color,		// (string) hover color
-		bound				: bound,			// (integer) bound width for autoscroll
-		speed				: speed,			// (integer) scroll speed in milliseconds
+		/**
+		 * Currently moved DIV element.
+		 * @type HTMLElement
+		 * @name REDIPS.drag#obj
+		 */
+		obj	: obj,
+		/**
+		 * Previously moved DIV element (before clicked or cloned).
+		 * @type HTMLElement
+		 * @name REDIPS.drag#obj_old
+		 */
+		obj_old	: obj_old,
+		/**
+		 * Dragging mode "cell" or "row". This is readonly property defined in a moment when DIV element or row handler is clicked.
+		 * @type String
+		 * @name REDIPS.drag#mode
+		 */
+		mode : mode,
+		/**
+		 * Source table cell.
+		 * Reference to source table cell is defined in handler_onmousedown (private) method.
+		 * @type HTMLElement
+		 * @name REDIPS.drag#source_cell
+		 * @see <a href="#handler_onmousedown">handler_onmousedown</a>
+		 */
+		source_cell : source_cell,
+		/**
+		 * Previous table cell.
+		 * Reference to previous table cell is defined in handler_onmousedown (private) method and in cell_changed (private) method.
+		 * @type HTMLElement
+		 * @name REDIPS.drag#previous_cell
+		 * @see <a href="#handler_onmousedown">handler_onmousedown</a>
+		 * @see <a href="#cell_changed">cell_changed</a>
+		 */
+		previous_cell : previous_cell,
+		/**
+		 * Current table cell.
+		 * Reference to current table cell is defined in handler_onmousedown (private) method and in cell_changed (private) method.
+		 * @type HTMLElement
+		 * @name REDIPS.drag#current_cell
+		 * @see <a href="#handler_onmousedown">handler_onmousedown</a>
+		 * @see <a href="#cell_changed">cell_changed</a>
+		 */	
+		current_cell : current_cell,
+		/**
+		 * Target table cell.
+		 * Reference to target table cell is defined in handler_onmouseup (private) method.
+		 * @type HTMLElement
+		 * @name REDIPS.drag#target_cell
+		 * @see <a href="#handler_onmouseup">handler_onmouseup</a>
+		 */
+		target_cell : target_cell,
+		/**
+		 * Hover color for current table cell.
+		 * Reference to target table cell is defined in handler_onmouseup (private) method.
+		 * @type String
+		 * @name REDIPS.drag#hover_color
+		 * @example REDIPS.drag.hover_color('#9BB3DA');
+		 * @example REDIPS.drag.hover_color('Lime');
+		 * @default #E7AB83
+		 */
+		hover_color	: hover_color,
+		/**
+		 * Bound size for triggering autoscroll for page or scrollable DIV container.
+		 * @type Integer
+		 * @name REDIPS.drag#bound
+		 * @default 25px
+		 */
+		bound : bound,
+		/**
+		 * Autoscroll pause in milliseconds.
+		 * @type Integer
+		 * @name REDIPS.drag#speed
+		 * @default 20 milliseconds
+		 */
+		speed : speed,
 		only				: only,				// (object) table cells marked with "only" can accept defined DIV elements
 		mark				: mark,				// (object) table cells marked with "mark" can be allowed or denied (with exceptions)
-		border				: border,			// (string) border style for enabled element
-		border_disabled		: border_disabled,	// (string) border style for disabled element
-		opacity_disabled	: opacity_disabled,	// (integer) set opacity for disabled elements
-		trash				: trash,			// (string) cell class name where draggable element will be destroyed		
-		trash_ask			: trash_ask,		// (boolean) confirm object deletion (ask a question "Are you sure?" before delete)
-		drop_option			: drop_option,		// (string) drop_option has three options: multiple, single and switch
+		/**
+		 * Border style for enabled element.
+		 * @type String
+		 * @name REDIPS.drag#border
+		 * @default solid
+		 */
+		border : border,
+		/**
+		 * Border style for disabled element.
+		 * @type String
+		 * @name REDIPS.drag#border_disabled
+		 * @default dotted
+		 */
+		border_disabled	: border_disabled,
+		/**
+		 * Opacity level for disabled elements
+		 * @type Integer
+		 * @name REDIPS.drag#opacity_disabled
+		 */
+		opacity_disabled : opacity_disabled,
+		/**
+		 * Table cell class name where draggable element will be destroyed.
+		 * @type String
+		 * @name REDIPS.drag#trash_cname
+		 * @default trash
+		 */
+		trash_cname : trash_cname,
+		/**
+		 * Confirm object deletion.
+		 * If set to"true" popup with question: "Are you sure you want to delete?" will appear.
+		 * @type Boolean
+		 * @name REDIPS.drag#trash_ask
+		 * @default true
+		 */
+		trash_ask : trash_ask,
+		/**
+		 * Property defines working types of REDIPS.drag library: multiple, single, switch, switching and overwrite.
+		 * @type String
+		 * @name REDIPS.drag#drop_option
+		 * @default multiple
+		 * @example REDIPS.drag.drop_option('multiple') - enabled dropping to already taken table cells
+		 * @example REDIPS.drag.drop_option('single') - enabled dropping to empty table cells
+		 * @example REDIPS.drag.drop_option('switch') - switch content
+		 * @example REDIPS.drag.drop_option('switching') - switching content continuously
+		 * @example REDIPS.drag.drop_option('overwrite') - overwrite content in table cell
+		 */
+		drop_option	: drop_option,
 		delete_cloned		: delete_cloned,	// (boolean) delete cloned div if the cloned div is dragged outside of any table
 		cloned_id			: cloned_id,		// (array) needed for increment ID of cloned elements
 		clone_shiftKey		: clone_shiftKey,	// (boolean) if true, elements could be cloned with pressed SHIFT key
@@ -2394,7 +2565,7 @@ REDIPS.drag = (function () {
 		getScrollPosition	: getScrollPosition,// method returns scroll positions in array [ scrollX, scrollY ]
 		get_style			: get_style,		// method returns style value of requested object and style name
 		
-		// autoscroll should be public because of setTimeout recursive call in autoscroll
+		// autoscrolls should be public because of setTimeout recursive calls in autoscroll (detailed comments are not needed) 
 		autoscrollX			: autoscrollX,
 		autoscrollY			: autoscrollY,
 		
@@ -2402,35 +2573,138 @@ REDIPS.drag = (function () {
 		handler_onmousedown	: handler_onmousedown,
 		handler_ondblclick	: handler_ondblclick,
 
-		/*
-		 * Action handlers
-		 * Each handler sees REDIPS.drag.obj, REDIPS.drag.obj_old, REDIPS.drag.target_cell ... references
-		 * Note: for the first dragging, REDIPS.drag.obj_old === REDIPS.drag.obj because REDIPS.drag.obj_old does not exist yet
-		 */
-		myhandler_clicked				: function () {},
-		myhandler_dblclicked			: function () {},
-		myhandler_moved					: function () {},
-		myhandler_notmoved				: function () {},
-		myhandler_dropped				: function () {},	// after element is dropped to the table
-		myhandler_dropped_before		: function () {},	// before element is dropped to the table
-		myhandler_switched				: function () {},
-		myhandler_changed				: function () {},
-		myhandler_cloned				: function () {},
-		myhandler_clonedend1			: function () {},
-		myhandler_clonedend2			: function () {},
-		myhandler_notcloned				: function () {},
-		myhandler_deleted				: function () {},
-		myhandler_undeleted				: function () {},
-		// row handlers
-		myhandler_row_clicked			: function () {},
-		myhandler_row_moved				: function () {},
-		myhandler_row_notmoved			: function () {},
-		myhandler_row_dropped			: function () {},
-		myhandler_row_dropped_source	: function () {},	// row dropped to the source location
-		myhandler_row_changed			: function () {}
+		/* Element Event Handlers */
 		
-	}; // end of public (return statement)	
-	
+		/**
+		 * Event handler is executed after element element is clicked.
+		 * @name REDIPS.drag#myhandler_clicked
+		 * @function
+		 */
+		myhandler_clicked : function () {},
+		/**
+		 * Event handler is executed after element is double clicked.
+		 * @name REDIPS.drag#myhandler_dblclicked
+		 * @function
+		 */
+		myhandler_dblclicked : function () {},
+		/**
+		 * Event handler is executed after element element is moved.
+		 * @name REDIPS.drag#myhandler_moved
+		 * @function
+		 */
+		myhandler_moved : function () {},
+		/**
+		 * Event handler is executed in case when mouse button is clicked and released (element was not actually moved).
+		 * @name REDIPS.drag#myhandler_notmoved
+		 * @function
+		 */
+		myhandler_notmoved : function () {},
+		/**
+		 * Event handler is executed after element is dropped to the table cell.
+		 * @name REDIPS.drag#myhandler_dropped
+		 * @function
+		 */		
+		myhandler_dropped : function () {},
+		/**
+		 * Event handler is executed before element is dropped to the table cell.
+		 * @name REDIPS.drag#myhandler_dropped_before
+		 * @function
+		 */	
+		myhandler_dropped_before : function () {},
+		/**
+		 * Event handler is executed after elements are switched (in "switch" dragging mode).
+		 * @name REDIPS.drag#myhandler_switched
+		 * @function
+		 */	
+		myhandler_switched : function () {},
+		/**
+		 * Event handler is executed on every change of current (highlighted) table cell.
+		 * @name REDIPS.drag#myhandler_changed
+		 * @function
+		 */	
+		myhandler_changed : function () {},
+		/**
+		 * Event handler is executed after element is cloned.
+		 * @name REDIPS.drag#myhandler_cloned
+		 * @function
+		 */	
+		myhandler_cloned : function () {},
+		/**
+		 * Event handler is executed after last element is cloned.
+		 * Element has defined "climit1_X" class name where X defines number of elements to clone. Last element can be dragged.
+		 * @name REDIPS.drag#myhandler_clonedend1
+		 * @function
+		 */	
+		myhandler_clonedend1 : function () {},
+		/**
+		 * Event handler is executed after last element is cloned.
+		 * Element has defined "climit2_X" class name where X defines number of elements to clone. Last element can't be dragged and stays static.
+		 * @name REDIPS.drag#myhandler_clonedend2
+		 * @function
+		 */	
+		myhandler_clonedend2 : function () {},
+		/**
+		 * Event handler is executed if cloned element is dropped on start position or cloned element is dropped outside current table with "delete_cloned" property set to true or "clone" type element is placed inside unmovable table cell.
+		 * @name REDIPS.drag#myhandler_notcloned
+		 * @function
+		 */	
+		myhandler_notcloned : function () {},
+		/**
+		 * Event handler is executed after element is deleted (dropped to the "trash" table cell).
+		 * @name REDIPS.drag#myhandler_deleted
+		 * @function
+		 */	
+		myhandler_deleted : function () {},
+		/**
+		 * Event handler is executed after element is undeleted.
+		 * After element is dropped to the "trash" table cell and "trash_ask" property is set to true then popup with question: "Are you sure you want to delete?" will appear.
+		 * Clicking on "Cancel" will undelete element and call this event handler.
+		 * @name REDIPS.drag#myhandler_undeleted
+		 * @see <a href="#trash_ask">trask_ask</a> property
+		 * @function
+		 */	
+		myhandler_undeleted	: function () {},
+		
+		/* Row Event Handlers */
+		
+		/**
+		 * Event handler is executed after row is clicked.
+		 * @name REDIPS.drag#myhandler_row_clicked
+		 * @function
+		 */
+		myhandler_row_clicked : function () {},
+		/**
+		 * Event handler is executed after row is moved from start position.
+		 * @name REDIPS.drag#myhandler_row_moved
+		 * @function
+		 */
+		myhandler_row_moved : function () {},
+		/**
+		 * Event handler is executed after mouse button is cliked on row and released (row was not moved).
+		 * @name REDIPS.drag#myhandler_row_notmoved
+		 * @function
+		 */
+		myhandler_row_notmoved : function () {},
+		/**
+		 * Event handler is executed after row is dropped to the table.
+		 * @name REDIPS.drag#myhandler_row_dropped
+		 * @function
+		 */
+		myhandler_row_dropped : function () {},
+		/**
+		 * Event handler is executed after row is moved around and dropped to the source position.
+		 * @name REDIPS.drag#myhandler_row_dropped_source
+		 * @function
+		 */
+		myhandler_row_dropped_source : function () {},
+		/**
+		 * Event handler is executed on every change of current (highlighted) table row.
+		 * @name REDIPS.drag#myhandler_row_changed
+		 * @function
+		 */
+		myhandler_row_changed : function () {}
+		
+	}; // end of public (return statement)		
 }());
 
 

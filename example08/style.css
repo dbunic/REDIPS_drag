@@ -47,9 +47,3 @@ div#drag2 td{
 	border: 2px solid SteelBlue;
 	background-color: white;
 }
-
-/* append here cloned object before placing to the target table cell */
-#obj_new{
-	height: 32px;
-	width: 100px;
-}

@@ -181,10 +181,3 @@ div#drag td{
 			width: 40px;
 			padding: 0px;
 		}
-
-
-/* append here cloned object before placing to the target table cell */
-#obj_new{
-	height: 32px;
-	width: 100px;
-}

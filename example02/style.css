@@ -90,9 +90,3 @@ div#drag td{
 .dark{
 	background-color: #e0e0e0;
 }
-
-/* append here cloned object before placing to the target table cell */
-#obj_new{
-	height: 23px;
-	width: 10px;
-}
