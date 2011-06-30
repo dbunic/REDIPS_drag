@@ -534,9 +534,15 @@ REDIPS.drag = (function () {
 	};
 
 
-
-	// function drops (delete old & insert new) table row
-	// input parameters are current table and current row; table_mini parameter is optional
+	/**
+	 * Method drops table row to the target row. Source row is deleted and cloned row is inserted at the new position.
+	 * @param {Integer} r_table Table index.
+	 * @param {Integer} r_row Row index.
+	 * @param {HTMLElement} [table_mini] Reference to the mini table (table that contains only one row). This actually clone of source row.
+	 * @private
+	 * @memberOf REDIPS.drag#
+	 * @see <a href="#row_clone">row_clone</a>
+	 */
 	row_drop = function (r_table, r_row, table_mini) {
 		// local variable definition
 		var ts = tables[r_table].rows[0].parentNode, // reference to the table section element (where row will be inserted / appended)
@@ -2499,8 +2505,36 @@ REDIPS.drag = (function () {
 		 * @default 20 milliseconds
 		 */
 		speed : speed,
-		only				: only,				// (object) table cells marked with "only" can accept defined DIV elements
-		mark				: mark,				// (object) table cells marked with "mark" can be allowed or denied (with exceptions)
+		/**
+		 * Table cells marked with "only" class name can accept only defined DIV elements.
+		 * Object contains: {div, cname, other}
+		 * <ul>
+		 * <li>{Array} div - defined DIV elements can be dropped only to the table cells marked with class name "only" (DIV id -> class name)</li>
+		 * <li>{String} cname - class name of marked cells (default is "only")</li>
+		 * <li>{String} other - allow / deny dropping DIV elements to other table cells (default is "deny")</li>
+		 * </ul>
+		 * @example REDIPS.drag.only.div.a1 = 'last' - only element with ID "a1" can be dropped to the table cell with class name "only last".
+		 * @example REDIPS.drag.only.other = 'deny' - DIV elements mentioned in "REDIPS.drag.only.div" cannot be dropped to other table cells.
+		 * @type Object
+		 * @name REDIPS.drag#only
+		 * @see <a href="#mark">mark</a>
+		 */
+		only : only,
+		/**
+		 * Table cells marked with "mark" class name can be marked as allowed or forbidden table cells (with exceptions) - default is "deny".
+		 * This is useful to define table cells forbidden for every DIV element with exceptions (or contrary, define table cells allowed for all DIV elements except some).
+		 * Object contains: {action, cname, exception}
+		 * <ul>
+		 * <li>{String} action - allow / deny table cell (default is "deny")</li>
+		 * <li>{String} cname - class name of marked cells (default is "mark")</li>
+		 * <li>{Array} exception - defined DIV elements can be dropped to the table cells marked with class "mark" (DIV id -> class name)</li>
+		 * </ul>
+		 * @example REDIPS.drag.mark.exception.d8 = 'smile' - only element with ID "d8" can be dropped to the table cell with class name "mark smile".
+		 * @type Object
+		 * @name REDIPS.drag#mark
+		 * @see <a href="#only">only</a>
+		 */
+		mark : mark,
 		/**
 		 * Border style for enabled element.
 		 * @type String
@@ -2548,13 +2582,50 @@ REDIPS.drag = (function () {
 		 * @example REDIPS.drag.drop_option('overwrite') - overwrite content in table cell
 		 */
 		drop_option	: drop_option,
-		delete_cloned		: delete_cloned,	// (boolean) delete cloned div if the cloned div is dragged outside of any table
-		cloned_id			: cloned_id,		// (array) needed for increment ID of cloned elements
-		clone_shiftKey		: clone_shiftKey,	// (boolean) if true, elements could be cloned with pressed SHIFT key
-		animation_pause		: animation_pause,	// animation pause (lower values mean the animation plays faster)
-		animation_step		: animation_step,	// animation step (minimum is 1)
+		/**
+		 * Delete cloned DIV element if dropped outside of any table.
+		 * If property is set to "false" then cloned DIV element will be dropped to the last possible table cell.
+		 * @type Boolean
+		 * @name REDIPS.drag#delete_cloned
+		 * @default true
+		 */
+		delete_cloned : delete_cloned,
+		/**
+		 * Needed for increment Id of cloned elements.
+		 * Property is exposed as public to allow setting initial values if needed. Mostly this will not be needed and REDIPS.drag will take care about cloned element Id.
+		 * Cloned elements will have format "originalId""c""clonedCounter" (where "c" is separator between element Id and cloning counter).
+		 * Double quotes are not part of Id.
+		 * @example 'd1c0' will Id of first cloned element (Id of original element is 'd1')
+		 * @type Array
+		 * @name REDIPS.drag#cloned_id
+		 */
+		cloned_id : cloned_id,
+		/**
+		 * If set to "true", all DIV elements on tables could be cloned with pressed SHIFT key. 
+		 * Just press SHIFT key and try to drag element. Instead of moving current element, DIV element will be cloned and dragged around.
+		 * @type Boolean
+		 * @name REDIPS.drag#clone_shiftKey
+		 * @default false
+		 */
+		clone_shiftKey : clone_shiftKey,
+		/**
+		 * Animation pause (lower values means the animation will go faster).
+		 * @type Integer
+		 * @name REDIPS.drag#animation_pause
+		 * @default 40 milliseconds
+		 */
+		animation_pause : animation_pause,
+		/**
+		 * Animation step (minimum is 1).
+		 * Property defined number of pixels in each step.
+		 * Higher values means bigger step (faster animation) but with less smoothness.
+		 * @type Integer
+		 * @name REDIPS.drag#animation_step
+		 * @default 2 px
+		 */
+		animation_step		: animation_step,	// 
 
-		// public methods
+		// public methods (comments are inside main code)
 		init				: init,
 		enable_drag			: enable_drag,
 		save_content		: save_content,
