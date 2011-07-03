@@ -1,5 +1,10 @@
 Changes for REDIPS.drag library
 
+4.3.2
+- added public method REDIPS.drag.add_events(HTMLElement) - method adds omousedown and ondblclick event listeners to the DIV element
+- handler_onmousedown and handler_ondblclick are set as private methods
+- autoscrollX and autoscrollY are set as private methods
+
 4.3.1
 - id name "obj_new" changed to "redips_clone"
 - added private method "form_elements"
