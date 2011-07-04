@@ -35,6 +35,12 @@ REDIPS.drag is a JavaScript drag and drop library focused on dragging table cont
 * REDIPS.drag.getScrollPosition - returns scroll positions as array [ scrollX, scrollY ]
 * REDIPS.drag.get_style() - returns style value of requested object and style name
 
+## Documentation
+
+A reference documentation with a list of public properties and methods contained in REDIPS.drag library.
+
+* [http://www.redips.net/javascript/redips-drag-documentation/](http://www.redips.net/javascript/redips-drag-documentation/)
+
 ## Demos
 
 Live demo shows REDIPS.drag library in action: 
