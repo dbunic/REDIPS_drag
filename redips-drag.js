@@ -23,7 +23,9 @@ var REDIPS = REDIPS || {};
  * @description REDIPS.drag is a JavaScript drag and drop library focused on dragging table content and table rows.
  * @name REDIPS.drag
  * @author Darko Bunic
- * @see Demo <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">http://www.redips.net/javascript/drag-and-drop-table-content/</a>
+ * @see
+ * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">http://www.redips.net/javascript/drag-and-drop-table-row/</a>
+ * <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">http://www.redips.net/javascript/drag-and-drop-table-content/</a>
  * @version 4.3.2
  */
 REDIPS.drag = (function () {

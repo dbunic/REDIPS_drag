@@ -124,7 +124,7 @@ window.onload = function () {
 				obj_new.redips_container = obj.redips_container;
 				// increment cloned_id for cloned element
 				rd.cloned_id[id] += 1;
-				// add onmousedown/ondblclick event listeners to the cloned object
+				// add onmousedown/ondblclick event listeners to the cloned element
 				rd.add_events(obj_new);
 				// append to the table cell
 				target_row.cells[i].appendChild(obj_new);
