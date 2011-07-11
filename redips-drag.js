@@ -202,6 +202,7 @@ REDIPS.drag = (function () {
 
 	/**
 	 * Tables initialization. Method searches for all tables inside drag container and prepares "tables" array.
+	 * Tables in "redips_clone" drag container are ignored (could happen if init_tables() is called after row_clone() method). 
 	 * "tables" array is one of the main parts of REDIPS.drag library.
 	 * @private
 	 * @memberOf REDIPS.drag#
