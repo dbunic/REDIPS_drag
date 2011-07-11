@@ -1,5 +1,8 @@
 Changes for REDIPS.drag library
 
+4.3.3
+- fixed bug: cloned row (mini_table) should be excluded from tables_nodeList - problem in move_object() when row was dropped outside table 
+
 4.3.2
 - added public method REDIPS.drag.add_events(HTMLElement) - method adds omousedown and ondblclick event listeners to the DIV element
 - handler_onmousedown and handler_ondblclick are set as private methods

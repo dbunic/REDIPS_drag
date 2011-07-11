@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 4.3.2
-Jul 2, 2011.
+Version 4.3.3
+Jul 11, 2011.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -26,7 +26,7 @@ var REDIPS = REDIPS || {};
  * @see
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">http://www.redips.net/javascript/drag-and-drop-table-row/</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">http://www.redips.net/javascript/drag-and-drop-table-content/</a>
- * @version 4.3.2
+ * @version 4.3.3
  */
 REDIPS.drag = (function () {
 		// methods
@@ -207,7 +207,7 @@ REDIPS.drag = (function () {
 	 * @memberOf REDIPS.drag#
 	 */
 	init_tables = function () {
-		var	i, j,				// loop variables
+		var	i, j, k,			// loop variables
 			element,			// used in searhing parent nodes of found tables below div id="drag"
 			level,				// (integer) 0 - ground table, 1 - nested table, 2 - nested nested table, 3 - nested nested nested table ...
 			group_idx,			// tables group index (ground table and its nested tables will have the same group)
@@ -218,7 +218,12 @@ REDIPS.drag = (function () {
 		// collect tables inside DIV id="drag" and make static nodeList
 		tables_nodeList = div_drag.getElementsByTagName('table');
 		// loop through tables and define table sort parameter
-		for (i = 0; i < tables_nodeList.length; i++) {
+		for (i = 0, j = 0; i < tables_nodeList.length; i++) {
+			// skip table if table belongs to the "redips_clone" container
+			// this is possible for cloned rows - if init_tables() is called after row_clone()
+			if (tables_nodeList[i].parentNode.id === 'redips_clone') {
+				continue;
+			}
 			// set start element for "do" loop
 			element = tables_nodeList[i].parentNode;
 			// set initial value for nested level
@@ -236,26 +241,28 @@ REDIPS.drag = (function () {
 				element = element.parentNode;
 			} while (element && element !== div_drag);
 			// copy table reference to the static list
-			tables[i] = tables_nodeList[i];
+			tables[j] = tables_nodeList[i];
 			// set redips_container to the table (needed in case when row is cloned)
-			tables[i].redips_container = div_drag;
+			tables[j].redips_container = div_drag;
 			// set nested level (needed for sorting in "tables" array)
 			// level === 0 - means that this is "ground" table ("ground" table may contain nested tables)
-			tables[i].redips_nestedLevel = level;
+			tables[j].redips_nestedLevel = level;
 			// set original table index (needed for sorting "tables" array to the original order in save_content() function)
-			tables[i].redips_idx = i;
+			tables[j].redips_idx = j;
 			// prepare td nodeList of current table
-			td = tables[i].getElementsByTagName('td');
+			td = tables[j].getElementsByTagName('td');
 			// loop through nodeList and search for rowspaned cells
-			for (j = 0, rowspan = false; j < td.length; j++) {
+			for (k = 0, rowspan = false; k < td.length; k++) {
 				// if only one rowspaned cell is found set flag to "true" and break loop
-				if (td[j].rowSpan > 1) {
+				if (td[k].rowSpan > 1) {
 					rowspan = true;
 					break;
 				}
 			}
-			// set redips_rowspan flag (needed in set_trc())
-			tables[i].redips_rowspan = rowspan;
+			// set redips_rowspan flag - needed in set_trc()
+			tables[j].redips_rowspan = rowspan;
+			// increment j counter
+			j++;
 		}
 		/*
 		 * define "redips_nestedGroup" and initial "redips_sort" parameter for each table
