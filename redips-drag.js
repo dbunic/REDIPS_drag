@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 4.3.3
-Jul 11, 2011.
+Version 4.3.4
+Jul 12, 2011.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -26,7 +26,7 @@ var REDIPS = REDIPS || {};
  * @see
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">http://www.redips.net/javascript/drag-and-drop-table-row/</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">http://www.redips.net/javascript/drag-and-drop-table-content/</a>
- * @version 4.3.3
+ * @version 4.3.4
  */
 REDIPS.drag = (function () {
 		// methods
@@ -1209,8 +1209,9 @@ REDIPS.drag = (function () {
 				REDIPS.drag.previous_cell = previous_cell = tables[table_old].rows[row_old].cells[cell_old];
 				// define current table cell
 				REDIPS.drag.current_cell = current_cell = tables[table].rows[row].cells[cell];
-				// if drop option is 'switching' then replace content from current cell to the previous cell
-				if (REDIPS.drag.drop_option === 'switching') {
+				// if drop option is 'switching' and drag mode is 'cell' (not 'row')
+				// then replace content from current cell to the previous cell
+				if (REDIPS.drag.drop_option === 'switching' && mode === 'cell') {
 					// move objects from current cell to the previous cell
 					relocate(current_cell, previous_cell);
 					// recalculate table cells again (because cell content could change row dimensions) 
@@ -1422,8 +1423,9 @@ REDIPS.drag = (function () {
 				}
 				// test if current cell is defined as single
 				single_cell = cell_current.className.indexOf('single') > -1 ? true : false;
-				// if drop_option == single or current cell is single and current cell has child nodes then test if cell is occupied
-				if ((REDIPS.drag.drop_option === 'single' || single_cell) && cell_current.childNodes.length > 0) {
+				// if drag mode is 'cell' (not 'row') and drop_option == single or current cell is single and current cell
+				// has child nodes then test if cell is occupied
+				if (mode === 'cell' && (REDIPS.drag.drop_option === 'single' || single_cell) && cell_current.childNodes.length > 0) {
 					// if cell has only one node and that is text node then break - because this is empty cell
 					if (cell_current.childNodes.length === 1 && cell_current.firstChild.nodeType === 3) {
 						break;
@@ -2827,10 +2829,10 @@ REDIPS.drag = (function () {
 		 * @name REDIPS.drag#drop_option
 		 * @default multiple
 		 * @example
-		 * // enabled dropping to already taken table cells
+		 * // elements can be dropped to all table cells
 		 * REDIPS.drag.drop_option('multiple');
 		 *  
-		 * // enabled dropping to empty table cells
+		 * // elements can be dropped only to the empty table cells
 		 * REDIPS.drag.drop_option('single'); 
 		 *  
 		 * // switch content

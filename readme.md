@@ -1,4 +1,4 @@
-REDIPS.drag 4.3.3
+REDIPS.drag 4.3.4
 ============
 
 ## What's REDIPS.drag?

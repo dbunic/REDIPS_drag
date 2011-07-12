@@ -26,6 +26,8 @@ window.onload = function () {
 	// initialize dragging containers (each table is placed in separate container)
 	rd.init('drag1');
 	rd.init('drag2');
+	// elements can be dropped only to the empty table cells
+	rd.drop_option = 'single';
 	// save locations of all DIV elements to the "loc" object (it should go after initialization)
 	start_positions();
 	// row was clicked - set hover color for "row" mode
@@ -161,9 +163,10 @@ shuffle = function () {
 		arr = [];	// generated positions will be saved in array (to avoid duplicates)
 	// loop goes through every "id" in loc object
 	for (id in loc) {
-		// test the property (filter properties of the prototype) and if element id begins with "d"
-		// other DIV elements are row handlers
-		if (loc.hasOwnProperty(id) && id.substring(0, 1) === 'd') {
+		// test the property (filter properties of the prototype) and
+		// if element id begins with "d" (other DIV elements are row handlers) and
+		// if id of element ends with "1" (only elements from first table) 
+		if (loc.hasOwnProperty(id) && id.substring(0, 1) === 'd' && id.charAt(id.length - 1) === '1') {
 			pos = rd.get_position(id);		// set current position for DIV element with defined id
 			pos1 = pos[1] + '_' + pos[2];	// prepare current position in format rowIndex + '_' + cellIndex
 			// generate random position (must be unique and different then current position)
@@ -174,12 +177,20 @@ shuffle = function () {
 			} while (arr.indexOf(rnd) > -1 || rnd === pos1);
 			// push generated value to the array (to avoid duplicate positions)
 			arr.push(rnd);
-			// disable row handlers - blue circles
+			// disable row handlers - blue circles in first column
 			enable_rows(false);
-			// move object to the random position
+			// move object to the random position in table1
 			rd.move_object({
 				id: id,								// id of object to move
-				target: [0, rowIndex, cellIndex],	// target position
+				target: [0, rowIndex, cellIndex],	// target position (table index is 0 because of separate drag container)
+				callback: enable_rows				// function to call after moving is over 
+			});
+			// disable row handlers - blue circles in first column
+			enable_rows(false);
+			// move object to the random position in table2
+			rd.move_object({
+				id: id.slice(0, -1) + '2',			// id of object from table2
+				target: [0, rowIndex, cellIndex],	// target position (table index is 0 because of separate drag container)
 				callback: enable_rows				// function to call after moving is over 
 			});
 		}

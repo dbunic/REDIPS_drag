@@ -1,5 +1,8 @@
 Changes for REDIPS.drag library
 
+4.3.4
+- fixed bug: drop_option should not have impact in case of dragging table rows
+
 4.3.3
 - fixed bug: cloned row (mini_table) should be excluded from tables_nodeList - problem in move_object() when row was dropped outside table 
 
