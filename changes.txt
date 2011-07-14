@@ -1,5 +1,8 @@
 Changes for REDIPS.drag library
 
+4.3.5
+- added option to exclude tables with className "nolayout" (if want to put table in DIV element and drag as any other content)
+
 4.3.4
 - fixed bug: drop_option should not have impact in case of dragging table rows
 

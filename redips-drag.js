@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 4.3.4
-Jul 12, 2011.
+Version 4.3.5
+Jul 14, 2011.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -24,9 +24,10 @@ var REDIPS = REDIPS || {};
  * @name REDIPS.drag
  * @author Darko Bunic
  * @see
- * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">http://www.redips.net/javascript/drag-and-drop-table-row/</a>
- * <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">http://www.redips.net/javascript/drag-and-drop-table-content/</a>
- * @version 4.3.4
+ * <a href="http://www.redips.net/javascript/drag-and-drop-table-content-animation/">Drag and drop table content plus animation</a>
+ * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">Drag and drop table rows</a>
+ * <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">Drag and Drop table content</a>
+ * @version 4.3.5
  */
 REDIPS.drag = (function () {
 		// methods
@@ -202,7 +203,8 @@ REDIPS.drag = (function () {
 
 	/**
 	 * Tables initialization. Method searches for all tables inside drag container and prepares "tables" array.
-	 * Tables in "redips_clone" drag container are ignored (could happen if init_tables() is called after row_clone() method). 
+	 * Tables in "redips_clone" drag container are ignored (could happen if init_tables() is called after row_clone() method).
+	 * Tables with className "nolayout" are ignored (table in DIV element can be dragged as any other content). 
 	 * "tables" array is one of the main parts of REDIPS.drag library.
 	 * @private
 	 * @memberOf REDIPS.drag#
@@ -220,9 +222,9 @@ REDIPS.drag = (function () {
 		tables_nodeList = div_drag.getElementsByTagName('table');
 		// loop through tables and define table sort parameter
 		for (i = 0, j = 0; i < tables_nodeList.length; i++) {
-			// skip table if table belongs to the "redips_clone" container
-			// this is possible for cloned rows - if init_tables() is called after row_clone()
-			if (tables_nodeList[i].parentNode.id === 'redips_clone') {
+			// skip table if table belongs to the "redips_clone" container (possible for cloned rows - if init_tables() is called after row_clone())
+			// or table has "nolayout" className
+			if (tables_nodeList[i].parentNode.id === 'redips_clone' || tables_nodeList[i].className.indexOf('nolayout') > -1) {
 				continue;
 			}
 			// set start element for "do" loop

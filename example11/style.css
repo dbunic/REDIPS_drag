@@ -2,7 +2,7 @@
 
 Darko Bunic
 http://www.redips.net/
-Dec, 2010.
+Jul, 2011.
 
 */
 
@@ -37,14 +37,15 @@ body{
 
 /* drag objects (DIV inside table cells) */
 .drag{
+	border: 1px solid lime;
 	cursor: move;
-	margin: auto;
+ 	margin: auto;
 	z-index: 10;
 	background-color: CornflowerBlue;
 	opacity: 0.7;
 	filter: alpha(opacity=70);
 	/* without width, IE7 will not apply filter/opacity to the element ?! */
-	width: 87px;
+	width: 80px;
 	height: 30px;
 	padding-top: 10px; /* height of drag handle */
 }
@@ -56,6 +57,19 @@ body{
 		text-align: center;
 		height: 30px;
 	}
+
+
+/* mini table */
+table#mini {
+	margin: 0px;
+	border: 0px:
+}
+	table#mini td{
+		border: 1px CornflowerBlue solid;
+		padding: 0px;
+		height: 10px;
+	}
+
 
 /* tables */
 div#drag table {
@@ -69,36 +83,35 @@ div#drag table {
 		}
 
 
-/* table cells */
-div#drag td,th{
+/* table cells for table1 and table2 */
+#table1 td,
+#table2 td,th {
 	border-style: solid;
-	height: 50px;
-	text-align: center;
-	font-size: 10pt;
-	padding: 2px;
+	height: 70px;
+	padding: 0px;
 }
 		/* left table - td */
-		div#drag #table1 td{
+		#table1 td {
 			border-width: 0px 0px 1px 0px;
 			border-color: white;
 		}
 		
 		/* right table - td */
-		div#drag #table2 td{
+		#table2 td {
 			border-width: 0px 3px 3px 0px;
 			border-color: #DDC5B5;
 			font-weight: normal;
 		}
 
 		/* right table - th */
-		div#drag #table2 th{
+		#table2 th {
 			border-width: 3px 0px 0px 3px;
 			border-color: #DDC5B5;
 			font-weight: normal;
 		}
 		
 		/* right table - upper right cell */
-		div#drag #table2 .upper_right{
+		#table2 .upper_right{
 			border-width: 0px;
 		}
 
@@ -134,4 +147,13 @@ div#drag td,th{
 .dark{
 	color: #444;
 	background-color: #e0e0e0;
+}
+
+
+/* trash cell */
+.trash {
+	color: white;
+	background-color: CornflowerBlue;
+	text-align: center;
+	font-size: 12pt;
 }

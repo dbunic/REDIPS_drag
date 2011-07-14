@@ -1,4 +1,4 @@
-REDIPS.drag 4.3.4
+REDIPS.drag 4.3.5
 ============
 
 ## What's REDIPS.drag?
@@ -22,6 +22,8 @@ REDIPS.drag is a JavaScript drag and drop library focused on dragging table cont
 * unlimit nested tables support
 * dropping rules (like allowed and forbidden table cells)
 * animation (move element/row to the destination cell/row)
+* "noautoscoll" option for drag containers
+* "nolayout" option for tables (table in DIV element can be dragged as any other content)
 
 ## Public methods
 
@@ -39,14 +41,15 @@ REDIPS.drag is a JavaScript drag and drop library focused on dragging table cont
 
 A reference documentation with a list of public properties and methods contained in REDIPS.drag library.
 
-* [http://www.redips.net/javascript/redips-drag-documentation/](http://www.redips.net/javascript/redips-drag-documentation/)
+* [http://www.redips.net/javascript/redips-drag-documentation/](REDIPS.drag documentation)
 
 ## Demos
 
 Live demo shows REDIPS.drag library in action: 
 
-* [http://www.redips.net/javascript/drag-and-drop-table-content/](http://www.redips.net/javascript/drag-and-drop-table-content/)
-* [http://www.redips.net/javascript/drag-and-drop-table-row/](http://www.redips.net/javascript/drag-and-drop-table-row/)
+* [http://www.redips.net/javascript/drag-and-drop-table-content-animation/](Drag and drop table content plus animation)
+* [http://www.redips.net/javascript/drag-and-drop-table-content/](Drag and drop table rows)
+* [http://www.redips.net/javascript/drag-and-drop-table-row/](Drag and Drop table content)
 
 ## YouTube
 
