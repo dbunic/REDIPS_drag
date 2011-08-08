@@ -1,10 +1,11 @@
 <?php 
 
 // define database host, database name, user name and password 
-$db_host = 'localhost';	// 99% chance you won't need to change this value (comment stolen from WordPress wp-config.php :)
+$db_host = 'localhost';	// 99% chance you won't need to change this value
 $db_name = 'enter_database_name';
 $db_user = 'enter_user_name';
 $db_pwd  = 'enter_user_password';
+
 
 // reset record set to null ($rs is used in timetable function)
 $rs = null;

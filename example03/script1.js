@@ -3,15 +3,15 @@
 
 /*
 
-This code shows how to run save on every element drop or element delete.
+This code shows how to run save.php on every element drop and delete.php on element delete.
 All nice features like printing subjects or spreading school objects across week are not supported here.
 Just replace the following line in index.php
 	<script type="text/javascript" src="script.js"></script>
 with:
 	<script type="text/javascript" src="script1.js"></script>
-and comment:
+and comment (or delete):
 	header('location: index.php');
-in save.php - redirection (or page refresh) after saving is not needed
+from save.php because redirection (or page refresh) is not needed
 */
 
 /* enable strict mode */
@@ -19,7 +19,7 @@ in save.php - redirection (or page refresh) after saving is not needed
 
 // functions
 var initXMLHttpClient,	// create XMLHttp request object in a cross-browser manner
-	save,				// save on element drop or element delete
+	send_request,		// send AJAX request
 	request;			// XMLHttp request object
 
 
@@ -36,11 +36,19 @@ window.onload = function () {
 	rd.trash_ask = false;		// do not ask on delete
 	// save - after element is dropped
 	rd.myhandler_dropped = function () {
-		save();
+		// get table content
+		var content = REDIPS.drag.save_content(1);
+		// save table content
+		send_request('save.php?' + content);
 	};
-	// save - after element is deleted
+	// delete - after element is deleted
 	rd.myhandler_deleted = function () {
-		save();
+		// get element position (method returns array with current and source positions - tableIndex, rowIndex and cellIndex)
+		var pos = rd.get_position(),
+			row = pos[4],
+			col = pos[5];
+		// delete element
+		send_request('delete.php?p=' + rd.obj.id + '_' + row + '_' + col);
 	};
 };
 
@@ -74,22 +82,19 @@ initXMLHttpClient = function () {
 };
 
 
-// save on every element drop or delete
-save = function () {
-	var content = REDIPS.drag.save_content(1),	// collect element positions from second table (timetable)
-		msg;
+// function sends AJAX request to the server (save or delete)
+// input parameter is complete URL of service with query string 
+send_request = function (url) {
 	// open asynchronus request
-	request.open('GET', 'save.php?' + content, true);
+	request.open('GET', url, true);
 	// the onreadystatechange event is triggered every time the readyState changes
 	request.onreadystatechange = function () {
 		//  request finished and response is ready
 		if (request.readyState === 4) {
 			// if something went wrong
 			if (request.status !== 200) {
-				// prepare error message
-				msg = 'Error: [' + request.status + '] ' + request.statusText;
 				// display error message
-				document.getElementById('message').innerHTML = msg;
+				document.getElementById('message').innerHTML = 'Error: [' + request.status + '] ' + request.statusText;
 			}
 	    }
 	};
