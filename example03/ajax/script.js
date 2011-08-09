@@ -1,26 +1,14 @@
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
 /*global window: false, ActiveXObject: false, REDIPS: true */
 
-/*
-
-This code shows how to run save.php on every element drop and delete.php on element delete.
-All nice features like printing subjects or spreading school objects across week are not supported here.
-Just replace the following line in index.php
-	<script type="text/javascript" src="script.js"></script>
-with:
-	<script type="text/javascript" src="script1.js"></script>
-and comment (or delete):
-	header('location: index.php');
-from save.php because redirection (or page refresh) is not needed
-*/
-
 /* enable strict mode */
 "use strict";
 
 // functions
 var initXMLHttpClient,	// create XMLHttp request object in a cross-browser manner
 	send_request,		// send AJAX request
-	request;			// XMLHttp request object
+	request,			// XMLHttp request object
+	print_message;		// print message
 
 
 // after page is loaded
@@ -36,20 +24,22 @@ window.onload = function () {
 	rd.trash_ask = false;		// do not ask on delete
 	// save - after element is dropped
 	rd.myhandler_dropped = function () {
-		// get table content
-		var content = REDIPS.drag.save_content(1);
+		// get element position (method returns array with current and source positions - tableIndex, rowIndex and cellIndex)
+		var pos = rd.get_position();
 		// save table content
-		send_request('save.php?' + content);
+		send_request('ajax/db_save.php?p=' + rd.obj.id + '_' + pos.join('_'));
 	};
 	// delete - after element is deleted
 	rd.myhandler_deleted = function () {
-		// get element position (method returns array with current and source positions - tableIndex, rowIndex and cellIndex)
+		// get element position
 		var pos = rd.get_position(),
 			row = pos[4],
 			col = pos[5];
 		// delete element
-		send_request('delete.php?p=' + rd.obj.id + '_' + row + '_' + col);
+		send_request('ajax/db_delete.php?p=' + rd.obj.id + '_' + row + '_' + col);
 	};
+	// print message to the message line
+	print_message('AJAX version');
 };
 
 
@@ -100,4 +90,10 @@ send_request = function (url) {
 	};
 	// send request
 	request.send(null);
+};
+
+
+// print message
+print_message = function (message) {
+	document.getElementById('message').innerHTML = message;
 };

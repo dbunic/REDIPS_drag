@@ -4,73 +4,13 @@
 /* enable strict mode */
 "use strict";
 
-// node list of DIV elements in table2 (global variable needed in report() and visibility() function)
-var div_nl;
 
-
-
-// save elements and their positions
-function save() {
-	// scan second table (timetable)
-	var content = REDIPS.drag.save_content(1);
-	window.location.href = 'save.php?' + content;
-}
-
-
-
-// print message
-function print_message(message) {
-	document.getElementById('message').innerHTML = message;
-}
-
-
-
-// function show all subjects in timetable
-function show_all() {
-	var	i; // loop variable
-	for (i = 0; i < div_nl.length; i++) {
-		div_nl[i].style.visibility = 'visible';
-	}
-}
-
-
-
-// show/hide report buttons
-function report_button() {
-	var	id,			// element id
-		i,			// loop variable
-		count,		// number of subjects in timetable
-		style,		// hidden or visible
-		// prepare subjects
-		subject = {'en': 0, 'ph': 0, 'ma': 0, 'bi': 0, 'ch': 0, 'it': 0, 'ar': 0, 'hi': 0, 'et': 0};
-	// loop goes through all collected elements
-	for (i = 0; i < div_nl.length; i++) {
-		// define only first two letters of ID
-		// (cloned elements have appended c1, c2, c3 ...)
-		id = div_nl[i].id.substr(0, 2);
-		// increase subject occurring
-		subject[id]++;
-	}
-	// loop through subjects
-	for (i in subject) {
-		// using the hasOwnProperty method to distinguish the true members of the object
-		if (subject.hasOwnProperty(i)) {
-			// prepare id of the report button
-			id = 'b_' + i;
-			// subject count on the timetable
-			count = subject[i];
-			if (count === 0) {
-				style = 'hidden';
-			}
-			else {
-				style = 'visible';
-			}
-			// hide or show report button
-			document.getElementById(id).style.visibility = style;
-		}
-	}
-}
-
+var save,			// save elements and their positions
+	report,			// function shows subject occurring in timetable
+	report_button,	// show/hide report buttons
+	show_all,		// function show all subjects in timetable
+	print_message,	// print message
+	div_nl;			// node list of DIV elements in table2 (global variable needed in report() and visibility() function)
 
 
 // function called after page is loaded
@@ -152,9 +92,17 @@ window.onload = function () {
 };
 
 
+// save elements and their positions
+save = function () {
+	// scan second table (timetable)
+	var content = REDIPS.drag.save_content(1);
+	// and save content
+	window.location.href = 'db_save.php?' + content;
+};
+
 
 // function shows subject occurring in timetable
-function report(subject) {
+report = function (subject) {
 		// define day and time labels
 	var day = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
 		time = ['08:00', '09:00', '10:00', '11:00', '12:00',
@@ -205,4 +153,56 @@ function report(subject) {
 	if (document.getElementById('report').checked === true) {
 		alert('Number of found subjects: ' + num + '\n' + str);
 	}
-}
+};
+
+
+// show/hide report buttons
+report_button = function () {
+	var	id,			// element id
+		i,			// loop variable
+		count,		// number of subjects in timetable
+		style,		// hidden or visible
+		// prepare subjects
+		subject = {'en': 0, 'ph': 0, 'ma': 0, 'bi': 0, 'ch': 0, 'it': 0, 'ar': 0, 'hi': 0, 'et': 0};
+	// loop goes through all collected elements
+	for (i = 0; i < div_nl.length; i++) {
+		// define only first two letters of ID
+		// (cloned elements have appended c1, c2, c3 ...)
+		id = div_nl[i].id.substr(0, 2);
+		// increase subject occurring
+		subject[id]++;
+	}
+	// loop through subjects
+	for (i in subject) {
+		// using the hasOwnProperty method to distinguish the true members of the object
+		if (subject.hasOwnProperty(i)) {
+			// prepare id of the report button
+			id = 'b_' + i;
+			// subject count on the timetable
+			count = subject[i];
+			if (count === 0) {
+				style = 'hidden';
+			}
+			else {
+				style = 'visible';
+			}
+			// hide or show report button
+			document.getElementById(id).style.visibility = style;
+		}
+	}
+};
+
+
+// print message
+print_message = function (message) {
+	document.getElementById('message').innerHTML = message;
+};
+
+
+// function show all subjects in timetable
+show_all = function () {
+	var	i; // loop variable
+	for (i = 0; i < div_nl.length; i++) {
+		div_nl[i].style.visibility = 'visible';
+	}
+};

@@ -1,15 +1,11 @@
 <?php
-//
-// delete.php is used only with script1.js
-//
-
 // include config with database definition
-include('config.php');
+include('../config.php');
 
 // input parameter is element to delete (suppress errors by adding a @ sign) 
 $p = @$_REQUEST['p'];
 
-// prepare elements -id, row and column
+// explode input parameteres: id, row and column
 list($sub_id, $row, $col) = explode('_', $p);
 
 // discard clone id part from the sub_id
@@ -22,5 +18,12 @@ if (is_numeric($row) && is_numeric($col)) {
 	// commit transaction (sqlCommit is function from config.php)
 	sqlCommit();
 }
+
+// no cache
+header('Pragma: no-cache');
+// HTTP/1.1
+header('Cache-Control: no-cache, must-revalidate');
+// date in the past
+header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
 
 ?>

@@ -1,7 +1,9 @@
 <?php 
 
-// define database host, database name, user name and password 
-$db_host = 'localhost';	// 99% chance you won't need to change this value
+// define database host (99% chance you won't need to change this value)
+$db_host = 'localhost';
+
+// define database name, user name and password
 $db_name = 'enter_database_name';
 $db_user = 'enter_user_name';
 $db_pwd  = 'enter_user_password';
