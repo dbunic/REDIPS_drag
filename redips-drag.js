@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 4.3.5
-Jul 14, 2011.
+Version 4.3.6
+Aug 9, 2011.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -27,7 +27,7 @@ var REDIPS = REDIPS || {};
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content-animation/">Drag and drop table content plus animation</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">Drag and drop table rows</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">Drag and Drop table content</a>
- * @version 4.3.5
+ * @version 4.3.6
  */
 REDIPS.drag = (function () {
 		// methods
@@ -1270,7 +1270,8 @@ REDIPS.drag = (function () {
 	/**
 	 * Method sets current table, row and cell.
 	 * Current cell position is based on position of mouse pointer and calculated grid of tables inside drag container.
-	 * Method contains built logic for dropping rules like marked/forbidden table cells.
+	 * Method contains logic for dropping rules like marked/forbidden table cells.
+	 * Rows with display='none' are not contained in row_offset array so row bounds calculation should take care about sparse arrays (since version 4.3.6).
 	 * @private
 	 * @memberOf REDIPS.drag#
 	 */
@@ -1309,11 +1310,29 @@ REDIPS.drag = (function () {
 			if (tos[3] < X && X < tos[1] && tos[0] < Y && Y < tos[2]) {
 				// define row offsets for the selected table (row box bounds)
 				row_offset = tables[table].row_offset;
-				// find the current row (loop will stop at the current row; row_offset[row][0] is row top offset)
-				for (row = 0; row < row_offset.length - 1 && row_offset[row][0] < Y; row++) {
+				// find the current row (loop skips hidden rows)
+				for (row = 0; row < row_offset.length - 1; row++) {
+					// if row doesn't exist (in case of hidden row) - skip it
+					if (row_offset[row] === undefined) {
+						continue;
+					}
 					// set top and bottom cell bounds
 					currentCell[0] = row_offset[row][0];
-					currentCell[2] = row_offset[row + 1][0];
+					// set bottom cell bound (if is possible) - hidden row doesn't exist
+					if (row_offset[row + 1] !== undefined) {
+						currentCell[2] = row_offset[row + 1][0];
+					}
+					// hidden row (like style.display === 'none')
+					else {
+						// search for next visible row
+						for (i = row + 2; i < row_offset.length; i++) {
+							// visible row found
+							if (row_offset[i] !== undefined) {
+								currentCell[2] = row_offset[i][0];
+								break;
+							}
+						}
+					}
 					// top bound of the next row
 					if (Y <= currentCell[2]) {
 						break;
@@ -1615,6 +1634,7 @@ REDIPS.drag = (function () {
 	/** 
 	 * Method is called in every possible case when position or size of table grid could change like: page scrolling, element dropped to the table cell, element start dragging and so on.
 	 * It calculates table row offsets (table grid) and saves to the "tables" array.
+	 * Table rows with style display='none' are skipped.
 	 * @private
 	 * @memberOf REDIPS.drag#
 	 */
@@ -1635,7 +1655,10 @@ REDIPS.drag = (function () {
 			}
 			// backward loop has better perfomance
 			for (j = tables[i].rows.length - 1; j >= 0; j--) {
-				row_offset[j] = box_offset(tables[i].rows[j], position);
+				// add rows to the offset array if row is not hidden 
+				if (tables[i].rows[j].style.display !== 'none') {
+					row_offset[j] = box_offset(tables[i].rows[j], position);
+				}
 			}
 			// save table informations (table offset and row offsets)
 			tables[i].offset = box_offset(tables[i], position);

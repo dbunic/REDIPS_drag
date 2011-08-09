@@ -1,5 +1,8 @@
 Changes for REDIPS.drag library
 
+4.3.6
+- added support for rows with style display='none'
+
 4.3.5
 - added option to exclude tables with className "nolayout" (if want to put table in DIV element and drag as any other content)
 
