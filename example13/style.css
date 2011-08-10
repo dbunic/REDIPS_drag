@@ -6,13 +6,13 @@ Oct, 2010.
 
 */
 
-body{
+body {
 	font-family: arial;
 	margin: 0px; /* for IE6 / IE7 */
 }
 
 /* make drag container visible */
-#drag{
+#drag {
 	border: 2px dashed LightBlue;
 	display: table;
 }
@@ -41,7 +41,7 @@ div#drag table {
 	}
 
 /* table cells */
-div#drag td{
+div#drag td {
 	border: 1px solid navy;
 	height: 40px;
 	text-align: center;
@@ -50,7 +50,7 @@ div#drag td{
 }
 
 /* drag object (DIV inside table cell) */
-.drag{
+.drag {
 	margin: auto;
 	margin-bottom: 1px;
 	margin-top: 1px;

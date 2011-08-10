@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 4.3.6
-Aug 9, 2011.
+Version 4.4.0
+Aug 10, 2011.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -84,7 +84,7 @@ REDIPS.drag = (function () {
 		moved_flag = 0,				// if object is moved, flag gets value 1  
 		cloned_flag = 0,			// if object is cloned, flag gets value 1
 		cloned_id = [],				// needed for increment ID of cloned elements
-		currentCell = [],			// current cell bounds: top, right, bottom, left (decrease number calls of set_trc)
+		currentCell = [],			// current cell bounds (top, right, bottom, left) and "containTable" flag for nested tables
 		div_drag = null,			// reference to the div drag
 		div_box = null,				// div drag box: top, right, bottom and left margin (decrease number calls of set_trc)
 		pointer = {x: 0, y: 0},		// mouse pointer position (this properties are set in handler_onmousemove() - needed for autoscroll)
@@ -237,8 +237,6 @@ REDIPS.drag = (function () {
 				if (element.nodeName === 'TD') {
 					// increase nested level
 					level++;
-					// mark table cell that contains table (needed for settings currentCell.containTable property in set_trc() - see around line 800)
-					element.table = true;
 				}
 				// go one level up
 				element = element.parentNode;
@@ -322,6 +320,13 @@ REDIPS.drag = (function () {
 			mouseButton,				// start drag if left mouse button is pressed
 			position,					// position of table or container box of table (if has position:fixed then exclude scroll offset)
 			X, Y;						// X and Y position of mouse pointer
+		// stopping event propagation (only first clicked element will register onmousedown event)
+		// needed in case of placing table inside of <div class="drag"> (after element was dropped to this table it couldn't be moved out
+		// any more - table and element moved together because table captures mousedown event after inner DIV element)
+		evt.cancelBubble = true;
+		if (evt.stopPropagation) {
+			evt.stopPropagation();
+		}
 		// define X and Y position (pointer.x and pointer.y are needed in set_trc() and autoscroll methods)
 		X = pointer.x = evt.clientX;
 		Y = pointer.y = evt.clientY;
@@ -892,8 +897,11 @@ REDIPS.drag = (function () {
 					REDIPS.drag.myhandler_switched();
 					// and myhandler_dropped
 					REDIPS.drag.myhandler_dropped(target_cell);
-					// if object is cloned, update climit1_X or climit2_X classname
+					// if object is cloned
 					if (cloned_flag === 1) {
+						// call cloned_dropped event handler
+						REDIPS.drag.myhandler_cloned_dropped(target_cell);
+						// update climit1_X or climit2_X classname
 						clone_limit();
 					}
 				}
@@ -901,8 +909,11 @@ REDIPS.drag = (function () {
 				else {
 					// call myhandler_dropped because clone_limit could call myhandler_clonedend1 or myhandler_clonedend2
 					REDIPS.drag.myhandler_dropped(target_cell);
-					// if object is cloned, update climit1_X or climit2_X classname
+					// if object is cloned
 					if (cloned_flag === 1) {
+						// call cloned_dropped event handler
+						REDIPS.drag.myhandler_cloned_dropped(target_cell);
+						// update climit1_X or climit2_X classname
 						clone_limit();
 					}
 				}
@@ -922,8 +933,11 @@ REDIPS.drag = (function () {
 				target_cell.appendChild(obj);
 				// call myhandler_dropped because clone_limit could call myhandler_clonedend1 or myhandler_clonedend2
 				REDIPS.drag.myhandler_dropped(target_cell);
-				// if object is cloned, update climit1_X or climit2_X classname
+				// if object is cloned
 				if (cloned_flag === 1) {
+					// call cloned_dropped event handler
+					REDIPS.drag.myhandler_cloned_dropped(target_cell);
+					// update climit1_X or climit2_X classname
 					clone_limit();
 				}
 			}
@@ -935,8 +949,11 @@ REDIPS.drag = (function () {
 				target_cell.appendChild(obj);
 				// call myhandler_dropped because clone_limit could call myhandler_clonedend1 or myhandler_clonedend2
 				REDIPS.drag.myhandler_dropped(target_cell);
-				// if object is cloned, update climit1_X or climit2_X classname
+				// if object is cloned
 				if (cloned_flag === 1) {
+					// call cloned_dropped event handler
+					REDIPS.drag.myhandler_cloned_dropped(target_cell);
+					// update climit1_X or climit2_X classname
 					clone_limit();
 				}
 			}
@@ -1047,8 +1064,7 @@ REDIPS.drag = (function () {
 		// 3) and current table contains nested table or cursor is outside of current cell
 		if (X < div_box[1] && X > div_box[3] && Y < div_box[2] && Y > div_box[0] &&
 			edge.flag.x === 0 && edge.flag.y === 0 &&
-			((currentCell.containTable === 1) ||
-			(X < currentCell[3] || X > currentCell[1] || Y < currentCell[0] || Y > currentCell[2]))) {
+			(currentCell.containTable || (X < currentCell[3] || X > currentCell[1] || Y < currentCell[0] || Y > currentCell[2]))) {
 			// set current table row and table cell
 			set_trc();
 			// if new location is inside table and new location is different then old location
@@ -1385,14 +1401,13 @@ REDIPS.drag = (function () {
 				}
 				// set current cell (for easier access in test below)
 				cell_current = tables[table].rows[row].cells[cell];
-				// if current cell has nested table then set currentCell.containTable property
-				// needed in handler_onmousemove() - see around line 567
-				// "table" property of cell (TD) is set in initialization phase inside init_tables()
-				if ('table' in cell_current) {
-					currentCell.containTable = 1;
+				// if current cell contain nested table(s) then set currentCell.containTable property
+				// needed in handler_onmousemove() - see around line 1070
+				if (cell_current.childNodes.length > 0 && cell_current.getElementsByTagName('table').length > 0) {
+					currentCell.containTable = true;
 				}
 				else {
-					currentCell.containTable = 0;
+					currentCell.containTable = false;
 				}
 				// if current cell isn't trash cell, then search for marks in class name
 				if (cell_current.className.indexOf(REDIPS.drag.trash_cname) === -1) {
@@ -1912,6 +1927,7 @@ REDIPS.drag = (function () {
 		// increment cloned_id for cloned element
 		cloned_id[obj.id] += 1;
 		// I assumed that custom properties will be automatically cloned - but not(?!)
+		// anyway, now seems that Chrome11 and FF4 automatically clone and custom properties - needed deeper analysis 
 		obj_new.redips_container = obj.redips_container;
 		obj_new.redips_enabled = obj.redips_enabled;
 		// remember previous object (original element)
@@ -2105,10 +2121,11 @@ REDIPS.drag = (function () {
 		}
 		// attach onmousedown event handler only to DIV elements that have "drag" in class name
 		// allow other div elements inside <div id="drag" ...
-		for (i = 0, j = 0; i < divs.length; i++) { 
+		for (i = 0, j = 0; i < divs.length; i++) {
+			// if DIV element contains "drag" class name
 			if (regex_drag.test(divs[i].className)) {
 				// DIV elements should have only onmousedown/ondblclick attached (using traditional event registration model)
-				// I had problems with using advanced event registration model regarding text selection and dragging text selection
+				// I had problems with using advanced event registration model and text selection / dragging text selection
 				divs[i].onmousedown = handler1;
 				divs[i].ondblclick = handler2;
 				divs[i].style.borderStyle = borderStyle;
@@ -2912,7 +2929,6 @@ REDIPS.drag = (function () {
 		 * @default 2 px
 		 */
 		animation_step : animation_step, 
-
 		/* public methods (documentation is in main code) */
 		init : init,
 		enable_drag : enable_drag,
@@ -2990,6 +3006,13 @@ REDIPS.drag = (function () {
 		 * @event
 		 */	
 		myhandler_cloned : function () {},
+		/**
+		 * Event handler invoked after clomed DIV element is dropped.
+		 * @name REDIPS.drag#myhandler_cloned_dropped
+		 * @function
+		 * @event
+		 */	
+		myhandler_cloned_dropped : function () {},
 		/**
 		 * Event handler invoked if last element is cloned (type 1).
 		 * Element has defined "climit1_X" class name where X defines number of elements to clone. Last element can be dragged.
@@ -3091,10 +3114,12 @@ if (!REDIPS.event) {
 		
 		// http://msdn.microsoft.com/en-us/scriptjunkie/ff728624
 		// http://www.javascriptrules.com/2009/07/22/cross-browser-event-listener-with-design-patterns/
+		// http://www.quirksmode.org/js/events_order.html
 
 		// add event listener
 		add = function (obj, eventName, handler) {
 			if (obj.addEventListener) {
+				// (false) register event in bubble phase (event propagates from from target element up to the DOM root)
 				obj.addEventListener(eventName, handler, false);
 			}
 			else if (obj.attachEvent) {

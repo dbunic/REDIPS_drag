@@ -1,5 +1,10 @@
 Changes for REDIPS.drag library
 
+4.4.0
+- added support for dynamical creation of table layout (inner table inside DIV element can be moved and accept other DIV elements)
+- added myhandler_cloned_dropped() event handler
+- upgrading example11
+
 4.3.6
 - added support for rows with style display='none'
 

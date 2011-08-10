@@ -1,4 +1,4 @@
-REDIPS.drag 4.3.6
+REDIPS.drag 4.4.0
 ============
 
 ## What's REDIPS.drag?
@@ -25,6 +25,7 @@ REDIPS.drag is a JavaScript drag and drop library focused on dragging table cont
 * "noautoscoll" option for drag containers
 * "nolayout" option for tables (table in DIV element can be dragged as any other content)
 * takes care about rows with style display='none'
+* support for dynamical creation of table layout (inner table inside DIV element can be moved and accept other DIV elements)
 
 ## Public methods
 
