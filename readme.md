@@ -1,4 +1,4 @@
-REDIPS.drag 4.4.0
+REDIPS.drag 4.4.1
 ============
 
 ## What's REDIPS.drag?
@@ -30,14 +30,17 @@ REDIPS.drag is a JavaScript drag and drop library focused on dragging table cont
 ## Public methods
 
 * REDIPS.drag.init() - drag container initialization
-* REDIPS.drag.enable_drag - enables / disables one or all DIV elements in tables
-* REDIPS.drag.add_events -  adds omousedown and ondblclick event listeners to the DIV element
-* REDIPS.drag.save_content - scans table content and prepare URL needed for saving
-* REDIPS.drag.relocate - relocates all child nodes from source table cell to the target table cell
-* REDIPS.drag.move_object - method will calculate parameters and start animation (DIV element to the destination table cell)
-* REDIPS.drag.row_opacity - sets opacity to table row (el, opacity, color)
-* REDIPS.drag.getScrollPosition - returns scroll positions as array [ scrollX, scrollY ]
+* REDIPS.drag.enable_drag() - enables / disables one or all DIV elements in tables
+* REDIPS.drag.enable_table() - enables / disables tables selected by class name
+* REDIPS.drag.clone_div() - clones DIV element and returns reference of the cloned element
+* REDIPS.drag.save_content() - scans table content and prepare URL needed for saving
+* REDIPS.drag.relocate() - relocates all child nodes from source table cell to the target table cell
+* REDIPS.drag.move_object() - method will calculate parameters and start animation (DIV element to the destination table cell)
+* REDIPS.drag.get_position() - returns DIV element position as array (tableIndex, rowIndex and cellIndex)
+* REDIPS.drag.row_opacity() - sets opacity to table row (el, opacity, color)
+* REDIPS.drag.getScrollPosition() - returns scroll positions as array [ scrollX, scrollY ]
 * REDIPS.drag.get_style() - returns style value of requested object and style name
+* REDIPS.drag.find_parent() - returns a reference of the required parent element
 
 ## Documentation
 

@@ -4,36 +4,34 @@
 /* enable strict mode */
 "use strict";
 
-var set_hover_color;
+var set_hover_color,	// set hover color method
+	rd;					// reference to the REDIPS.drag library
 
 // onload event
 window.onload = function () {
-	// reference to the REDIPS.drag object
-	var rd = REDIPS.drag;
+	// set reference to the REDIPS.drag library
+	rd = REDIPS.drag;
 	// initialization
 	rd.init();
 	// elements could be cloned with pressed SHIFT key
 	rd.clone_shiftKey = true;
 	// handler clicked - set hover color
 	rd.myhandler_clicked = function () {
-		set_hover_color(REDIPS.drag.current_cell);
+		set_hover_color(rd.current_cell);
 	};
 	// handler changed - set hover color
 	rd.myhandler_changed = function () {
-		set_hover_color(REDIPS.drag.current_cell);
+		set_hover_color(rd.current_cell);
 	};
 };
 
 
 // set hover color
 set_hover_color = function (e) {
-	var color;
-	// loop up until table found
-	while (e && e.nodeName !== 'TABLE') {
-		e = e.parentNode;
-	}
+	var color,
+		tbl = rd.find_parent('TABLE', e);
 	// set hover color depending in nested level
-	switch (e.redips_nestedLevel) {
+	switch (tbl.redips.nestedLevel) {
 	// "ground" level table
 	case 0:
 		color = '#9BB3DA';
@@ -52,5 +50,5 @@ set_hover_color = function (e) {
 		break;
 	}
 	// set hover color
-	REDIPS.drag.hover_color = color; 
+	rd.hover_color = color; 
 };

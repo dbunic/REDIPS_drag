@@ -206,7 +206,7 @@ shuffle = function () {
  */
 get_id = function (obj) {
 	var	ri = {1: 2, 2: 1},						// needed for reverse 1 -> 2 or 2 -> 1
-		id = obj.id || obj.redips_dragrow_id,	// define DIV id or mini table
+		id = obj.id || obj.redips.dragrow_id,	// define DIV id or mini table
 		lc = id.charAt(id.length - 1),			// last character of id that should be reversed (1 -> 2 or 2 -> 1)
 		id_new = id.slice(0, -1) + ri[lc];		// id of element from opposite table
 	// return new id

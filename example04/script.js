@@ -6,6 +6,8 @@
 
 var board = [[0, 0, 0], [0, 0, 0], [0, 0, 0]], // board array
 	xo = {x: 1, o: -1},	// define values for X and O elements
+	rd,					// reference to the REDIPS.drag library
+	divo,				// reference to the O DIV element
 	// methods
 	toggle_xo,			// toggle X and O clone elements on the left
 	check_board,		// method checks board
@@ -14,21 +16,25 @@ var board = [[0, 0, 0], [0, 0, 0], [0, 0, 0]], // board array
 
 // onload event
 window.onload = function () {
+	// set reference to the REDIPS.drag library
+	rd = REDIPS.drag;
 	// initialization
-	REDIPS.drag.init();
+	rd.init();
 	// define border for disabled element (default is dotted)
-	REDIPS.drag.border_disabled = 'none';
+	rd.border_disabled = 'none';
 	// dragged elements can be placed to the empty cells only
-	REDIPS.drag.drop_option = 'single';
+	rd.drop_option = 'single';
+	// set reference to the O div element (needed in toggle_xo() method)
+	divo = document.getElementById('o');
 	// toggle X and O elements on the left side
 	toggle_xo();
 	// declare tasks after element is dropped
-	REDIPS.drag.myhandler_dropped = function () {
-		var obj = REDIPS.drag.obj, // current element (cloned element)
-			obj_old = REDIPS.drag.obj_old, // previous element (this is clone element)
-			tac = REDIPS.drag.target_cell; // target cell
+	rd.myhandler_dropped = function () {
+		var obj = rd.obj,			// current element (cloned element)
+			obj_old = rd.obj_old,	// previous element (this is clone element)
+			tac = rd.target_cell;	// target cell
 		// disable dropped DIV element
-		REDIPS.drag.enable_drag(false, obj.id);
+		rd.enable_drag(false, obj.id);
 		// toggle X and O elements on the left
 		toggle_xo();
 		// check board (obj_old.id can be 'x' or 'o')
@@ -40,13 +46,13 @@ window.onload = function () {
 // toggle X and O clone elements on the left
 toggle_xo = function () {
 	// references to the X and O elements
-	if (document.getElementById('o').redips_enabled) {
-		REDIPS.drag.enable_drag(false, 'o');
-		REDIPS.drag.enable_drag(true, 'x');
+	if (divo.redips.enabled) {
+		rd.enable_drag(false, 'o');
+		rd.enable_drag(true, 'x');
 	}
 	else {
-		REDIPS.drag.enable_drag(true, 'o');
-		REDIPS.drag.enable_drag(false, 'x');
+		rd.enable_drag(true, 'o');
+		rd.enable_drag(false, 'x');
 	}
 };
 
@@ -73,10 +79,10 @@ check_board = function (id, row_idx, cell_idx) {
 check_line = function (value) {
 	if (value === 3) {
 		document.getElementById('message').innerHTML = 'X is the Winner!';
-		REDIPS.drag.enable_drag(false); // disable all drag elements
+		rd.enable_drag(false); // disable all drag elements
 	}
 	else if (value === -3) {
 		document.getElementById('message').innerHTML = 'O is the Winner!';
-		REDIPS.drag.enable_drag(false); // disable all drag elements
+		rd.enable_drag(false); // disable all drag elements
 	}
 };

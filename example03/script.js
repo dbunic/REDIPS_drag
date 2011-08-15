@@ -28,22 +28,17 @@ window.onload = function () {
 	report_button();
 	// after element is dropped, print message
 	rd.myhandler_dropped = function () {
-		var obj = rd.obj,							// dragged OBJect
-			obj_old = rd.obj_old,					// original object
+		var	obj_old = rd.obj_old,					// original object
 			target_cell = rd.target_cell,			// Target cell
 			target_row = rd.target_cell.parentNode,	// Target row
 			marked_cell = rd.marked_cell,			// marked cells
 			mark_cname = rd.mark_cname,				// name of marked cells
-			i, obj_new, mark_found, id;				// local variables
+			i, obj_new, mark_found;					// local variables
 		// if checkbox is checked and original element is clone type then clone school subject to the week
 		if (document.getElementById('week').checked === true && obj_old.className.indexOf('clone') > -1) {
 			// loop through table cells
 			for (i = 0; i < target_row.cells.length; i++) {
-				// skip table cell where DIV element is dropped
-				if (target_cell === target_row.cells[i]) {
-					continue;
-				}
-				// skip if table cell is not empty
+				// skip if table cell is not empty (true for cell where element is currently dropped)
 				if (target_row.cells[i].childNodes.length > 0) {
 					continue;
 				}
@@ -55,17 +50,7 @@ window.onload = function () {
 					continue;
 				}
 				// clone DIV element
-				obj_new = obj.cloneNode(true);
-				// set id (first two characters are id of original element)
-				id = obj.id.substring(0, 2);
-				// set id for cloned element
-				obj_new.id = id + 'c' + rd.cloned_id[id];
-				// set reference to the DIV container 
-				obj_new.redips_container = obj.redips_container;
-				// increment cloned_id for cloned element
-				rd.cloned_id[id] += 1;
-				// add onmousedown/ondblclick event listeners to the cloned element
-				rd.add_events(obj_new);
+				obj_new = rd.clone_div(obj_old);
 				// append to the table cell
 				target_row.cells[i].appendChild(obj_new);
 			}
