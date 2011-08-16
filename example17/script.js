@@ -219,8 +219,8 @@ get_id = function (obj) {
  * @param {Boolean} Flag enable or disable elements in both dragging containers.
  */
 enable_elements = function (flag) {
-	rd.enable_drag(flag, 'drag1', 'container');
-	rd.enable_drag(flag, 'drag2', 'container');
+	rd.enable_drag(flag, 'drag1', 'subtree');
+	rd.enable_drag(flag, 'drag2', 'subtree');
 	// enable/disable buttons "Reset" and "Shuffle"
 	enable_buttons(flag);
 };

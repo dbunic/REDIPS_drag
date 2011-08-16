@@ -57,5 +57,5 @@ enable_button = function (flag) {
 	// enable/disable button
 	button.disabled = !flag;
 	// enable/disable DIV elements in dragging container
-	rd.enable_drag(flag, 'drag', 'container');
+	rd.enable_drag(flag, 'drag', 'subtree');
 };

@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 4.4.1
-Aug 12, 2011.
+Version 4.4.2
+Aug 16, 2011.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -27,7 +27,7 @@ var REDIPS = REDIPS || {};
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content-animation/">Drag and drop table content plus animation</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">Drag and drop table rows</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">Drag and Drop table content</a>
- * @version 4.4.1
+ * @version 4.4.2
  */
 REDIPS.drag = (function () {
 		// methods
@@ -530,8 +530,22 @@ REDIPS.drag = (function () {
 			row_last,	// last row in cloned table
 			id,			// id of <DIV class="drag row">
 			i;			// loop variable
-		// clone current row (needed in onmousemove)
-		if (el.nodeName === 'TR') {
+		// first call of row_clone in onmousedown will return reference of TR element (input parameter is DIV class="row")
+		if (el.nodeName === 'DIV') {
+			// remember id of <DIV class="drag row">
+			id = el.id;
+		    // find parent TR element
+			el = find_parent('TR', el);
+			// create a "property object" in which all custom properties will be saved
+			// (it is only one property for now)
+			el.redips = {};
+			// save id to the table row as redips.dragrow_id
+			el.redips.dragrow_id = id;
+			// return reference to the TR
+			return el;
+		}
+		// second call of row_clone in onmousemove will clone current row (el.nodeName === 'TR')
+		else {
 			// remember row object (source row)
 			row_obj = el;
 		    // find parent table
@@ -557,7 +571,7 @@ REDIPS.drag = (function () {
 			// set form values in cloned row (to prevent reset values of form elements)
 			form_elements(row_obj, table_mini.rows[0]);
 			// copy custom properties to the child DIV elements and set onmousedown/ondblclick event handlers
-			copy_properties(row_obj, table_mini);
+			copy_properties(row_obj, table_mini.rows[0]);
 			// set id of <DIV class="drag row" id="row1"> to the table mini if is possible
 			// needed for dropped row identification
 			if (row_obj.redips !== undefined) {
@@ -575,21 +589,6 @@ REDIPS.drag = (function () {
 			table_mini.style.width = (offset[1] - offset[3]) + "px";
 			// return reference of mini table
 			return table_mini;
-		}
-		// input parameter is DIV class="row"
-		// return reference of the current row (needed in onmousedown)
-		else {
-			// remember id of <DIV class="drag row">
-			id = el.id;
-		    // find parent TR element
-			el = find_parent('TR', el);
-			// create a "property object" in which all custom properties will be saved
-			// (it is only one property for now)
-			el.redips = {};
-			// save id to the table row as redips.dragrow_id
-			el.redips.dragrow_id = id;
-			// return reference to the TR
-			return el;
 		}
 	};
 
@@ -619,14 +618,30 @@ REDIPS.drag = (function () {
 		rowIndex = src.rowIndex;
 		// find source table
 		src = find_parent('TABLE', src);
-		// delete source row
-		src.deleteRow(rowIndex);
+		// if dragged row was the last row then row will not be deleted
+		if (src.rows.length === 1) {
+			// first it will be marked as transparent
+			row_opacity(obj_old, 0, 'White');
+			// then all DIV elements will be disabled
+			enable_drag(false, obj_old, 'subtree');
+			// set redips.last_row to true
+			obj_old.redips.last_row = true;
+		}
+		// this was not the last row - delete source row
+		else {
+			src.deleteRow(rowIndex);
+		}
 		// set reference to the TR in mini table (mini table has only one row - first row)
 		tr = table_mini.getElementsByTagName('tr')[0];
 		// if row is not dropped to the last row position
 		if (r_row < tables[r_table].rows.length) {
 			// insert table row
 			ts.insertBefore(tr, tables[r_table].rows[r_row]);
+			// if table has two rows and last row was marked as "last_row" then delete last row
+			if (ts.rows.length === 2 && ts.rows[1].redips.last_row) {
+				ts.deleteRow(1);
+				
+			}
 		}
 		// row is dropped to the last row position
 		else {
@@ -1940,43 +1955,66 @@ REDIPS.drag = (function () {
 	 * Method copies custom properties from source element to the cloned element and sets event handlers (onmousedown and ondblclick).
 	 * This action will be taken on DIV element itself and all child DIV elements.
 	 * Needed in case when DIV element is cloned or ROW is cloned (for dragging mode="row").
-	 * @param {HTMLElement} el1 Source element (DIV or TR element).
-	 * @param {HTMLElement} el1 Cloned element (DIV or TR element).
+	 * @param {HTMLElement} src Source element (DIV or TR element).
+	 * @param {HTMLElement} cln Cloned element (DIV or TR element).
 	 * @private
 	 * @memberOf REDIPS.drag#
 	 */
-	copy_properties = function (el1, el2) {
-		var	div1, div2,	// collection of DIV elements in source and cloned element
-			copy,		// copy method
-			i;			// loop variable
-		// define copy method (d1 source element, d2 cloned element)
+	copy_properties = function (src, cln) {
+		var	copy = [],	// copy method
+			childs;		// copy properties for child elements (this method calls "copy" method)
+		// define copy method for DIV elements (e1 source element, e2 cloned element)
 		// http://stackoverflow.com/questions/4094811/javascript-clonenode-and-properties
-		copy = function (d1, d2) {
-			// if redips property exists on source element
-			if (d1.redips) {
+		copy[0] = function (e1, e2) {
+			// if redips property exists in source element
+			if (e1.redips) {
 				// copy custom properties (redips.enabled,  redips.container ...)
-				d2.redips = {};
-				d2.redips.enabled = d1.redips.enabled;
-				d2.redips.container = d1.redips.container;
+				e2.redips = {};
+				e2.redips.enabled = e1.redips.enabled;
+				e2.redips.container = e1.redips.container;
 				// set onmousedown/ondblclick event handler if source element is enabled
-				if (d1.redips.enabled) {
-					d2.onmousedown = handler_onmousedown;
-					d2.ondblclick = handler_ondblclick;
+				if (e1.redips.enabled) {
+					e2.onmousedown = handler_onmousedown;
+					e2.ondblclick = handler_ondblclick;
 				}
 			}
 		};
-		// if source element is DIV element then copy custom properties
-		if (el1.nodeName === 'DIV') {
-			copy(el1, el2);
+		// define copy method for TR elements
+		copy[1] = function (e1, e2) {
+			// if redips property exists in source element
+			if (e1.redips) {
+				// copy custom properties (redips.dragrow_id,  redips.last_row ...)
+				e2.redips = {};
+				e2.redips.dragrow_id = e1.redips.dragrow_id;
+				e2.redips.last_row = e1.redips.last_row;
+			}
+		};
+		// define method to copy properties for child elements (input parameter is element index 0 - DIV, 1 - TR)
+		childs = function (e) {
+			var	el1, el2,			// collection of DIV/TR elements in source and cloned element
+				i,					// loop variable
+				tn = ['DIV', 'TR'];	// tag name
+			// collect child DIV/TR elements from the source element (possible if div element contains table)
+			el1 = src.getElementsByTagName(tn[e]);
+			// collect child DIV/TR elements from cloned element
+			el2 = cln.getElementsByTagName(tn[e]);
+			// copy custom properties (redips.enabled,  redips.container ...) and set event handlers to child DIV elements
+			for (i = 0; i < el2.length; i++) {
+				copy[e](el1[i], el2[i]);
+			}
+		};
+		// if source element is DIV element then copy custom properties for DIV element
+		if (src.nodeName === 'DIV') {
+			copy[0](src, cln);
 		}
-		// collect child DIV elements from the source element (possible if div element contains table)
-		div1 = el1.getElementsByTagName('div');
-		// collect child DIV elements from cloned element
-		div2 = el2.getElementsByTagName('div');
-		// copy custom properties (redips.enabled,  redips.container ...) and set event handlers to child DIV elements
-		for (i = 0; i < div2.length; i++) {
-			copy(div1[i], div2[i]);
+		// if source element is TR element then copy custom properties for TR element
+		else if (src.nodeName === 'TR') {
+			copy[1](src, cln);
 		}
+		// copy properties for DIV child elements
+		childs(0);
+		// copy properties for TR child elements
+		childs(1);
 	};
 
 
@@ -2009,7 +2047,7 @@ REDIPS.drag = (function () {
 			// decrease limit number and cut out "climit" class
 			limit -= 1;
 			classes = classes.replace(/climit\d_\d+/g, '');
-			// test if limit drop to zero
+			// test if limit drops to zero
 			if (limit <= 0) {
 				// no more cloning, cut "clone" from class names
 				classes = classes.replace('clone', '');
@@ -2095,20 +2133,20 @@ REDIPS.drag = (function () {
 	/**
 	 * Method attaches / detaches onmousedown, ondblclick events to DIV elements and attaches onscroll event to the scrollable containers in initialization phase.
 	 * If class attribute of DIV container contains "noautoscroll" class name then autoscroll option will be disabled.
-	 * @param {String|Boolean} enable_flag Enable / disable element (or element container like table, dragging container ...).
-	 * @param {String|HTMLElement} [div_id] Element id (or dragging area) to enable / disable. Parameter defines DIV object or DIV id of element(s) to enable / disable.
-	 * @param {String} [type] Type definition for the second parameter div_id - element or container.
+	 * @param {String|Boolean} enable_flag Enable / disable element (or element subtree like table, dragging container ...).
+	 * @param {String|HTMLElement} [el] Element id (or subtree) to enable / disable. Parameter defines element id or element reference of DIV element(s) to enable / disable.
+	 * @param {String} [type] Type definition for the second parameter el - element or subtree.
 	 * @example
-	 * // enables element with id="el_id"
+	 * // enable element with id="el_id"
 	 * enable_drag(true, 'el_id');
 	 *  
-	 * // disables all elements in drag1 container 
-	 * enable_drag(false, 'drag1', 'container')
+	 * // disable all elements in drag1 subtree 
+	 * enable_drag(false, 'drag1', 'subtree')
 	 * @public
 	 * @function
 	 * @name REDIPS.drag#enable_drag
 	 */
-	enable_drag = function (enable_flag, div_id, type) {
+	enable_drag = function (enable_flag, el, type) {
 		// define local variables
 		var i, j, k,		// local variables used in loop
 			divs = [],		// collection of div elements contained in tables or one div element
@@ -2144,23 +2182,29 @@ REDIPS.drag = (function () {
 		}
 		// collect DIV elements inside current drag area (drag elements and scrollable containers)
 		// e.g. enable_drag(true)
-		if (div_id === undefined) {
+		if (el === undefined) {
 			divs = div_drag.getElementsByTagName('div');
 		}
-		// collect div elements inside container
-		// e.g. enable_drag(true, 'drag1', 'container')
-		else if (typeof(div_id) === 'string' && type === 'container') {
-			divs = document.getElementById(div_id).getElementsByTagName('div');
+		// collect DIV elements in subtree - e.g. enable_drag(true, 'drag1', 'subtree') 
+		else if (type === 'subtree') {
+			// if second parameter is string
+			if (typeof(el) === 'string') {
+				divs = document.getElementById(el).getElementsByTagName('div');
+			}
+			// otherwise, second parameter is HTMLelement
+			else {
+				divs = el.getElementsByTagName('div');
+			}
 		}
-		// "type" parameter is not "container" and "div_id" is string - assuming div_id is id of one element to enable/disable
+		// "type" parameter is not "subtree" and "el" is string - assuming el is id of one element to enable/disable
 		// e.g. enable_drag(true, 'drag1')
-		else if (typeof(div_id) === 'string') {
-			divs[0] = document.getElementById(div_id);
+		else if (typeof(el) === 'string') {
+			divs[0] = document.getElementById(el);
 		}
 		// prepare array with one div element
 		// e.g. enable_drag(true, el)
 		else {
-			divs[0] = div_id;
+			divs[0] = el;
 		}
 		// attach onmousedown event handler only to DIV elements that have "drag" in class name
 		// allow other div elements inside <div id="drag" ...
@@ -2663,6 +2707,20 @@ REDIPS.drag = (function () {
 	 * If input parameter is not defined then method will return array with current and source positions (array length will be 6).
 	 * @param {String|HTMLElement} [ip] DIV element id / reference or table cell id / reference.
 	 * @return {Array} Returns array with members tableIndex, rowIndex and cellIndex.
+	 * @example
+	 * // display target and source position of dropped element
+	 * rd.myhandler_dropped = function () {
+	 *    // set target and source position (method returns positions as array)
+	 *    // pos[0] - target table index
+	 *    // pos[1] - target row index
+	 *    // pos[2] - target cell (column) index
+	 *    // pos[3] - source table index
+	 *    // pos[4] - source row index
+	 *    // pos[5] - source cell (column) index
+	 *    var pos = rd.get_position();
+	 *    // display element positions
+	 *    alert(pos);
+	 * };
 	 * @public
 	 * @function
 	 * @name REDIPS.drag#get_position
