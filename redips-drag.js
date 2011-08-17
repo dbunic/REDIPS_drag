@@ -526,57 +526,54 @@ REDIPS.drag = (function () {
 		var table_mini,	// original table is cloned and all rows except picked row are deleted
 			offset,		// offset of source TR
 			row_obj,	// reference to the row object
-			row_index,	// row index
 			row_last,	// last row in cloned table
 			id,			// id of <DIV class="drag row">
 			i;			// loop variable
-		// first call of row_clone in onmousedown will return reference of TR element (input parameter is DIV class="row")
+		// 1) row_clone call in onmousedown will return reference of TR element (input parameter is DIV class="row")
 		if (el.nodeName === 'DIV') {
 			// remember id of <DIV class="drag row">
 			id = el.id;
 		    // find parent TR element
 			el = find_parent('TR', el);
-			// create a "property object" in which all custom properties will be saved
-			// (it is only one property for now)
-			el.redips = {};
-			// save id to the table row as redips.dragrow_id
+			// create a "property object" in which all custom properties will be saved (it is only one property for now)
+			if (el.redips === undefined) {
+				el.redips = {};
+			}
+			// save id of DIV element to the table row as redips.dragrow_id
 			el.redips.dragrow_id = id;
-			// return reference to the TR
+			// return reference to the TR element
 			return el;
 		}
-		// second call of row_clone in onmousemove will clone current row (el.nodeName === 'TR')
+		// 2) row_clone call in onmousemove will clone current row (el.nodeName === 'TR')
 		else {
 			// remember row object (source row)
 			row_obj = el;
 		    // find parent table
 			el = find_parent('TABLE', el);
-			// remember source row index
-			row_index = row_obj.rowIndex;
 			// clone whole table
 			table_mini = el.cloneNode(true);
-			// create a "property object" in which all custom properties will be saved
-			table_mini.redips = {};
-			// set reference to the redips.container (needed if move_object() moves elements on other container)
-			table_mini.redips.container = el.redips.container;
-			// define source row (needed for source row deletion in row_drop method)
-			table_mini.redips.source_row = row_obj;
 			// find last row in cloned table
 			row_last = table_mini.rows.length - 1;
 		    // delete all rows but clicked table row
 			for (i = row_last; i >= 0; i--) {
-				if (i !== row_index) {
+				if (i !== row_obj.rowIndex) {
 					table_mini.deleteRow(i);
 				}
 			}
-			// set form values in cloned row (to prevent reset values of form elements)
-			form_elements(row_obj, table_mini.rows[0]);
-			// copy custom properties to the child DIV elements and set onmousedown/ondblclick event handlers
-			copy_properties(row_obj, table_mini.rows[0]);
-			// set id of <DIV class="drag row" id="row1"> to the table mini if is possible
-			// needed for dropped row identification
+			// create a "property object" in which all custom properties will be saved
+			table_mini.redips = {};
+			// set reference to the redips.container (needed if move_object() moves elements in other container)
+			table_mini.redips.container = el.redips.container;
+			// define source row (needed for source row deletion in row_drop method)
+			table_mini.redips.source_row = row_obj;
+			// set id of <DIV class="drag row" id="row1"> to the table mini if is possible (needed for dropped row identification)
 			if (row_obj.redips !== undefined) {
 				table_mini.redips.dragrow_id = row_obj.redips.dragrow_id;
 			}
+			// set form values in cloned row (to prevent reset values of form elements)
+			form_elements(row_obj, table_mini.rows[0]);
+			// copy custom properties to all child DIV elements and set onmousedown/ondblclick event handlers
+			copy_properties(row_obj, table_mini.rows[0]);
 			// append cloned mini table to the DIV id="redips_clone"
 			document.getElementById('redips_clone').appendChild(table_mini);
 			// include scroll position in offset
@@ -620,10 +617,8 @@ REDIPS.drag = (function () {
 		src = find_parent('TABLE', src);
 		// if dragged row was the last row then row will not be deleted
 		if (src.rows.length === 1) {
-			// first it will be marked as transparent
-			row_opacity(obj_old, 0, 'White');
-			// then all DIV elements will be disabled
-			enable_drag(false, obj_old, 'subtree');
+			// content of table cells will be deleted and background color will be set to white
+			row_opacity(obj_old, 'empty', 'White');
 			// set redips.last_row to true
 			obj_old.redips.last_row = true;
 		}
@@ -2800,11 +2795,20 @@ REDIPS.drag = (function () {
 
 
 	/**
-	 * Method sets opacity to table row.
+	 * Method sets opacity to table row or deletes row content.
 	 * Input parameter "el" is reference to the table row or reference to the cloned mini table (when row is moved).
 	 * @param {HTMLElement|String} el Id of row handler (div class="drag row") or reference to element (source row or mini table).
-	 * @param {Integer} opacity Opacity level (from 0 to 100).
+	 * @param {Integer|String} opacity Opacity level (from 0 to 100) or "empty" (then content of table cells in row will be deleted - in that case first parameter should be TR).
 	 * @param {String} [color] Background color.
+	 * @example
+	 * // set reference to the REDIPS.drag library
+	 * rd = REDIPS.drag; 
+	 * 
+	 * // make row semi-transparent
+	 * rd.row_opacity(row_obj, 50);
+	 * 
+	 * // set row as empty and white (content in table cells will be deleted)
+	 * rd.row_opacity(row_obj, 'empty', 'White');
 	 * @public
 	 * @function
 	 * @name REDIPS.drag#row_opacity
@@ -2826,14 +2830,21 @@ REDIPS.drag = (function () {
 			for (i = 0; i < td.length; i++) {
 				// set background color to table cell if needed
 				td[i].style.backgroundColor = color ? color : '';
-				// loop through child nodes of every table cell
-				for (j = 0; j < td[i].childNodes.length; j++) {
-					// apply styles only to Element nodes (not text nodes, attributes ...)
-					// http://code.stephenmorley.org/javascript/dom-nodetype-constants/
-					if (td[i].childNodes[j].nodeType === 1) {
-						td[i].childNodes[j].style.opacity = opacity / 100;
-						td[i].childNodes[j].style.filter = 'alpha(opacity=' + opacity + ')';
-						//td[i].childNodes[j].style.visibility = 'hidden';
+				// if opacity is set to "empty" then delete cell content 
+				if (opacity === 'empty') {
+					td[i].innerHTML = '';
+				}
+				// otherwise set opacity to every child node in table cell
+				else {
+					// loop through child nodes of every table cell
+					for (j = 0; j < td[i].childNodes.length; j++) {
+						// apply styles only to Element nodes (not text nodes, attributes ...)
+						// http://code.stephenmorley.org/javascript/dom-nodetype-constants/
+						if (td[i].childNodes[j].nodeType === 1) {
+							td[i].childNodes[j].style.opacity = opacity / 100;
+							td[i].childNodes[j].style.filter = 'alpha(opacity=' + opacity + ')';
+							//td[i].childNodes[j].style.visibility = 'hidden';
+						}
 					}
 				}
 			}
@@ -3056,7 +3067,7 @@ REDIPS.drag = (function () {
 		 * @default 2 px
 		 */
 		animation_step : animation_step, 
-		/* public methods (documentation is in main code) */
+		/* public methods (documented in main code) */
 		init : init,
 		enable_drag : enable_drag,
 		enable_table : enable_table,
