@@ -118,7 +118,7 @@ REDIPS.drag = (function () {
 		border = 'solid',			// (string) border style for enabled elements
 		border_disabled = 'dotted',	// (string) border style for disabled elements
 		opacity_disabled,			// (integer) set opacity for disabled elements
-		trash_cname = 'trash',			// (string) cell class name where draggable element will be destroyed
+		trash_cname = 'trash',		// (string) cell class name where draggable element will be destroyed
 		trash_ask = true,			// (boolean) confirm object deletion (ask a question "Are you sure?" before delete)
 		drop_option = 'multiple',	// (string) drop_option has the following options: multiple, single, switch, switching and overwrite
 		delete_cloned = true,		// (boolean) delete cloned div if the cloned div is dragged outside of any table
