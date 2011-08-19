@@ -5,7 +5,7 @@ Changes for REDIPS.drag library
 - fixed moving last row from table
 
 4.4.1
-- added example19
+- added example19 - thanks to Tomas Lampo
 - added public method enable_table()
 - added public method find_parent() - find parent element from start position
 - added public method clone_div() - clones DIV element

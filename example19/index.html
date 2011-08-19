@@ -1,91 +1,97 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html lang="en-US" xml:lang="en-US" xmlns="http://www.w3.org/1999/xhtml">
-<head>
-	<link rel="stylesheet" href="style.css" type="text/css" charset="utf-8" />
-	<script type="text/javascript" src="../redips-drag-min.js"></script>
-	<!-- initialize drag and drop -->
-	<script type="text/javascript" src="script.js"></script>
-	<title>Example</title>
-</head>
-<body>
-	<div id="drag">
-		<table cellspacing="0" cellpadding="3" id="main" class="main">
-			<tr id="g0">
-				<td class="rowhandler">
-					<div class="drag row"></div>
-				</td>
-				<td>
-					<h2>Group 1</h2>
-					<input type="hidden" name="position[]" value="g0" />
-					<table cellspacing="0" cellpadding="3" class="view">
-						<tr class="vis1" id="v0">
-							<td class="rowhandler">
-								<div class="drag row"></div>
-							</td>
-							<td>View -1 <input type="hidden" name="position[]" value="23" />
-							</td>
-						</tr>
-					</table>
-				</td>
-			</tr>
-			<tr id="g1">
-				<td class="rowhandler">
-					<div class="drag row"></div>
-				</td>
-				<td>
-					<h2>Group 2</h2>
-					<input type="hidden" name="position[]" value="g1" />
-					<table cellspacing="0" cellpadding="3" class="view">
-						<tr class="vis1" id="v1">
-							<td class="rowhandler">
-								<div class="drag row"></div>
-							</td>
-							<td>View 0 <input type="hidden" name="position[]" value="1" />
-							</td>
-						</tr>
-						<tr class="vis1" id="v2">
-							<td class="rowhandler">
-								<div class="drag row"></div>
-							</td>
-							<td>View 1 <input type="hidden" name="position[]" value="4" />
-							</td>
-						</tr>
-						<tr class="vis1" id="v3">
-							<td class="rowhandler">
-								<div class="drag row"></div>
-							</td>
-							<td>View 2 <input type="hidden" name="position[]" value="3" />
-							</td>
-						</tr>
-					</table>
-				</td>
-			</tr>
-			<tr id="g2">
-				<td class="rowhandler">
-					<div class="drag row"></div>
-				</td>
-				<td>
-					<h2>Group 3</h2>
-					<input type="hidden" name="position[]" value="g2" />
-					<table cellspacing="0" cellpadding="3" class="view">
-						<tr class="vis1" id="v4">
-							<td class="rowhandler">
-								<div class="drag row"></div>
-							</td>
-							<td>View 3 <input type="hidden" name="position[]" value="22" />
-							</td>
-						</tr>
-						<tr class="vis1" id="v5">
-							<td class="rowhandler">
-								<div class="drag row"></div>
-							</td>
-							<td>View 4 <input type="hidden" name="position[]" value="5" />
-							</td>
-						</tr>
-					</table>
-				</td>
-			</tr>
-		</table>
-	</div>
-</body>
+	<head>
+		<meta name="author" content="Darko Bunic"/>
+		<meta name="description" content="Drag and drop table content/rows with JavaScript"/>
+		<link rel="stylesheet" href="style.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../redips-drag-min.js"></script>
+		<script type="text/javascript" src="script.js"></script>
+		<title>www.redips.net</title>
+	</head>
+	<body>
+		<center>
+			<h1><a href="http://www.redips.net/javascript/drag-and-drop-table-content/">www.redips.net</a></h1>
+			<h2>Example 19: Groups and table rows</h2>
+			<!-- drag region -->
+			<div id="drag">
+				<table cellspacing="0" cellpadding="3" id="main" class="main">
+					<tr id="g0">
+						<td class="rowhandler">
+							<div class="drag row"></div>
+						</td>
+						<td>
+							<h2>Group 1</h2>
+							<input type="hidden" name="position[]" value="g0" />
+							<table cellspacing="0" cellpadding="3" class="view">
+								<tr class="vis1" id="v0">
+									<td class="rowhandler">
+										<div class="drag row"></div>
+									</td>
+									<td>View -1 <input type="hidden" name="position[]" value="23" />
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr id="g1">
+						<td class="rowhandler">
+							<div class="drag row"></div>
+						</td>
+						<td>
+							<h2>Group 2</h2>
+							<input type="hidden" name="position[]" value="g1" />
+							<table cellspacing="0" cellpadding="3" class="view">
+								<tr class="vis1" id="v1">
+									<td class="rowhandler">
+										<div class="drag row"></div>
+									</td>
+									<td>View 0 <input type="hidden" name="position[]" value="1" />
+									</td>
+								</tr>
+								<tr class="vis1" id="v2">
+									<td class="rowhandler">
+										<div class="drag row"></div>
+									</td>
+									<td>View 1 <input type="hidden" name="position[]" value="4" />
+									</td>
+								</tr>
+								<tr class="vis1" id="v3">
+									<td class="rowhandler">
+										<div class="drag row"></div>
+									</td>
+									<td>View 2 <input type="hidden" name="position[]" value="3" />
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr id="g2">
+						<td class="rowhandler">
+							<div class="drag row"></div>
+						</td>
+						<td>
+							<h2>Group 3</h2>
+							<input type="hidden" name="position[]" value="g2" />
+							<table cellspacing="0" cellpadding="3" class="view">
+								<tr class="vis1" id="v4">
+									<td class="rowhandler">
+										<div class="drag row"></div>
+									</td>
+									<td>View 3 <input type="hidden" name="position[]" value="22" />
+									</td>
+								</tr>
+								<tr class="vis1" id="v5">
+									<td class="rowhandler">
+										<div class="drag row"></div>
+									</td>
+									<td>View 4 <input type="hidden" name="position[]" value="5" />
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</center>
+	</body>
 </html>

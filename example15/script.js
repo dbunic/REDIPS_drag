@@ -4,47 +4,12 @@
 /* enable strict mode */
 "use strict";
 
-// global variable of tables inside dragging area (needed for last_row() function)
-// variable is initialized in window.onload()
-var tables;
-
-
-// function disables dragging last row from the table
-function last_row() {
-	var i, j, divs, enabled, color;
-	for (i = 0; i < tables.length; i++) {
-		// if table has only 3 rows than disable row handler (last row can not be moved)
-		if (tables[i].rows.length <= 3) {
-			enabled = false;
-			color = 'Gray';
-		}
-		// else enable row handler
-		else {
-			enabled = true;
-			color = 'SteelBlue';
-		}
-		// get collection of DIV elements in table
-		divs = tables[i].getElementsByTagName('div');
-		// loop through DIV elements
-		for (j = 0; j < divs.length; j++) {
-			// if DIV element is row handler set enable/disable and Gray/Blue color
-			if (divs[j].className.indexOf('row') !== -1) {
-				REDIPS.drag.enable_drag(enabled, divs[j]);
-				divs[j].style.backgroundColor = color;
-				divs[j].style.borderColor = color;
-			}
-		}
-	}
-}
-
 
 // initialization - after page is fully loaded
 window.onload = function () {
 	// reference to the REDIPS.drag library and message line
 	var	rd = REDIPS.drag,
 		msg;
-	// define reference to the tables inside dragging area (last row can not be moved from table)
-	tables = document.getElementById('drag').getElementsByTagName('table');
 	// initialization
 	rd.init();
 	// row was clicked - event handler
@@ -84,8 +49,6 @@ window.onload = function () {
 	};
 	// row was dropped - event handler
 	rd.myhandler_row_dropped = function () {
-		// disable moving last row from the table
-		last_row();
 		// display message
 		msg.innerHTML = 'Row dropped';
 	};

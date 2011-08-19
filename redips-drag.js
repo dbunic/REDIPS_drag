@@ -3,7 +3,7 @@ Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
 Version 4.4.2
-Aug 16, 2011.
+Aug 20, 2011.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -515,6 +515,11 @@ REDIPS.drag = (function () {
 	 * <li>input parameter is TR (current row) - previously returned with this function</li>
 	 * <li>method will clone current row and return reference of the cloned row</li>
 	 * </ul>
+	 * If called from move_object:
+	 * <ul>
+	 * <li>input parameter is TR (row to animate)</li>
+	 * <li>method will clone row and return reference of the cloned row</li>
+	 * </ul> 
 	 * @param {HTMLElement} el DIV class="row" or TR (current row)
 	 * @return {HTMLElement} Returns reference of the current row or clone current row and return reference of the cloned row.
 	 * @see <a href="#handler_onmousedown">handler_onmousedown</a>
@@ -523,12 +528,14 @@ REDIPS.drag = (function () {
 	 * @memberOf REDIPS.drag#
 	 */
 	row_clone = function (el) {
-		var table_mini,	// original table is cloned and all rows except picked row are deleted
-			offset,		// offset of source TR
-			row_obj,	// reference to the row object
-			row_last,	// last row in cloned table
-			id,			// id of <DIV class="drag row">
-			i;			// loop variable
+		var table_mini,			// original table is cloned and all rows except picked row are deleted
+			offset,				// offset of source TR
+			row_obj,			// reference to the row object
+			last_idx,			// last row index in cloned table
+			last_row = true,	// (boolean) flag indicates if dragged row is last row
+			cr,					// current row (needed for searc if dragged row is last row)
+			id,					// id of <DIV class="drag row">
+			i, j;				// loop variables
 		// 1) row_clone call in onmousedown will return reference of TR element (input parameter is DIV class="row")
 		if (el.nodeName === 'DIV') {
 			// remember id of <DIV class="drag row">
@@ -548,23 +555,49 @@ REDIPS.drag = (function () {
 		else {
 			// remember row object (source row)
 			row_obj = el;
+			// if redips object doesn't exist (possible if row_clone() is called from move_object() method) then create initialize redips object on TR element
+			if (row_obj.redips === undefined) {
+				row_obj.redips = {};
+			}
 		    // find parent table
 			el = find_parent('TABLE', el);
 			// clone whole table
 			table_mini = el.cloneNode(true);
-			// find last row in cloned table
-			row_last = table_mini.rows.length - 1;
-		    // delete all rows but clicked table row
-			for (i = row_last; i >= 0; i--) {
+			// find last row index in cloned table
+			last_idx = table_mini.rows.length - 1;
+		    // test if dragged row is the last row and delete all rows but current row
+			// the trick is to find rowhandler in cells except current cell and that's fine for user interface
+			// if rows are animated, then "rowhandler" cells don't have to exsist and here will be a problem
+			// but for now it is good enough
+			for (i = last_idx; i >= 0; i--) {
+				// if row is not the current row
 				if (i !== row_obj.rowIndex) {
+					// search for "rowhandler cell" in row (last_row is set to "true" by default)
+					if (last_row === true) {
+						// set current row
+						cr = table_mini.rows[i];
+						// open loop to go through each cell
+						for (j = 0; j < cr.cells.length; j++) {
+							// if table cell contains "rowhandler" class name then dragged row is not the last row in table
+							if (cr.cells[j].className.indexOf('rowhandler') > -1) {
+								last_row = false;
+							}
+						}
+						
+					}
+					// delete row (it should go after searching for "rowhandler" class name)
 					table_mini.deleteRow(i);
 				}
 			}
+			// set last row flag to the current row
+			// * needed in row_drop() for replacing this row with dropped row
+			// * needed is set_trc() to disable dropping DIV elements to the last row
+			row_obj.redips.last_row = last_row;
 			// create a "property object" in which all custom properties will be saved
 			table_mini.redips = {};
 			// set reference to the redips.container (needed if move_object() moves elements in other container)
 			table_mini.redips.container = el.redips.container;
-			// define source row (needed for source row deletion in row_drop method)
+			// set source row (needed for source row deletion in row_drop method)
 			table_mini.redips.source_row = row_obj;
 			// set id of <DIV class="drag row" id="row1"> to the table mini if is possible (needed for dropped row identification)
 			if (row_obj.redips !== undefined) {
@@ -592,22 +625,32 @@ REDIPS.drag = (function () {
 
 	/**
 	 * Method drops table row to the target row. Source row is deleted and cloned row is inserted at the new position.
+	 * Method takes care about the last row in the table only if user drags element. In case of moving rows with move_obj(), control
+	 * and logic for last row is turned off. This method is called from handler_onmouseup() and animation().
 	 * @param {Integer} r_table Table index.
 	 * @param {Integer} r_row Row index.
-	 * @param {HTMLElement} [table_mini] Reference to the mini table (table that contains only one row). This actually clone of source row.
+	 * @param {HTMLElement} [table_mini] Reference to the mini table (table that contains only one row). This is actually clone of source row.
 	 * @see <a href="#row_clone">row_clone</a>
 	 * @private
 	 * @memberOf REDIPS.drag#
 	 */
 	row_drop = function (r_table, r_row, table_mini) {
 		// local variable definition
-		var ts = tables[r_table].rows[0].parentNode, // reference to the table section element (where row will be inserted / appended)
-			tr,			// reference to the TR in mini table
-			src,		// reference to the source row (row that should be deleted)
-			rowIndex;	// row index that should be deleted
-		// if mini table is undefined then use reference to the table_mini from obj
+		var tbl = tables[r_table],			// reference to the current table
+			ts = tbl.rows[0].parentNode,	// reference to the table section element (where row will be inserted / appended)
+			animated = false,				// (boolean) flag shows if row is animated or dragged by user
+			tr,								// reference to the TR in mini table
+			rp,								// reference to the redips property of row below inserted row
+			src,							// reference to the source row (row that should be deleted)
+			rowIndex;						// index of row that should be deleted	
+		// if table_mini is not defined, then row_drop() is called from handler_onmouseup() and set reference to the currently dragged row - mini table
 		if (table_mini === undefined) {
 			table_mini = obj;
+		}
+		// otherwise, row_drop() is called from animation() (because third input parameter is set)
+		// in that case set animated flag to true to turn off "last row" logic
+		else {
+			animated = true;
 		}
 		// set initial position to find source table
 		src = table_mini.redips.source_row;
@@ -615,12 +658,10 @@ REDIPS.drag = (function () {
 		rowIndex = src.rowIndex;
 		// find source table
 		src = find_parent('TABLE', src);
-		// if dragged row was the last row then row will not be deleted
-		if (src.rows.length === 1) {
+		// if row is not animated and source row was marked as "last row" then row will be bleached (not deleted)
+		if (!animated && obj_old.redips.last_row) {
 			// content of table cells will be deleted and background color will be set to white
 			row_opacity(obj_old, 'empty', 'White');
-			// set redips.last_row to true
-			obj_old.redips.last_row = true;
 		}
 		// this was not the last row - delete source row
 		else {
@@ -629,13 +670,14 @@ REDIPS.drag = (function () {
 		// set reference to the TR in mini table (mini table has only one row - first row)
 		tr = table_mini.getElementsByTagName('tr')[0];
 		// if row is not dropped to the last row position
-		if (r_row < tables[r_table].rows.length) {
-			// insert table row
-			ts.insertBefore(tr, tables[r_table].rows[r_row]);
-			// if table has two rows and last row was marked as "last_row" then delete last row
-			if (ts.rows.length === 2 && ts.rows[1].redips.last_row) {
-				ts.deleteRow(1);
-				
+		if (r_row < tbl.rows.length) {
+			// insert row before current row
+			ts.insertBefore(tr, tbl.rows[r_row]);
+			// set reference to the redips property of row below inserted row
+			rp = tbl.rows[r_row + 1].redips;
+			// if the row below current row is marked as last_row then delete this row
+			if (rp && rp.last_row) {
+				ts.deleteRow(r_row + 1);
 			}
 		}
 		// row is dropped to the last row position
@@ -643,6 +685,10 @@ REDIPS.drag = (function () {
 			// row should be appended
 			ts.appendChild(tr);
 		}
+		// delete last_row property from inserted/appended row because last_row will be set on next move
+		// copy_properties() in row_clone() copied last_row property to the row in mini_table
+		// otherwise row would be overwritten and that's no good
+		delete tr.redips.last_row;
 		// if row contains TABLE(S) then recall init_table() to properly initialize tables array and set custom properties
 		if (tr.getElementsByTagName('table').length > 0) {
 			init_tables();
@@ -815,6 +861,9 @@ REDIPS.drag = (function () {
 						}
 						// remove cloned mini table
 						obj.parentNode.removeChild(obj);
+						// delete last_row property from source row because last_row will be set on next move
+						// otherwise row would be overwritten and that's no good
+						delete obj_old.redips.last_row;
 						// call myhandler_row_dropped_source() event handler
 						REDIPS.drag.myhandler_row_dropped_source(target_cell);
 					}
@@ -1297,18 +1346,26 @@ REDIPS.drag = (function () {
 	 * @memberOf REDIPS.drag#
 	 */
 	set_trc = function () {
-		var cell_current,	// define current cell (needed for some test at the function bottom)
+		var previous,	// set previous position (current cell will not be highlighted) 
+			cell_current,	// define current cell (needed for some test at the function bottom)
 			row_offset,		// row offsets for the selected table (row box bounds)
 			row_found,		// remember found row
 			cells,			// number of cells in the selected row
-			has_content,	// has_content flag
+			empty,			// (boolean) flag indicates if table cell is empty or not
 			mark_found,		// (boolean) found "mark" class name
 			only_found,		// (boolean) found "only" class name
 			single_cell,	// table cell can be defined as single
-			row_handler,	// table cell marked as row handler (dragging rows enabled, table content disabled)
 			tos = [],		// table offset
 			X, Y,			// X and Y position of mouse pointer
 			i;				// used in local loop
+		// set previous position (current cell will not be highlighted)
+		previous = function () {
+			if (table_old !== null && row_old !== null && cell_old !== null) {
+				table = table_old;
+				row = row_old;
+				cell = cell_old;
+			}
+		};
 		// prepare X and Y position of mouse pointer
 		X = pointer.x;
 		Y = pointer.y;
@@ -1390,9 +1447,7 @@ REDIPS.drag = (function () {
 				while (tables[table].redips.rowspan && cell === -1 && row-- > 0);
 				// if cell < 0 or row < 0 then use last possible location
 				if (row < 0 || cell < 0) {
-					table = table_old;
-					row = row_old;
-					cell = cell_old;
+					previous();
 				}
 				// current cell found but if current row differ from previously found row (thanks too while loop with row--)
 				// then test if Y is inside current cell
@@ -1404,9 +1459,7 @@ REDIPS.drag = (function () {
 					currentCell[2] = currentCell[0] + tables[table].rows[row].cells[cell].offsetHeight;
 					// if Y is outside of the current row, return previous location 
 					if (Y < currentCell[0] || Y > currentCell[2]) {
-						table = table_old;
-						row = row_old;
-						cell = cell_old;
+						previous();
 					}
 				}
 				// set current cell (for easier access in test below)
@@ -1426,26 +1479,15 @@ REDIPS.drag = (function () {
 					// if current cell is marked with 'only' class name
 					if (only_found === true) {
 						// marked cell "only" found, test for defined pairs (DIV id -> class name)
-						// means to bypass this code
 						if (cell_current.className.indexOf(only.div[obj.id]) === -1) {
-							// if old location exists then assign old location
-							if ((table_old !== null && row_old !== null && cell_old !== null)) {
-								table = table_old;
-								row = row_old;
-								cell = cell_old;
-							}
+							previous();
 							break;
 						}
 					}
 					// DIV objects marked with "only" can't be placed to other cells (if property "other" is "deny")
 					else if (only.div[obj.id] !== undefined && only.other === 'deny') {
-						// if old location exists then assign old location
-						if ((table_old !== null && row_old !== null && cell_old !== null)) {
-							table = table_old;
-							row = row_old;
-							cell = cell_old;
-						}
-						break;						
+						previous();
+						break;
 					}
 					else {
 						// search for 'mark' class name
@@ -1453,15 +1495,9 @@ REDIPS.drag = (function () {
 						// if current cell is marked and access type is 'deny' or current cell isn't marked and access type is 'allow'
 						// then return previous location
 						if ((mark_found === true && REDIPS.drag.mark.action === 'deny') || (mark_found === false && REDIPS.drag.mark.action === 'allow')) {
-							// marked cell found, but make exception if defined pairs (DIV id -> class name) exists
-							// means to bypass code this code
+							// marked cell found, but make exception if defined pairs "DIV id -> class name" exists (return previous location)
 							if (cell_current.className.indexOf(mark.exception[obj.id]) === -1) {
-								// if old location exists then assign old location
-								if ((table_old !== null && row_old !== null && cell_old !== null)) {
-									table = table_old;
-									row = row_old;
-									cell = cell_old;
-								}
+								previous();
 								break;
 							}
 						}
@@ -1469,44 +1505,42 @@ REDIPS.drag = (function () {
 				}
 				// test if current cell is defined as single
 				single_cell = cell_current.className.indexOf('single') > -1 ? true : false;
-				// if drag mode is 'cell' (not 'row') and drop_option == single or current cell is single and current cell
-				// has child nodes then test if cell is occupied
-				if (mode === 'cell' && (REDIPS.drag.drop_option === 'single' || single_cell) && cell_current.childNodes.length > 0) {
-					// if cell has only one node and that is text node then break - because this is empty cell
-					if (cell_current.childNodes.length === 1 && cell_current.firstChild.nodeType === 3) {
-						break;
-					}
-					// define and set has_content flag to false
-					has_content = false;
-					// open loop for each child node and jump out if 'drag' className found
-					for (i = cell_current.childNodes.length - 1; i >= 0; i--) {
-						if (cell_current.childNodes[i].className && cell_current.childNodes[i].className.indexOf('drag') > -1) {
-							has_content = true;
-							break;
-						} 
-					}
-					// if cell has content and old position exists ...
-					if (has_content && table_old !== null && row_old !== null && cell_old !== null) {
-						// .. and current position is different then source position then return previous position
-						if (table_source !== table || row_source !== row || cell_source !== cell) {
-							table = table_old;
-							row = row_old;
-							cell = cell_old;
+				// if drag mode is "cell"
+				if (mode === 'cell') {
+					// if drop_option == single or current cell is single and current cell contains nodes then test if cell is occupied
+					if ((REDIPS.drag.drop_option === 'single' || single_cell) && cell_current.childNodes.length > 0) {
+						// if cell has only one node and that is text node then break - because this is empty cell
+						if (cell_current.childNodes.length === 1 && cell_current.firstChild.nodeType === 3) {
 							break;
 						}
+						// intialize "empty" flag to true
+						empty = true;
+						// open loop for each child node and jump out if 'drag' className found
+						for (i = cell_current.childNodes.length - 1; i >= 0; i--) {
+							if (cell_current.childNodes[i].className && cell_current.childNodes[i].className.indexOf('drag') > -1) {
+								empty = false;
+								break;
+							} 
+						}
+						// if cell is not empty and old position exists ...
+						if (!empty && table_old !== null && row_old !== null && cell_old !== null) {
+							// .. and current position is different then source position then return previous position
+							if (table_source !== table || row_source !== row || cell_source !== cell) {
+								previous();
+								break;
+							}
+						}
 					}
-				}
-				// if current cell is marked as row_handler
-				row_handler = cell_current.className.indexOf('rowhandler') > -1 ? true : false;
-				// current cell is marked as row handler and user is dragging table content (do not enable)  
-				if (row_handler && mode === 'cell') {
-					// if old location exists then assign old location
-					if ((table_old !== null && row_old !== null && cell_old !== null)) {
-						table = table_old;
-						row = row_old;
-						cell = cell_old;
+					// current cell is marked as row handler and user is dragging DIV element over it - do not enable  
+					if (cell_current.className.indexOf('rowhandler') > -1) {
+						previous();
+						break;
 					}
-					break;
+					// if current row is defined as last_row, elements can't be dropped to these cells
+					if (cell_current.parentNode.redips && cell_current.parentNode.redips.last_row) {
+						previous();
+						break;
+					}
 				}
 				// break table loop 
 				break;
@@ -2517,8 +2551,8 @@ REDIPS.drag = (function () {
 			i = get_table_index(ip.source[0]);
 			// define source row index from input parameter object
 			row = ip.source[1];
-			// define source row
-			p.obj_old = tables[i].rows[row];
+			// set source row
+			obj_old = p.obj_old = tables[i].rows[row];
 			// set reference to the mini table - cloned from source row (TABLE element)
 			p.obj = row_clone(p.obj_old);
 		}
@@ -2526,7 +2560,7 @@ REDIPS.drag = (function () {
 		else if (p.obj.className.indexOf('row') > -1) {
 			p.mode = 'row';
 			// find TR element and remember reference to the source row (TR element)
-			p.obj = p.obj_old = find_parent('TR', p.obj);
+			p.obj = p.obj_old = obj_old = find_parent('TR', p.obj);
 			// set reference to the mini table - cloned from source row (TABLE element)
 			p.obj = row_clone(p.obj_old);
 		}
