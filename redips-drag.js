@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 4.4.2
-Aug 20, 2011.
+Version 4.4.3
+Aug 22, 2011.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -27,7 +27,7 @@ var REDIPS = REDIPS || {};
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content-animation/">Drag and drop table content plus animation</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">Drag and drop table rows</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">Drag and Drop table content</a>
- * @version 4.4.2
+ * @version 4.4.3
  */
 REDIPS.drag = (function () {
 		// methods
@@ -41,6 +41,7 @@ REDIPS.drag = (function () {
 		table_top,					// set current table group in "tables" array to the array top
 		handler_onmouseup,			// onmouseup handler
 		handler_onmousemove,		// onmousemove handler for the document level
+		element_drop,				// drop element to the table cell
 		cell_changed,				// private method called from handler_onmousemove(), autoscrollX(), autoscrollY()
 		handler_onresize,			// onresize window event handler
 		set_trc,					// function sets current table, row and cell
@@ -946,35 +947,12 @@ REDIPS.drag = (function () {
 						source_cell.appendChild(target_elements[0]); // '0', not 'i' because NodeList objects in the DOM are live
 					}
 				}
-				// call myhandler_dropped_before()
-				REDIPS.drag.myhandler_dropped_before(target_cell);
-				// and finaly, append dragged object to the destination table cell
-				target_cell.appendChild(obj);
+				// drop element to the table cell
+				element_drop();
 				// if destination element exists, then elements are switched
 				if (target_elements_length) {
 					// call myhandler_switched because clone_limit could call myhandler_clonedend1 or myhandler_clonedend2
 					REDIPS.drag.myhandler_switched();
-					// and myhandler_dropped
-					REDIPS.drag.myhandler_dropped(target_cell);
-					// if object is cloned
-					if (cloned_flag === 1) {
-						// call cloned_dropped event handler
-						REDIPS.drag.myhandler_cloned_dropped(target_cell);
-						// update climit1_X or climit2_X classname
-						clone_limit();
-					}
-				}
-				// otherwise element is dropped to the empty cells
-				else {
-					// call myhandler_dropped because clone_limit could call myhandler_clonedend1 or myhandler_clonedend2
-					REDIPS.drag.myhandler_dropped(target_cell);
-					// if object is cloned
-					if (cloned_flag === 1) {
-						// call cloned_dropped event handler
-						REDIPS.drag.myhandler_cloned_dropped(target_cell);
-						// update climit1_X or climit2_X classname
-						clone_limit();
-					}
 				}
 			}
 			// overwrite destination table cell with dragged content 
@@ -986,35 +964,13 @@ REDIPS.drag = (function () {
 					// remove child DIV elements from target cell
 					target_cell.removeChild(target_elements[0]); // '0', not 'i' because NodeList objects in the DOM are live
 				}
-				// call myhandler_dropped_before()
-				REDIPS.drag.myhandler_dropped_before(target_cell);
-				// append object to the target cell
-				target_cell.appendChild(obj);
-				// call myhandler_dropped because clone_limit could call myhandler_clonedend1 or myhandler_clonedend2
-				REDIPS.drag.myhandler_dropped(target_cell);
-				// if object is cloned
-				if (cloned_flag === 1) {
-					// call cloned_dropped event handler
-					REDIPS.drag.myhandler_cloned_dropped(target_cell);
-					// update climit1_X or climit2_X classname
-					clone_limit();
-				}
+				// drop element to the table cell
+				element_drop();
 			}
 			// else call myhandler_dropped_before(), append object to the cell and call myhandler_dropped() 
 			else {
-				// call myhandler_dropped_before()
-				REDIPS.drag.myhandler_dropped_before(target_cell);
-				// append object to the target cell
-				target_cell.appendChild(obj);
-				// call myhandler_dropped because clone_limit could call myhandler_clonedend1 or myhandler_clonedend2
-				REDIPS.drag.myhandler_dropped(target_cell);
-				// if object is cloned
-				if (cloned_flag === 1) {
-					// call cloned_dropped event handler
-					REDIPS.drag.myhandler_cloned_dropped(target_cell);
-					// update climit1_X or climit2_X classname
-					clone_limit();
-				}
+				// drop element to the table cell
+				element_drop();
 			}
 			// force naughty browsers (IE6, IE7 ...) to redraw source and destination row (element.className = element.className does the trick)
 			// but careful (table_source || row_source could be null if clone element was clicked in denied table cell)
@@ -1037,6 +993,36 @@ REDIPS.drag = (function () {
 		}
 		// reset old positions
 		table_old = row_old = cell_old = null;
+	};
+
+
+	/**
+	 * Element drop. This function is called from handler_onmouseup. Function appends element to the table cell and calls event handlers.
+	 * If myhandler_dropped_before() returned "false" then element will not be dropped to the current cell.
+	 * @private
+	 * @memberOf REDIPS.drag#
+	 */
+	element_drop = function () {
+		// call myhandler_dropped_before() - this handler can return "false" value
+		var drop = REDIPS.drag.myhandler_dropped_before(target_cell);
+		// if handler returns false then element drop should be canceled
+		if (drop !== false) {
+			// append object to the target cell
+			target_cell.appendChild(obj);
+			// call myhandler_dropped because clone_limit could call myhandler_clonedend1 or myhandler_clonedend2
+			REDIPS.drag.myhandler_dropped(target_cell);
+			// if object is cloned
+			if (cloned_flag === 1) {
+				// call cloned_dropped event handler
+				REDIPS.drag.myhandler_cloned_dropped(target_cell);
+				// update climit1_X or climit2_X classname
+				clone_limit();
+			}
+		}
+		// cloned element should be deleted
+		else if (cloned_flag === 1) {
+			obj.parentNode.removeChild(obj);
+		}
 	};
 
 

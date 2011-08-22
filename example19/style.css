@@ -22,7 +22,7 @@ body {
 /* set border-collapse */
 div#drag table {
 	border-collapse: collapse;
-	width: 580px;
+	width: 541px;
 }
 	/* define margin below first table */
 	.tbl1 {
