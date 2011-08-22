@@ -3138,6 +3138,7 @@ REDIPS.drag = (function () {
 		myhandler_dropped : function () {},
 		/**
 		 * Event handler invoked if mouse button is released and before element is dropped to the table cell.
+		 * If boolen "false" is returned from event handler then element drop will be canceled (dragged element will be returned to the start position while cloned element will be deleted). 
 		 * @name REDIPS.drag#myhandler_dropped_before
 		 * @function
 		 * @event
