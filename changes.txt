@@ -1,5 +1,13 @@
 Changes for REDIPS.drag library
 
+4.5.0
+- added functionality for cloning and deleting table rows
+- added event handlers:
+* myhandler_row_deleted()
+* myhandler_row_undeleted()
+- added "clone_shiftKey_row" public property
+- added example20 "Clone and delete table rows"
+
 4.4.3
 - if myhandler_dropped_before() returns false then element drop will be canceled
 
@@ -8,7 +16,7 @@ Changes for REDIPS.drag library
 - fixed moving last row from table
 
 4.4.1
-- added example19 - thanks to Tomas Lampo
+- added example19 "Groups and table rows" - thanks to Tomas Lampo
 - added public method enable_table()
 - added public method find_parent() - find parent element from start position
 - added public method clone_div() - clones DIV element

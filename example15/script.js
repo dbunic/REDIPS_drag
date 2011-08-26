@@ -18,10 +18,8 @@ window.onload = function () {
 		var el = rd.obj;
 		// set hover color for "row" mode
 		rd.hover_color = '#9BB3DA';
-		// loop up until TABLE element found
-		while (el && el.nodeName !== 'TABLE') {
-			el = el.parentNode;
-	    }
+		// find parent table
+		el = rd.find_parent('TABLE', el);
 		// every table has only one SPAN element to display messages
 		msg = el.getElementsByTagName('span')[0];
 		// display message

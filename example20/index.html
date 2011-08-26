@@ -1,0 +1,114 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+	<head>
+		<meta name="author" content="Darko Bunic"/>
+		<meta name="description" content="Drag and drop table rows with JavaScript"/>
+		<link rel="stylesheet" href="style.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../redips-drag.js"></script>
+		<script type="text/javascript" src="script.js"></script>
+		<title>www.redips.net</title>
+	</head>
+	<body>
+		<center>
+			<h1><a href="http://www.redips.net/javascript/drag-and-drop-table-row/">www.redips.net</a></h1>
+			<h2>Example 20: Clone and delete table rows</h2>
+		</center>
+
+		<!-- tables inside this DIV could contain drag-able content  -->
+		<div id="drag">
+			<table class="tbl1">
+				<colgroup>
+					<col width="30"/>
+					<col width="100"/>
+					<col width="100"/>
+					<col width="100"/>
+					<col width="100"/>
+					<col width="100"/>
+				</colgroup>
+				<tbody>
+					<tr>
+						<th colspan="6" class="mark">Table 2</th>
+					</tr>
+					<tr class="rd">
+						<td class="rowhandler"><div class="drag row clone"></div></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+					</tr>
+					<tr class="rl">
+						<td class="rowhandler"><div class="drag row"></div></td>
+						<td><div class="drag orange">Drag</div></td>
+						<td></td>
+						<td class="cdark"></td>
+						<td></td>
+						<td><div class="drag orange">rows</div></td>
+					</tr>
+					<tr class="rl">
+						<td class="rowhandler"><div class="drag row"></div></td>
+						<td></td>
+						<td class="cdark"></td>
+						<td></td>
+						<td class="cdark"></td>
+						<td></td>
+					</tr>
+					<tr class="rl">
+						<td class="rowhandler"><div class="drag row"></div></td>
+						<td class="cdark"></td>
+						<td><div class="drag orange">and</div></td>
+						<td></td>
+						<td><div class="drag orange">table</div></td>
+						<td class="cdark"></td>
+					</tr>
+					<tr class="rd">
+						<td class="rowhandler"><div class="drag row"></div></td>
+						<td></td>
+						<td></td>
+						<td><div class="drag blue">drop</div></td>
+						<td></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td colspan="6" class="mark"><span>Message line</span></td>
+					</tr>
+				</tbody>
+			</table>
+
+			<table class="tbl2">
+				<colgroup>
+					<col width="30"/>
+					<col width="100"/>
+					<col width="100"/>
+					<col width="100"/>
+					<col width="100"/>
+					<col width="100"/>
+				</colgroup>
+				<tbody>
+					<tr>
+						<th colspan="6" class="mark">Table 2</th>
+					</tr>
+					<tr class="rd">
+						<td class="rowhandler"><div class="drag row"></div></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+					</tr>
+				</tbody>
+			</table>
+
+			<table>
+				<colgroup>
+					<col width="100"/>
+				</colgroup>
+				<tbody>
+					<tr>
+						<td class="trash">Trash</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</body>
+</html>

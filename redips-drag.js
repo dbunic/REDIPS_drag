@@ -91,6 +91,7 @@ REDIPS.drag = (function () {
 		div_drag = null,			// reference to the div drag
 		div_box = null,				// div drag box: top, right, bottom and left margin (decrease number calls of set_trc)
 		pointer = {x: 0, y: 0},		// mouse pointer position (this properties are set in handler_onmousemove() - needed for autoscroll)
+		shift_key = false,			// (boolean) private parameter if shift key is pressed (initialized in handler_mousedown)
 		
 		// selected, previous and source table, row and cell (private parameters too)
 		table = null,
@@ -120,7 +121,8 @@ REDIPS.drag = (function () {
 		border_disabled = 'dotted',	// (string) border style for disabled elements
 		opacity_disabled,			// (integer) set opacity for disabled elements
 		trash_cname = 'trash',		// (string) cell class name where draggable element will be destroyed
-		trash_ask = true,			// (boolean) confirm object deletion (ask a question "Are you sure?" before delete)
+		trash_ask = true,			// (boolean) confirm element deletion
+		trash_ask_row = true,		// (boolean) confirm row deletion
 		drop_option = 'multiple',	// (string) drop_option has the following options: multiple, single, switch, switching and overwrite
 		delete_cloned = true,		// (boolean) delete cloned div if the cloned div is dragged outside of any table
 		source_cell = null,			// (object) source table cell (defined in onmousedown and in onmouseup)
@@ -130,7 +132,8 @@ REDIPS.drag = (function () {
 		animation_pause = 40,		// animation pause (lower values mean the animation plays faster)
 		animation_step = 2,			// animation step (minimum is 1)
 		
-		clone_shiftKey = false;		// (boolean) if true, elements could be cloned with pressed SHIFT key
+		clone_shiftKey = false,		// (boolean) if true, elements could be cloned with pressed SHIFT key
+		clone_shiftKey_row = false;	// (boolean) if true, rows could be cloned with pressed SHIFT key
 
 
 	/**
@@ -332,6 +335,8 @@ REDIPS.drag = (function () {
 		if (evt.stopPropagation) {
 			evt.stopPropagation();
 		}
+		// define true or false if shift key is pressed
+		shift_key = evt.shiftKey;
 		// define which mouse button was pressed
 		if (evt.which) {
 			mouseButton = evt.which;
@@ -643,7 +648,23 @@ REDIPS.drag = (function () {
 			tr,								// reference to the TR in mini table
 			rp,								// reference to the redips property of row below inserted row
 			src,							// reference to the source row (row that should be deleted)
-			rowIndex;						// index of row that should be deleted	
+			rowIndex,						// index of row that should be deleted
+			delete_srow;					// private method - delete source row
+		// define private method - delete source row
+		delete_srow = function () {
+			// if row is not animated and source row was marked as "last row" then row will be bleached (not deleted)
+			if (!animated && obj_old.redips.last_row) {
+				// content of table cells will be deleted and background color will be set to white
+				row_opacity(obj_old, 'empty', 'White');
+			}
+			// this was not the last row - delete source row
+			else {
+				// find source table
+				src = find_parent('TABLE', src);
+				// delete row
+				src.deleteRow(rowIndex);
+			}
+		};
 		// if table_mini is not defined, then row_drop() is called from handler_onmouseup() and set reference to the currently dragged row - mini table
 		if (table_mini === undefined) {
 			table_mini = obj;
@@ -657,45 +678,71 @@ REDIPS.drag = (function () {
 		src = table_mini.redips.source_row;
 		// set rowIndex from redips.source_row property saved in table_mini
 		rowIndex = src.rowIndex;
-		// find source table
-		src = find_parent('TABLE', src);
-		// if row is not animated and source row was marked as "last row" then row will be bleached (not deleted)
-		if (!animated && obj_old.redips.last_row) {
-			// content of table cells will be deleted and background color will be set to white
-			row_opacity(obj_old, 'empty', 'White');
-		}
-		// this was not the last row - delete source row
-		else {
-			src.deleteRow(rowIndex);
-		}
 		// set reference to the TR in mini table (mini table has only one row - first row)
 		tr = table_mini.getElementsByTagName('tr')[0];
-		// if row is not dropped to the last row position
-		if (r_row < tbl.rows.length) {
-			// insert row before current row
-			ts.insertBefore(tr, tbl.rows[r_row]);
-			// set reference to the redips property of row below inserted row
-			rp = tbl.rows[r_row + 1].redips;
-			// if the row below current row is marked as last_row then delete this row
-			if (rp && rp.last_row) {
-				ts.deleteRow(r_row + 1);
+		// destroy mini table (node still exists in memory)
+		table_mini.parentNode.removeChild(table_mini);
+		// test if target cell is "trash"
+		if (target_cell.className.indexOf(REDIPS.drag.trash_cname) > -1) {
+			// if trash_ask_row is "true" then user should be asked
+			if (REDIPS.drag.trash_ask_row) {
+				// ask user if is sure
+				if (confirm('Are you sure you want to delete row?')) {
+					// delete source row and call row_deleted event handler
+					delete_srow();
+					REDIPS.drag.myhandler_row_deleted(target_cell);
+				}
+				// user is not sure - undelete
+				else {
+					// just call undeleted handler
+					REDIPS.drag.myhandler_row_undeleted();
+				}
+			}
+			// trask_ask_row is set to "false" - source row can be deleted
+			else {
+				// delete source row and call row_deleted event handler
+				delete_srow();
+				REDIPS.drag.myhandler_row_deleted(target_cell);
 			}
 		}
-		// row is dropped to the last row position
+		// target cell is not "trash" cell
 		else {
-			// row should be appended
-			ts.appendChild(tr);
+			// if rowhandler has "clone" in class name or shift key is pressed, then row is cloned
+			if (REDIPS.drag.clone_shiftKey_row === true && shift_key) {
+//				REDIPS.drag.myhandler_row_cloned();
+			}
+			else {
+				delete_srow();
+			}
+			// if row is not dropped to the last row position
+			if (r_row < tbl.rows.length) {
+				// insert row before current row
+				ts.insertBefore(tr, tbl.rows[r_row]);
+				// set reference to the redips property of row below inserted row
+				rp = tbl.rows[r_row + 1].redips;
+				// if the row below current row is marked as last_row then delete this row
+				if (rp && rp.last_row) {
+					ts.deleteRow(r_row + 1);
+				}
+			}
+			// row is dropped to the last row position
+			else {
+				// row should be appended
+				ts.appendChild(tr);
+			}
+			// delete last_row property from inserted/appended row because last_row will be set on next move
+			// copy_properties() in row_clone() copied last_row property to the row in mini_table
+			// otherwise row would be overwritten and that's no good
+			delete tr.redips.last_row;
+			// call "dropped" event handler
+			REDIPS.drag.myhandler_row_dropped(target_cell);
 		}
-		// delete last_row property from inserted/appended row because last_row will be set on next move
-		// copy_properties() in row_clone() copied last_row property to the row in mini_table
-		// otherwise row would be overwritten and that's no good
-		delete tr.redips.last_row;
 		// if row contains TABLE(S) then recall init_table() to properly initialize tables array and set custom properties
+		// no matter if row was moved or deleted
 		if (tr.getElementsByTagName('table').length > 0) {
 			init_tables();
 		}
-		// destroy mini table
-		table_mini.parentNode.removeChild(table_mini);
+
 	};
 
 
@@ -871,7 +918,6 @@ REDIPS.drag = (function () {
 					// and dropped to the new row
 					else {
 						row_drop(r_table, r_row);
-						REDIPS.drag.myhandler_row_dropped(target_cell);
 					}	
 				}
 			}
@@ -1048,9 +1094,10 @@ REDIPS.drag = (function () {
 		Y = pointer.y = evt.clientY;
 		// if moved_flag isn't set (this is the first moment when object is moved)
 		if (moved_flag === 0) {
-			// if moved object has clone in class name or clone_shiftKey is enabled and shift key is pressed
+			// if moved object is element and has clone in class name or clone_shiftKey is enabled and shift key is pressed
 			// then remember previous object, clone object, set cloned flag and call myhandler_cloned
-			if (obj.className.indexOf('clone') > -1 || (REDIPS.drag.clone_shiftKey === true && evt.shiftKey)) {
+			// (shift_key is defined in handler_mousedown)
+			if (mode === 'cell' && (obj.className.indexOf('clone') > -1 || (REDIPS.drag.clone_shiftKey === true && shift_key))) {
 				// remember previous object (original element)
 				REDIPS.drag.obj_old = obj_old = obj;
 				// clone DIV element ready for dragging
@@ -1088,6 +1135,10 @@ REDIPS.drag = (function () {
 				// call myhandler_moved for table content or row
 				if (mode === 'cell') {
 					REDIPS.drag.myhandler_moved();
+				}
+				else if (obj.className.indexOf('clone') > -1 || (REDIPS.drag.clone_shiftKey_row === true && shift_key)){
+					REDIPS.drag.myhandler_row_cloned();
+console.log('hi');
 				}
 				else {
 					REDIPS.drag.myhandler_row_moved();
@@ -3026,13 +3077,21 @@ REDIPS.drag = (function () {
 		 */
 		trash_cname : trash_cname,
 		/**
-		 * Confirm object deletion.
-		 * If set to"true" popup with question: "Are you sure you want to delete?" will appear.
+		 * Confirm element deletion.
+		 * If set to "true" popup with question: "Are you sure you want to delete?" will appear.
 		 * @type Boolean
 		 * @name REDIPS.drag#trash_ask
 		 * @default true
 		 */
 		trash_ask : trash_ask,
+		/**
+		 * Confirm row deletion.
+		 * If set to "true" popup with question: "Are you sure you want to delete row?" will appear.
+		 * @type Boolean
+		 * @name REDIPS.drag#trash_ask_row
+		 * @default true
+		 */
+		trash_ask_row : trash_ask_row,
 		/**
 		 * Property defines working types of REDIPS.drag library: multiple, single, switch, switching and overwrite.
 		 * @type String
@@ -3071,6 +3130,14 @@ REDIPS.drag = (function () {
 		 * @default false
 		 */
 		clone_shiftKey : clone_shiftKey,
+		/**
+		 * If set to "true", table rows could be cloned with pressed SHIFT key. 
+		 * Just press SHIFT key and start dragging table row. Source row will not be deleted.
+		 * @type Boolean
+		 * @name REDIPS.drag#clone_shiftKey_row
+		 * @default false
+		 */
+		clone_shiftKey_row : clone_shiftKey_row,
 		/**
 		 * Animation pause (lower values means the animation will go faster).
 		 * @type Integer
@@ -3258,7 +3325,31 @@ REDIPS.drag = (function () {
 		 * @function
 		 * @event
 		 */
-		myhandler_row_changed : function () {}
+		myhandler_row_changed : function () {},
+		/**
+		 * Event handler invoked if table row is cloned.
+		 * @name REDIPS.drag#myhandler_row_cloned
+		 * @function
+		 * @event
+		 */	
+		myhandler_row_cloned : function () {},
+		/**
+		 * Event handler invoked if row is deleted (dropped to the "trash" table cell).
+		 * @name REDIPS.drag#myhandler_row_deleted
+		 * @function
+		 * @event
+		 */
+		myhandler_row_deleted : function () {},
+		/**
+		 * Event handler invoked if row is undeleted.
+		 * After row is dropped to the "trash" table cell and "trash_ask_row" property is set to true then popup with question: "Are you sure you want to delete row?" will appear.
+		 * Clicking on "Cancel" will undelete row and call this event handler.
+		 * @see <a href="#trash_ask">trask_ask_row</a>
+		 * @name REDIPS.drag#myhandler_row_undeleted 
+		 * @function
+		 * @event
+		 */	
+		myhandler_row_undeleted : function () {}
 
 	}; // end of public (return statement)		
 }());
