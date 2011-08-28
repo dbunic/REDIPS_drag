@@ -4,24 +4,26 @@
 /* enable strict mode */
 "use strict";
 
-//onload event
-window.onload = function () {
+// define redips_init variable
+var redips_init;
+
+// redips initialization
+redips_init = function () {
+	// reference to the REDIPS.drag lib
+	var rd = REDIPS.drag;
 	// initialization
-	REDIPS.drag.init();
+	rd.init();
 	// dragged elements can be placed to the empty cells only
-	REDIPS.drag.drop_option = 'single';
+	rd.drop_option = 'single';
 	// elements could be cloned with pressed SHIFT key
-	REDIPS.drag.clone_shiftKey = true;
+	rd.clone_shiftKey = true;
 	// define dropped handler
-	REDIPS.drag.myhandler_dropped = function () {
-		// definition of local variables
-		var tbl = REDIPS.drag.target_cell,	// target cell (where element is dropped)
-			id,								// id of scrollable container
-			msg;							// message
-		// loop up until table found
-		while (tbl && tbl.nodeName !== 'TABLE') {
-			tbl = tbl.parentNode;
-		}
+	rd.myhandler_dropped = function (target_cell) {
+		var tbl,	// table reference of dropped element
+			id,		// id of scrollable container
+			msg;	// message
+		// find table of target cell
+		tbl = rd.find_parent('TABLE', target_cell)
 		// test if table belongs to scrollable container
 		if (tbl.sca !== undefined) {
 			// every table has defined scrollable container (if table belongs to scrollable container)
@@ -48,3 +50,12 @@ window.onload = function () {
 		document.getElementById('message').innerHTML = msg;
 	};
 };
+
+
+// add onload event listener
+if (window.addEventListener) {
+	window.addEventListener('load', redips_init, false);
+}
+else if (window.attachEvent) {
+	window.attachEvent('onload', redips_init);
+}

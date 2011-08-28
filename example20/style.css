@@ -20,8 +20,8 @@ body {
 }
 
 /* styles for first two tables */
-.tbl1,
-.tbl2 {
+#tbl1,
+#tbl2 {
 	width: 580px;
 	border-collapse: collapse;
 	margin-bottom: 17px;
@@ -116,4 +116,12 @@ div#drag th {
 	color: white;
 	background-color: steelBlue;
 	text-align: center;
+}
+
+/* instructions */
+.inst {
+	color: grey;
+	width: 580px;
+	padding: 10px;
+	margin: 0px auto;
 }

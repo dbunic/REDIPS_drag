@@ -10,28 +10,14 @@ var redips_init;
 // redips initialization
 redips_init = function () {
 	// reference to the REDIPS.drag lib
-	var	rd = REDIPS.drag;
-	// set hover color
-	rd.hover_color = '#DDD';
+	var rd = REDIPS.drag;
 	// initialization
 	rd.init();
-	// row was clicked - enable / disable tables
-	rd.myhandler_row_clicked = function () {
-		// find table
-		var tbl = rd.find_parent('TABLE', rd.obj);
-		// if row belongs to the "main" table
-		if (tbl.className.indexOf('main') > -1) {
-			rd.enable_table(false, 'view');
-			rd.enable_table(true, 'main');
-		}
-		// row belongs to the "view" table
-		else {
-			rd.enable_table(true, 'view');
-			rd.enable_table(false, 'main');
-		}
-	};
+	// dragged elements can be placed to the empty cells only
+	rd.drop_option = 'single';
+	// elements could be cloned with pressed SHIFT key
+	rd.clone_shiftKey = true;
 };
-
 
 // add onload event listener
 if (window.addEventListener) {

@@ -6,6 +6,7 @@
 
 var board = [[0, 0, 0], [0, 0, 0], [0, 0, 0]], // board array
 	xo = {x: 1, o: -1},	// define values for X and O elements
+	redips_init,		// define redips_init variable
 	rd,					// reference to the REDIPS.drag library
 	divo,				// reference to the O DIV element
 	// methods
@@ -14,8 +15,8 @@ var board = [[0, 0, 0], [0, 0, 0], [0, 0, 0]], // board array
 	check_line;			// method checks line (row, column or diagonal) for value 3 or -3
 
 
-// onload event
-window.onload = function () {
+// redips initialization
+redips_init = function () {
 	// set reference to the REDIPS.drag library
 	rd = REDIPS.drag;
 	// initialization
@@ -86,3 +87,12 @@ check_line = function (value) {
 		rd.enable_drag(false); // disable all drag elements
 	}
 };
+
+
+// add onload event listener
+if (window.addEventListener) {
+	window.addEventListener('load', redips_init, false);
+}
+else if (window.attachEvent) {
+	window.attachEvent('onload', redips_init);
+}

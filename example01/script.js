@@ -4,7 +4,11 @@
 /* enable strict mode */
 "use strict";
 
-window.onload = function () {
+// define redips_init variable
+var redips_init;
+
+// redips initialization
+redips_init = function () {
 	// reference to the REDIPS.drag library and message line
 	var	rd = REDIPS.drag,
 		msg = document.getElementById('message');
@@ -56,11 +60,10 @@ window.onload = function () {
 		rd.obj.innerHTML += 'd';
 	};
 	rd.myhandler_changed = function () {
-		// define current row and current cell
-		var ri = REDIPS.drag.current_cell.parentNode.rowIndex,
-			ci = REDIPS.drag.current_cell.cellIndex;
+		// get target and source position (method returns positions as array)
+		var pos = rd.get_position();
 		// display current row and current cell
-		msg.innerHTML = 'Changed: ' + ri + ' ' + ci;
+		msg.innerHTML = 'Changed: ' + pos[1] + ' ' + pos[2];
 	};
 };
 
@@ -97,4 +100,12 @@ function save() {
 		//window.open('/my/multiple-parameters.php?' + content, 'Mypop', 'width=350,height=160,scrollbars=yes');
 		window.open('multiple-parameters.php?' + content, 'Mypop', 'width=350,height=260,scrollbars=yes');
 	}
+}
+
+// add onload event listener
+if (window.addEventListener) {
+	window.addEventListener('load', redips_init, false);
+}
+else if (window.attachEvent) {
+	window.attachEvent('onload', redips_init);
 }

@@ -4,9 +4,13 @@
 /* enable strict mode */
 "use strict";
 
-window.onload = function () {
+// define redips_init variable
+var redips_init;
+
+// redips initialization
+redips_init = function () {
 	var num = 0,			// number of successfully placed elements
-		rd = REDIPS.drag;	// reference to the REDIPS.drag class
+		rd = REDIPS.drag;	// reference to the REDIPS.drag lib
 	// initialization
 	rd.init();
 	// set hover color
@@ -39,3 +43,11 @@ window.onload = function () {
 		}
 	};
 };
+
+// add onload event listener
+if (window.addEventListener) {
+	window.addEventListener('load', redips_init, false);
+}
+else if (window.attachEvent) {
+	window.attachEvent('onload', redips_init);
+}

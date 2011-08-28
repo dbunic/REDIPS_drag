@@ -2,11 +2,16 @@ Changes for REDIPS.drag library
 
 4.5.0
 - added functionality for cloning and deleting table rows
-- added event handlers:
-* myhandler_row_deleted()
-* myhandler_row_undeleted()
+- added the following event handlers:
+    myhandler_row_deleted()
+    myhandler_row_undeleted()
+    myhandler_row_cloned()
+    myhandler_row_notcloned
 - added "clone_shiftKey_row" public property
 - added example20 "Clone and delete table rows"
+- changed redips.dragrow_id to the redips.div (now it is reference to DIV element with class name "drag row")
+- replacing window.onload in all examples with advanced event registration model
+- added public method row_empty() - marks selected row as empty (tbl_id, row_idx)
 
 4.4.3
 - if myhandler_dropped_before() returns false then element drop will be canceled

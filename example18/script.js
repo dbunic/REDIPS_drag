@@ -7,12 +7,13 @@
 /* Simple element animation */
 
 var	rd = REDIPS.drag,	// reference to the REDIPS.drag library
+	redips_init,		// redips initialization
 	move,				// moves object to the random position
 	enable_button;		// enables/disables button
 
 
-// REDIPS.drag initialization
-window.onload = function () {
+// redips initialization
+redips_init = function () {
 	rd.init();
 	// animation pause (lower values mean the animation plays faster)
 	rd.animation_pause = 40;
@@ -62,3 +63,11 @@ enable_button = function (flag) {
 	button.disabled = !flag;
 };
 
+
+// add onload event listener
+if (window.addEventListener) {
+	window.addEventListener('load', redips_init, false);
+}
+else if (window.attachEvent) {
+	window.attachEvent('onload', redips_init);
+}

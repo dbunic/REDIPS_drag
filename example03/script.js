@@ -5,7 +5,8 @@
 "use strict";
 
 
-var save,			// save elements and their positions
+var redips_init,	// define redips_init variable
+	save,			// save elements and their positions
 	report,			// function shows subject occurring in timetable
 	report_button,	// show/hide report buttons
 	show_all,		// function show all subjects in timetable
@@ -13,8 +14,8 @@ var save,			// save elements and their positions
 	div_nl;			// node list of DIV elements in table2 (global variable needed in report() and visibility() function)
 
 
-// function called after page is loaded
-window.onload = function () {
+// redips initialization
+redips_init = function () {
 	var	rd = REDIPS.drag;			// reference to the REDIPS.drag object
 	// initialization
 	rd.init();
@@ -191,3 +192,11 @@ show_all = function () {
 		div_nl[i].style.visibility = 'visible';
 	}
 };
+
+// add onload event listener
+if (window.addEventListener) {
+	window.addEventListener('load', redips_init, false);
+}
+else if (window.attachEvent) {
+	window.attachEvent('onload', redips_init);
+}

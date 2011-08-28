@@ -16,7 +16,8 @@ var hover1 = '#9BB3DA',				// hover color for original elements
 	hover_div,						// reference to the hover_div object
 	size = {w: 0, h: 0},			// size of DIV elements in question table
 	tc,								// target container (defined in myhandler_dropped_before() and used in myhandler_dropped())
-	// functions
+	// methods
+	redips_init,					// define redips_init variable
 	initXMLHttpClient,				// create XMLHttp request object in a cross-browser manner
 	send_request,					// send request to the server and display response in obj.innerHTML
 	show_tooltip,					// show tooltip (when mouse is over element in question table)
@@ -25,11 +26,10 @@ var hover1 = '#9BB3DA',				// hover color for original elements
 	hide_tables,					// initially hide all tables but first table
 	single_content,					// set class="single" to all cells in question table (left table)
 	set_events;						// set onmouseover & onmouseout to all div elements inside DIV id="drag"
-	
-	
-	
-// initialization
-window.onload = function () {
+
+
+// redips initialization
+redips_init = function () {
 	// reference to the REDIPS.drag class
 	var rd = REDIPS.drag;
 	// set reference to the hover_div
@@ -278,3 +278,12 @@ single_content = function () {
 		cell[i].className = 'single';
 	}
 };
+
+
+// add onload event listener
+if (window.addEventListener) {
+	window.addEventListener('load', redips_init, false);
+}
+else if (window.attachEvent) {
+	window.attachEvent('onload', redips_init);
+}

@@ -5,14 +5,15 @@
 "use strict";
 
 // functions
-var initXMLHttpClient,	// create XMLHttp request object in a cross-browser manner
+var redips_init,		// define redips_init variable
+	initXMLHttpClient,	// create XMLHttp request object in a cross-browser manner
 	send_request,		// send AJAX request
 	request,			// XMLHttp request object
 	print_message;		// print message
 
 
-// after page is loaded
-window.onload = function () {
+// redips initialization
+redips_init = function () {
 	// reference to the REDIPS.drag object
 	var	rd = REDIPS.drag;
 	// create XMLHttp request object
@@ -97,3 +98,12 @@ send_request = function (url) {
 print_message = function (message) {
 	document.getElementById('message').innerHTML = message;
 };
+
+
+// add onload event listener
+if (window.addEventListener) {
+	window.addEventListener('load', redips_init, false);
+}
+else if (window.attachEvent) {
+	window.attachEvent('onload', redips_init);
+}

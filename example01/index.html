@@ -4,7 +4,7 @@
 		<meta name="author" content="Darko Bunic"/>
 		<meta name="description" content="Drag and drop table content with JavaScript"/>
 		<link rel="stylesheet" href="style.css" type="text/css" media="screen" />
-		<script type="text/javascript" src="../redips-drag-min.js"></script>
+		<script type="text/javascript" src="../redips-drag.js"></script>
 		<script type="text/javascript" src="script.js"></script>
 		<title>www.redips.net</title>
 	</head>
@@ -136,8 +136,8 @@
 			<div><input type="radio" name="drop_option" class="checkbox" onclick="set_drop_option(this)" value="switch" title="Switch content"/><span class="message_line">Switch content</span></div>
 			<div><input type="radio" name="drop_option" class="checkbox" onclick="set_drop_option(this)" value="switching" title="Switching content continuously"/><span class="message_line">Switching content continuously</span></div>
 			<div><input type="radio" name="drop_option" class="checkbox" onclick="set_drop_option(this)" value="overwrite" title="Overwrite content"/><span class="message_line">Overwrite content</span></div>
-			<div><input type="checkbox" class="checkbox" onclick="toggle_delete_cloned(this)" title="Remove cloned object if dragged outside of any table" checked="true"/><span class="message_line">Remove cloned object if dragged outside of any table</span></div>
-			<div><input type="checkbox" class="checkbox" onclick="toggle_confirm(this)" title="Confirm before delete object" checked="true"/><span class="message_line">Confirm before delete object</span></div>
+			<div><input type="checkbox" class="checkbox" onclick="toggle_delete_cloned(this)" title="Remove cloned object if dragged outside of any table" checked="true"/><span class="message_line">Remove cloned element if dragged outside of any table</span></div>
+			<div><input type="checkbox" class="checkbox" onclick="toggle_confirm(this)" title="Confirm before delete object" checked="true"/><span class="message_line">Confirm before delete element</span></div>
 			<div><input type="checkbox" class="checkbox" onclick="toggle_dragging(this)" title="Enable dragging" checked="true"/><span class="message_line">Enable dragging</span></div>			
 		</div>
 	</body>

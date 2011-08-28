@@ -4,11 +4,12 @@
 /* enable strict mode */
 "use strict";
 
-var set_hover_color,	// set hover color method
+var redips_init,		// define redips_init variable
+	set_hover_color,	// set hover color method
 	rd;					// reference to the REDIPS.drag library
 
-// onload event
-window.onload = function () {
+// redips initialization
+redips_init = function () {
 	// set reference to the REDIPS.drag library
 	rd = REDIPS.drag;
 	// initialization
@@ -16,20 +17,20 @@ window.onload = function () {
 	// elements could be cloned with pressed SHIFT key
 	rd.clone_shiftKey = true;
 	// handler clicked - set hover color
-	rd.myhandler_clicked = function () {
-		set_hover_color(rd.current_cell);
+	rd.myhandler_clicked = function (current_cell) {
+		set_hover_color(current_cell);
 	};
 	// handler changed - set hover color
-	rd.myhandler_changed = function () {
-		set_hover_color(rd.current_cell);
+	rd.myhandler_changed = function (current_cell) {
+		set_hover_color(current_cell);
 	};
 };
 
 
 // set hover color
-set_hover_color = function (e) {
+set_hover_color = function (cell) {
 	var color,
-		tbl = rd.find_parent('TABLE', e);
+		tbl = rd.find_parent('TABLE', cell);
 	// set hover color depending in nested level
 	switch (tbl.redips.nestedLevel) {
 	// "ground" level table
@@ -52,3 +53,12 @@ set_hover_color = function (e) {
 	// set hover color
 	rd.hover_color = color; 
 };
+
+
+// add onload event listener
+if (window.addEventListener) {
+	window.addEventListener('load', redips_init, false);
+}
+else if (window.attachEvent) {
+	window.attachEvent('onload', redips_init);
+}

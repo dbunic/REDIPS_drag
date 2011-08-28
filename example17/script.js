@@ -10,6 +10,7 @@ var	rd = REDIPS.drag,	// reference to the REDIPS.drag library
 	loc = {},			// initial locations of DIV elements
 	lock = 0,			// needed for enable/disable element synchronization (used in enable_rows)
 	// methods
+	redips_init,		// redips initialization
 	start_positions,	// remember a start positions of DIV elements
 	reset,				// returns elements to their initial positions
 	shuffle,			// shuffles (randomizes the order of the elements on tables)
@@ -19,8 +20,8 @@ var	rd = REDIPS.drag,	// reference to the REDIPS.drag library
 	get_id;				// returns id of element in opposite table
 
 
-// REDIPS.drag initialization and definition of event handlers
-window.onload = function () {
+// redips initialization
+redips_init = function () {
 	rd.border_disabled = 'solid';	// border style for disabled element will not be changed
 	rd.opacity_disabled = 70;		// disabled elements will have opacity effect
 	// initialize dragging containers (each table is placed in separate container)
@@ -47,8 +48,10 @@ window.onload = function () {
 	};
 	// row was dropped - move row in opposite table
 	rd.myhandler_row_dropped = function () {
-		var	id_new = get_id(rd.obj),	// id of element from opposite table
-			row = [];					// returned value from move_object method
+		// id of element from opposite table (rd.obj_old is source row, redips.div is reference to the <div class="drag row">)
+		var	id_new = get_id(rd.obj_old.redips.div),
+			// returned value from move_object method
+			row = [];
 		// disable elements in both containers ("enable_elements" is local function)
 		enable_elements(false);
 		// move row in other table (method returns reference to the mini table and source row)
@@ -201,12 +204,12 @@ shuffle = function () {
 /**
  * Function returns "id" of element in opposite table.
  * e.g. d2_1 -> d2_2 or d4_2 -> d4_1
- * @param {HTMLElement} DIV element or TABLE element (in case when dragging row) - mini table. 
+ * @param {HTMLElement} DIV element (in row dragging context "el" is rowhandler of source row) 
  * @return {String} Id of element in opposite table. 
  */
-get_id = function (obj) {
+get_id = function (el) {
 	var	ri = {1: 2, 2: 1},						// needed for reverse 1 -> 2 or 2 -> 1
-		id = obj.id || obj.redips.dragrow_id,	// define DIV id or mini table
+		id = el.id,								// define DIV id or mini table
 		lc = id.charAt(id.length - 1),			// last character of id that should be reversed (1 -> 2 or 2 -> 1)
 		id_new = id.slice(0, -1) + ri[lc];		// id of element from opposite table
 	// return new id
@@ -289,4 +292,13 @@ if (!Array.prototype.indexOf) {
 		}
 		return -1;
 	};
+}
+
+
+// add onload event listener
+if (window.addEventListener) {
+	window.addEventListener('load', redips_init, false);
+}
+else if (window.attachEvent) {
+	window.attachEvent('onload', redips_init);
 }

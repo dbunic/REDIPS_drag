@@ -4,9 +4,11 @@
 /* enable strict mode */
 "use strict";
 
+// define redips_init variable
+var redips_init;
 
-// initialization - after page is fully loaded
-window.onload = function () {
+// redips initialization
+redips_init = function () {
 	// reference to the REDIPS.drag library and message line
 	var	rd = REDIPS.drag,
 		msg;
@@ -23,7 +25,7 @@ window.onload = function () {
 		// every table has only one SPAN element to display messages
 		msg = el.getElementsByTagName('span')[0];
 		// display message
-		msg.innerHTML = 'Row clicked';
+		msg.innerHTML = 'Clicked';
 	};
 	// element clicked - event handler
 	rd.myhandler_clicked = function () {
@@ -39,16 +41,16 @@ window.onload = function () {
 		// obj.obj_old is reference of source row
 		rd.row_opacity(rd.obj_old, 20, 'White');
 		// display message
-		msg.innerHTML = 'Row moved';
+		msg.innerHTML = 'Moved';
 	};
 	// row was not moved - event handler
 	rd.myhandler_row_notmoved = function () {
-		msg.innerHTML = 'Row not moved';
+		msg.innerHTML = 'Not moved';
 	};
 	// row was dropped - event handler
 	rd.myhandler_row_dropped = function () {
 		// display message
-		msg.innerHTML = 'Row dropped';
+		msg.innerHTML = 'Dropped';
 	};
 	// row was dropped to the source - event handler
 	// mini table (cloned row) will be removed and source row should return to original state
@@ -56,13 +58,21 @@ window.onload = function () {
 		// make source row completely visible (no opacity)
 		rd.row_opacity(rd.obj_old, 100);
 		// display message
-		msg.innerHTML = 'Row dropped to the source';
+		msg.innerHTML = 'Dropped to the source';
 	};
 	// row position was changed - event handler
 	rd.myhandler_row_changed = function () {
-		// define current row
-		var ri = rd.current_cell.parentNode.rowIndex;
-		// display current row
-		msg.innerHTML = 'Row changed: ' + ri;
+		// get target and source position (method returns positions as array)
+		var pos = rd.get_position();
+		// display current table and current row
+		msg.innerHTML = 'Changed: ' + pos[0] + ' ' + pos[1];
 	};
 };
+
+// add onload event listener
+if (window.addEventListener) {
+	window.addEventListener('load', redips_init, false);
+}
+else if (window.attachEvent) {
+	window.attachEvent('onload', redips_init);
+}

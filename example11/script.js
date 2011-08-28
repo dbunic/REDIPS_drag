@@ -4,7 +4,11 @@
 /* enable strict mode */
 "use strict";
 
-window.onload = function () {
+// define redips_init variable
+var redips_init;
+
+// redips initialization
+redips_init = function () {
 	// reference to the REDIPS.drag object
 	var	rd = REDIPS.drag;
 	// define border style (this should go before init() method)
@@ -32,3 +36,11 @@ window.onload = function () {
 		}
 	};
 };
+
+// add onload event listener
+if (window.addEventListener) {
+	window.addEventListener('load', redips_init, false);
+}
+else if (window.attachEvent) {
+	window.attachEvent('onload', redips_init);
+}
