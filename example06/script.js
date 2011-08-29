@@ -23,7 +23,7 @@ redips_init = function () {
 			id,		// id of scrollable container
 			msg;	// message
 		// find table of target cell
-		tbl = rd.find_parent('TABLE', target_cell)
+		tbl = rd.find_parent('TABLE', target_cell);
 		// test if table belongs to scrollable container
 		if (tbl.sca !== undefined) {
 			// every table has defined scrollable container (if table belongs to scrollable container)
