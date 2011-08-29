@@ -41,7 +41,7 @@ else{src=find_parent('TABLE',src);src.deleteRow(rowIndex);}};if(table_mini===und
 else{animated=true;}
 src=table_mini.redips.source_row;rowIndex=src.rowIndex;tr=table_mini.getElementsByTagName('tr')[0];table_mini.parentNode.removeChild(table_mini);if(!animated&&target_cell.className.indexOf(REDIPS.drag.trash_cname)>-1){if(cloned){REDIPS.drag.myhandler_row_deleted();}
 else{if(REDIPS.drag.trash_ask_row){if(confirm('Are you sure you want to delete row?')){delete_srow();REDIPS.drag.myhandler_row_deleted();}
-else{REDIPS.drag.myhandler_row_undeleted();}}
+else{delete obj_old.redips.empty_row;REDIPS.drag.myhandler_row_undeleted();}}
 else{delete_srow();REDIPS.drag.myhandler_row_deleted();}}}
 else{if(animated||!cloned){delete_srow();}
 if(r_row<tbl.rows.length){ts.insertBefore(tr,tbl.rows[r_row]);rp=tbl.rows[r_row+1].redips;if(rp&&rp.empty_row){ts.deleteRow(r_row+1);}}

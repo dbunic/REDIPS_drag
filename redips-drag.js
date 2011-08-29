@@ -714,6 +714,9 @@ REDIPS.drag = (function () {
 					}
 					// user is not sure - undelete
 					else {
+						// delete empty_row property from source row because empty_row will be set on next move
+						// otherwise row would be overwritten and that's no good
+						delete obj_old.redips.empty_row;
 						// just call undeleted handler
 						REDIPS.drag.myhandler_row_undeleted();
 					}
