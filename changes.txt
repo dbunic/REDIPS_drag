@@ -11,7 +11,7 @@ Changes for REDIPS.drag library
 - added example20 "Clone and delete table rows"
 - changed redips.dragrow_id to the redips.div (now it is reference to DIV element with class name "drag row")
 - replacing window.onload in all examples with advanced event registration model
-- added public method row_empty() - marks selected row as empty (tbl_id, row_idx)
+- added public method row_empty() - marks selected row as empty (tbl_id, row_idx, [color])
 
 4.4.3
 - if myhandler_dropped_before() returns false then element drop will be canceled

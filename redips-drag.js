@@ -134,9 +134,9 @@ REDIPS.drag = (function () {
 		target_cell = null,			// (object) target table cell (defined in onmouseup)
 		animation_pause = 40,		// animation pause (lower values mean the animation plays faster)
 		animation_step = 2,			// animation step (minimum is 1)
-		
 		clone_shiftKey = false,		// (boolean) if true, elements could be cloned with pressed SHIFT key
-		clone_shiftKey_row = false;	// (boolean) if true, rows could be cloned with pressed SHIFT key
+		clone_shiftKey_row = false,	// (boolean) if true, rows could be cloned with pressed SHIFT key
+		row_empty_color = 'White';	// (string) color of empty row
 
 
 	/**
@@ -543,7 +543,7 @@ REDIPS.drag = (function () {
 			offset,				// offset of source TR
 			row_obj,			// reference to the row object
 			last_idx,			// last row index in cloned table
-			last_row = true,	// (boolean) flag indicates if dragged row is last row
+			empty_row = true,	// (boolean) flag indicates if dragged row is last row and should be marked as "empty row"
 			cr,					// current row (needed for searc if dragged row is last row)
 			div,				// reference to the <DIV class="drag row"> element
 			i, j;				// loop variables
@@ -595,15 +595,15 @@ REDIPS.drag = (function () {
 			for (i = last_idx; i >= 0; i--) {
 				// if row is not the current row
 				if (i !== row_obj.rowIndex) {
-					// search for "rowhandler cell" in row (last_row is set to "true" by default)
-					if (last_row === true) {
+					// search for "rowhandler cell" in row (empty_row is set to "true" by default)
+					if (empty_row === true) {
 						// set current row
 						cr = table_mini.rows[i];
 						// open loop to go through each cell
 						for (j = 0; j < cr.cells.length; j++) {
 							// if table cell contains "rowhandler" class name then dragged row is not the last row in table
 							if (cr.cells[j].className.indexOf('rowhandler') > -1) {
-								last_row = false;
+								empty_row = false;
 								break;
 							}
 						}
@@ -613,10 +613,10 @@ REDIPS.drag = (function () {
 					table_mini.deleteRow(i);
 				}
 			}
-			// set last row flag to the current row
+			// set empty_row flag to the current row
 			// * needed in row_drop() for replacing this row with dropped row
-			// * needed in set_trc() to disable dropping DIV elements to the last row
-			row_obj.redips.last_row = last_row;
+			// * needed in set_trc() to disable dropping DIV elements to the empty row
+			row_obj.redips.empty_row = empty_row;
 			// create a "property object" in which all custom properties will be saved
 			table_mini.redips = {};
 			// set reference to the redips.container (needed if move_object() moves elements in other container)
@@ -666,10 +666,10 @@ REDIPS.drag = (function () {
 			delete_srow;					// private method - delete source row
 		// define private method - delete source row
 		delete_srow = function () {
-			// if row is not animated and source row was marked as "last row" then row will be bleached (not deleted)
-			if (!animated && obj_old.redips.last_row) {
-				// content of table cells will be deleted and background color will be set to white
-				row_opacity(obj_old, 'empty', 'White');
+			// if row is not animated and source row was marked as "empty row" then row will be colored (not deleted)
+			if (!animated && obj_old.redips.empty_row) {
+				// content of table cells will be deleted and background color will be set to default color
+				row_opacity(obj_old, 'empty', REDIPS.drag.row_empty_color);
 			}
 			// this was not the last row - delete source row
 			else {
@@ -738,8 +738,8 @@ REDIPS.drag = (function () {
 				ts.insertBefore(tr, tbl.rows[r_row]);
 				// set reference to the redips property of row below inserted row
 				rp = tbl.rows[r_row + 1].redips;
-				// if the row below current row is marked as last_row then delete this row
-				if (rp && rp.last_row) {
+				// if the row below current row is marked as empty_row then delete this row
+				if (rp && rp.empty_row) {
 					ts.deleteRow(r_row + 1);
 				}
 			}
@@ -748,10 +748,10 @@ REDIPS.drag = (function () {
 				// row should be appended
 				ts.appendChild(tr);
 			}
-			// delete last_row property from inserted/appended row because last_row will be set on next move
-			// copy_properties() in row_clone() copied last_row property to the row in mini_table
+			// delete empty_row property from inserted/appended row because empty_row will be set on next move
+			// copy_properties() in row_clone() copied empty_row property to the row in mini_table
 			// otherwise row would be overwritten and that's no good
-			delete tr.redips.last_row;
+			delete tr.redips.empty_row;
 			// call row_dropped event handler if row_drop() was not called from animation()
 			if (!animated) {
 				REDIPS.drag.myhandler_row_dropped(target_cell);
@@ -928,9 +928,9 @@ REDIPS.drag = (function () {
 						}
 						// remove cloned mini table
 						obj.parentNode.removeChild(obj);
-						// delete last_row property from source row because last_row will be set on next move
+						// delete empty_row property from source row because empty_row will be set on next move
 						// otherwise row would be overwritten and that's no good
-						delete obj_old.redips.last_row;
+						delete obj_old.redips.empty_row;
 						// if row was cloned and dropped to the source location then call row notcloned event handler
 						if (cloned) {
 							REDIPS.drag.myhandler_row_notcloned();
@@ -1605,8 +1605,8 @@ REDIPS.drag = (function () {
 						previous();
 						break;
 					}
-					// if current row is defined as last_row, elements can't be dropped to these cells
-					if (cell_current.parentNode.redips && cell_current.parentNode.redips.last_row) {
+					// if current row is defined as empty_row, elements can't be dropped to these cells
+					if (cell_current.parentNode.redips && cell_current.parentNode.redips.empty_row) {
 						previous();
 						break;
 					}
@@ -2081,9 +2081,9 @@ REDIPS.drag = (function () {
 		copy[1] = function (e1, e2) {
 			// if redips property exists in source element
 			if (e1.redips) {
-				// copy custom properties (redips.last_row ...)
+				// copy custom properties (redips.empty_row ...)
 				e2.redips = {};
-				e2.redips.last_row = e1.redips.last_row;
+				e2.redips.empty_row = e1.redips.empty_row;
 			}
 		};
 		// define method to copy properties for child elements (input parameter is element index 0 - DIV, 1 - TR)
@@ -2978,6 +2978,8 @@ REDIPS.drag = (function () {
 	 * Input parameters are table id and row index.
 	 * @param {String} tbl_id Table id.
 	 * @param {Integer} row_idx Row index (starts from 0).
+	 * @param {String} [color] Color of empty row (default is "White" or defined with REDIPS.drag.row_empty_color parameter).
+	 * @see <a href="#row_empty_color">row_empty_color</a>
 	 * @example
 	 * // set reference to the REDIPS.drag library
 	 * rd = REDIPS.drag; 
@@ -2987,17 +2989,21 @@ REDIPS.drag = (function () {
 	 * @function
 	 * @name REDIPS.drag#row_empty
 	 */
-	row_empty = function (tbl_id, row_idx) {
+	row_empty = function (tbl_id, row_idx, color) {
 		var tbl = document.getElementById(tbl_id),
 			row = tbl.rows[row_idx];
+		// define color parameter if input parameter "color" is not defined
+		if (color === undefined) {
+			color = REDIPS.drag.row_empty_color;
+		}
 		// create a "property object" in which all custom properties of row will be saved.
 		if (row.redips === undefined) {
 			row.redips = {};
 		}
-		// set last_row property to true
-		row.redips.last_row = true;
+		// set empty_row property to true
+		row.redips.empty_row = true;
 		// mark row as empty
-		row_opacity(row, 'empty', 'White');
+		row_opacity(row, 'empty', color);
 	};
 
 
@@ -3224,7 +3230,15 @@ REDIPS.drag = (function () {
 		 * @name REDIPS.drag#animation_step
 		 * @default 2 px
 		 */
-		animation_step : animation_step, 
+		animation_step : animation_step,
+		/**
+		 * Color of empty row.
+		 * @type String
+		 * @see <a href="#row_empty">row_empty</a>
+		 * @name REDIPS.drag#row_empty_color
+		 * @default White
+		 */
+		row_empty_color : row_empty_color,
 		/* public methods (documented in main code) */
 		init : init,
 		enable_drag : enable_drag,

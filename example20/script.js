@@ -18,7 +18,7 @@ redips_init = function () {
 	rd.trash_ask_row = true;
 	// enable clone element and row with shift key
 	rd.clone_shiftKey = rd.clone_shiftKey_row = true;
-	// mark row as empty
+	// mark row in second table as empty
 	rd.row_empty('tbl2', 1);
 	// element clicked (set hover color for "cell" mode)
 	rd.myhandler_clicked = function () {

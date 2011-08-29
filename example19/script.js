@@ -15,6 +15,8 @@ redips_init = function () {
 	rd.hover_color = '#DDD';
 	// initialization
 	rd.init();
+	// define color for empty row
+	rd.row_empty_color = '#eee';
 	// row was clicked - enable / disable tables
 	rd.myhandler_row_clicked = function () {
 		// find table
