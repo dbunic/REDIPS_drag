@@ -3,41 +3,37 @@
 	<head>
 		<meta name="author" content="Darko Bunic"/>
 		<meta name="description" content="Drag and drop table content with JavaScript"/>
-		<link rel="stylesheet" href="style.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="style.css" type="text/css" media="screen"/>
+		<script type="text/javascript" src="../header.js"></script>
 		<script type="text/javascript" src="../redips-drag-min.js"></script>
-		<!-- initialize drag and drop -->
 		<script type="text/javascript" src="script.js"></script>
-		<title>www.redips.net</title>
+		<title>Example 14: Sort elements in long table</title>
 	</head>
 	<body>
-		<center>
-			<h1><a href="http://www.redips.net/javascript/drag-and-drop-table-content/">www.redips.net</a></h1>
-			<h2>Example 14: Sort elements in long table</h2>
-		</center>
-			<!-- tables inside this DIV could have draggable content -->
-			<div id="drag">
-				<table id="table1">
-					<colgroup>
-						<col width="200"/>
-					</colgroup>
-					<tbody>
-						<tr><td><div class="drag orange">11</div></td></tr><tr><td><div class="drag green">12</div></td></tr>
-						<tr><td><div class="drag orange">15</div></td></tr><tr><td><div class="drag green">16</div></td></tr>
-						<tr><td><div class="drag orange">27</div></td></tr><tr><td><div class="drag green">28</div></td></tr>
-						<tr><td><div class="drag orange">9</div></td></tr><tr><td><div class="drag green">10</div></td></tr>
-						<tr><td><div class="drag orange">3</div></td></tr><tr><td><div class="drag green">4</div></td></tr>
-						<tr><td><div class="drag orange">5</div></td></tr><tr><td><div class="drag green">6</div></td></tr>
-						<tr><td><div class="drag orange">17</div></td></tr><tr><td><div class="drag green">18</div></td></tr>
-						<tr><td><div class="drag orange">29</div></td></tr><tr><td><div class="drag green">30</div></td></tr>
-						<tr><td><div class="drag orange">7</div></td></tr><tr><td><div class="drag green">8</div></td></tr>
-						<tr><td><div class="drag orange">13</div></td></tr><tr><td><div class="drag green">14</div></td></tr>
-						<tr><td><div class="drag orange">23</div></td></tr><tr><td><div class="drag green">24</div></td></tr>
-						<tr><td><div class="drag orange">1</div></td></tr><tr><td><div class="drag green">2</div></td></tr>
-						<tr><td><div class="drag orange">25</div></td></tr><tr><td><div class="drag green">26</div></td></tr>
-						<tr><td><div class="drag orange">19</div></td></tr><tr><td><div class="drag green">20</div></td></tr>
-						<tr><td><div class="drag orange">21</div></td></tr><tr><td><div class="drag green">22</div></td></tr>
-					</tbody>
-				</table>
-			</div><!-- drag container -->
+		<!-- tables inside this DIV could have draggable content -->
+		<div id="drag">
+			<table id="table1">
+				<colgroup>
+					<col width="200"/>
+				</colgroup>
+				<tbody>
+					<tr><td><div class="drag orange">11</div></td></tr><tr><td><div class="drag green">12</div></td></tr>
+					<tr><td><div class="drag orange">15</div></td></tr><tr><td><div class="drag green">16</div></td></tr>
+					<tr><td><div class="drag orange">27</div></td></tr><tr><td><div class="drag green">28</div></td></tr>
+					<tr><td><div class="drag orange">9</div></td></tr><tr><td><div class="drag green">10</div></td></tr>
+					<tr><td><div class="drag orange">3</div></td></tr><tr><td><div class="drag green">4</div></td></tr>
+					<tr><td><div class="drag orange">5</div></td></tr><tr><td><div class="drag green">6</div></td></tr>
+					<tr><td><div class="drag orange">17</div></td></tr><tr><td><div class="drag green">18</div></td></tr>
+					<tr><td><div class="drag orange">29</div></td></tr><tr><td><div class="drag green">30</div></td></tr>
+					<tr><td><div class="drag orange">7</div></td></tr><tr><td><div class="drag green">8</div></td></tr>
+					<tr><td><div class="drag orange">13</div></td></tr><tr><td><div class="drag green">14</div></td></tr>
+					<tr><td><div class="drag orange">23</div></td></tr><tr><td><div class="drag green">24</div></td></tr>
+					<tr><td><div class="drag orange">1</div></td></tr><tr><td><div class="drag green">2</div></td></tr>
+					<tr><td><div class="drag orange">25</div></td></tr><tr><td><div class="drag green">26</div></td></tr>
+					<tr><td><div class="drag orange">19</div></td></tr><tr><td><div class="drag green">20</div></td></tr>
+					<tr><td><div class="drag orange">21</div></td></tr><tr><td><div class="drag green">22</div></td></tr>
+				</tbody>
+			</table>
+		</div>
 	</body>
 </html>
