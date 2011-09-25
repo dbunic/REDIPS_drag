@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 4.5.0
-Aug 28, 2011.
+Version 4.5.1
+Sep 28, 2011.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -27,7 +27,7 @@ var REDIPS = REDIPS || {};
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content-animation/">Drag and drop table content plus animation</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">Drag and drop table rows</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">Drag and Drop table content</a>
- * @version 4.5.0
+ * @version 4.5.1
  */
 REDIPS.drag = (function () {
 		// methods
@@ -61,6 +61,8 @@ REDIPS.drag = (function () {
 		find_parent,				// method returns a reference of the required parent element
 		save_content,				// scan tables, prepare query string and sent to the multiple-parameters.php
 		relocate,					// relocate objects from source cell to the target cell (source and target cells are input parameters)
+		empty_cell,					// method removes elements from table cell
+		shift_cells,				// method shifts table content to the left or right (useful for content where the order should be preserved)
 		move_object,				// method moves object to the destination table, row and cell
 		animation,					// object animation
 		get_table_index,			// find table index - because tables array is sorted on every element click
@@ -128,6 +130,7 @@ REDIPS.drag = (function () {
 		trash_ask_row = true,		// (boolean) confirm row deletion
 		drop_option = 'multiple',	// (string) drop_option has the following options: multiple, single, switch, switching and overwrite
 		delete_cloned = true,		// (boolean) delete cloned div if the cloned div is dragged outside of any table
+		delete_shifted = false,		// (boolean) delete last shifted elements in table
 		source_cell = null,			// (object) source table cell (defined in onmousedown and in onmouseup)
 		current_cell = null,		// (object) current table cell (defined in onmousdown)
 		previous_cell = null,		// (object) previous table cell (defined in onmousemove)
@@ -1031,13 +1034,8 @@ REDIPS.drag = (function () {
 			}
 			// overwrite destination table cell with dragged content 
 			else if (REDIPS.drag.drop_option === 'overwrite') {
-				// remove objects from the destination table cell
-				target_elements = target_cell.getElementsByTagName('DIV');
-				target_elements_length = target_elements.length;
-				for (i = 0; i < target_elements_length; i++) {
-					// remove child DIV elements from target cell
-					target_cell.removeChild(target_elements[0]); // '0', not 'i' because NodeList objects in the DOM are live
-				}
+				// empty target cell
+				empty_cell(target_cell);
 				// drop element to the table cell
 				element_drop();
 			}
@@ -2533,20 +2531,153 @@ REDIPS.drag = (function () {
 	 * @name REDIPS.drag#relocate
 	 */
 	relocate = function (from, to) {
-		var i, // local variable
-			childnodes_length; // number of child nodes 
+		var i,	// local variable
+			cn;	// number of child nodes 
 		// test if "from" cell is equal to "to" cell then do nothing
 		if (from === to) {
 			return;
 		} 
 		// define childnodes length before loop (not in loop because NodeList objects in the DOM are live)
-		childnodes_length = from.childNodes.length;
+		cn = from.childNodes.length;
 		// loop through all child nodes
-		for (i = 0; i < childnodes_length; i++) {
+		for (i = 0; i < cn; i++) {
 			to.appendChild(from.childNodes[0]); // '0', not 'i' because NodeList objects in the DOM are live
 		}	
 	};
 
+
+	/**
+	 * Method removes elements from table cell.
+	 * @param {HTMLElement} td Table cell reference from which all the elements will be deleted.
+	 * @example
+	 * // set REDIPS.drag reference
+	 * var rd = REDIPS.drag;
+	 * // search for TABLE element (from cell reference)
+	 * tbl = rd.empty_cell(td);
+	 * @return {Boolean} Returns false if input element is not table cell.
+	 * @public
+	 * @function
+	 * @name REDIPS.drag#empty_cell
+	 */
+	empty_cell = function (td) {
+		var i,	// local variable
+			cn;	// number of child nodes 
+		// if td is not table cell element then return false
+		if (td.nodeName !== 'TD') {
+			return false;
+		} 
+		// define childnodes length before loop (not in loop because NodeList objects in the DOM are live)
+		cn = td.childNodes.length;
+		// delete all child nodes from td
+		for (i = 0; i < cn; i++) {
+			td.removeChild(td.childNodes[0]);
+		}
+	};
+
+	/**
+	 * Method shifts cell content to the left or right. Useful for content where the order should be preserved.
+	 * Last (or first) element can stay in cell or can be deleted from table.
+	 * @param {HTMLElement} td Table cell reference from which table content will be shifted.
+	 * @param {String} [direction] Left or right shift direction. Default is "right".
+	 * @example
+	 * // set REDIPS.drag reference
+	 * var rd = REDIPS.drag;
+	 * // search for TABLE element (from cell reference)
+	 * tbl = rd.empty_cell(td);
+	 * @return {Boolean} Returns false if input element is not table cell.
+	 * @public
+	 * @function
+	 * @name REDIPS.drag#empty_cell
+	 */
+	shift_cells = function (td, direction) {
+		var tbl,	// table reference
+			cr_idx,	// current row index
+			lc,		// last cell
+			i,		// loop variable
+			left,	// shift row content to the left
+			right;	// shift row content to the right
+		// shift row content to the left
+		left = function (tr, td) {
+			var	c1,	c2,	// source and target cell
+				i;		// local variables
+			// loop through table cells
+			for (i = 1; i < tr.cells.length; i++) {
+				// define source and target cell
+				c1 = tr.cells[i];
+				c2 = tr.cells[i - 1];
+				// relocate cells
+				relocate(c1, c2);
+				// if found current cell then stop the loop
+				if (tr.cells[i] === td) {
+					break;
+				}
+			}
+		};
+		// shift row content to the right
+		right = function (tr, td) {
+			var	c1, c2,	// source and target cell
+				i;		// local variables
+			// loop through cells (backward) to the current cell
+			for (i = tr.cells.length - 1; i > 0; i--) {
+				// if found current cell then stop the loop
+				if (tr.cells[i] === td) {
+					break;
+				}
+				// define source and target cell
+				c1 = tr.cells[i - 1];
+				c2 = tr.cells[i];
+				// relocate cells
+				relocate(c1, c2);
+			}
+		};
+		// set default direction (if not defined)
+		if (direction === undefined) {
+			direction = 'right';
+		}
+		// set reference to the table
+		tbl = find_parent('TABLE', td);
+		// set current row index
+		cr_idx = find_parent('TR', td).rowIndex;
+		// left direction
+		if (direction === 'left') {
+			// open loop from first row to the current row
+			for (i = 0; i <= cr_idx; i++) {
+				// delete the most left elements
+				if (REDIPS.drag.delete_shifted && i === 0) {
+					empty_cell(tbl.rows[0].cells[0]);
+				}
+				// shift row content to the left
+				left(tbl.rows[i], td);
+				// relocate first cell from the lower row to the last cell of the current row
+				// for all cases except if current cell is in the first row
+				if (i < cr_idx) {
+					// define last cell in the current row and relocate
+					lc = tbl.rows[i].cells.length - 1;
+					relocate(tbl.rows[i + 1].cells[0], tbl.rows[i].cells[lc]);
+				}
+			}
+		}
+		// right direction
+		else {
+			// open loop from last row to the current row
+			for (i = tbl.rows.length - 1; i >= cr_idx; i--) {
+				// delete the most right elements
+				if (REDIPS.drag.delete_shifted && i === tbl.rows.length - 1) {
+					lc = tbl.rows[tbl.rows.length - 1].cells.length - 1;
+					empty_cell(tbl.rows[tbl.rows.length - 1].cells[lc]);
+				}
+				// shift row content to the right
+				right(tbl.rows[i], td);
+				// relocate last cell from upper row to the first cell of the current row
+				// for all cases except if current cell is in the last row
+				if (i > cr_idx) {
+					// define last cell in the upper row and relocate
+					lc = tbl.rows[i - 1].cells.length - 1;
+					relocate(tbl.rows[i - 1].cells[lc], tbl.rows[i].cells[0]);
+				}
+			}
+		}
+	};
 
 	/**
 	 * Method will calculate parameters and start animation (DIV element to the destination table cell).
@@ -3203,6 +3334,13 @@ REDIPS.drag = (function () {
 		 */
 		delete_cloned : delete_cloned,
 		/**
+		 * Delete shifted elements (the most right or the most left elements).
+		 * @type Boolean
+		 * @name REDIPS.drag#delete_shifted
+		 * @default false
+		 */
+		delete_shifted : delete_shifted,
+		/**
 		 * If set to "true", all DIV elements on tables could be cloned with pressed SHIFT key. 
 		 * Just press SHIFT key and try to drag element. Instead of moving current element, DIV element will be cloned and ready for dragging.
 		 * @type Boolean
@@ -3249,6 +3387,7 @@ REDIPS.drag = (function () {
 		clone_div : clone_div,
 		save_content : save_content,
 		relocate : relocate,
+		empty_cell : empty_cell,
 		move_object : move_object,
 		get_position : get_position,
 		row_opacity : row_opacity,
