@@ -1,0 +1,45 @@
+/*
+
+Darko Bunic
+http://www.redips.net/
+Oct, 2010.
+
+*/
+
+body{
+	font-family: arial;
+	margin: 0px; /* for IE6 / IE7 */
+}
+
+/* make drag container visible */
+#drag{
+	border: 2px dashed LightBlue;
+	display: table;
+}
+
+/* table */
+div#drag table {
+	background-color: #eee;
+	border-collapse: collapse;
+	margin: 7px;	
+}
+
+/* table cells */
+div#drag td{
+	border: 1px solid navy;
+	height: 50px;
+	text-align: center;
+	font-size: 10pt;
+	padding: 2px;
+}
+
+/* drag object (DIV inside table cell) */
+.drag{
+	margin: auto;
+	text-align: center;
+	width: 87px;
+	height: 35px;
+	line-height: 35px;
+	border: 2px solid SteelBlue;
+	background-color: white;
+}

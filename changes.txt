@@ -5,6 +5,7 @@ Changes for REDIPS.drag library
 - added shift_cells() private method
 - added delete_shifted public property
 - added shift_animation public property
+- fixed BUG with cloning last row in table
 
 4.5.0
 - added functionality for cloning and deleting table rows

@@ -616,10 +616,14 @@ REDIPS.drag = (function () {
 					table_mini.deleteRow(i);
 				}
 			}
-			// set empty_row flag to the current row
-			// * needed in row_drop() for replacing this row with dropped row
-			// * needed in set_trc() to disable dropping DIV elements to the empty row
-			row_obj.redips.empty_row = empty_row;
+			// if row is not cloned then set empty_row property
+			// cloned row always leaves original row in the table so empty_row property should stay as it was before clone operation
+			if (!cloned) {
+				// set empty_row flag to the current row
+				// * needed in row_drop() for replacing this row with dropped row
+				// * needed in set_trc() to disable dropping DIV elements to the empty row
+				row_obj.redips.empty_row = empty_row;
+			}
 			// create a "property object" in which all custom properties will be saved
 			table_mini.redips = {};
 			// set reference to the redips.container (needed if move_object() moves elements in other container)
@@ -1079,6 +1083,9 @@ REDIPS.drag = (function () {
 		var drop = REDIPS.drag.myhandler_dropped_before(target_cell);
 		// if handler returns false then element drop should be canceled
 		if (drop !== false) {
+			if (REDIPS.drag.drop_option === 'shift') {
+				shift_cells(target_cell, source_cell);
+			}
 			// append object to the target cell
 			target_cell.appendChild(obj);
 			// call myhandler_dropped because clone_limit could call myhandler_clonedend1 or myhandler_clonedend2
@@ -2577,19 +2584,13 @@ REDIPS.drag = (function () {
 	/**
 	 * Method shifts cell content to the left or right. Useful for content where the order should be preserved.
 	 * Last (or first) element can stay in cell or can be deleted from table.
-	 * @param {HTMLElement} td Table cell reference from which table content will be shifted.
+	 * @param {HTMLElement} td1 Table cell from which table content will be shifted (first point - target cell).
+	 * @param {HTMLElement} td2 Table cell to which table content will be shifted (last point - source cell).
 	 * @param {String} [direction] Left or right shift direction. Default is "right".
-	 * @example
-	 * // set REDIPS.drag reference
-	 * var rd = REDIPS.drag;
-	 * // search for TABLE element (from cell reference)
-	 * tbl = rd.empty_cell(td);
-	 * @return {Boolean} Returns false if input element is not table cell.
-	 * @public
-	 * @function
-	 * @name REDIPS.drag#empty_cell
+	 * @private
+	 * @memberOf REDIPS.drag#
 	 */
-	shift_cells = function (td, direction) {
+	shift_cells = function (td1, td2, direction) {
 		var tbl,	// table reference
 			cr_idx,	// current row index
 			lc,		// last cell
@@ -2614,13 +2615,23 @@ REDIPS.drag = (function () {
 			}
 		};
 		// shift row content to the right
-		right = function (tr, td) {
+		right = function (tr, td1, td2) {
 			var	c1, c2,	// source and target cell
+				idx,	// cell index
 				i;		// local variables
+			// test if current row contains td2
+			if (find_parent('TR', td2) === tr) {
+				idx = td2.cellIndex;
+console.log(idx);
+			}
+			else {
+				idx = tr.cells.length - 1;
+			}
+				
 			// loop through cells (backward) to the current cell
-			for (i = tr.cells.length - 1; i > 0; i--) {
+			for (i = idx; i > 0; i--) {
 				// if found current cell then stop the loop
-				if (tr.cells[i] === td) {
+				if (tr.cells[i] === td1) {
 					break;
 				}
 				// define source and target cell
@@ -2635,9 +2646,9 @@ REDIPS.drag = (function () {
 			direction = 'right';
 		}
 		// set reference to the table
-		tbl = find_parent('TABLE', td);
+		tbl = find_parent('TABLE', td1);
 		// set current row index
-		cr_idx = find_parent('TR', td).rowIndex;
+		cr_idx = find_parent('TR', td1).rowIndex;
 		// left direction
 		if (direction === 'left') {
 			// open loop from first row to the current row
@@ -2647,7 +2658,7 @@ REDIPS.drag = (function () {
 					empty_cell(tbl.rows[0].cells[0]);
 				}
 				// shift row content to the left
-				left(tbl.rows[i], td);
+				left(tbl.rows[i], td1);
 				// relocate first cell from the lower row to the last cell of the current row
 				// for all cases except if current cell is in the first row
 				if (i < cr_idx) {
@@ -2667,7 +2678,7 @@ REDIPS.drag = (function () {
 					empty_cell(tbl.rows[tbl.rows.length - 1].cells[lc]);
 				}
 				// shift row content to the right
-				right(tbl.rows[i], td);
+				right(tbl.rows[i], td1, td2);
 				// relocate last cell from upper row to the first cell of the current row
 				// for all cases except if current cell is in the last row
 				if (i > cr_idx) {
