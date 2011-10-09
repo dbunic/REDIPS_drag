@@ -135,8 +135,9 @@ REDIPS.drag = (function () {
 		current_cell = null,		// (object) current table cell (defined in onmousdown)
 		previous_cell = null,		// (object) previous table cell (defined in onmousemove)
 		target_cell = null,			// (object) target table cell (defined in onmouseup)
-		animation_pause = 40,		// animation pause (lower values mean the animation plays faster)
+		animation_pause = 20,		// animation pause (lower values mean the animation plays faster)
 		animation_step = 2,			// animation step (minimum is 1)
+		animation_shift = false,	// (boolean) shift drop option animation (if set to true, table content will be relocated with animation in case of "shift" drop option)
 		clone_shiftKey = false,		// (boolean) if true, elements could be cloned with pressed SHIFT key
 		clone_shiftKey_row = false,	// (boolean) if true, rows could be cloned with pressed SHIFT key
 		row_empty_color = 'White';	// (string) color of empty row
@@ -1083,8 +1084,9 @@ REDIPS.drag = (function () {
 		var drop = REDIPS.drag.myhandler_dropped_before(target_cell);
 		// if handler returns false then element drop should be canceled
 		if (drop !== false) {
-			if (REDIPS.drag.drop_option === 'shift') {
-				shift_cells(target_cell, source_cell);
+			// shift table content if drop_option is set to "shift" and target cell is not empty
+			if (REDIPS.drag.drop_option === 'shift' && target_cell.hasChildNodes()) {
+				shift_cells(source_cell, target_cell);
 			}
 			// append object to the target cell
 			target_cell.appendChild(obj);
@@ -2530,26 +2532,45 @@ REDIPS.drag = (function () {
 
 
 	/**
-	 * Method relocates all child nodes from source table cell to the target table cell.
+	 * Method relocates all child nodes from source table cell to the target table cell (with optional animation).
 	 * @param {HTMLElement} from Source table cell.
 	 * @param {HTMLElement} to Target table cell.
+	 * @param {String} [mode] Relocation mode "instant" or "animation". Default is "instant".
 	 * @public
 	 * @function
 	 * @name REDIPS.drag#relocate
 	 */
-	relocate = function (from, to) {
-		var i,	// local variable
-			cn;	// number of child nodes 
+	relocate = function (from, to, mode) {
+		var i,		// local variable
+			cn,		// number of child nodes
+			target;	// target position
 		// test if "from" cell is equal to "to" cell then do nothing
 		if (from === to) {
 			return;
-		} 
-		// define childnodes length before loop (not in loop because NodeList objects in the DOM are live)
+		}
+		// define childnodes length before loop
 		cn = from.childNodes.length;
-		// loop through all child nodes
-		for (i = 0; i < cn; i++) {
-			to.appendChild(from.childNodes[0]); // '0', not 'i' because NodeList objects in the DOM are live
-		}	
+		// if mode is "animation"
+		if (mode === 'animation') {
+			// set target position
+			target = REDIPS.drag.get_position(to);
+			// loop through all child nodes
+			for (i = 0; i < cn; i++) {
+				// move DIV element to the target cell
+				REDIPS.drag.move_object({
+					obj: from.childNodes[i],
+					target: target
+				});
+			}
+		}
+		// instant mode
+		else {
+			// loop through all child nodes
+			for (i = 0; i < cn; i++) {
+				// '0', not 'i' because NodeList objects in the DOM are live
+				to.appendChild(from.childNodes[0]);
+			}	
+		}
 	};
 
 
@@ -2581,120 +2602,80 @@ REDIPS.drag = (function () {
 		}
 	};
 
+
 	/**
 	 * Method shifts cell content to the left or right. Useful for content where the order should be preserved.
 	 * Last (or first) element can stay in cell or can be deleted from table.
-	 * @param {HTMLElement} td1 Table cell from which table content will be shifted (first point - target cell).
-	 * @param {HTMLElement} td2 Table cell to which table content will be shifted (last point - source cell).
-	 * @param {String} [direction] Left or right shift direction. Default is "right".
+	 * @param {HTMLElement} td1 Source table cell.
+	 * @param {HTMLElement} td2 Target table cell.
+	 * @param {String} [direction] Left or right shift direction. If source and target cells are within the same table then direction is automatically defined and this parameter is ignored. Default is "right".
 	 * @private
 	 * @memberOf REDIPS.drag#
 	 */
 	shift_cells = function (td1, td2, direction) {
-		var tbl,	// table reference
-			cr_idx,	// current row index
-			lc,		// last cell
-			i,		// loop variable
-			left,	// shift row content to the left
-			right;	// shift row content to the right
-		// shift row content to the left
-		left = function (tr, td) {
-			var	c1,	c2,	// source and target cell
-				i;		// local variables
-			// loop through table cells
-			for (i = 1; i < tr.cells.length; i++) {
-				// define source and target cell
-				c1 = tr.cells[i];
-				c2 = tr.cells[i - 1];
-				// relocate cells
-				relocate(c1, c2);
-				// if found current cell then stop the loop
-				if (tr.cells[i] === td) {
-					break;
-				}
-			}
-		};
-		// shift row content to the right
-		right = function (tr, td1, td2) {
-			var	c1, c2,	// source and target cell
-				idx,	// cell index
-				i;		// local variables
-			// test if current row contains td2
-			if (find_parent('TR', td2) === tr) {
-				idx = td2.cellIndex;
-console.log(idx);
+		var tbl1, tbl2,	// table reference of source and target cell
+			pos = [], 
+			pos1 = [],
+			pos2 = [],	// source and target table index
+			c1, c2,
+			max;
+		// set table reference for source and target table cell
+		tbl1 = find_parent('TABLE', td1);
+		tbl2 = find_parent('TABLE', td2);
+		// test if source and target table cells are within the same table
+		if (tbl1 === tbl2) {
+			// prepare positions [row, cell] for source and target table cell
+			pos = pos1 = [td1.parentNode.rowIndex, td1.cellIndex];
+			pos2 = [td2.parentNode.rowIndex, td2.cellIndex];
+			max = td2.parentNode.cells.length - 1;
+			// if source cell is prior to the target cell then set direction to the "left", otherwise direction is to the "right"
+			if (pos1[0] * 1000 + pos1[1] < pos2[0] * 1000 + pos2[1]) {
+				direction = 1; // left
 			}
 			else {
-				idx = tr.cells.length - 1;
+				direction = -1; // right
 			}
-				
-			// loop through cells (backward) to the current cell
-			for (i = idx; i > 0; i--) {
-				// if found current cell then stop the loop
-				if (tr.cells[i] === td1) {
-					break;
-				}
-				// define source and target cell
-				c1 = tr.cells[i - 1];
-				c2 = tr.cells[i];
-				// relocate cells
-				relocate(c1, c2);
-			}
-		};
-		// set default direction (if not defined)
-		if (direction === undefined) {
+		}
+		// source and target cells are from different tables (if direction is not defined, set default direction)
+		else if (direction === undefined) {
 			direction = 'right';
 		}
-		// set reference to the table
-		tbl = find_parent('TABLE', td1);
-		// set current row index
-		cr_idx = find_parent('TR', td1).rowIndex;
-		// left direction
-		if (direction === 'left') {
-			// open loop from first row to the current row
-			for (i = 0; i <= cr_idx; i++) {
-				// delete the most left elements
-				if (REDIPS.drag.delete_shifted && i === 0) {
-					empty_cell(tbl.rows[0].cells[0]);
-				}
-				// shift row content to the left
-				left(tbl.rows[i], td1);
-				// relocate first cell from the lower row to the last cell of the current row
-				// for all cases except if current cell is in the first row
-				if (i < cr_idx) {
-					// define last cell in the current row and relocate
-					lc = tbl.rows[i].cells.length - 1;
-					relocate(tbl.rows[i + 1].cells[0], tbl.rows[i].cells[lc]);
-				}
+		// while loop goes from source to target position
+		while (pos[0] !== pos2[0] || pos[1] !== pos2[1]) {
+			// define destination cell
+			c2 = tbl2.rows[pos[0]].cells[pos[1]];
+			// increment cell index
+			pos[1] += direction;
+			// if cellIndex was most left column
+			if (pos[1] < 0) {
+				pos[1] = max;
+				pos[0]--;
 			}
-		}
-		// right direction
-		else {
-			// open loop from last row to the current row
-			for (i = tbl.rows.length - 1; i >= cr_idx; i--) {
-				// delete the most right elements
-				if (REDIPS.drag.delete_shifted && i === tbl.rows.length - 1) {
-					lc = tbl.rows[tbl.rows.length - 1].cells.length - 1;
-					empty_cell(tbl.rows[tbl.rows.length - 1].cells[lc]);
-				}
-				// shift row content to the right
-				right(tbl.rows[i], td1, td2);
-				// relocate last cell from upper row to the first cell of the current row
-				// for all cases except if current cell is in the last row
-				if (i > cr_idx) {
-					// define last cell in the upper row and relocate
-					lc = tbl.rows[i - 1].cells.length - 1;
-					relocate(tbl.rows[i - 1].cells[lc], tbl.rows[i].cells[0]);
-				}
+			// if cellIndex was most right column
+			else if (pos[1] > max) {
+				pos[1] = 0;
+				pos[0]++;
+			}
+			// define source cell
+			c1 = tbl2.rows[pos[0]].cells[pos[1]];
+			// relocate cell content with animantion
+			if (REDIPS.drag.animation_shift) {
+				relocate(c1, c2, 'animation');
+			}
+			// relocate cell content without animation
+			else {
+				relocate(c1, c2);
 			}
 		}
 	};
+
 
 	/**
 	 * Method will calculate parameters and start animation (DIV element to the destination table cell).
 	 * If "target" property is not defined then current location will be used. Here is properties definition of input parameter:
 	 * <ul>
-	 * <li>{String} id - reference of element to animate - DIV element or row handler (div class="drag row")</li>
+	 * <li>{String} id - id of element to animate - DIV element or row handler (div class="drag row")</li>
+	 * <li>{String} obj - reference of element to animate - DIV element or row handler (if "id" parameter exists, "obj" parameter will be ignored)</li>
 	 * <li>{String} mode - animation mode (if mode="row" then source and target properties should be defined)</li>
 	 * <li>{Array} source - source position (table index and row index)</li>
 	 * <li>{Array} target - target position (table, row and cell index (optional for "row" mode)</li>
@@ -2727,7 +2708,13 @@ console.log(idx);
 	 *     id: 'a2',
 	 *     target: [0, 1, 2]
 	 * });
-	 *  
+	 * 
+	 * // move DIV element with reference "mydiv" to the first table, second row and third cell
+	 * rd.move_object({
+	 *     obj: mydiv,
+	 *     target: [0, 1, 2]
+	 * });
+	 * 
 	 * // move first row and after animation is finished call "enable_button" function
 	 * // "move_object" returns Array with references of table_mini and source row
 	 * row = rd.move_object({
@@ -2754,6 +2741,10 @@ console.log(idx);
 		// ip.id - input parameter obj_id
 		if (typeof(ip.id) === 'string') {
 			p.obj = p.obj_old = document.getElementById(ip.id);
+		}
+		// reference of DIV element to animate
+		else if (typeof(ip.obj) === 'object' && ip.obj.nodeName === 'DIV') {
+			p.obj = p.obj_old = ip.obj;
 		}
 		// test if animation mode is "row" (mode, source and target properties should be defined)
 		if (ip.mode === 'row') {
@@ -3315,7 +3306,7 @@ console.log(idx);
 		 */
 		trash_ask_row : trash_ask_row,
 		/**
-		 * Property defines working types of REDIPS.drag library: multiple, single, switch, switching and overwrite.
+		 * Property defines working types of REDIPS.drag library: multiple, single, switch, switching, overwrite and shift.
 		 * @type String
 		 * @name REDIPS.drag#drop_option
 		 * @default multiple
@@ -3334,6 +3325,9 @@ console.log(idx);
 		 *  
 		 * // overwrite content in table cell
 		 * REDIPS.drag.drop_option('overwrite');
+		 * 
+		 * // shift table content after element is dropped
+		 * REDIPS.drag.drop_option('shift');
 		 */
 		drop_option	: drop_option,
 		/**
@@ -3371,7 +3365,7 @@ console.log(idx);
 		 * Animation pause (lower values means the animation will go faster).
 		 * @type Integer
 		 * @name REDIPS.drag#animation_pause
-		 * @default 40 (milliseconds)
+		 * @default 20 (milliseconds)
 		 */
 		animation_pause : animation_pause,
 		/**
@@ -3383,6 +3377,14 @@ console.log(idx);
 		 * @default 2 px
 		 */
 		animation_step : animation_step,
+		/**
+		 * Shift drop option animation.
+		 * If set to true, table content will be relocated with animation in case of "shift" drop option.
+		 * @type Boolean
+		 * @name REDIPS.drag#animation_shift
+		 * @default false
+		 */
+		animation_shift : animation_shift,
 		/**
 		 * Color of empty row.
 		 * @type String

@@ -6,6 +6,9 @@ Changes for REDIPS.drag library
 - added delete_shifted public property
 - added shift_animation public property
 - fixed BUG with cloning last row in table
+- added optional "obj" parameter in move_object() public method
+- added optional "mode" parameter in relocate() public method
+- added public parameter "animation_shift" (default value is false)  
 
 4.5.0
 - added functionality for cloning and deleting table rows

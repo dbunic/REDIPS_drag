@@ -4,7 +4,8 @@
 /* enable strict mode */
 "use strict";
 
-var redips_init;
+var redips_init,
+	toggle_animation;
 
 // redips initialization
 redips_init = function () {
@@ -19,6 +20,10 @@ redips_init = function () {
 		rd.hover_color = '#FFCFAE';
 	};
 };
+
+toggle_animation = function (chk) {
+	REDIPS.drag.animation_shift = chk.checked;
+}
 
 
 // add onload event listener
