@@ -2608,37 +2608,45 @@ REDIPS.drag = (function () {
 	 * Last (or first) element can stay in cell or can be deleted from table.
 	 * @param {HTMLElement} td1 Source table cell.
 	 * @param {HTMLElement} td2 Target table cell.
-	 * @param {String} [direction] Left or right shift direction. If source and target cells are within the same table then direction is automatically defined and this parameter is ignored. Default is "right".
 	 * @private
 	 * @memberOf REDIPS.drag#
 	 */
-	shift_cells = function (td1, td2, direction) {
+	shift_cells = function (td1, td2) {
 		var tbl1, tbl2,	// table reference of source and target cell
-			pos = [], 
-			pos1 = [],
+			pos = [],
 			pos2 = [],	// source and target table index
+			direction,
 			c1, c2,
-			max;
+			cols;		// column number (this parameter is read from first row)
 		// set table reference for source and target table cell
 		tbl1 = find_parent('TABLE', td1);
 		tbl2 = find_parent('TABLE', td2);
+		// define number of columns
+		cols = tbl2.rows[0].cells.length - 1;
 		// test if source and target table cells are within the same table
 		if (tbl1 === tbl2) {
 			// prepare positions [row, cell] for source and target table cell
-			pos = pos1 = [td1.parentNode.rowIndex, td1.cellIndex];
+			pos = [td1.parentNode.rowIndex, td1.cellIndex];
 			pos2 = [td2.parentNode.rowIndex, td2.cellIndex];
-			max = td2.parentNode.cells.length - 1;
 			// if source cell is prior to the target cell then set direction to the "left", otherwise direction is to the "right"
-			if (pos1[0] * 1000 + pos1[1] < pos2[0] * 1000 + pos2[1]) {
+			if (pos[0] * 1000 + pos[1] < pos2[0] * 1000 + pos2[1]) {
 				direction = 1; // left
 			}
 			else {
 				direction = -1; // right
 			}
 		}
-		// source and target cells are from different tables (if direction is not defined, set default direction)
-		else if (direction === undefined) {
-			direction = 'right';
+		// source and target cells are from different tables
+		else {
+			direction = -1; // right
+console.log(td2.parentNode.rowIndex);
+console.log(td2.cellIndex);
+
+			pos = [td2.parentNode.rowIndex, td2.cellIndex];
+console.log(pos);
+			// bottom right cell in target table
+			pos2 = [tbl2.rows.length - 1, cols];
+console.log(pos2);
 		}
 		// while loop goes from source to target position
 		while (pos[0] !== pos2[0] || pos[1] !== pos2[1]) {
@@ -2648,11 +2656,11 @@ REDIPS.drag = (function () {
 			pos[1] += direction;
 			// if cellIndex was most left column
 			if (pos[1] < 0) {
-				pos[1] = max;
+				pos[1] = cols;
 				pos[0]--;
 			}
 			// if cellIndex was most right column
-			else if (pos[1] > max) {
+			else if (pos[1] > cols) {
 				pos[1] = 0;
 				pos[0]++;
 			}

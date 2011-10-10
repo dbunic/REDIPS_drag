@@ -5,7 +5,9 @@
 "use strict";
 
 var redips_init,
-	toggle_animation;
+	toggle_animation,
+	counter = 0;
+
 
 // redips initialization
 redips_init = function () {
@@ -15,15 +17,24 @@ redips_init = function () {
 	rd.init();
 	// set drop option to "shift"
 	rd.drop_option = 'shift';
-	// element clicked (set hover color for "cell" mode)
-	rd.myhandler_clicked = function () {
-		rd.hover_color = '#FFCFAE';
+	// enable animation on shifted elements
+	rd.animation_shift = true;
+	// do not ask on delete
+	rd.trash_ask = false;
+	// add counter to cloned element name
+	rd.myhandler_cloned = function () {
+		// increase counter
+		counter++;
+		// append to the DIV element name
+		rd.obj.innerHTML += counter;
 	};
 };
 
+
+// enable / disable animation
 toggle_animation = function (chk) {
 	REDIPS.drag.animation_shift = chk.checked;
-}
+};
 
 
 // add onload event listener

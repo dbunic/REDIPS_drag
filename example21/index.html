@@ -13,10 +13,9 @@
 		<center>
 			<!-- tables inside this DIV could contain drag-able content  -->
 			<div id="drag">
+				<!-- first table -->
 				<table>
 					<colgroup>
-						<col width="100"/>
-						<col width="100"/>
 						<col width="100"/>
 						<col width="100"/>
 						<col width="100"/>
@@ -32,18 +31,14 @@
 							<td><div class="drag">D</div></td>
 							<td><div class="drag">E</div></td>
 							<td><div class="drag">F</div></td>
-							<td><div class="drag">G</div></td>
-							<td><div class="drag">H</div></td>
 						</tr>
 						<tr>
+							<td><div class="drag">G</div></td>
+							<td><div class="drag">H</div></td>
 							<td><div class="drag">I</div></td>
 							<td><div class="drag">J</div></td>
 							<td><div class="drag">K</div></td>
 							<td><div class="drag">L</div></td>
-							<td><div class="drag">M</div></td>
-							<td><div class="drag">N</div></td>
-							<td><div class="drag">O</div></td>
-							<td><div class="drag">P</div></td>
 						</tr>
 						<tr>
 							<td><div class="drag">Q</div></td>
@@ -51,9 +46,7 @@
 							<td><div class="drag">S</div></td>
 							<td><div class="drag">T</div></td>
 							<td><div class="drag">U</div></td>
-							<td></td>
-							<td></td>
-							<td></td>
+							<td><div class="drag">M</div></td>
 						</tr>
 						<tr>
 							<td></td>
@@ -62,22 +55,8 @@
 							<td></td>
 							<td></td>
 							<td></td>
-							<td></td>
-							<td></td>
 						</tr>
 						<tr>
-							<td></td>
-							<td></td>
-							<td></td>
-							<td></td>
-							<td></td>
-							<td></td>
-							<td></td>
-							<td></td>
-						</tr>
-						<tr>
-							<td></td>
-							<td></td>
 							<td></td>
 							<td></td>
 							<td></td>
@@ -87,7 +66,23 @@
 						</tr>
 					</tbody>
 				</table>
-<input type="checkbox" class="checkbox" onclick="toggle_animation(this)" title="Enable / disable animation"/><span>Animation</span>
+				<!-- second table with clone element and trash -->
+				<table>
+					<colgroup>
+						<col width="100"/>
+						<col width="100"/>
+					</colgroup>
+					<tbody>
+						<tr>
+							<!-- clone cell is forbidden for any element -->
+							<td class="mark"><div class="drag clone orange">C</div></td>
+							<!-- trash cell -->
+							<td class="trash">Trash</td>
+						</tr>
+					</tbody>
+				</table>
+				<!-- animation checkbox -->
+				<input type="checkbox" class="checkbox" onclick="toggle_animation(this)" title="Enable / disable animation" checked="true"/><span>Animation</span>
 			</div>
 		</center>
 	</body>
