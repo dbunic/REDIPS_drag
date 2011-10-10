@@ -2604,8 +2604,7 @@ REDIPS.drag = (function () {
 
 
 	/**
-	 * Method shifts cell content to the left or right. Useful for content where the order should be preserved.
-	 * Last (or first) element can stay in cell or can be deleted from table.
+	 * Method shifts table content to the left or right. Useful for cases where order of table content should be preserved.
 	 * @param {HTMLElement} td1 Source table cell.
 	 * @param {HTMLElement} td2 Target table cell.
 	 * @private
@@ -2613,11 +2612,11 @@ REDIPS.drag = (function () {
 	 */
 	shift_cells = function (td1, td2) {
 		var tbl1, tbl2,	// table reference of source and target cell
-			pos = [],
-			pos2 = [],	// source and target table index
-			direction,
-			c1, c2,
-			cols;		// column number (this parameter is read from first row)
+			pos,		// start cell (source) position
+			pos2,		// end cell (target) position
+			d,			// direction (1 - left, -1 - right)
+			c1, c2,		// source and target cell needed for relocate
+			cols;		// column number (column number is defined from first row)
 		// set table reference for source and target table cell
 		tbl1 = find_parent('TABLE', td1);
 		tbl2 = find_parent('TABLE', td2);
@@ -2630,30 +2629,28 @@ REDIPS.drag = (function () {
 			pos2 = [td2.parentNode.rowIndex, td2.cellIndex];
 			// if source cell is prior to the target cell then set direction to the "left", otherwise direction is to the "right"
 			if (pos[0] * 1000 + pos[1] < pos2[0] * 1000 + pos2[1]) {
-				direction = 1; // left
+				d = 1; // left
 			}
+			// set direction to the right
 			else {
-				direction = -1; // right
+				d = -1;
 			}
 		}
 		// source and target cells are from different tables
 		else {
-			direction = -1; // right
-console.log(td2.parentNode.rowIndex);
-console.log(td2.cellIndex);
-
-			pos = [td2.parentNode.rowIndex, td2.cellIndex];
-console.log(pos);
-			// bottom right cell in target table
-			pos2 = [tbl2.rows.length - 1, cols];
-console.log(pos2);
+			// set direction to the right
+			d = -1;
+			// bottom right cell in target table (as start cell)
+			pos = [tbl2.rows.length - 1, cols];
+			// target cell
+			pos2 = [td2.parentNode.rowIndex, td2.cellIndex];
 		}
 		// while loop goes from source to target position
 		while (pos[0] !== pos2[0] || pos[1] !== pos2[1]) {
-			// define destination cell
+			// define target cell
 			c2 = tbl2.rows[pos[0]].cells[pos[1]];
 			// increment cell index
-			pos[1] += direction;
+			pos[1] += d;
 			// if cellIndex was most left column
 			if (pos[1] < 0) {
 				pos[1] = cols;
