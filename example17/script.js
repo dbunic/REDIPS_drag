@@ -230,7 +230,7 @@ enable_elements = function (flag) {
 
 
 /**
- * Function enables/disables rows and buttons on page. In case when user drops element, row handlers are disabled until all animations are finishes.
+ * Function enables/disables rows and buttons on page. In case when user drops element, row handlers are disabled until all animations are finished.
  * "lock" variable is used for animation synchronization.
  * @param {Boolean} Flag enable or disable rows in both dragging containers.
  */

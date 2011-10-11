@@ -138,6 +138,7 @@ REDIPS.drag = (function () {
 		animation_pause = 20,		// animation pause (lower values mean the animation plays faster)
 		animation_step = 2,			// animation step (minimum is 1)
 		animation_shift = false,	// (boolean) shift drop option animation (if set to true, table content will be relocated with animation in case of "shift" drop option)
+		an_counter,					// (integer) counter of animated elements to be shifted before table should be enabled
 		clone_shiftKey = false,		// (boolean) if true, elements could be cloned with pressed SHIFT key
 		clone_shiftKey_row = false,	// (boolean) if true, rows could be cloned with pressed SHIFT key
 		row_empty_color = 'White';	// (string) color of empty row
@@ -335,6 +336,10 @@ REDIPS.drag = (function () {
 			mouseButton,				// start drag if left mouse button is pressed
 			position,					// position of table or container box of table (if has position:fixed then exclude scroll offset)
 			X, Y;						// X and Y position of mouse pointer
+		// if current DIV element is animated, then disable dragging of this element
+		if (this.redips.animated === true) {
+			return true;
+		}
 		// stop event propagation (only first clicked element will register onmousedown event)
 		// needed in case of placing table inside of <div class="drag"> (after element was dropped to this table it couldn't be moved out
 		// any more - table and element moved together because table captures mousedown event also in bubbling process)
@@ -2388,8 +2393,9 @@ REDIPS.drag = (function () {
 
 	/**
 	 * This method can select tables by class name and mark them as enabled / disabled.
+	 * Instead of class name, it it possible to send table reference for enable / disable.
 	 * By default, all tables are enabled to accept dropped elements.
-	 * @param {String} cname Class name of table(s) to enable / disable.
+	 * @param {String|HTMLElement} el Class name of table(s) to enable/disable or table reference to enable/disable. 
 	 * @example
 	 * // disable tables with class name 'mini'
 	 * enable_table(false, 'mini');
@@ -2397,14 +2403,20 @@ REDIPS.drag = (function () {
 	 * @function
 	 * @name REDIPS.drag#enable_table
 	 */
-	enable_table = function (enable_flag, cname) {
+	enable_table = function (enable_flag, el) {
 		var i;
-		// loop through tables array
-		for (i = 0; i < tables.length; i++) {
-			// if class name is found then set redips.enabled property to the table
-			// redips_enabled is tested inside set_trc() method
-			if (tables[i].className.indexOf(cname) > -1) {
-				tables[i].redips.enabled = enable_flag;
+		// if "el" is table reference then set enable/disable to the table
+		if (typeof(el) === 'object' && el.nodeName === 'TABLE') {
+			el.redips.enabled = enable_flag;
+		}
+		// else "el" is table class name
+		else {
+			// loop through tables array
+			for (i = 0; i < tables.length; i++) {
+				// if class name is found then set redips.enabled property to the table (redips_enabled is tested inside set_trc() method)
+				if (tables[i].className.indexOf(el) > -1) {
+					tables[i].redips.enabled = enable_flag;
+				}
 			}
 		}
 	};
@@ -2556,10 +2568,23 @@ REDIPS.drag = (function () {
 			target = REDIPS.drag.get_position(to);
 			// loop through all child nodes
 			for (i = 0; i < cn; i++) {
+				// increase animated counter
+				an_counter++;
 				// move DIV element to the target cell
+				// after animation is finished, enable target cell
 				REDIPS.drag.move_object({
 					obj: from.childNodes[i],
-					target: target
+					target: target,
+					callback: function (div) {
+						var tbl;
+						// decrease animated counter
+						an_counter--;
+						// after last element is shifted, enable table
+						if (an_counter === 0) {
+							tbl = REDIPS.drag.find_parent('TABLE', div);
+							REDIPS.drag.enable_table(true, tbl);
+						}
+					}
 				});
 			}
 		}
@@ -2644,6 +2669,14 @@ REDIPS.drag = (function () {
 			pos = [tbl2.rows.length - 1, cols];
 			// target cell
 			pos2 = [td2.parentNode.rowIndex, td2.cellIndex];
+		}
+		// if DIV relocate uses animation then target table should be disabled until animation is finished
+		if (REDIPS.drag.animation_shift) {
+			// set animated counter to 0
+			// counter is increased inside relocate() (if relocate has set "animation" as third parameter)
+			an_counter = 0;
+			// disable target table
+			REDIPS.drag.enable_table(false, tbl2);
 		}
 		// while loop goes from source to target position
 		while (pos[0] !== pos2[0] || pos[1] !== pos2[1]) {
@@ -2822,7 +2855,7 @@ REDIPS.drag = (function () {
 		// calculate delta x and delta y
 		dx = x2 - x1;
 		dy = y2 - y1;
-		// set style to fixed to allow dragging DIV object
+		// set style to fixed to allow moving DIV object
 		p.obj.style.position = 'fixed';
 		// if line is more horizontal
 		if (Math.abs(dx) > Math.abs(dy)) {
@@ -2862,6 +2895,8 @@ REDIPS.drag = (function () {
 			i = y1;
 			p.last = y2;
 		}
+		// set attribute "animated" of DIV object to true (to disable dragging od DIV while animation lasts)
+		p.obj.redips.animated = true;
 		// start animation
 		animation(i, p);
 		// return reference of obj and obj_old elements
@@ -2922,6 +2957,8 @@ REDIPS.drag = (function () {
 			// return z-index and position style to 'static' (this is default element position) 
 			p.obj.style.zIndex = -1;
 			p.obj.style.position = 'static';
+			// set animation flag to false (to enable DIV dragging)
+			p.obj.redips.animated = false;
 			// if moved element is cell then append element to the target cell
 			if (p.mode === 'cell') { 
 				p.target_cell.appendChild(p.obj);
@@ -2930,9 +2967,9 @@ REDIPS.drag = (function () {
 			else {
 				row_drop(p.target[0], p.target[1], p.obj);
 			}
-			// execute callback function if callback is defined
+			// execute callback function if callback is defined and send reference of moved element
 			if (typeof(p.callback) === 'function') {
-				p.callback();
+				p.callback(p.obj);
 			}
 		}
 	};

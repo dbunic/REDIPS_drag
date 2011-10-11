@@ -19,6 +19,8 @@ redips_init = function () {
 	rd.drop_option = 'shift';
 	// enable animation on shifted elements
 	rd.animation_shift = true;
+	// set animation loop pause
+	rd.animation_pause = 70;
 	// do not ask on delete
 	rd.trash_ask = false;
 	// add counter to cloned element name
