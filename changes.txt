@@ -3,6 +3,8 @@ Changes for REDIPS.drag library
 4.5.2
 - disable dragging DIV element while animation lasts
 - public method enable_table() now accepts table class name and table reference
+- text selection is cleared on element click
+- added "shift" and "switching" options to example14
 
 4.5.1
 - added empty_cell() public method

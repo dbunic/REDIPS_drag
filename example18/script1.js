@@ -51,8 +51,9 @@ move = function () {
  */
 enable_button = function (flag) {
 	var button = document.getElementById('btn_move');
-	// input parameter is optional (default value is true)
-	if (flag === undefined) {
+	// if input parameter is not boolean type, then enable_rows is called from callback function
+	// callback function sends reference of moved element
+	if (typeof(flag) !== 'boolean') {
 		flag = true;
 	}
 	// enable/disable button

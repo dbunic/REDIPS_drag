@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 4.5.1
-Sep 28, 2011.
+Version 4.5.2
+Oct 15, 2011.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -27,7 +27,7 @@ var REDIPS = REDIPS || {};
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content-animation/">Drag and drop table content plus animation</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">Drag and drop table rows</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">Drag and Drop table content</a>
- * @version 4.5.1
+ * @version 4.5.2
  */
 REDIPS.drag = (function () {
 		// methods
@@ -138,7 +138,7 @@ REDIPS.drag = (function () {
 		animation_pause = 20,		// animation pause (lower values mean the animation plays faster)
 		animation_step = 2,			// animation step (minimum is 1)
 		animation_shift = false,	// (boolean) shift drop option animation (if set to true, table content will be relocated with animation in case of "shift" drop option)
-		an_counter,					// (integer) counter of animated elements to be shifted before table should be enabled
+		an_counter = 0,				// (integer) counter of animated elements to be shifted before table should be enabled
 		clone_shiftKey = false,		// (boolean) if true, elements could be cloned with pressed SHIFT key
 		clone_shiftKey_row = false,	// (boolean) if true, rows could be cloned with pressed SHIFT key
 		row_empty_color = 'White';	// (string) color of empty row
@@ -359,6 +359,19 @@ REDIPS.drag = (function () {
 		// if any other mouse button then left mouse button is pressed or need to enable control for form elements - exit from event handler
 		if (mouseButton !== 1 || elementControl(evt)) {
 			return true;
+		}
+		// remove text selection (Chrome, FF, Opera, Safari)
+		if (window.getSelection) {
+			window.getSelection().removeAllRanges();
+		}
+		// IE8
+		else if (document.selection && document.selection.type === "Text") {
+			try {
+				document.selection.empty();
+			}
+			catch (error) {
+				// ignore error to as a workaround for bug in IE8
+			}
 		}
 		// define X and Y position (pointer.x and pointer.y are needed in set_trc() and autoscroll methods)
 		X = pointer.x = evt.clientX;
@@ -2544,7 +2557,8 @@ REDIPS.drag = (function () {
 
 
 	/**
-	 * Method relocates all child nodes from source table cell to the target table cell (with optional animation).
+	 * Method relocates DIV elements from source table cell to the target table cell (with optional animation).
+	 * If animation is enabled, then target table will be disabled until animated element reaches destination cell.
 	 * @param {HTMLElement} from Source table cell.
 	 * @param {HTMLElement} to Target table cell.
 	 * @param {String} [mode] Relocation mode "instant" or "animation". Default is "instant".
@@ -2554,8 +2568,29 @@ REDIPS.drag = (function () {
 	 */
 	relocate = function (from, to, mode) {
 		var i,		// local variable
+			tbl2,	// target table
 			cn,		// number of child nodes
-			target;	// target position
+			move;	// move object (private function)
+		// define private move function (after animation is finished table will be enabled)
+		move = function (el, to) {
+			// define target position
+			var target = REDIPS.drag.get_position(to);
+			// move object
+			REDIPS.drag.move_object({
+				obj: el,
+				target: target,
+				callback: function (div) {
+					var tbl;
+					// decrease animated counter
+					an_counter--;
+					// after last element is shifted, enable table
+					if (an_counter === 0) {
+						tbl = REDIPS.drag.find_parent('TABLE', div);
+						REDIPS.drag.enable_table(true, tbl);
+					}
+				}
+			});
+		};
 		// test if "from" cell is equal to "to" cell then do nothing
 		if (from === to) {
 			return;
@@ -2564,28 +2599,19 @@ REDIPS.drag = (function () {
 		cn = from.childNodes.length;
 		// if mode is "animation"
 		if (mode === 'animation') {
-			// set target position
-			target = REDIPS.drag.get_position(to);
+			// if child nodes exists
+			if (cn > 0) {
+				// define target table reference
+				tbl2 = find_parent('TABLE', to);
+				// disable target table
+				REDIPS.drag.enable_table(false, tbl2);
+			}
 			// loop through all child nodes
 			for (i = 0; i < cn; i++) {
-				// increase animated counter
+				// increase animated counter (counter is initially set to 0)
 				an_counter++;
 				// move DIV element to the target cell
-				// after animation is finished, enable target cell
-				REDIPS.drag.move_object({
-					obj: from.childNodes[i],
-					target: target,
-					callback: function (div) {
-						var tbl;
-						// decrease animated counter
-						an_counter--;
-						// after last element is shifted, enable table
-						if (an_counter === 0) {
-							tbl = REDIPS.drag.find_parent('TABLE', div);
-							REDIPS.drag.enable_table(true, tbl);
-						}
-					}
-				});
+				move(from.childNodes[i], to);
 			}
 		}
 		// instant mode
@@ -2669,14 +2695,6 @@ REDIPS.drag = (function () {
 			pos = [tbl2.rows.length - 1, cols];
 			// target cell
 			pos2 = [td2.parentNode.rowIndex, td2.cellIndex];
-		}
-		// if DIV relocate uses animation then target table should be disabled until animation is finished
-		if (REDIPS.drag.animation_shift) {
-			// set animated counter to 0
-			// counter is increased inside relocate() (if relocate has set "animation" as third parameter)
-			an_counter = 0;
-			// disable target table
-			REDIPS.drag.enable_table(false, tbl2);
 		}
 		// while loop goes from source to target position
 		while (pos[0] !== pos2[0] || pos[1] !== pos2[1]) {

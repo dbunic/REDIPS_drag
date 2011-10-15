@@ -14,7 +14,7 @@ body{
 /* drag area */
 #drag{
 	display: table;
-	width: 200px;
+	width: 220px;
 	margin: auto;
 }
 
@@ -33,6 +33,9 @@ body{
 	width: 87px;
 	height: 35px;
 	line-height: 35px;
+	/* round corners */
+	border-radius: 4px; /* Opera, Chrome */
+	-moz-border-radius: 4px; /* FF */
 }
 
 
@@ -40,6 +43,7 @@ body{
 #table1{
 	background-color: #eee;
 	border-collapse: collapse;
+	margin-top: 7px;
 }
 	/* border for table1 */
 	#table1 td {

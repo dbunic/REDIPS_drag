@@ -43,6 +43,9 @@ body{
 	width: 87px;
 	height: 35px;
 	line-height: 35px;
+	/* round corners */
+	border-radius: 4px; /* Opera, Chrome */
+	-moz-border-radius: 4px; /* FF */
 }
 
 /* drag area */

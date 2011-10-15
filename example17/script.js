@@ -24,6 +24,7 @@ var	rd = REDIPS.drag,	// reference to the REDIPS.drag library
 redips_init = function () {
 	rd.border_disabled = 'solid';	// border style for disabled element will not be changed
 	rd.opacity_disabled = 70;		// disabled elements will have opacity effect
+	rd.animation_pause = 40;		// set animation loop pause
 	// initialize dragging containers (each table is placed in separate container)
 	rd.init('drag1');
 	rd.init('drag2');
@@ -89,7 +90,7 @@ redips_init = function () {
 			id: id_new,
 			callback: function () {
 				rd.enable_drag(true, obj);
-				enable_rows();
+				enable_rows(true);
 			}
 		});
 	};
@@ -125,7 +126,7 @@ start_positions = function () {
 
 
 /**
- * Function returns element to initial positions.
+ * Method returns element to initial positions.
  */
 reset = function () {
 	var id,
@@ -145,7 +146,7 @@ reset = function () {
 				rd.move_object({
 					id: id,					// id of object to move
 					target: loc[id],		// target position
-					callback: enable_rows	// function to call after moving is over
+					callback: enable_rows	// callback function after moving is finished
 				});
 			}
 		}
@@ -186,7 +187,7 @@ shuffle = function () {
 			rd.move_object({
 				id: id,								// id of object to move
 				target: [0, rowIndex, cellIndex],	// target position (table index is 0 because of separate drag container)
-				callback: enable_rows				// function to call after moving is over 
+				callback: enable_rows				// callback function after moving is finished
 			});
 			// disable row handlers - blue circles in first column
 			enable_rows(false);
@@ -194,7 +195,7 @@ shuffle = function () {
 			rd.move_object({
 				id: id.slice(0, -1) + '2',			// id of object from table2
 				target: [0, rowIndex, cellIndex],	// target position (table index is 0 because of separate drag container)
-				callback: enable_rows				// function to call after moving is over 
+				callback: enable_rows				// callback function after moving is finished
 			});
 		}
 	}
@@ -236,8 +237,9 @@ enable_elements = function (flag) {
  */
 enable_rows = function (flag) {
 	var id;
-	// input parameter is optional (default value is true)
-	if (flag === undefined) {
+	// if input parameter is not boolean type, then enable_rows is called from callback function
+	// callback function sends reference of moved element
+	if (typeof(flag) !== 'boolean') {
 		flag = true;
 	}
 	// enable element - decrease lock variable
@@ -248,7 +250,7 @@ enable_rows = function (flag) {
 	if (lock <= 0) {
 		// set lock variable to 0 (just to be sure - it should be 0 anyway)
 		lock = 0;
-		// enable/disable buttons "Reset" and "Shuffle"
+		// enable / disable buttons "Reset" and "Shuffle"
 		enable_buttons(flag);
 		// loop goes through every "id" in loc object
 		for (id in loc) {

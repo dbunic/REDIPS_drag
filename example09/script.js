@@ -7,6 +7,7 @@
 
 var redips_init,		// define redips_init variable
 	set_drop_option,	// set drop option regarding to the table where DIV element belongs
+	toggle_animation,	// enable / disable animation
 	rd = REDIPS.drag;	// reference to the REDIPS.drag lib
 
 
@@ -33,12 +34,18 @@ set_drop_option = function (el) {
 	}
 	// loop ends and "el" position should be table
 	if (el.id === 'table1') {
-		rd.drop_option = 'switching';
+		rd.drop_option = 'shift';
 	}
 	else {
 		rd.drop_option = 'single';
 	}
 }
+
+
+// enable / disable animation
+toggle_animation = function (chk) {
+	REDIPS.drag.animation_shift = chk.checked;
+};
 
 
 // add onload event listener

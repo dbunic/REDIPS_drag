@@ -4,8 +4,10 @@
 /* enable strict mode */
 "use strict";
 
-// define redips_init variable
-var redips_init;
+
+var redips_init,		// define redips_init variable
+	toggle_animation,	// animation for shift option
+	set_drop_option;	// function sets drop_option parameter
 
 // redips initialization
 redips_init = function () {
@@ -13,9 +15,24 @@ redips_init = function () {
 	var rd = REDIPS.drag;
 	// initialization
 	rd.init();
-	// set switching drop option
-	rd.drop_option = 'switching';
+	// set shift drop option
+	rd.drop_option = 'shift';
+	// enable animation on shifted elements
+	rd.animation_shift = true;
 };
+
+
+// function sets drop_option parameter
+set_drop_option = function (radio_button) {
+	REDIPS.drag.drop_option = radio_button.value;
+};
+
+
+// enable / disable animation
+toggle_animation = function (chk) {
+	REDIPS.drag.animation_shift = chk.checked;
+};
+
 
 // add onload event listener
 if (window.addEventListener) {

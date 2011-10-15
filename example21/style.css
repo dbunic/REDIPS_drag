@@ -15,13 +15,14 @@ body{
 #drag{
 	border: 2px dashed LightBlue;
 	display: table;
+	margin: auto;
 }
 
 /* table */
 div#drag table {
 	background-color: #eee;
 	border-collapse: collapse;
-	margin: 7px;	
+	margin: 7px;
 }
 
 /* table cells */

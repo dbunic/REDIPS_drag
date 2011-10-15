@@ -7,7 +7,7 @@
 		<script type="text/javascript" src="../header.js"></script>
 		<script type="text/javascript" src="../redips-drag-min.js"></script>
 		<script type="text/javascript" src="script.js"></script>
-		<title>Example 9: Single and switching mode</title>
+		<title>Example 9: Single and shift mode</title>
 	</head>
 	<body>
 		<div id="main_container">
@@ -47,7 +47,12 @@
 					</table>
 				</div><!-- right container -->
 			</div><!-- drag container -->
-			<div id="message">Sort elements from the right table</div>
+			<div id="message">
+				Sort elements from the right table
+				<br/>
+				<!-- animation checkbox -->
+				<input type="checkbox" class="checkbox" onclick="toggle_animation(this)" title="Enable / disable animation"/><span>Animation</span>
+			</div>
 		</div><!-- main container -->
 	</body>
 </html>

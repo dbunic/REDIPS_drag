@@ -37,6 +37,9 @@ body{
 	/* without width, IE6/7 will not apply filter/opacity to the element ?! */
 	/* IE needs element layout */
 	width: 82px;
+	/* round corners */
+	border-radius: 4px; /* Opera, Chrome */
+	-moz-border-radius: 4px; /* FF */
 }
 
 /* tables */
