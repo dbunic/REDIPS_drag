@@ -3371,7 +3371,7 @@ REDIPS.drag = (function () {
 		 * @name REDIPS.drag#drop_option
 		 * @default multiple
 		 * @example
-		 * // elements can be dropped to all table cells
+		 * // elements can be dropped to all table cells (multiple elements in table cell)
 		 * REDIPS.drag.drop_option('multiple');
 		 *  
 		 * // elements can be dropped only to the empty table cells
@@ -3385,7 +3385,7 @@ REDIPS.drag = (function () {
 		 *  
 		 * // overwrite content in table cell
 		 * REDIPS.drag.drop_option('overwrite');
-		 * 
+		 *  
 		 * // shift table content after element is dropped
 		 * REDIPS.drag.drop_option('shift');
 		 */
