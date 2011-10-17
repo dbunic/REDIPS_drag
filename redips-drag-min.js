@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 4.5.2
-Oct 15, 2011.
+Version 4.5.3
+Oct 16, 2011.
 */
 "use strict";var REDIPS=REDIPS||{};REDIPS.drag=(function(){var init,init_tables,enable_drag,enable_table,img_onmousemove,handler_onmousedown,handler_ondblclick,table_top,handler_onmouseup,handler_onmousemove,element_drop,cell_changed,handler_onresize,set_trc,set_position,set_bgcolor,get_bgcolor,box_offset,calculate_cells,getScrollPosition,autoscrollX,autoscrollY,clone_div,copy_properties,clone_limit,elementControl,get_style,find_parent,save_content,relocate,empty_cell,shift_cells,move_object,animation,get_table_index,get_position,row_opacity,row_empty,row_clone,row_drop,form_elements,normalize,obj_margin=null,window_width=0,window_height=0,scroll_width=null,scroll_height=null,edge={page:{x:0,y:0},div:{x:0,y:0},flag:{x:0,y:0}},scroll_object,bgcolor_old,scrollable_container=[],tables=[],sort_idx,moved,cloned,cloned_id=[],currentCell=[],div_drag=null,div_box=null,pointer={x:0,y:0},shift_key=false,clone_class=false,table=null,table_old=null,table_source=null,row=null,row_old=null,row_source=null,cell=null,cell_old=null,cell_source=null,obj=false,obj_old=false,mode='cell',hover_color='#E7AB83',bound=25,speed=20,only={div:[],cname:'only',other:'deny'},mark={action:'deny',cname:'mark',exception:[]},border='solid',border_disabled='dotted',opacity_disabled,trash_cname='trash',trash_ask=true,trash_ask_row=true,drop_option='multiple',delete_cloned=true,delete_shifted=false,source_cell=null,current_cell=null,previous_cell=null,target_cell=null,animation_pause=20,animation_step=2,animation_shift=false,an_counter=0,clone_shiftKey=false,clone_shiftKey_row=false,row_empty_color='White';init=function(dc){var self=this,i,imgs,redips_clone;if(dc===undefined){dc='drag';}
 div_drag=document.getElementById(dc);if(!document.getElementById('redips_clone')){redips_clone=document.createElement('div');redips_clone.id='redips_clone';redips_clone.style.width=redips_clone.style.height='1px';div_drag.appendChild(redips_clone);}
@@ -197,8 +197,8 @@ else{tbl_start=tbl_end=tbl;}
 for(t=tbl_start;t<=tbl_end;t++){tbl_rows=tables[t].rows.length;for(r=0;r<tbl_rows;r++){cells=tables[t].rows[r].cells.length;for(c=0;c<cells;c++){tbl_cell=tables[t].rows[r].cells[c];if(tbl_cell.childNodes.length>0){for(d=0;d<tbl_cell.childNodes.length;d++){if(tbl_cell.childNodes[d].nodeName==='DIV'){query+='p[]='+tbl_cell.childNodes[d].id+'_'+t+'_'+r+'_'+c+'&';}}}}}}
 query=query.substring(0,query.length-1);tables.sort(function(a,b){return b.redips.sort-a.redips.sort;});return query;};relocate=function(from,to,mode){var i,tbl2,cn,move;move=function(el,to){var target=REDIPS.drag.get_position(to);REDIPS.drag.move_object({obj:el,target:target,callback:function(div){var tbl;an_counter--;if(an_counter===0){tbl=REDIPS.drag.find_parent('TABLE',div);REDIPS.drag.enable_table(true,tbl);}}});};if(from===to){return;}
 cn=from.childNodes.length;if(mode==='animation'){if(cn>0){tbl2=find_parent('TABLE',to);REDIPS.drag.enable_table(false,tbl2);}
-for(i=0;i<cn;i++){an_counter++;move(from.childNodes[i],to);}}
-else{for(i=0;i<cn;i++){to.appendChild(from.childNodes[0]);}}};empty_cell=function(td){var i,cn;if(td.nodeName!=='TD'){return false;}
+for(i=0;i<cn;i++){if(from.childNodes[i].nodeType===1&&from.childNodes[i].nodeName==='DIV'){an_counter++;move(from.childNodes[i],to);}}}
+else{for(i=0;i<cn;i++){if(from.childNodes[0].nodeType===1&&from.childNodes[0].nodeName==='DIV'){to.appendChild(from.childNodes[0]);}}}};empty_cell=function(td){var i,cn;if(td.nodeName!=='TD'){return false;}
 cn=td.childNodes.length;for(i=0;i<cn;i++){td.removeChild(td.childNodes[0]);}};shift_cells=function(td1,td2){var tbl1,tbl2,pos,pos2,d,c1,c2,cols;tbl1=find_parent('TABLE',td1);tbl2=find_parent('TABLE',td2);cols=tbl2.rows[0].cells.length-1;if(tbl1===tbl2){pos=[td1.parentNode.rowIndex,td1.cellIndex];pos2=[td2.parentNode.rowIndex,td2.cellIndex];if(pos[0]*1000+pos[1]<pos2[0]*1000+pos2[1]){d=1;}
 else{d=-1;}}
 else{d=-1;pos=[tbl2.rows.length-1,cols];pos2=[td2.parentNode.rowIndex,td2.cellIndex];}

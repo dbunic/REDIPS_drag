@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 4.5.2
-Oct 15, 2011.
+Version 4.5.3
+Oct 16, 2011.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -27,7 +27,7 @@ var REDIPS = REDIPS || {};
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content-animation/">Drag and drop table content plus animation</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">Drag and drop table rows</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">Drag and Drop table content</a>
- * @version 4.5.2
+ * @version 4.5.3
  */
 REDIPS.drag = (function () {
 		// methods
@@ -2608,18 +2608,24 @@ REDIPS.drag = (function () {
 			}
 			// loop through all child nodes
 			for (i = 0; i < cn; i++) {
-				// increase animated counter (counter is initially set to 0)
-				an_counter++;
-				// move DIV element to the target cell
-				move(from.childNodes[i], to);
+				// relocate (with animation) only DIV elements
+				if (from.childNodes[i].nodeType === 1 && from.childNodes[i].nodeName === 'DIV') {
+					// increase animated counter (counter is initially set to 0)
+					an_counter++;
+					// move DIV element to the target cell
+					move(from.childNodes[i], to);
+				}
 			}
 		}
 		// instant mode
 		else {
 			// loop through all child nodes
 			for (i = 0; i < cn; i++) {
-				// '0', not 'i' because NodeList objects in the DOM are live
-				to.appendChild(from.childNodes[0]);
+				// relocate only DIV elements
+				if (from.childNodes[0].nodeType === 1 && from.childNodes[0].nodeName === 'DIV') {
+					// '0', not 'i' because NodeList objects in the DOM are live
+					to.appendChild(from.childNodes[0]);
+				}
 			}	
 		}
 	};

@@ -1,5 +1,8 @@
 Changes for REDIPS.drag library
 
+4.5.3
+- fixed BUG with text nodes and shift animation
+
 4.5.2
 - disable dragging DIV element while animation lasts
 - public method enable_table() now accepts table class name and table reference
