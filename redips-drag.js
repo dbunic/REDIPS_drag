@@ -73,6 +73,7 @@ REDIPS.drag = (function () {
 		row_drop,					// function drops (delete old & insert new) table row (input parameters are current table and row)
 		form_elements,				// set form values in cloned row (to prevent reset values of form elements)
 		normalize,					// private method returns normalized spaces from input string
+		has_childs,					// private method (returns true if element contains child nodes with nodeType === 1)
 	
 		// private parameters
 		obj_margin = null,			// space from clicked point to the object bounds (top, right, bottom, left)
@@ -1103,7 +1104,8 @@ REDIPS.drag = (function () {
 		// if handler returns false then element drop should be canceled
 		if (drop !== false) {
 			// shift table content if drop_option is set to "shift" and target cell is not empty
-			if (REDIPS.drag.drop_option === 'shift' && target_cell.hasChildNodes()) {
+			// has_child() is private method
+			if (REDIPS.drag.drop_option === 'shift' && has_childs(target_cell)) {
 				shift_cells(source_cell, target_cell);
 			}
 			// append object to the target cell
@@ -2567,7 +2569,7 @@ REDIPS.drag = (function () {
 	 * @name REDIPS.drag#relocate
 	 */
 	relocate = function (from, to, mode) {
-		var i,		// local variable
+		var i, j,	// loop variables
 			tbl2,	// target table
 			cn,		// number of child nodes
 			move;	// move object (private function)
@@ -2606,7 +2608,7 @@ REDIPS.drag = (function () {
 				// disable target table
 				REDIPS.drag.enable_table(false, tbl2);
 			}
-			// loop through all child nodes
+			// loop through all child nodes in table cell
 			for (i = 0; i < cn; i++) {
 				// relocate (with animation) only DIV elements
 				if (from.childNodes[i].nodeType === 1 && from.childNodes[i].nodeName === 'DIV') {
@@ -2619,12 +2621,16 @@ REDIPS.drag = (function () {
 		}
 		// instant mode
 		else {
-			// loop through all child nodes
-			for (i = 0; i < cn; i++) {
+			// loop through all child nodes in table cell
+			// 'j', not 'i' because NodeList objects in the DOM are live
+			for (i = 0, j = 0; i < cn; i++) {
 				// relocate only DIV elements
-				if (from.childNodes[0].nodeType === 1 && from.childNodes[0].nodeName === 'DIV') {
-					// '0', not 'i' because NodeList objects in the DOM are live
-					to.appendChild(from.childNodes[0]);
+				if (from.childNodes[j].nodeType === 1 && from.childNodes[j].nodeName === 'DIV') {
+					to.appendChild(from.childNodes[j]);
+				}
+				// skip text nodes, attribute nodes ...
+				else {
+					j++;
 				}
 			}	
 		}
@@ -3108,6 +3114,26 @@ REDIPS.drag = (function () {
 	 */
 	normalize = function (str) {
 		return str.replace(/^\s+|\s+$/g, '').replace(/\s{2,}/g, ' ');
+	};
+
+
+	/**
+	 * Function returns "true" if input element contains child nodes with nodeType === 1
+	 * @param {HTMLElement} el Input element.
+	 * @return {Boolean} Returns normalized string.
+	 * @private
+	 * @memberOf REDIPS.drag#
+	 */
+	has_childs = function (el) {
+		// local variable
+		var i;
+		// loop goes through all child nodes and search for node with nodeType === 1
+		for (i = 0; i < el.childNodes.length; i++) {
+			if (el.childNodes[i].nodeType === 1) {
+				return true;
+			}
+		}
+		return false;
 	};
 
 

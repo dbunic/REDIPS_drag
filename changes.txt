@@ -2,6 +2,7 @@ Changes for REDIPS.drag library
 
 4.5.3
 - fixed BUG with text nodes and shift animation
+- added private method has_childs()
 
 4.5.2
 - disable dragging DIV element while animation lasts
