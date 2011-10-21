@@ -3297,10 +3297,10 @@ REDIPS.drag = (function () {
 		 * @name REDIPS.drag#hover_color
 		 * @example
 		 * // set "#9BB3DA" as hover color
-		 * REDIPS.drag.hover_color('#9BB3DA');
+		 * REDIPS.drag.hover_color = '#9BB3DA';
 		 *  
 		 * // or set "Lime" as hover color
-		 * REDIPS.drag.hover_color('Lime');
+		 * REDIPS.drag.hover_color ='Lime';
 		 * @default #E7AB83
 		 */
 		hover_color	: hover_color,
