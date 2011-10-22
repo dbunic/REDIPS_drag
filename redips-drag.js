@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 4.5.3
-Oct 16, 2011.
+Version 4.5.4
+Oct 22, 2011.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -27,7 +27,7 @@ var REDIPS = REDIPS || {};
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content-animation/">Drag and drop table content plus animation</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">Drag and drop table rows</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">Drag and Drop table content</a>
- * @version 4.5.3
+ * @version 4.5.4
  */
 REDIPS.drag = (function () {
 		// methods
@@ -42,6 +42,7 @@ REDIPS.drag = (function () {
 		handler_onmouseup,			// onmouseup handler
 		handler_onmousemove,		// onmousemove handler for the document level
 		element_drop,				// drop element to the table cell
+		element_deleted,			// actions needed after element is deleted (call event handler, updatig, climit1_X or climit2_X classnames, content shifting ...)
 		cell_changed,				// private method called from handler_onmousemove(), autoscrollX(), autoscrollY()
 		handler_onresize,			// onresize window event handler
 		set_trc,					// function sets current table, row and cell
@@ -59,6 +60,7 @@ REDIPS.drag = (function () {
 		elementControl,				// method returns true or false if element needs to have control
 		get_style,					// method returns style value of requested object and style name
 		find_parent,				// method returns a reference of the required parent element
+		find_cell,					// method returns first or last cell: rowIndex, cellIndex and cell reference (input is "first" or "last" parameter and table or object within table)
 		save_content,				// scan tables, prepare query string and sent to the multiple-parameters.php
 		relocate,					// relocate objects from source cell to the target cell (source and target cells are input parameters)
 		empty_cell,					// method removes elements from table cell
@@ -139,6 +141,7 @@ REDIPS.drag = (function () {
 		animation_pause = 20,		// animation pause (lower values mean the animation plays faster)
 		animation_step = 2,			// animation step (minimum is 1)
 		animation_shift = false,	// (boolean) shift drop option animation (if set to true, table content will be relocated with animation in case of "shift" drop option)
+		shift_after = true,			// (boolean) shift elements to empty cell after DIV element is moved to the trash cell.
 		an_counter = 0,				// (integer) counter of animated elements to be shifted before table should be enabled
 		clone_shiftKey = false,		// (boolean) if true, elements could be cloned with pressed SHIFT key
 		clone_shiftKey_row = false,	// (boolean) if true, rows could be cloned with pressed SHIFT key
@@ -1001,17 +1004,13 @@ REDIPS.drag = (function () {
 			else if (target_cell.className.indexOf(REDIPS.drag.trash_cname) > -1) {
 				// remove child from DOM (node still exists in memory)
 				obj.parentNode.removeChild(obj);
-				// if parameter trash_ask is "true", confirm deletion (function trash_delete is at bottom of this script)
+				// if parameter trash_ask is set to "true", confirm deletion
 				if (REDIPS.drag.trash_ask) {
 					setTimeout(function () {
 						// Are you sure?
 						if (confirm('Are you sure you want to delete?')) {
-							// yes, call myhandler_deleted event handler
-							REDIPS.drag.myhandler_deleted();
-							// if object is cloned, update climit1_X or climit2_X classname
-							if (cloned) {
-								clone_limit();
-							}
+							// yes, do all actions needed after element is deleted
+							element_deleted();
 						}
 						// no, do undelete
 						else {
@@ -1027,13 +1026,9 @@ REDIPS.drag = (function () {
 						}
 					}, 20);
 				}
-				// else call myhandler_deleted handler (reference to the obj still exists)
+				// element is deleted and do all actions needed after element is deleted
 				else {
-					REDIPS.drag.myhandler_deleted();
-					// if object is cloned, update climit1_X or climit2_X classname
-					if (cloned) {
-						clone_limit();
-					}
+					element_deleted();
 				}
 			}
 			else if (REDIPS.drag.drop_option === 'switch') {
@@ -1123,6 +1118,27 @@ REDIPS.drag = (function () {
 		// cloned element should be deleted
 		else if (cloned) {
 			obj.parentNode.removeChild(obj);
+		}
+	};
+
+
+	/**
+	 * Actions needed after element is deleted. This function is called from handler_onmouseup. Function deletes element and calls event handlers.
+	 * @private
+	 * @memberOf REDIPS.drag#
+	 */
+	element_deleted = function () {
+		// call myhandler_deleted() method
+		REDIPS.drag.myhandler_deleted();
+		// if object is cloned, update climit1_X or climit2_X classname
+		if (cloned) {
+			clone_limit();
+		}
+		// shift table content if drop_option is set to "shift" and shift_after is set to true and DIV element is deleted
+		if (REDIPS.drag.drop_option === 'shift' && REDIPS.drag.shift_after) {
+			// content from source cell to table end will be shifted to the left
+			// this emulates dropping DIV to the last table cell
+			shift_cells(source_cell, find_cell('last', source_cell)[0]);
 		}
 	};
 
@@ -2464,7 +2480,7 @@ REDIPS.drag = (function () {
 	 * @param {String} tag_name Tag name of parent element.
 	 * @param {HTMLElement} el Start position to search.
 	 * @example
-	 * // search for TABLE element (from cell reference)
+	 * // find parent TABLE element (from cell reference)
 	 * tbl = find_parent('TABLE', cell);
 	 * @return {HTMLElement} Returns reference of the found parent element.
 	 * @public
@@ -2479,6 +2495,45 @@ REDIPS.drag = (function () {
 	    // return found element
 	    return el;
 	};
+
+
+
+	/**
+	 * Method returns data for first or last table cell. Data are: cell reference, row index and column index.
+	 * @param {String} param Parameter defines first or last table cell (values are "first" or "last").
+	 * @param {HTMLElement} el Table reference or any element within table.
+	 * @example
+	 * // find first cell in table (tbl1 is table reference)
+	 * first_cell = find_cell('first', tbl1);
+	 * 
+	 * // find last cell in table (cell2 is reference of one cell within table)
+	 * last_cell = find_cell('last', cell2);
+	 * @return {Array} Returns array with cell reference, row index and column index.
+	 * @public
+	 * @function
+	 * @name REDIPS.drag#find_cell
+	 */
+	find_cell = function (param, el) {
+		// find parent table (if "el" is already table then "el" reference will not change)
+		var tbl = find_parent('TABLE', el),
+			ri = 0,	// row index
+			ci = 0,	// cell index
+			c;	// cell reference
+		// define row index, column index and cell reference for bottom last table cell 
+		if (param === 'last') {
+			ri = tbl.rows.length - 1;
+			ci = tbl.rows[0].cells.length - 1;
+			// cell index
+			c = tbl.rows[ri].cells[ci];
+		}
+		// define cell reference for first table cell (row and column indexes are 0) 
+		else {
+			c = tbl.rows[0].cells[0];
+		}
+	    // return cell data as array
+	    return [c, ri, ci];
+	};
+
 
 
 	/**
@@ -3404,22 +3459,22 @@ REDIPS.drag = (function () {
 		 * @default multiple
 		 * @example
 		 * // elements can be dropped to all table cells (multiple elements in table cell)
-		 * REDIPS.drag.drop_option('multiple');
+		 * REDIPS.drag.drop_option = 'multiple';
 		 *  
 		 * // elements can be dropped only to the empty table cells
-		 * REDIPS.drag.drop_option('single'); 
+		 * REDIPS.drag.drop_option = 'single';
 		 *  
 		 * // switch content
-		 * REDIPS.drag.drop_option('switch');
+		 * REDIPS.drag.drop_option = 'switch';
 		 *  
 		 * // switching content continuously
-		 * REDIPS.drag.drop_option('switching');
+		 * REDIPS.drag.drop_option = 'switching';
 		 *  
 		 * // overwrite content in table cell
-		 * REDIPS.drag.drop_option('overwrite');
+		 * REDIPS.drag.drop_option = 'overwrite';
 		 *  
-		 * // shift table content after element is dropped
-		 * REDIPS.drag.drop_option('shift');
+		 * // shift table content after element is dropped or moved to trash cell
+		 * REDIPS.drag.drop_option = 'shift';
 		 */
 		drop_option	: drop_option,
 		/**
@@ -3477,6 +3532,16 @@ REDIPS.drag = (function () {
 		 * @default false
 		 */
 		animation_shift : animation_shift,
+		/**
+		 * Shift elements to empty cell after DIV element is deleted (moved to the trash cell).
+		 * If set to false, table content will not be shifted.
+		 * This property will have effect only if drop_option is set to "shift".
+		 * @type Boolean
+		 * @see <a href="#drop_option">drop_option</a>
+		 * @name REDIPS.drag#shift_after
+		 * @default true
+		 */
+		shift_after : shift_after,
 		/**
 		 * Color of empty row.
 		 * @type String

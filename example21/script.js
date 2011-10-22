@@ -6,6 +6,8 @@
 
 var redips_init,
 	toggle_animation,
+	toggle_shift_after,
+	toggle_confirm,
 	counter = 0;
 
 
@@ -37,6 +39,18 @@ redips_init = function () {
 toggle_animation = function (chk) {
 	REDIPS.drag.animation_shift = chk.checked;
 };
+
+
+// enable / disable shift after element is deleted
+toggle_shift_after = function (chk) {
+	REDIPS.drag.shift_after = chk.checked;
+};
+
+
+// toggles trash_ask parameter defined at the top
+function toggle_confirm(chk) {
+	REDIPS.drag.trash_ask = chk.checked;
+}
 
 
 // add onload event listener

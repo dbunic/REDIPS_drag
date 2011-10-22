@@ -4,6 +4,9 @@
 		<meta name="author" content="Darko Bunic"/>
 		<meta name="description" content="Drag and drop table content with JavaScript"/>
 		<link rel="stylesheet" href="style.css" type="text/css" media="screen" />
+		<script type="text/javascript">
+			var redips_url = '/javascript/drag-and-drop-content-shift/';
+		</script>
 		<script type="text/javascript" src="../header.js"></script>
 		<script type="text/javascript" src="../redips-drag-min.js"></script>
 		<script type="text/javascript" src="script.js"></script>
@@ -82,6 +85,12 @@
 			</table>
 			<!-- animation checkbox -->
 			<input type="checkbox" class="checkbox" onclick="toggle_animation(this)" title="Enable / disable animation" checked=""/><span>Animation</span>
+			<br/>
+			<!-- shift after element is deleted checkbox -->
+			<input type="checkbox" class="checkbox" onclick="toggle_shift_after(this)" title="Enable / disable content shifting after element is deleted" checked=""/><span>Shift content (after element is deleted)</span>
+			<br/>
+			<!-- confirm before delete object -->
+			<input type="checkbox" class="checkbox" onclick="toggle_confirm(this)" title="Delete confirmation"/><span class="message_line">Delete confirmation</span>
 		</div>
 	</body>
 </html>

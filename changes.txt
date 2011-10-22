@@ -1,5 +1,11 @@
 Changes for REDIPS.drag library
 
+4.5.4
+- added public method find_cell (method returns data for first or last table cell)
+- added public property "shift_after" - shift table content after element is deleted (default is true)
+- added private mehod element_deleted
+- improved example21
+
 4.5.3
 - fixed BUG with text nodes and shift animation
 - added private method has_childs()
