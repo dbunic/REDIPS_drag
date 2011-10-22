@@ -48,9 +48,9 @@ toggle_shift_after = function (chk) {
 
 
 // toggles trash_ask parameter defined at the top
-function toggle_confirm(chk) {
+toggle_confirm = function (chk) {
 	REDIPS.drag.trash_ask = chk.checked;
-}
+};
 
 
 // add onload event listener
