@@ -10,6 +10,8 @@
 		<title>Example 9: Single and shift mode</title>
 	</head>
 	<body>
+		<br/>
+		<br/>
 		<div id="main_container">
 			<!-- tables inside this DIV could have draggable content -->
 			<div id="drag">
@@ -18,7 +20,7 @@
 				<div id="left">
 					<table id="table1">
 						<colgroup>
-							<col width="200"/>
+							<col width="250"/>
 						</colgroup>
 						<tbody>
 							<tr><td></td></tr>
@@ -35,23 +37,27 @@
 				<div id="right">
 					<table id="table2">
 						<colgroup>
-							<col width="100"/>
+							<col width="120"/>
 						</colgroup>
 						<tbody>
 							<!-- clone 2 elements + last element -->
-							<tr><td class="mark"><div id="c" class="drag green clone climit1_1">3</div></td></tr>
+							<tr><td class="mark"><div id="c" class="drag green">3</div></td></tr>
 							<tr><td class="mark"><div id="b" class="drag orange">2</div></td></tr>
+							<tr><td class="mark"><div id="f" class="drag orange">6</div></td></tr>
 							<tr><td class="mark"><div id="a" class="drag orange">1</div></td></tr>
-							<tr><td class="mark"><div id="d" class="drag green clone climit1_1">4</div></td></tr>
+							<tr><td class="mark"><div id="d" class="drag green">4</div></td></tr>
+							<tr><td class="mark"><div id="e" class="drag green">5</div></td></tr>
 						</tbody>
 					</table>
 				</div><!-- right container -->
 			</div><!-- drag container -->
 			<div id="message">
-				Sort elements from the right table
-				<br/>
+				Sort elements from right table
+				<br/><br/>
+				Double click will return element to initial position
+				<br/><br/>
 				<!-- animation checkbox -->
-				<input type="checkbox" class="checkbox" onclick="toggle_animation(this)" title="Enable / disable animation"/><span>Animation</span>
+				<input type="checkbox" class="checkbox" onclick="toggle_animation(this)" title="Enable / disable animation" checked=""/><span>Sort animation</span>
 			</div>
 		</div><!-- main container -->
 	</body>

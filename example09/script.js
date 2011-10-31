@@ -6,8 +6,9 @@
 
 
 var redips_init,		// define redips_init variable
-	set_drop_option,	// set drop option regarding to the table where DIV element belongs
 	toggle_animation,	// enable / disable animation
+	start_positions,	// remember initial positions of DIV elements
+	pos = {},			// initial positions of DIV elements
 	rd = REDIPS.drag;	// reference to the REDIPS.drag lib
 
 
@@ -15,31 +16,55 @@ var redips_init,		// define redips_init variable
 redips_init = function () {
 	// initialization
 	rd.init();
-	// "moved" event handler uses reference of the moved element
+	// enable animation on shifted elements
+	rd.animation_shift = true;
+	// save initial DIV positions to "pos" object (it should go after initialization)
+	start_positions();
+	// in a moment when DIV element is moved, set drop_option property (shift or single)
 	rd.myhandler_moved = function () {
-		set_drop_option(rd.obj);
-	}
-	// "cloned" event handler uses reference of the source element (not cloned element)
-	rd.myhandler_cloned	= function () {
-		set_drop_option(rd.obj_old);
-	}
+		// find parent table of moved element
+		var tbl = rd.find_parent('TABLE', rd.obj);
+		// if table id is table1
+		if (tbl.id === 'table1') {
+			rd.drop_option = 'shift';
+		}
+		else {
+			rd.drop_option = 'single';
+		}
+	};
+	// when DIV element is double clicked return it to the initial position
+	rd.myhandler_dblclicked = function () {
+		// set dblclicked DIV id
+		var id = rd.obj.id;
+		// move DIV element to initial position
+		rd.move_object({
+			id: id,			// DIV element id
+			target: pos[id]	// target position
+		});
+	};
 };
 
 
-// set drop option regarding to the table where DIV element belongs
-set_drop_option = function (el) {
-	// loop up until found table
-	while (el && el.nodeName !== 'TABLE') {
-		el = el.parentNode;
+// function scans DIV elements and saves their positions to the "pos" object
+start_positions = function () {
+	var divs, id, i, position;
+	// collect DIV elements from dragging area
+	divs = document.getElementById('drag').getElementsByTagName('div');
+	// open loop for each DIV element
+	for (i = 0; i < divs.length; i++) {
+		// set DIV element id
+		id = divs[i].id;
+		// if element id is defined, then save element position 
+		if (id) {
+			// set element position
+			position = rd.get_position(divs[i]);
+			// if div has position (filter obj_new) 
+			if (position.length > 0) {
+				pos[id] = position;
+			}
+		}
 	}
-	// loop ends and "el" position should be table
-	if (el.id === 'table1') {
-		rd.drop_option = 'shift';
-	}
-	else {
-		rd.drop_option = 'single';
-	}
-}
+};
 
 
 // enable / disable animation

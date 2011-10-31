@@ -14,7 +14,7 @@ body{
 /* main container */
 #main_container{
 	margin: auto;
-	width: 350px;
+	width: 420px;
 }
 		/* container for the left table */
 		#main_container #left{
@@ -51,7 +51,7 @@ body{
 /* drag area */
 #drag{
 	display: table;
-	width: 350px;
+	width: 420px;
 }
 
 /* table cells */
