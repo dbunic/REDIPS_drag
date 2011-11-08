@@ -9,19 +9,19 @@ var redips_init;
 
 // redips initialization
 redips_init = function () {
-	// reference to the REDIPS.drag class
+	// reference to the REDIPS.drag
 	var rd = REDIPS.drag;
 	// initialization
 	rd.init();
-	// dragged elements can be placed to the empty cells only
+	// set hover color
+	rd.hover_color = '#9BB3DA';
+	// single element per cell
 	rd.drop_option = 'single';
 	// define A and B source elements for the last row only (element ID and class name of the last row)
 	rd.only.div.a = 'last';
 	rd.only.div.b = 'last';
 	// A and B elements can't be placed to other table cells (this is default value)
 	rd.only.other = 'deny';
-	// set hover color
-	rd.hover_color = '#9BB3DA';
 	// after element is cloned define dropping rule for last row (only for clones of A or B element)
 	rd.myhandler_cloned = function () {
 		// define variables
