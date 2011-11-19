@@ -1840,7 +1840,6 @@ REDIPS.drag = (function () {
 			row_offset,	// row box
 			position,	// if element (table or table container) has position:fixed then "page scroll" offset should not be added
 			cb;			// box offset for container box (cb)
-//document.getElementById('msg').innerHTML = (new Date()).getMilliseconds();
 		// open loop for each HTML table inside id=drag (table array is initialized in init() function)
 		for (i = 0; i < tables.length; i++) {
 			// initialize row_offset array
