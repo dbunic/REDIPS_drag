@@ -3,6 +3,7 @@
 	<head>
 		<meta name="author" content="Darko Bunic"/>
 		<meta name="description" content="Drag and drop table content with JavaScript"/>
+		<meta name="viewport" content="width=device-width, user-scalable=no"/><!-- "position: fixed" fix for Android 2.2+ -->
 		<link rel="stylesheet" href="style.css" type="text/css" media="screen" />
 		<script type="text/javascript" src="../header.js"></script>
 		<script type="text/javascript" src="../redips-drag-min.js"></script>
@@ -134,7 +135,7 @@
 			<div><input type="radio" name="drop_option" class="checkbox" onclick="set_drop_option(this)" value="switching" title="Switching content continuously"/><span class="message_line">Switching content continuously</span></div>
 			<div><input type="radio" name="drop_option" class="checkbox" onclick="set_drop_option(this)" value="overwrite" title="Overwrite content"/><span class="message_line">Overwrite content</span></div>
 			<div><input type="checkbox" class="checkbox" onclick="toggle_delete_cloned(this)" title="Remove cloned object if dragged outside of any table" checked="true"/><span class="message_line">Remove cloned element if dragged outside of any table</span></div>
-			<div><input type="checkbox" class="checkbox" onclick="toggle_confirm(this)" title="Delete confirmation" checked="true"/><span class="message_line">Delete confirmation</span></div>
+			<div><input type="checkbox" class="checkbox" onclick="toggle_confirm(this)" title="Confirm delete" checked="true"/><span class="message_line">Confirm delete</span></div>
 			<div><input type="checkbox" class="checkbox" onclick="toggle_dragging(this)" title="Enable dragging" checked="true"/><span class="message_line">Enable dragging</span></div>			
 		</div>
 	</body>

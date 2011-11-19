@@ -7,6 +7,7 @@ include('config.php');
 	<head>
 		<meta name="author" content="Darko Bunic"/>
 		<meta name="description" content="Drag and drop table content with JavaScript"/>
+		<meta name="viewport" content="width=device-width, user-scalable=no"/><!-- "position: fixed" fix for Android 2.2+ -->
 		<link rel="stylesheet" href="style.css" type="text/css" media="screen"/>
 		<script type="text/javascript">
 			var redips_url = '/javascript/drag-and-drop-example-3/';

@@ -3,6 +3,7 @@
 	<head>
 		<meta name="author" content="Darko Bunic"/>
 		<meta name="description" content="Drag and drop table content with JavaScript"/>
+		<meta name="viewport" content="width=device-width, user-scalable=no"/><!-- "position: fixed" fix for Android 2.2+ -->
 		<link rel="stylesheet" href="style.css" type="text/css" media="screen"/>
 		<script type="text/javascript" src="../header.js"></script>
 		<script type="text/javascript" src="../redips-drag-min.js"></script>
@@ -57,7 +58,7 @@
 				Double click will return element to initial position
 				<br/><br/>
 				<!-- animation checkbox -->
-				<input type="checkbox" class="checkbox" onclick="toggle_animation(this)" title="Enable / disable animation" checked=""/><span>Sort animation</span>
+				<input type="checkbox" class="checkbox" onclick="toggle_animation(this)" title="Enable / disable animation" checked=""/><span>Animation</span>
 			</div>
 		</div><!-- main container -->
 	</body>

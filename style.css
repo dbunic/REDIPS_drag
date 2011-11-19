@@ -36,9 +36,11 @@ body {
 	-webkit-border-radius: 10px;
 	border-radius: 10px;
 	/* shadow for FF, Chrome, Safari (except IE)*/
+	/*
 	-moz-box-shadow: 4px 4px 8px #444;
 	-webkit-box-shadow: 4px 4px 8px #444;
 	box-shadow: 4px 4px 8px #444;
+	*/
 }
 
 /* drag objects border for the first table */

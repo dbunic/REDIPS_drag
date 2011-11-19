@@ -1,5 +1,9 @@
 Changes for REDIPS.drag library
 
+4.6.0
+- added support for touch devices (touchstart, touchmove, touchend)
+- improved example07 (added EF example)
+
 4.5.4
 - added public method find_cell (method returns data for first or last table cell)
 - added public property "shift_after" - shift table content after element is deleted (default is true)

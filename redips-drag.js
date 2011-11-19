@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 4.5.4
-Oct 22, 2011.
+Version 4.6.0
+Nov 19, 2011.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -27,7 +27,7 @@ var REDIPS = REDIPS || {};
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content-animation/">Drag and drop table content plus animation</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">Drag and drop table rows</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">Drag and Drop table content</a>
- * @version 4.5.4
+ * @version 4.6.0
  */
 REDIPS.drag = (function () {
 		// methods
@@ -197,9 +197,10 @@ REDIPS.drag = (function () {
 		REDIPS.event.add(window, 'resize', handler_onresize);
 		// collect images inside drag container
 		imgs = div_drag.getElementsByTagName('img');
-		// disable onmousemove event for images to prevent default action of onmousemove event (needed for IE to enable dragging on image)
+		// disable onmousemove/ontouchmove event for images to prevent default action of onmousemove event (needed for IE to enable dragging on image)
 		for (i = 0; i < imgs.length; i++) {
 			REDIPS.event.add(imgs[i], 'mousemove', img_onmousemove);
+			REDIPS.event.add(imgs[i], 'touchmove', img_onmousemove);
 		}
 		// attach onscroll event to the window (needed for recalculating table cells positions)
 		REDIPS.event.add(window, 'scroll', calculate_cells);
@@ -346,7 +347,7 @@ REDIPS.drag = (function () {
 		}
 		// stop event propagation (only first clicked element will register onmousedown event)
 		// needed in case of placing table inside of <div class="drag"> (after element was dropped to this table it couldn't be moved out
-		// any more - table and element moved together because table captures mousedown event also in bubbling process)
+		// any more - table and element moved together because table captures mousedown event also in bubbling proces)
 		evt.cancelBubble = true;
 		if (evt.stopPropagation) {
 			evt.stopPropagation();
@@ -360,8 +361,10 @@ REDIPS.drag = (function () {
 		else {
 			mouseButton = evt.button;
 		}
-		// if any other mouse button then left mouse button is pressed or need to enable control for form elements - exit from event handler
-		if (mouseButton !== 1 || elementControl(evt)) {
+		// exit from event handler if:
+		// 1) control to form elements and links should pass
+		// 2) device is not touch device and left mouse button is not pressed
+		if (elementControl(evt) || (!evt.touches && mouseButton !== 1)) {
 			return true;
 		}
 		// remove text selection (Chrome, FF, Opera, Safari)
@@ -377,9 +380,16 @@ REDIPS.drag = (function () {
 				// ignore error to as a workaround for bug in IE8
 			}
 		}
-		// define X and Y position (pointer.x and pointer.y are needed in set_trc() and autoscroll methods)
-		X = pointer.x = evt.clientX;
-		Y = pointer.y = evt.clientY;
+		// define X and Y position (pointer.x and pointer.y are needed in set_trc() and autoscroll methods) for touchscreen devices
+		if (evt.touches) {
+			X = pointer.x = evt.touches[0].clientX;
+			Y = pointer.y = evt.touches[0].clientY;
+		}
+		// or for monitor + mouse devices
+		else {
+			X = pointer.x = evt.clientX;
+			Y = pointer.y = evt.clientY;
+		}
 		// remember previous object if defined or set to the clicked object
 		REDIPS.drag.obj_old = obj_old = obj || this;
 		// set reference to the clicked object
@@ -450,6 +460,9 @@ REDIPS.drag = (function () {
 		// activate onmousemove and onmouseup event handlers on document object if left mouse button was clicked
 		REDIPS.event.add(document, 'mousemove', handler_onmousemove);
 		REDIPS.event.add(document, 'mouseup', handler_onmouseup);
+		// activate ontouchmove and ontouchend event handlers on document object for touchscreen devices
+		REDIPS.event.add(document, 'touchmove', handler_onmousemove);
+		REDIPS.event.add(document, 'touchend', handler_onmouseup);
 		// get IE (all versions) to allow dragging outside the window (?!)
 		// http://stackoverflow.com/questions/1685326/responding-to-the-onmousemove-event-outside-of-the-browser-window-in-ie
 		if (obj.setCapture) {
@@ -881,9 +894,12 @@ REDIPS.drag = (function () {
 		if (obj.releaseCapture) {
 			obj.releaseCapture();
 		}
-		// detach onmousemove and onmouseup event handlers
+		// detach mousemove and touchmove event handlers
 		REDIPS.event.remove(document, 'mousemove', handler_onmousemove);
+		REDIPS.event.remove(document, 'touchmove', handler_onmousemove);
+		// detach mouseup and touchend event handlers
 		REDIPS.event.remove(document, 'mouseup', handler_onmouseup);
+		REDIPS.event.remove(document, 'touchend', handler_onmouseup);
 		// detach div_drag.onselectstart handler to enable select for IE7/IE8 browser 
 		div_drag.onselectstart = null;
 		// reset left and top styles
@@ -1160,9 +1176,16 @@ REDIPS.drag = (function () {
 			X, Y,						// X and Y position of mouse pointer
 			i,							// needed for local loop
 			scrollPosition;				// scroll position variable needed for autoscroll call
-		// define X and Y position (pointer.x and pointer.y are needed in set_trc() and autoscroll methods)
-		X = pointer.x = evt.clientX;
-		Y = pointer.y = evt.clientY;
+		// define X and Y position (pointer.x and pointer.y are needed in set_trc() and autoscroll methods) for touchscreen devices
+		if (evt.touches) {
+			X = pointer.x = evt.touches[0].clientX;
+			Y = pointer.y = evt.touches[0].clientY;
+		}
+		// or for monitor + mouse devices
+		else {
+			X = pointer.x = evt.clientX;
+			Y = pointer.y = evt.clientY;
+		}
 		// if "moved" flag isn't set (this is the first moment when object is moved)
 		if (!moved) {
 			// if moved object is element and has clone in class name or clone_shiftKey is enabled and shift key is pressed
@@ -1817,6 +1840,7 @@ REDIPS.drag = (function () {
 			row_offset,	// row box
 			position,	// if element (table or table container) has position:fixed then "page scroll" offset should not be added
 			cb;			// box offset for container box (cb)
+//document.getElementById('msg').innerHTML = (new Date()).getMilliseconds();
 		// open loop for each HTML table inside id=drag (table array is initialized in init() function)
 		for (i = 0; i < tables.length; i++) {
 			// initialize row_offset array
@@ -2116,9 +2140,10 @@ REDIPS.drag = (function () {
 				e2.redips = {};
 				e2.redips.enabled = e1.redips.enabled;
 				e2.redips.container = e1.redips.container;
-				// set onmousedown/ondblclick event handler if source element is enabled
+				// set onmousedown, ontouchstart and ondblclick event handler if source element is enabled
 				if (e1.redips.enabled) {
 					e2.onmousedown = handler_onmousedown;
+					e2.ontouchstart = handler_onmousedown;
 					e2.ondblclick = handler_ondblclick;
 				}
 			}
@@ -2198,8 +2223,9 @@ REDIPS.drag = (function () {
 				if (limit_type === 2) {
 					// cut "drag" class
 					classes = classes.replace('drag', '');
-					// remove onmousedown event handler
+					// remove onmousedown and ontouchstart event handler
 					obj_old.onmousedown = null;
+					obj_old.ontouchstart = null;
 					// set cursor style to auto
 					obj_old.style.cursor = 'auto';
 					// call myhandler_clonedend2 handler
@@ -2370,9 +2396,10 @@ REDIPS.drag = (function () {
 					divs[i].style.opacity = opacity / 100;
 					divs[i].style.filter = 'alpha(opacity=' + opacity + ')';					
 				}
-				// DIV elements should have only onmousedown/ondblclick attached (using traditional event registration model)
+				// DIV elements should have only onmousedown, ontouchstart and ondblclick attached (using traditional event registration model)
 				// I had problems with using advanced event registration model and text selection / dragging text selection
 				divs[i].onmousedown = handler1;
+				divs[i].ontouchstart = handler1;
 				divs[i].ondblclick = handler2;
 				divs[i].style.borderStyle = borderStyle;
 				divs[i].style.cursor = cursor;
