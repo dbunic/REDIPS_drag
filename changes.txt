@@ -1,5 +1,9 @@
 Changes for REDIPS.drag library
 
+4.6.1
+- fixed bug with moving table row between two tables (added get_table_index)
+  * in line 3080 -> row_drop(get_table_index(p.target[0]), p.target[1], p.obj);
+
 4.6.0
 - added support for touch devices (touchstart, touchmove, touchend)
 - improved example07 (added EF example)

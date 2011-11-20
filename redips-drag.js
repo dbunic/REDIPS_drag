@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 4.6.0
-Nov 19, 2011.
+Version 4.6.1
+Nov 20, 2011.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -27,7 +27,7 @@ var REDIPS = REDIPS || {};
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content-animation/">Drag and drop table content plus animation</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">Drag and drop table rows</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">Drag and Drop table content</a>
- * @version 4.6.0
+ * @version 4.6.1
  */
 REDIPS.drag = (function () {
 		// methods
@@ -3076,7 +3076,8 @@ REDIPS.drag = (function () {
 			}
 			// else element is row
 			else {
-				row_drop(p.target[0], p.target[1], p.obj);
+				// take care about real table index
+				row_drop(get_table_index(p.target[0]), p.target[1], p.obj);
 			}
 			// execute callback function if callback is defined and send reference of moved element
 			if (typeof(p.callback) === 'function') {
