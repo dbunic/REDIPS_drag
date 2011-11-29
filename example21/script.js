@@ -5,6 +5,7 @@
 "use strict";
 
 var redips_init,
+	shift_option,
 	toggle_animation,
 	toggle_shift_after,
 	toggle_confirm,
@@ -32,6 +33,12 @@ redips_init = function () {
 		// append to the DIV element name
 		rd.obj.innerHTML += counter;
 	};
+};
+
+
+// set shift_mode
+shift_option = function (radio) {
+	REDIPS.drag.shift_option = radio.value;
 };
 
 

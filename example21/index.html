@@ -9,7 +9,7 @@
 			var redips_url = '/javascript/drag-and-drop-content-shift/';
 		</script>
 		<script type="text/javascript" src="../header.js"></script>
-		<script type="text/javascript" src="../redips-drag-min.js"></script>
+		<script type="text/javascript" src="../redips-drag.js"></script>
 		<script type="text/javascript" src="script.js"></script>
 		<title>Example 21: Shift table content</title>
 	</head>
@@ -84,6 +84,11 @@
 					</tr>
 				</tbody>
 			</table>
+			<!-- shift modes -->
+			<input type="radio" name ="shift_mode" onclick="shift_option(this)" title="Horizontal1" value="horizontal1" checked="true"/><span>Horizontal 1</span><br/>
+			<input type="radio" name ="shift_mode" onclick="shift_option(this)" title="Horizontal1" value="horizontal2"/><span>Horizontal 2</span><br/>
+			<input type="radio" name ="shift_mode" onclick="shift_option(this)" title="Horizontal1" value="vertical1"/><span>Vertical 1</span><br/>
+			<input type="radio" name ="shift_mode" onclick="shift_option(this)" title="Horizontal1" value="vertical2"/><span>Vertical 2</span><br/><br/>
 			<!-- animation checkbox -->
 			<input type="checkbox" class="checkbox" onclick="toggle_animation(this)" title="Enable / disable animation" checked=""/><span>Animation</span>
 			<br/>

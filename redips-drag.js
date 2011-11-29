@@ -125,27 +125,28 @@ REDIPS.drag = (function () {
 		mark = {action: 'deny',
 				cname: 'mark',
 				exception: []},
-		border = 'solid',			// (string) border style for enabled elements
-		border_disabled = 'dotted',	// (string) border style for disabled elements
-		opacity_disabled,			// (integer) set opacity for disabled elements
-		trash_cname = 'trash',		// (string) cell class name where draggable element will be destroyed
-		trash_ask = true,			// (boolean) confirm element deletion
-		trash_ask_row = true,		// (boolean) confirm row deletion
-		drop_option = 'multiple',	// (string) drop_option has the following options: multiple, single, switch, switching and overwrite
-		delete_cloned = true,		// (boolean) delete cloned div if the cloned div is dragged outside of any table
-		delete_shifted = false,		// (boolean) delete last shifted elements in table
-		source_cell = null,			// (object) source table cell (defined in onmousedown and in onmouseup)
-		current_cell = null,		// (object) current table cell (defined in onmousdown)
-		previous_cell = null,		// (object) previous table cell (defined in onmousemove)
-		target_cell = null,			// (object) target table cell (defined in onmouseup)
-		animation_pause = 20,		// animation pause (lower values mean the animation plays faster)
-		animation_step = 2,			// animation step (minimum is 1)
-		animation_shift = false,	// (boolean) shift drop option animation (if set to true, table content will be relocated with animation in case of "shift" drop option)
-		shift_after = true,			// (boolean) shift elements to empty cell after DIV element is moved to the trash cell.
-		an_counter = 0,				// (integer) counter of animated elements to be shifted before table should be enabled
-		clone_shiftKey = false,		// (boolean) if true, elements could be cloned with pressed SHIFT key
-		clone_shiftKey_row = false,	// (boolean) if true, rows could be cloned with pressed SHIFT key
-		row_empty_color = 'White';	// (string) color of empty row
+		border = 'solid',				// (string) border style for enabled elements
+		border_disabled = 'dotted',		// (string) border style for disabled elements
+		opacity_disabled,				// (integer) set opacity for disabled elements
+		trash_cname = 'trash',			// (string) cell class name where draggable element will be destroyed
+		trash_ask = true,				// (boolean) confirm element deletion
+		trash_ask_row = true,			// (boolean) confirm row deletion
+		drop_option = 'multiple',		// (string) drop_option has the following options: multiple, single, switch, switching and overwrite
+		shift_option = 'horizontal1',	// (string) property defines shift modes: horizontal1, horizontal2, vertical1 and vertical2
+		delete_cloned = true,			// (boolean) delete cloned div if the cloned div is dragged outside of any table
+		delete_shifted = false,			// (boolean) delete last shifted elements in table
+		source_cell = null,				// (object) source table cell (defined in onmousedown and in onmouseup)
+		current_cell = null,			// (object) current table cell (defined in onmousdown)
+		previous_cell = null,			// (object) previous table cell (defined in onmousemove)
+		target_cell = null,				// (object) target table cell (defined in onmouseup)
+		animation_pause = 20,			// animation pause (lower values mean the animation plays faster)
+		animation_step = 2,				// animation step (minimum is 1)
+		animation_shift = false,		// (boolean) shift drop option animation (if set to true, table content will be relocated with animation in case of "shift" drop option)
+		shift_after = true,				// (boolean) shift elements to empty cell after DIV element is moved to the trash cell.
+		an_counter = 0,					// (integer) counter of animated elements to be shifted before table should be enabled
+		clone_shiftKey = false,			// (boolean) if true, elements could be cloned with pressed SHIFT key
+		clone_shiftKey_row = false,		// (boolean) if true, rows could be cloned with pressed SHIFT key
+		row_empty_color = 'White';		// (string) color of empty row
 
 
 	/**
@@ -2760,24 +2761,40 @@ REDIPS.drag = (function () {
 			pos2,		// end cell (target) position
 			d,			// direction (1 - left, -1 - right)
 			c1, c2,		// source and target cell needed for relocate
+			rows,		// row number
 			cols;		// column number (column number is defined from first row)
 		// set table reference for source and target table cell
 		tbl1 = find_parent('TABLE', td1);
 		tbl2 = find_parent('TABLE', td2);
-		// define number of columns
+		// define number of rows and columns
+		rows = tbl2.rows.length - 1;
 		cols = tbl2.rows[0].cells.length - 1;
 		// test if source and target table cells are within the same table
 		if (tbl1 === tbl2) {
 			// prepare positions [row, cell] for source and target table cell
 			pos = [td1.parentNode.rowIndex, td1.cellIndex];
 			pos2 = [td2.parentNode.rowIndex, td2.cellIndex];
-			// if source cell is prior to the target cell then set direction to the "left", otherwise direction is to the "right"
-			if (pos[0] * 1000 + pos[1] < pos2[0] * 1000 + pos2[1]) {
-				d = 1; // left
+			// shift_mode vertical
+			if (REDIPS.drag.shift_option === 'vertical1' || REDIPS.drag.shift_option === 'vertical2') {
+				// if source cell is prior to the target cell then set direction to the "up", otherwise direction is to the "down"
+				if (pos[1] * 1000 + pos[0] < pos2[1] * 1000 + pos2[0]) {
+					d = 1; // up
+				}
+				// set direction to down
+				else {
+					d = -1;
+				}
 			}
-			// set direction to the right
+			// shift mode horizontal
 			else {
-				d = -1;
+				// if source cell is prior to the target cell then set direction to the "left", otherwise direction is to the "right"
+				if (pos[0] * 1000 + pos[1] < pos2[0] * 1000 + pos2[1]) {
+					d = 1; // left / up
+				}
+				// set direction to the right / down
+				else {
+					d = -1;
+				}
 			}
 		}
 		// source and target cells are from different tables
@@ -2785,7 +2802,7 @@ REDIPS.drag = (function () {
 			// set direction to the right
 			d = -1;
 			// bottom right cell in target table (as start cell)
-			pos = [tbl2.rows.length - 1, cols];
+			pos = [rows, cols];
 			// target cell
 			pos2 = [td2.parentNode.rowIndex, td2.cellIndex];
 		}
@@ -2793,17 +2810,33 @@ REDIPS.drag = (function () {
 		while (pos[0] !== pos2[0] || pos[1] !== pos2[1]) {
 			// define target cell
 			c2 = tbl2.rows[pos[0]].cells[pos[1]];
-			// increment cell index
-			pos[1] += d;
-			// if cellIndex was most left column
-			if (pos[1] < 0) {
-				pos[1] = cols;
-				pos[0]--;
+			if (REDIPS.drag.shift_option === 'horizontal1') {
+				// increment cell index
+				pos[1] += d;
+				// if cellIndex was most left column
+				if (pos[1] < 0) {
+					pos[1] = cols;
+					pos[0]--;
+				}
+				// if cellIndex was most right column
+				else if (pos[1] > cols) {
+					pos[1] = 0;
+					pos[0]++;
+				}
 			}
-			// if cellIndex was most right column
-			else if (pos[1] > cols) {
-				pos[1] = 0;
-				pos[0]++;
+			else if (REDIPS.drag.shift_option === 'vertical1') {
+				// increment row index
+				pos[0] += d;
+				// if row is highest row
+				if (pos[0] < 0) {
+					pos[0] = rows;
+					pos[1]--;
+				}
+				// if cellIndex was most right column
+				else if (pos[0] > rows) {
+					pos[0] = 0;
+					pos[1]++;
+				}
 			}
 			// define source cell
 			c1 = tbl2.rows[pos[0]].cells[pos[1]];
@@ -3504,6 +3537,16 @@ REDIPS.drag = (function () {
 		 * REDIPS.drag.drop_option = 'shift';
 		 */
 		drop_option	: drop_option,
+		/**
+		 * Property defines shift modes: horizontal1, horizontal2, vertical1 and vertical2
+		 * @type String
+		 * @name REDIPS.drag#shift_option
+		 * @default horizontal1
+		 * @example
+		 * // elements can be dropped to all table cells (multiple elements in table cell)
+		 * REDIPS.drag.shift_option = 'vertical2';
+		 */
+		shift_option : shift_option,
 		/**
 		 * Delete cloned DIV element if dropped outside of any table.
 		 * If property is set to "false" then cloned DIV element will be dropped to the last possible table cell.
