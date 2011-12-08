@@ -3534,8 +3534,8 @@ REDIPS.drag = (function () {
 		 * REDIPS.drag.hover.color_td = '#9BB3DA';
 		 *  
 		 * // or set "Lime" as hover color for TR
-		 * REDIPS.drag.hover.color_tr ='Lime';
-		 * 
+		 * REDIPS.drag.hover.color_tr = 'Lime';
+		 *  
 		 * // set red border for highlighted TD
 		 * REDIPS.drag.hover.border_td = '2px solid red';
 		 */
