@@ -22,6 +22,7 @@ body {
 /* set border-collapse */
 div#drag table {
 /* 	border-collapse: collapse; */
+	border-collapse: separate;
 	border-spacing: 0px;
 	width: 580px;
 }
