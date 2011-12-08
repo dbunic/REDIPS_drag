@@ -14,23 +14,22 @@ redips_init = function () {
 		msg;
 	// initialization
 	rd.init();
+	// set hover color for TD and TR
+	rd.hover.color_td = '#FFCFAE';
+	rd.hover.color_tr = '#9BB3DA';
+	// set hover border for current TD and TR
+	rd.hover.border_td = '2px solid #32568E';
+	rd.hover.border_tr = '2px solid #32568E';
 	// row was clicked - event handler
 	rd.myhandler_row_clicked = function () {
 		// set current element (this is clicked TR)
 		var el = rd.obj;
-		// set hover color for "row" mode
-		rd.hover_color = '#9BB3DA';
 		// find parent table
 		el = rd.find_parent('TABLE', el);
 		// every table has only one SPAN element to display messages
 		msg = el.getElementsByTagName('span')[0];
 		// display message
 		msg.innerHTML = 'Clicked';
-	};
-	// element clicked - event handler
-	rd.myhandler_clicked = function () {
-		// set hover color for "cell" mode
-		rd.hover_color = '#FFCFAE';
 	};
 	// row was moved - event handler
 	rd.myhandler_row_moved = function () {

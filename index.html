@@ -15,9 +15,11 @@
 				// initialization
 				rd.init();
 				// set hover color
-				rd.hover_color = '#E7C7B2';
+				rd.hover.color_td = '#E7C7B2';
 				// set drop option to 'shift'
 				rd.drop_option = 'shift';
+				// set shift mode to vertical2
+				rd.shift_option = 'vertical2';
 				// enable animation on shifted elements
 				rd.animation_shift = true;
 				// set animation loop pause
@@ -34,7 +36,7 @@
 	<body>
 		<center>
 			<h1><a href="http://www.redips.net/javascript/drag-and-drop-table-content/">www.redips.net</a></h1>
-			<h2>Drag and drop table content/rows with JavaScript - Version 4.6.1</h2>
+			<h2>Drag and drop table content/rows with JavaScript - Version 4.6.2</h2>
 		</center>
 		<!-- tables inside this DIV could have draggable content -->
 		<div id="drag">
@@ -45,46 +47,49 @@
 					<col width="240"/>
 					<col width="240"/>
 				</colgroup>
+				<!-- message line -->
+				<tr>
+					<th colspan="3" id="message" class="mark" title="Message line">Message line</th>
+				</tr>
+				<!-- table data -->
 				<tr>
 					<td><div id="link1" class="drag t1">Example 00<br/><a href="example00/">Minimal steps</a></div></td>
+					<td><div id="link1" class="drag t1">Example 08<br/><a href="example08/">Tables in separated containers</a></div></td>
+					<td><div id="link1" class="drag t1">Example 16<br/><a href="example16/">AJAX, hover, sticky, dragging</a></div></td>
+				</tr>
+				<tr>
 					<td><div id="link1" class="drag t1">Example 01<br/><a href="example01/">Three tables</a></div></td>
+					<td><div id="link1" class="drag t1">Example 09<br/><a href="example09/">Single and shift mode</a></div></td>
+					<td><div id="link1" class="drag t1">Example 17<br/><a href="example17/">Move object (animation)</a></div></td>
+				</tr>
+				<tr>
 					<td><div id="link1" class="drag t1">Example 02<br/><a href="example02/">Green and orange elements</a></div></td>
+					<td><div id="link1" class="drag t1">Example 10<br/><a href="example10/">Sticky tables</a></div></td>
+					<td><div id="link1" class="drag t1">Example 18<br/><a href="example18/">Simple element animation</a> / <a href="example18/index1.html">row</a></div></td>
 				</tr>
 				<tr>
 					<td><div id="link1" class="drag t1">Example 03<br/><a href="example03/index.php">School timetable</a> (<a href="example03/index_static.html">static</a>)</div></td>
-					<td><div id="link1" class="drag t1">Example 04<br/><a href="example04/">Tic Tac Toe</a></div></td>
-					<td><div id="link1" class="drag t1">Example 05<br/><a href="example05/">Scrollable DIV containers</a></div></td>
-				</tr>
-				<tr>
-					<td><div id="link1" class="drag t1">Example 06<br/><a href="example06/">Scrollable and fixed containers</a></div></td>
-					<td><div id="link1" class="drag t1">Example 07<br/><a href="example07/index1.html">A B C D</a> / <a href="example07/index2.html">E F</a></div></td>
-					<td><div id="link1" class="drag t1">Example 08<br/><a href="example08/">Tables in separated containers</a></div></td>
-				</tr>
-				<tr>
-					<td><div id="link1" class="drag t1">Example 09<br/><a href="example09/">Single and shift mode</a></div></td>
-					<td><div id="link1" class="drag t1">Example 10<br/><a href="example10/">Sticky tables</a></div></td>
 					<td><div id="link1" class="drag t1">Example 11<br/><a href="example11/">Drag handle on titlebar</a></div></td>
-				</tr>
-				<tr>
-					<td><div id="link1" class="drag t1">Example 12<br/><a href="example12/">Select and move more elements</a></div></td>
-					<td><div id="link1" class="drag t1">Example 13<br/><a href="example13/">Nested tables</a></div></td>
-					<td><div id="link1" class="drag t1">Example 14<br/><a href="example14/">Sort elements in long table</a></div></td>
-				</tr>
-				<tr>
-					
-					<td><div id="link1" class="drag t1">Example 15<br/><a href="example15/">Drag and drop table rows</a></div></td>
-					<td><div id="link1" class="drag t1">Example 16<br/><a href="example16/">AJAX, hover, sticky, dragging</a></div></td>
-					<td><div id="link1" class="drag t1">Example 17<br/><a href="example17/">Move object (animation)</a></div></td>
-					
-				</tr>
-				<tr>
-					<td><div id="link1" class="drag t1">Example 18<br/><a href="example18/">Simple element animation</a> / <a href="example18/index1.html">row</a></div></td>
 					<td><div id="link1" class="drag t1">Example 19<br/><a href="example19/">Groups and table rows</a></div></td>
+				</tr>
+				<tr>
+					<td><div id="link1" class="drag t1">Example 04<br/><a href="example04/">Tic Tac Toe</a></div></td>
+					<td><div id="link1" class="drag t1">Example 12<br/><a href="example12/">Select and move more elements</a></div></td>
 					<td><div id="link1" class="drag t1">Example 20<br/><a href="example20/">Clone and delete table rows</a></div></td>
 				</tr>
 				<tr>
+					<td><div id="link1" class="drag t1">Example 05<br/><a href="example05/">Scrollable DIV containers</a></div></td>
+					<td><div id="link1" class="drag t1">Example 13<br/><a href="example13/">Nested tables</a></div></td>
 					<td><div id="link1" class="drag t1">Example 21<br/><a href="example21/">Shift table content</a></div></td>
+				</tr>
+				<tr>
+					<td><div id="link1" class="drag t1">Example 06<br/><a href="example06/">Scrollable and fixed containers</a></div></td>
+					<td><div id="link1" class="drag t1">Example 14<br/><a href="example14/">Sort elements in long table</a></div></td>
 					<td></td>
+				</tr>
+				<tr>
+					<td><div id="link1" class="drag t1">Example 07<br/><a href="example07/index1.html">A B C D</a> / <a href="example07/index2.html">E F</a></div></td>
+					<td><div id="link1" class="drag t1">Example 15<br/><a href="example15/">Drag and drop table rows</a></div></td>
 					<td></td>
 				</tr>
 				<tr>
@@ -101,9 +106,6 @@
 					<td></td>
 					<td></td>
 					<td></td>
-				</tr>
-				<tr>
-					<td colspan="3" id="message" class="mark" title="Message line">Message line</td>
 				</tr>
 			</table>
 		</div>

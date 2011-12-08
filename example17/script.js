@@ -30,16 +30,11 @@ redips_init = function () {
 	rd.init('drag2');
 	// elements can be dropped only to the empty table cells
 	rd.drop_option = 'single';
+	// set hover color for TD and TR
+	rd.hover.color_td = '#FFCFAE';
+	rd.hover.color_tr = '#9BB3DA';
 	// save locations of all DIV elements to the "loc" object (it should go after initialization)
 	start_positions();
-	// row was clicked - set hover color for "row" mode
-	rd.myhandler_row_clicked = function () {
-		rd.hover_color = '#9BB3DA';
-	};
-	// element was clicked - set hover color for "cell" mode
-	rd.myhandler_clicked = function () {
-		rd.hover_color = '#FFCFAE';
-	};
 	// row was moved - event handler
 	rd.myhandler_row_moved = function () {
 		// set opacity for moved row (rd.obj is reference of cloned row - mini table)

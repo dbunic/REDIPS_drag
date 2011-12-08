@@ -9,7 +9,7 @@
 			var redips_url = '/javascript/drag-and-drop-content-shift/';
 		</script>
 		<script type="text/javascript" src="../header.js"></script>
-		<script type="text/javascript" src="../redips-drag.js"></script>
+		<script type="text/javascript" src="../redips-drag-min.js"></script>
 		<script type="text/javascript" src="script.js"></script>
 		<title>Example 21: Shift table content</title>
 	</head>
@@ -44,24 +44,24 @@
 						<td><div class="drag">L</div></td>
 					</tr>
 					<tr>
+						<td><div class="drag">M</div></td>
+						<td><div class="drag">N</div></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td><div class="drag">O</div></td>
+						<td><div class="drag">P</div></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+					</tr>
+					<tr>
 						<td><div class="drag">Q</div></td>
 						<td><div class="drag">R</div></td>
-						<td><div class="drag">S</div></td>
-						<td><div class="drag">T</div></td>
-						<td><div class="drag">U</div></td>
-						<td><div class="drag">M</div></td>
-					</tr>
-					<tr>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-					</tr>
-					<tr>
-						<td></td>
-						<td></td>
 						<td></td>
 						<td></td>
 						<td></td>
@@ -84,19 +84,26 @@
 					</tr>
 				</tbody>
 			</table>
-			<!-- shift modes -->
-			<input type="radio" name ="shift_mode" onclick="shift_option(this)" title="Horizontal1" value="horizontal1" checked="true"/><span>Horizontal 1</span><br/>
-			<input type="radio" name ="shift_mode" onclick="shift_option(this)" title="Horizontal1" value="horizontal2"/><span>Horizontal 2</span><br/>
-			<input type="radio" name ="shift_mode" onclick="shift_option(this)" title="Horizontal1" value="vertical1"/><span>Vertical 1</span><br/>
-			<input type="radio" name ="shift_mode" onclick="shift_option(this)" title="Horizontal1" value="vertical2"/><span>Vertical 2</span><br/><br/>
-			<!-- animation checkbox -->
-			<input type="checkbox" class="checkbox" onclick="toggle_animation(this)" title="Enable / disable animation" checked=""/><span>Animation</span>
-			<br/>
-			<!-- shift after element is deleted checkbox -->
-			<input type="checkbox" class="checkbox" onclick="toggle_shift_after(this)" title="Enable / disable content shifting after element is deleted" checked=""/><span>Shift content (after element is deleted)</span>
-			<br/>
-			<!-- confirm before delete object -->
-			<input type="checkbox" class="checkbox" onclick="toggle_confirm(this)" title="Delete confirmation"/><span class="message_line">Delete confirmation</span>
+
+			<div class="mycontrols">
+				<!-- animation checkbox -->
+				<input type="checkbox" class="checkbox" onclick="toggle_animation(this)" title="Enable / disable animation" checked=""/>Animation
+				<br/>
+				<!-- shift after element is deleted checkbox -->
+				<input type="checkbox" class="checkbox" onclick="toggle_shift_after(this)" title="Enable / disable content shifting after element is deleted" checked=""/>Shift content (after element is deleted)
+				<br/>
+				<!-- confirm before delete object -->
+				<input type="checkbox" class="checkbox" onclick="toggle_confirm(this)" title="Show confirm delete dialog"/>Show confirm delete dialog
+				<br/>
+				<br/>
+				<!-- shift modes -->
+				<span class="text">Shift options:</span>
+				<br/>
+				<input type="radio" name ="shift_mode" onclick="shift_option(this)" title="Horizontal1" value="horizontal1" checked="true"/>horizontal 1 - element shift can affect more rows<br/>
+				<input type="radio" name ="shift_mode" onclick="shift_option(this)" title="Horizontal1" value="horizontal2"/>horizontal 2 - each row is treated separately<br/>
+				<input type="radio" name ="shift_mode" onclick="shift_option(this)" title="Horizontal1" value="vertical1"/>vertical 1 - element shift can affect more columns<br/>
+				<input type="radio" name ="shift_mode" onclick="shift_option(this)" title="Horizontal1" value="vertical2"/>vertical 2 - each column is treated separately
+			</div>
 		</div>
 	</body>
 </html>

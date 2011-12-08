@@ -16,7 +16,7 @@ redips_init = function () {
 	// initialization
 	rd.init();
 	// set hover color
-	rd.hover_color = '#FFE885';
+	rd.hover.color_td = '#FFE885';
 	// DIV elements can be dropped to the empty cells only
 	rd.drop_option = 'single';
 	// do not ask on delete

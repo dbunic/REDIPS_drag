@@ -14,7 +14,7 @@ redips_init = function () {
 	// initialization
 	rd.init();
 	// set hover color
-	rd.hover_color = '#9BB3DA';
+	rd.hover.color_td = '#9BB3DA';
 	// single element per cell
 	rd.drop_option = 'single';
 	// define A and B source elements for the last row only (element ID and class name of the last row)

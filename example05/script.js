@@ -4,11 +4,12 @@
 /* enable strict mode */
 "use strict";
 
-// define redips_init variable
-var redips_init;
+// define redips_init and random color generator
+var redipsInit,
+	rndColor;
 
 // redips initialization
-redips_init = function () {
+redipsInit = function () {
 	// reference to the REDIPS.drag lib
 	var rd = REDIPS.drag;
 	// initialization
@@ -17,12 +18,26 @@ redips_init = function () {
 	rd.drop_option = 'single';
 	// elements could be cloned with pressed SHIFT key
 	rd.clone_shiftKey = true;
+	// every change of current TD will have different background color
+	rd.myhandler_changed = function () {
+		rd.hover.color_td = rndColor();
+	};
 };
+
+// random color generator - http://www.redips.net/javascript/random-color-generator/
+function rndColor() {
+	var hex = '0123456789ABCDEF'.split(''),
+		color = '#', i;
+	for (i = 0; i < 6 ; i++) {
+		color = color + hex[Math.floor(Math.random() * 16)];
+	}
+	return color;
+}
 
 // add onload event listener
 if (window.addEventListener) {
-	window.addEventListener('load', redips_init, false);
+	window.addEventListener('load', redipsInit, false);
 }
 else if (window.attachEvent) {
-	window.attachEvent('onload', redips_init);
+	window.attachEvent('onload', redipsInit);
 }

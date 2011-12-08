@@ -20,9 +20,9 @@ redips_init = function () {
 	request = initXMLHttpClient();
 	// REDIPS.drag initialization
 	rd.init();
-	rd.drop_option = 'single';	// dragged elements can be placed to the empty cells only
-	rd.hover_color = '#9BB3DA';	// set hover color
-	rd.trash_ask = false;		// do not ask on delete
+	rd.drop_option = 'single';		// dragged elements can be placed to the empty cells only
+	rd.hover.color_td = '#9BB3DA';	// set hover color
+	rd.trash_ask = false;			// do not ask on delete
 	// save - after element is dropped
 	rd.myhandler_dropped = function () {
 		// get element position (method returns array with current and source positions - tableIndex, rowIndex and cellIndex)

@@ -9,12 +9,12 @@ var redips_init;
 
 // redips initialization
 redips_init = function () {
-	// reference to the REDIPS.drag lib
+	// set REDIPS.drag reference
 	var	rd = REDIPS.drag;
-	// set hover color
-	rd.hover_color = '#DDD';
-	// initialization
+	// lib initialization
 	rd.init();
+	// set hover color for TR
+	rd.hover.color_tr = '#ddd';
 	// define color for empty row
 	rd.row_empty_color = '#eee';
 	// row was clicked - enable / disable tables

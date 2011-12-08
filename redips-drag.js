@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 4.6.1
-Nov 20, 2011.
+Version 4.6.2
+Dec 5, 2011.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -27,7 +27,7 @@ var REDIPS = REDIPS || {};
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content-animation/">Drag and drop table content plus animation</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">Drag and drop table rows</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">Drag and Drop table content</a>
- * @version 4.6.1
+ * @version 4.6.2
  */
 REDIPS.drag = (function () {
 		// methods
@@ -47,8 +47,8 @@ REDIPS.drag = (function () {
 		handler_onresize,			// onresize window event handler
 		set_trc,					// function sets current table, row and cell
 		set_position,				// function sets color for the current table cell and remembers previous position and color
-		set_bgcolor,				// function sets background color for the input parameters table, row, cell and background color (color is array)
-		get_bgcolor,				// function returns background as array color for the input parameters table, row and cell
+		setTdStyle,					// method sets background color and border styles for TD
+		getTdStyle,					// method returns object containing background color and border styles for TD
 		box_offset,					// calculates object (box) offset (top, right, bottom, left)
 		calculate_cells,			// calculates table columns and row offsets (cells dimensions)
 		getScrollPosition,			// returns scroll positions in array
@@ -87,7 +87,7 @@ REDIPS.drag = (function () {
 				div:  {x: 0, y: 0},	// closer to the edge, faster scrolling
 				flag: {x: 0, y: 0}},// flags are needed to prevent multiple calls of autoscrollX and autoscrollY from onmousemove event handler
 		scroll_object,				// scroll_object
-		bgcolor_old,				// (array) old cell background color
+		bgstyle_old,				// (object) old td styles (background color and border styles)
 		scrollable_container = [],	// scrollable container areas (contains autoscroll areas, reference to the container and scroll direction)
 		tables = [],				// table offsets and row offsets (initialized in onload event)
 		sort_idx,					// sort index needed for sorting tables in table_top()
@@ -116,7 +116,11 @@ REDIPS.drag = (function () {
 		obj = false,				// (object) moved object
 		obj_old = false,			// (object) previously moved object (before clicked or cloned)
 		mode = 'cell',				// (string) drag mode: "cell" or "row" (default is cell)
-		hover_color = '#E7AB83',	// (string) hover color
+		// (object) defines color and border styles for current TD and TR
+		// hover.border_tr defines border color used in "row" mode to show whether row will be dropped above or below current row
+		// border_td and border_tr are initially undefined
+		hover = {color_td: '#E7AB83',
+				color_tr: '#E7AB83'},
 		bound = 25,					// (integer) bound width for autoscroll
 		speed = 20,					// (integer) scroll speed in milliseconds
 		only = {div: [],			// (array) DIVid -> classname, defined DIV elements can be placed only to the marked table cell with class name 'only'
@@ -469,9 +473,9 @@ REDIPS.drag = (function () {
 		if (obj.setCapture) {
 			obj.setCapture();
 		}
-		// remember background cell color if is possible
+		// remember background color if is possible
 		if (table !== null && row !== null && cell !== null) {
-			bgcolor_old = get_bgcolor(table, row, cell);
+			bgstyle_old = getTdStyle(table, row, cell);
 		}
 		// set table CSS position (needed for exclusion "scroll offset" if table box has position fixed)
 		position = get_style(tables[table_source], 'position');
@@ -932,7 +936,7 @@ REDIPS.drag = (function () {
 				target_table = tables[table];
 				REDIPS.drag.target_cell = target_cell = target_table.rows[row].cells[cell];
 				// set background color for destination cell (cell had hover color)
-				set_bgcolor(table, row, cell, bgcolor_old);
+				setTdStyle(table, row, cell, bgstyle_old);
 				// set r_table & r_row (needed for mode === "row")
 				r_table = table;
 				r_row = row;
@@ -942,7 +946,7 @@ REDIPS.drag = (function () {
 				target_table = tables[table_source];
 				REDIPS.drag.target_cell = target_cell = target_table.rows[row_source].cells[cell_source];
 				// set background color for destination cell (cell had hover color)
-				set_bgcolor(table_source, row_source, cell_source, bgcolor_old);
+				setTdStyle(table_source, row_source, cell_source, bgstyle_old);
 				// set r_table & r_row (needed for mode === "row")
 				r_table = table_source;
 				r_row = row_source;
@@ -952,7 +956,7 @@ REDIPS.drag = (function () {
 				target_table = tables[table_old];
 				REDIPS.drag.target_cell = target_cell = target_table.rows[row_old].cells[cell_old];
 				// set background color for destination cell (cell had hover color)
-				set_bgcolor(table_old, row_old, cell_old, bgcolor_old);
+				setTdStyle(table_old, row_old, cell_old, bgstyle_old);
 				// set r_table & r_row (needed for mode === "row")
 				r_table = table_old;
 				r_row = row_old;
@@ -1145,6 +1149,8 @@ REDIPS.drag = (function () {
 	 * @memberOf REDIPS.drag#
 	 */
 	element_deleted = function () {
+		// set param needed to find last cell (for case where REDIPS.drag.shift_after === true)
+		var param;
 		// call myhandler_deleted() method
 		REDIPS.drag.myhandler_deleted();
 		// if object is cloned, update climit1_X or climit2_X classname
@@ -1153,9 +1159,19 @@ REDIPS.drag = (function () {
 		}
 		// shift table content if drop_option is set to "shift" and shift_after is set to true and DIV element is deleted
 		if (REDIPS.drag.drop_option === 'shift' && REDIPS.drag.shift_after) {
-			// content from source cell to table end will be shifted to the left
-			// this emulates dropping DIV to the last table cell
-			shift_cells(source_cell, find_cell('last', source_cell)[0]);
+			// define last table cell in column, row or table - depending on shift_option value
+			switch (REDIPS.drag.shift_option) {
+			case 'vertical2':
+				param = 'lastInColumn';
+				break;
+			case 'horizontal2':
+				param = 'lastInRow';
+				break;
+			default:
+				param = 'last';
+			}
+			// content from source cell to last cell will be shifted (emulates dropping DIV element to the last table cell)
+			shift_cells(source_cell, find_cell(param, source_cell)[2]);
 		}
 	};
 
@@ -1415,7 +1431,7 @@ REDIPS.drag = (function () {
 			// set cell background color to the previous cell
 			if (table_old !== null && row_old !== null && cell_old !== null) {
 				// set background color for previous table cell
-				set_bgcolor(table_old, row_old, cell_old, bgcolor_old);
+				setTdStyle(table_old, row_old, cell_old, bgstyle_old);
 				// define previous table cell
 				REDIPS.drag.previous_cell = previous_cell = tables[table_old].rows[row_old].cells[cell_old];
 				// define current table cell
@@ -1700,9 +1716,9 @@ REDIPS.drag = (function () {
 		// in case if ordinary element is placed inside 'deny' table cell
 		if (table < tables.length && table !== null && row !== null && cell !== null) {
 			// remember background color before setting the new background color
-			bgcolor_old = get_bgcolor(table, row, cell);
-			// set background color to the current table cell
-			set_bgcolor(table, row, cell, [REDIPS.drag.hover_color]);
+			bgstyle_old = getTdStyle(table, row, cell);
+			// highlight current TD / TR (colors and styles are read from public property "hover"
+			setTdStyle(table, row, cell);
 			// remember current position (for table, row and cell)
 			table_old = table;
 			row_old = row;
@@ -1712,67 +1728,144 @@ REDIPS.drag = (function () {
 
 
 	/**
-	 * Method sets table cell(s) background color.
-	 * If color has only one value and REDIPS.drag works in "row" mode, then apply this color to all table cells
-	 * @param {Integer} t Table index.
-	 * @param {Integer} r Row index.
-	 * @param {Integer} c Cell index.
-	 * @param {Array} color Array of colors.
-	 * @see <a href="#get_bgcolor">get_bgcolor</a>
+	 * Method sets table cell(s) background styles (background colors and border styles).
+	 * If tdStyle is undefined then current td/tr will be highlighted from public property hover.color_td, hover.color_tr ...
+	 * @param {Integer} ti Table index.
+	 * @param {Integer} ri Row index.
+	 * @param {Integer} ci Cell index.
+	 * @param {Object} t Object contains background color and border styles ("t" is TD style object is prepared in getTdStyle method).
+	 * @see <a href="#getTdStyle">getTdStyle</a>
 	 * @see <a href="#set_position">set_position</a>
 	 * @see <a href="#cell_changed">cell_changed</a>
 	 * @see <a href="#handler_onmouseup">handler_onmouseup</a>
 	 * @private
 	 * @memberOf REDIPS.drag#
 	 */
-	set_bgcolor = function (t, r, c, color) {
-		// reference to the table row and loop variable
-		var tr, i;
+	setTdStyle = function (ti, ri, ci, t) {
+		// reference to the table row, loop variable and td.style
+		var tr, i, s;
 		// if drag mode is "cell"
 		if (mode === 'cell') {
-			tables[t].rows[r].cells[c].style.backgroundColor = color[0];
+			// set TD style reference
+			s = tables[ti].rows[ri].cells[ci].style;
+			// TD background color - tdStyle is undefined then highlight TD otherwise return previous background color
+			s.backgroundColor = (t === undefined) ? REDIPS.drag.hover.color_td : t.color[0].toString();
+			// TD border - if hover.border_td is set then take care of border style
+			if (REDIPS.drag.hover.border_td !== undefined) {
+				// set border (highlight)
+				if (t === undefined) {
+					s.border = REDIPS.drag.hover.border_td;
+				}
+				// return previous state (exit from TD)
+				else {
+					s.borderTopWidth = t.top[0][0];
+					s.borderTopStyle = t.top[0][1];
+					s.borderTopColor = t.top[0][2];
+					s.borderRightWidth = t.right[0][0];
+					s.borderRightStyle = t.right[0][1];
+					s.borderRightColor = t.right[0][2];
+					s.borderBottomWidth = t.bottom[0][0];
+					s.borderBottomStyle = t.bottom[0][1];
+					s.borderBottomColor = t.bottom[0][2];
+					s.borderLeftWidth = t.left[0][0];
+					s.borderLeftStyle = t.left[0][1];
+					s.borderLeftColor = t.left[0][2];
+				}
+			}
 		}
 		// or drag mode is "row"
 		else {
 			// set reference to the current table row
-			tr = tables[t].rows[r];
+			tr = tables[ti].rows[ri];
 			// set colors to table cells (respectively) or first color to all cells (in case of settings hover to the row)
 			for (i = 0; i < tr.cells.length; i++) {
-				tr.cells[i].style.backgroundColor = color[i] ? color[i] : color[0];
+				// set reference to current TD style
+				s = tr.cells[i].style;
+				// TR background color - tdStyle is undefined then highlight TD otherwise return previous background color
+				s.backgroundColor = (t === undefined) ? REDIPS.drag.hover.color_tr : t.color[i].toString();
+				// TR border - if hover.border_td is set then take care of border style
+				if (REDIPS.drag.hover.border_tr !== undefined) {
+					// set border (highlight) - source row will not have any border
+					if (t === undefined) {
+						// if row is moved above source row 
+						if (table === table_source && row > row_source) {
+							s.borderBottom = REDIPS.drag.hover.border_tr;
+						}
+						// if row is moved to other table or below source row
+						else if (table !== table_source || row < row_source) {
+							s.borderTop = REDIPS.drag.hover.border_tr;
+						}
+					}
+					// return previous state borderTop and borderBottom (exit from TD)
+					else {
+						s.borderTopWidth = t.top[i][0];
+						s.borderTopStyle = t.top[i][1];
+						s.borderTopColor = t.top[i][2];
+						s.borderBottomWidth = t.bottom[i][0];
+						s.borderBottomStyle = t.bottom[i][1];
+						s.borderBottomColor = t.bottom[i][2];
+
+					}
+				}
 			}
 		}
 	};
 
 
 	/**
-	 * Method s returns background color as array for the input parameters table index, row index  and cell index.
+	 * Method s returns background and border styles as object for the input parameters table index, row index and cell index.
 	 * @param {Integer} t Table index.
 	 * @param {Integer} r Row index.
 	 * @param {Integer} c Cell index.
-	 * @return {Array} Array of colors (for the row or table cell).
-	 * @see <a href="#set_bgcolor">set_bgcolor</a>
+	 * @return {Object} Object containing background color and border styles (for the row or table cell).
+	 * @see <a href="#setTdStyle">setTdStyle</a>
 	 * @private
 	 * @memberOf REDIPS.drag#
 	 */
-	get_bgcolor = function (t, r, c) {
-		var color = [],	// define color as array
-			tr,			// reference to the table row
-			i;			// loop variable
-		// if drag mode is "cell" color array will have only one value
+	getTdStyle = function (ti, ri, ci) {
+		var tr, i, c, // reference to the table row, loop variable and td reference
+			// define TD style object with background color and border styles: top, right, bottom and left
+			t = {color: [], top: [], right: [], bottom: [], left: []},
+			// private method gets border styles: top, right, bottom, left
+			border = function (c, name) {
+				var width = 'border' + name + 'Width',
+					style = 'border' + name + 'Style',
+					color = 'border' + name + 'Color';			
+				return [get_style(c, width), get_style(c, style), get_style(c, color)];
+			};
+		// if drag mode is "cell" tdStyle.color and tdStyle.border will have only one value
 		if (mode === 'cell') {
-			color[0] = tables[t].rows[r].cells[c].style.backgroundColor;
+			// set TD reference
+			c = tables[ti].rows[ri].cells[ci];
+			// remember background color
+			t.color[0] = c.style.backgroundColor;
+			// remember top, right, bottom and left TD border styles if hover.border_td property is set
+			if (REDIPS.drag.hover.border_td !== undefined) {
+				t.top[0] = border(c, 'Top');
+				t.right[0] = border(c, 'Right');
+				t.bottom[0] = border(c, 'Bottom');
+				t.left[0] = border(c, 'Left');
+			}
 		}
 		// if drag mode is "row", then color array will contain color for each table cell
 		else {
 			// set reference to the current table row
-			tr = tables[t].rows[r];
-			// remember color for each table cell
+			tr = tables[ti].rows[ri];
+			// remember styles for each table cell
 			for (i = 0; i < tr.cells.length; i++) {
-				color[i] = tr.cells[i].style.backgroundColor;
+				// set TD reference
+				c = tr.cells[i];
+				// remember background color
+				t.color[i] = c.style.backgroundColor;
+				// remember top and bottom TD border styles if hover.border_tr property is set
+				if (REDIPS.drag.hover.border_tr !== undefined) {
+					t.top[i] = border(c, 'Top');
+					t.bottom[i] = border(c, 'Bottom');
+				}
 			}
 		}
-		// return background color as array
-		return color;
+		// return TD style object
+		return t;
 	};
 
 
@@ -2496,7 +2589,8 @@ REDIPS.drag = (function () {
 			val = el.currentStyle[style_name];
 		}
 		else if (el && window.getComputedStyle) {
-			val = document.defaultView.getComputedStyle(el, null).getPropertyValue(style_name);
+//			val = document.defaultView.getComputedStyle(el, null).getPropertyValue(style_name);
+			val = document.defaultView.getComputedStyle(el, null)[style_name];  
 		}
 		return val;
 	};
@@ -2526,16 +2620,19 @@ REDIPS.drag = (function () {
 
 
 	/**
-	 * Method returns data for first or last table cell. Data are: cell reference, row index and column index.
-	 * @param {String} param Parameter defines first or last table cell (values are "first" or "last").
-	 * @param {HTMLElement} el Table reference or any element within table.
+	 * Method returns data (cell reference, row index and column index) for first or last cell in table or row / column.
+	 * @param {String} param Parameter defines first or last table cell (values are "first", "firstInColumn", "firstInRow", "last", "lastInColumn", "lastInRow").
+	 * @param {HTMLElement} el Table cell reference (td). For "first" or "last" request, el can be any HTMLElement within table.
 	 * @example
-	 * // find first cell in table (tbl1 is table reference)
-	 * first_cell = find_cell('first', tbl1);
+	 * // find first cell in row (el is table cell reference)
+	 * firstInRow = find_cell('firstInRow', el);
 	 * 
-	 * // find last cell in table (cell2 is reference of one cell within table)
-	 * last_cell = find_cell('last', cell2);
-	 * @return {Array} Returns array with cell reference, row index and column index.
+	 * // find last cell in table (el is reference of any cell inside table)
+	 * last = find_cell('last', el);
+	 * 
+	 * // find last cell in column (el is table cell reference)
+	 * lastInColumn = find_cell('lastInColumn', el);
+	 * @return {Array} Returns array with row index, column index and cell reference, 
 	 * @public
 	 * @function
 	 * @name REDIPS.drag#find_cell
@@ -2543,22 +2640,43 @@ REDIPS.drag = (function () {
 	find_cell = function (param, el) {
 		// find parent table (if "el" is already table then "el" reference will not change)
 		var tbl = find_parent('TABLE', el),
-			ri = 0,	// row index
-			ci = 0,	// cell index
+			ri,	// row index
+			ci,	// cell index
 			c;	// cell reference
-		// define row index, column index and cell reference for bottom last table cell 
-		if (param === 'last') {
+		switch (param) {
+		// first in column
+		case 'firstInColumn':
+			ri = 0;
+			ci = el.cellIndex;
+			break;
+		// first in row
+		case 'firstInRow':
+			ri = el.parentNode.rowIndex;
+			ci = 0;
+			break;
+		// last in column
+		case 'lastInColumn':
+			ri = tbl.rows.length - 1;
+			ci = el.cellIndex;
+			break;
+		// last in row
+		case 'lastInRow':
+			ri = el.parentNode.rowIndex;
+			ci = tbl.rows[0].cells.length - 1;
+			break;
+		// last in table
+		case 'last':
 			ri = tbl.rows.length - 1;
 			ci = tbl.rows[0].cells.length - 1;
-			// cell index
-			c = tbl.rows[ri].cells[ci];
-		}
+			break;
 		// define cell reference for first table cell (row and column indexes are 0) 
-		else {
-			c = tbl.rows[0].cells[0];
+		default:
+			ri = ci = 0;
 		}
-	    // return cell data as array
-	    return [c, ri, ci];
+		// set table cell reference
+		c = tbl.rows[ri].cells[ci];
+	    // return cell data as array: row index, cell index and td reference
+	    return [ri, ci, c];
 	};
 
 
@@ -2692,8 +2810,8 @@ REDIPS.drag = (function () {
 			}
 			// loop through all child nodes in table cell
 			for (i = 0; i < cn; i++) {
-				// relocate (with animation) only DIV elements
-				if (from.childNodes[i].nodeType === 1 && from.childNodes[i].nodeName === 'DIV') {
+				// relocate (with animation) only DIV elements (exclude relocation for currently dragged element)
+				if (from.childNodes[i].nodeType === 1 && from.childNodes[i].nodeName === 'DIV' && REDIPS.drag.obj !== from.childNodes[i]) {
 					// increase animated counter (counter is initially set to 0)
 					an_counter++;
 					// move DIV element to the target cell
@@ -2706,8 +2824,8 @@ REDIPS.drag = (function () {
 			// loop through all child nodes in table cell
 			// 'j', not 'i' because NodeList objects in the DOM are live
 			for (i = 0, j = 0; i < cn; i++) {
-				// relocate only DIV elements
-				if (from.childNodes[j].nodeType === 1 && from.childNodes[j].nodeName === 'DIV') {
+				// relocate only DIV elements (exclude relocation for currently dragged element)
+				if (from.childNodes[j].nodeType === 1 && from.childNodes[j].nodeName === 'DIV' && REDIPS.drag.obj !== from.childNodes[j]) {
 					to.appendChild(from.childNodes[j]);
 				}
 				// skip text nodes, attribute nodes ...
@@ -2749,7 +2867,8 @@ REDIPS.drag = (function () {
 
 
 	/**
-	 * Method shifts table content to the left or right. Useful for cases where order of table content should be preserved.
+	 * Method shifts table content horizontally or vertically. REDIPS.drag.shift_option defines the way of how content will be shifted.
+	 * Useful for sorting table content in any direction.
 	 * @param {HTMLElement} td1 Source table cell.
 	 * @param {HTMLElement} td2 Target table cell.
 	 * @private
@@ -2758,89 +2877,86 @@ REDIPS.drag = (function () {
 	shift_cells = function (td1, td2) {
 		var tbl1, tbl2,	// table reference of source and target cell
 			pos,		// start cell (source) position
+			pos1,		// start position (used for settings of pos variable)
 			pos2,		// end cell (target) position
 			d,			// direction (1 - left, -1 - right)
 			c1, c2,		// source and target cell needed for relocate
+			soption,	// shift option read from public parameter
 			rows,		// row number
-			cols;		// column number (column number is defined from first row)
+			cols,		// column number (column number is defined from first row)
+			x, y,		// column / row
+			max;		// maximum number or rows or columns
+		// if DIV element is dropped to the source cell then there's nothing to do - just return from method
+		if (td1 === td2) {
+			return;
+		}
+		// set shift option from public property
+		soption = REDIPS.drag.shift_option;
+		// set source and target position (pos1 is used for setting pos variable in switch (soption) case)
+		pos1 = [td1.parentNode.rowIndex, td1.cellIndex];
+		pos2 = [td2.parentNode.rowIndex, td2.cellIndex];
 		// set table reference for source and target table cell
 		tbl1 = find_parent('TABLE', td1);
 		tbl2 = find_parent('TABLE', td2);
-		// define number of rows and columns
+		// define number of rows and columns for target table (it's used as row and column index) 
 		rows = tbl2.rows.length - 1;
 		cols = tbl2.rows[0].cells.length - 1;
-		// test if source and target table cells are within the same table
-		if (tbl1 === tbl2) {
-			// prepare positions [row, cell] for source and target table cell
-			pos = [td1.parentNode.rowIndex, td1.cellIndex];
-			pos2 = [td2.parentNode.rowIndex, td2.cellIndex];
-			// shift_mode vertical
-			if (REDIPS.drag.shift_option === 'vertical1' || REDIPS.drag.shift_option === 'vertical2') {
-				// if source cell is prior to the target cell then set direction to the "up", otherwise direction is to the "down"
-				if (pos[1] * 1000 + pos[0] < pos2[1] * 1000 + pos2[0]) {
-					d = 1; // up
-				}
-				// set direction to down
-				else {
-					d = -1;
-				}
-			}
-			// shift mode horizontal
-			else {
-				// if source cell is prior to the target cell then set direction to the "left", otherwise direction is to the "right"
-				if (pos[0] * 1000 + pos[1] < pos2[0] * 1000 + pos2[1]) {
-					d = 1; // left / up
-				}
-				// set direction to the right / down
-				else {
-					d = -1;
-				}
-			}
+		// set start position for shifting (depending on shift option value)
+		switch (soption) {
+		case 'vertical2':
+			// if source and target cells are from the same table and from the same column then use pos1 otherwise set last cell in column
+			pos = (tbl1 === tbl2 && td1.cellIndex === td2.cellIndex) ? pos1 : find_cell('lastInColumn', td2);
+			break;
+		case 'horizontal2':
+			// if source and target cell are from the same table and from the same row then use pos1 otherwise set last cell in row
+			pos = (tbl1 === tbl2 && td1.parentNode.rowIndex === td2.parentNode.rowIndex) ? pos1 : find_cell('lastInRow', td2);
+			break;
+		// vertical1 and horizontal1 shift option
+		default:
+			// set start cell if source and target cells are from the same table otherwise set last cell in table
+			pos = (tbl1 === tbl2) ? pos1 : [rows, cols];
 		}
-		// source and target cells are from different tables
+		//
+		// shift direction, max and row / column variables
+		//
+		// set direction (up/down) for vertical shift option
+		// if source cell is prior to the target cell then set direction to the "up", otherwise direction is to the "down"
+		if (soption === 'vertical1' || soption === 'vertical2') {
+			d = (pos[1] * 1000 + pos[0] < pos2[1] * 1000 + pos2[0]) ? 1 : -1;
+			max = rows;
+			x = 0;
+			y = 1;
+		}
+		// set direction (left/right) for horizontal shift option
+		// if source cell is prior to the target cell then set direction to the "left", otherwise direction is to the "right"
 		else {
-			// set direction to the right
-			d = -1;
-			// bottom right cell in target table (as start cell)
-			pos = [rows, cols];
-			// target cell
-			pos2 = [td2.parentNode.rowIndex, td2.cellIndex];
+			d = (pos[0] * 1000 + pos[1] < pos2[0] * 1000 + pos2[1]) ? 1 : -1;
+			max = cols;
+			x = 1;
+			y = 0;
 		}
-		// while loop goes from source to target position
+		//
+		// loop
+		//
+		// while loop - goes from source to target position
 		while (pos[0] !== pos2[0] || pos[1] !== pos2[1]) {
 			// define target cell
 			c2 = tbl2.rows[pos[0]].cells[pos[1]];
-			if (REDIPS.drag.shift_option === 'horizontal1') {
-				// increment cell index
-				pos[1] += d;
-				// if cellIndex was most left column
-				if (pos[1] < 0) {
-					pos[1] = cols;
-					pos[0]--;
-				}
-				// if cellIndex was most right column
-				else if (pos[1] > cols) {
-					pos[1] = 0;
-					pos[0]++;
-				}
+			// increment row index
+			pos[x] += d;
+			// if row is highest row
+			if (pos[x] < 0) {
+				pos[x] = max;
+				pos[y]--;
 			}
-			else if (REDIPS.drag.shift_option === 'vertical1') {
-				// increment row index
-				pos[0] += d;
-				// if row is highest row
-				if (pos[0] < 0) {
-					pos[0] = rows;
-					pos[1]--;
-				}
-				// if cellIndex was most right column
-				else if (pos[0] > rows) {
-					pos[0] = 0;
-					pos[1]++;
-				}
+			// if cellIndex was most right column
+			else if (pos[x] > max) {
+				pos[x] = 0;
+				pos[y]++;
 			}
 			// define source cell
 			c1 = tbl2.rows[pos[0]].cells[pos[1]];
-			// relocate cell content with animantion
+			// relocate cell content with animation
 			if (REDIPS.drag.animation_shift) {
 				relocate(c1, c2, 'animation');
 			}
@@ -3406,19 +3522,24 @@ REDIPS.drag = (function () {
 		 */
 		target_cell : target_cell,
 		/**
-		 * Hover color for current table cell.
-		 * Color could be changed inside event handlers (e.g. each table could have different hover color or some cells could have special hover colors).
-		 * @type String
-		 * @name REDIPS.drag#hover_color
+		 * Hover object contains 4 properties: color_td, color_tr, border_td and border_tr. color_td and color_tr defines hover color for DIV element and table row.
+		 * If border_td is defined, then highlighted cell will have border. If border_tr is defined then highlighted row will have only top or bottom border.
+		 * Top border shows that row will be placed above current row, while bottom border shows that current row will be placed below current row.
+		 * Some browsers may have problem with "border-collapse:collapse" table style and border highlighting.
+		 * In that case try without collapsing TD borders (e.g set "border-spacing:0" and smaller "td.border-width").
+		 * @type Object
+		 * @name REDIPS.drag#hover
 		 * @example
-		 * // set "#9BB3DA" as hover color
-		 * REDIPS.drag.hover_color = '#9BB3DA';
+		 * // set "#9BB3DA" as hover color for TD
+		 * REDIPS.drag.hover.color_td = '#9BB3DA';
 		 *  
-		 * // or set "Lime" as hover color
-		 * REDIPS.drag.hover_color ='Lime';
-		 * @default #E7AB83
+		 * // or set "Lime" as hover color for TR
+		 * REDIPS.drag.hover.color_tr ='Lime';
+		 * 
+		 * // set red border for highlighted TD
+		 * REDIPS.drag.hover.border_td = '2px solid red';
 		 */
-		hover_color	: hover_color,
+		hover : hover,
 		/**
 		 * Bound size for triggering page autoscroll or autoscroll of scrollable DIV container.
 		 * @type Integer
@@ -3538,12 +3659,16 @@ REDIPS.drag = (function () {
 		 */
 		drop_option	: drop_option,
 		/**
-		 * Property defines shift modes: horizontal1, horizontal2, vertical1 and vertical2
+		 * Property defines shift modes: horizontal1, horizontal2, vertical1 and vertical2.
+		 * horizontal1 - horizontal shift (element shift can affect more rows)
+		 * horizontal2 - horizontal shift (each row is treated separately)
+		 * vertical1 - vertical shift (element shift can affect more columns)
+		 * vertical2 - vertical shift (each column is treated separately)
 		 * @type String
 		 * @name REDIPS.drag#shift_option
 		 * @default horizontal1
 		 * @example
-		 * // elements can be dropped to all table cells (multiple elements in table cell)
+		 * // DIV elements will be shifted vertically (each column is treated separately)
 		 * REDIPS.drag.shift_option = 'vertical2';
 		 */
 		shift_option : shift_option,

@@ -63,6 +63,12 @@ div#drag td {
 
 }
 
+/* */
+.message {
+	color: grey;
+	font-size: 14px;
+}
+
 /* circle */
 .circle {
 	/* round corners */

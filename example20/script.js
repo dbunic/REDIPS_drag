@@ -13,6 +13,9 @@ redips_init = function () {
 		msg = document.getElementById('msg');
 	// initialization
 	rd.init();
+	// set hover colors for TD and TR
+	rd.hover.color_td = '#FFCFAE';
+	rd.hover.color_tr = '#9BB3DA';
 	// don't ask on element delete but ask for row delete
 	rd.trash_ask = false;
 	rd.trash_ask_row = true;
@@ -20,16 +23,11 @@ redips_init = function () {
 	rd.clone_shiftKey = rd.clone_shiftKey_row = true;
 	// mark row in second table as empty
 	rd.row_empty('tbl2', 1);
-	// element clicked (set hover color for "cell" mode)
-	rd.myhandler_clicked = function () {
-		rd.hover_color = '#FFCFAE';
-	};
 	//
 	// row event handlers
 	//
 	// row clicked (display message and set hover color for "row" mode)
 	rd.myhandler_row_clicked = function () {
-		rd.hover_color = '#9BB3DA';
 		msg.innerHTML = 'Clicked';
 	};
 	// row row_dropped

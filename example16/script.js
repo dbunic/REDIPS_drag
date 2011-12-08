@@ -71,10 +71,10 @@ redips_init = function () {
 		}
 		// set hover color for original DIV elements and for cloned DIV elements
 		if (rd.obj.className.indexOf('clnd') === -1) {
-			rd.hover_color = hover1;
+			rd.hover.color_td = hover1;
 		}
 		else {
-			rd.hover_color = hover2;
+			rd.hover.color_td = hover2;
 		}
 	};
 	// event handler called before DIV element is dropped to the table
@@ -129,7 +129,7 @@ redips_init = function () {
 			rd.obj.className += ' clnd';
 		}
 		// set hover color for cloned elements
-		rd.hover_color = hover2;
+		rd.hover.color_td = hover2;
 	};
 };
 

@@ -19,10 +19,10 @@ redips_init = function () {
 	var	rd = REDIPS.drag;			// reference to the REDIPS.drag object
 	// initialization
 	rd.init();
-	rd.drop_option = 'single';	// dragged elements can be placed to the empty cells only
-	rd.hover_color = '#9BB3DA';	// set hover color
-	rd.trash_ask = false;		// do not ask on delete
-	rd.clone_shiftKey = true;	// elements could be cloned with pressed SHIFT key
+	rd.drop_option = 'single';		// dragged elements can be placed to the empty cells only
+	rd.hover.color_td = '#9BB3DA';	// set hover color
+	rd.trash_ask = false;			// do not ask on delete
+	rd.clone_shiftKey = true;		// elements could be cloned with pressed SHIFT key
 	// prepare node list of DIV elements in table2
 	div_nl = document.getElementById('table2').getElementsByTagName('div');
 	// show / hide report buttons (needed for dynamic version - with index.php)

@@ -21,7 +21,8 @@ body {
 
 /* set border-collapse */
 div#drag table {
-	border-collapse: collapse;
+/* 	border-collapse: collapse; */
+	border-spacing: 0px;
 	width: 580px;
 }
 	/* define margin below first table */
@@ -31,15 +32,23 @@ div#drag table {
 
 /* set table row height */
 div#drag table tr {
-	height: 32px;
+	height: 40px;
 }
 
-/* table cells */
+
+/*
+	http://stackoverflow.com/questions/4096390/table-border-color-in-css-with-border-collapse
+	
+	if collapsing borders have the same style and width, but differ in color,
+	then from most to least preferred: cell, row, row group, column, column group, table.
+	
+	if ... come from same type of element, such as two rows... then color is taken from
+	borders that are the topmost and the leftmost.
+	
+	wider border wins over narrower ones / double wins over solid, then dashed, dotted, ridge, outset, groove, inset
+*/
 div#drag td {
-	/* IE8 BUG - applying alpha filter on TD will overwrite TD border - thank you MicroSoft for tearing my hair :P */
-	/* I also tried with outline and that was fine, but Opera11 place high zIndex to outline grid and that looks wierd */
-	/* so, I paint TR to white with JavaScript and applying aplha filter to table content (DIV elements) */
-	border: 1px solid white;
+	border: 2px groove white;
 }
 
 /* table titles */

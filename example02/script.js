@@ -14,7 +14,7 @@ redips_init = function () {
 	// initialization
 	rd.init();
 	// set hover color
-	rd.hover_color = '#9BB3DA';
+	rd.hover.color_td = '#9BB3DA';
 	// define green elements for green cells
 	rd.mark.exception.green = 'green_cell';
 	rd.mark.exception.greenc0 = 'green_cell';

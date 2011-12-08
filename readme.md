@@ -1,4 +1,4 @@
-REDIPS.drag 4.6.1
+REDIPS.drag 4.6.2
 ============
 
 ## What's REDIPS.drag?
@@ -14,6 +14,7 @@ REDIPS.drag is a JavaScript drag and drop library focused on dragging table cont
 
 * dragging table content/row
 * dropping modes: multiple, single, switch, switching, overwrite and shift
+* 4 shift modes (horizontal1, horizontal2, vertical1 and vertical2)
 * using custom event handlers
 * autoscroll
 * content cloning

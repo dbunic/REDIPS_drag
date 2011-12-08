@@ -51,7 +51,7 @@ set_hover_color = function (cell) {
 		break;
 	}
 	// set hover color
-	rd.hover_color = color; 
+	rd.hover.color_td = color; 
 };
 
 

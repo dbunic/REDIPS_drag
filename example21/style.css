@@ -59,3 +59,15 @@ div#drag td{
 	color: white;
 	background-color: SteelBlue;
 }
+
+/* space between radio/checkbox and text */
+div#drag input {
+	margin-right: 10px;
+}
+
+/* text style */
+.mycontrols {
+	margin: 5px;
+	color: grey;
+	font-size: 16px;
+}

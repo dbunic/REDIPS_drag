@@ -1,5 +1,13 @@
 Changes for REDIPS.drag library
 
+4.6.2
+- added shift_option public property
+- added 4 shift modes: horizontal1, horizontal2, vertical1 and vertical2
+- extended find_cell method with values "first", "firstInColumn", "firstInRow", "last", "lastInColumn", "lastInRow"
+- added public property hover_border (in "row" mode borderTop or borderBottom will be show where whether row will be dropped above or below current row)
+- REDIPS.drag.hover_color is no longer used
+- working on examples (improving)
+
 4.6.1
 - fixed bug with moving table row between two tables (added get_table_index)
   * in line 3080 -> row_drop(get_table_index(p.target[0]), p.target[1], p.obj);
