@@ -1,5 +1,8 @@
 Changes for REDIPS.drag library
 
+4.6.3
+- in "switch" mode, reference of last switched element (because TD can contain more elements) will be saved in REDIPS.drag.obj_old property
+
 4.6.2
 - added shift_option public property
 - added 4 shift modes: horizontal1, horizontal2, vertical1 and vertical2

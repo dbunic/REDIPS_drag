@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 4.6.2
-Dec 5, 2011.
+Version 4.6.3
+Dec 17, 2011.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -27,7 +27,7 @@ var REDIPS = REDIPS || {};
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content-animation/">Drag and drop table content plus animation</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">Drag and drop table rows</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">Drag and Drop table content</a>
- * @version 4.6.2
+ * @version 4.6.3
  */
 REDIPS.drag = (function () {
 		// methods
@@ -1061,7 +1061,10 @@ REDIPS.drag = (function () {
 				for (i = 0; i < target_elements_length; i++) {
 					// source_cell is defined in onmouseup
 					if (target_elements[0] !== undefined) { //fixes issue with nested DIVS
-						source_cell.appendChild(target_elements[0]); // '0', not 'i' because NodeList objects in the DOM are live
+						// save reference of switched element in REDIPS.drag.obj_old property
+						REDIPS.drag.obj_old = target_elements[0];
+						// '0', not 'i' because NodeList objects in the DOM are live
+						source_cell.appendChild(target_elements[0]);
 					}
 				}
 				// drop element to the table cell
@@ -2392,17 +2395,27 @@ REDIPS.drag = (function () {
 
 
 	/**
-	 * Method attaches / detaches onmousedown, ondblclick events to DIV elements and attaches onscroll event to the scrollable containers in initialization phase.
+	 * Method attaches / detaches onmousedown, ontouchstart and ondblclick events to DIV elements and attaches onscroll event to the scrollable containers in initialization phase.
+	 * It also can be used for element initialization after DIV element was manually added to the table.
 	 * If class attribute of DIV container contains "noautoscroll" class name then autoscroll option will be disabled.
 	 * @param {String|Boolean} enable_flag Enable / disable element (or element subtree like table, dragging container ...).
 	 * @param {String|HTMLElement} [el] Element id (or subtree) to enable / disable. Parameter defines element id or element reference of DIV element(s) to enable / disable.
 	 * @param {String} [type] Type definition for the second parameter el - element or subtree.
 	 * @example
-	 * // enable element with id="el_id"
+	 * // enable element with id="id123"
 	 * enable_drag(true, 'el_id');
+	 *  
+	 * // or init manually added element with known id
+	 * REDIPS.drag.enable_drag(true, 'id234');
 	 *  
 	 * // disable all elements in drag1 subtree 
 	 * enable_drag(false, 'drag1', 'subtree')
+	 *  
+	 * // init all DIV elements in dragging area (including newly added DIV element)
+	 * REDIPS.drag.enable_drag('init');
+	 *  
+	 * // init added element with known reference
+	 * REDIPS.drag.enable_drag(true, my_el);
 	 * @public
 	 * @function
 	 * @name REDIPS.drag#enable_drag
