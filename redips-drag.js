@@ -27,6 +27,7 @@ var REDIPS = REDIPS || {};
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content-animation/">Drag and drop table content plus animation</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">Drag and drop table rows</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">Drag and Drop table content</a>
+ * <a href="http://www.redips.net/javascript/drag-and-drop-content-shift/">JavaScript drag and drop plus content shift</a>
  * @version 4.6.3
  */
 REDIPS.drag = (function () {
@@ -2403,7 +2404,7 @@ REDIPS.drag = (function () {
 	 * @param {String} [type] Type definition for the second parameter el - element or subtree.
 	 * @example
 	 * // enable element with id="id123"
-	 * enable_drag(true, 'el_id');
+	 * enable_drag(true, 'id123');
 	 *  
 	 * // or init manually added element with known id
 	 * REDIPS.drag.enable_drag(true, 'id234');
