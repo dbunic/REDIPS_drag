@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 4.6.3
-Dec 17, 2011.
+Version 4.6.4
+Dec 21, 2011.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -268,8 +268,10 @@ REDIPS.drag = (function () {
 			} while (element && element !== div_drag);
 			// copy table reference to the static list
 			tables[j] = tables_nodeList[i];
-			// create a "property object" in which all custom properties will be saved
-			tables[j].redips = {};
+			// create a "property object" in which all custom properties will be saved (if "redips" property doesn't exist)
+			if (!tables[j].redips) {
+				tables[j].redips = {};
+			}
 			// set redips.container to the table (needed in case when row is cloned)
 			tables[j].redips.container = div_drag;
 			// set nested level (needed for sorting in "tables" array)
@@ -319,6 +321,10 @@ REDIPS.drag = (function () {
 				nested_tables = tables[i].getElementsByTagName('table');
 				// open loop for every nested table
 				for (j = 0; j < nested_tables.length; j++) {
+					// skip table if table contains "nolayout" className
+					if (nested_tables[j].className.indexOf('nolayout') > -1) {
+						continue;
+					}
 					// set group index and initial sort index
 					nested_tables[j].redips.nestedGroup = group_idx;
 					nested_tables[j].redips.sort = sort_idx * 100 + nested_tables[j].redips.nestedLevel;

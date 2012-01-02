@@ -1,5 +1,9 @@
 Changes for REDIPS.drag library
 
+4.6.4
+- fixed bug for disabled tables inside DIV element
+- fixed "nolayout" option for nested tables
+
 4.6.3
 - in "switch" mode, reference of last switched element (because TD can contain more elements) will be saved in REDIPS.drag.obj_old property
 
