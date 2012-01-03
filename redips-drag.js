@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 4.6.4
-Dec 21, 2011.
+Version 4.6.5
+Jan 3, 2012.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -28,7 +28,7 @@ var REDIPS = REDIPS || {};
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">Drag and drop table rows</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">Drag and Drop table content</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-content-shift/">JavaScript drag and drop plus content shift</a>
- * @version 4.6.3
+ * @version 4.6.5
  */
 REDIPS.drag = (function () {
 		// methods
@@ -99,6 +99,10 @@ REDIPS.drag = (function () {
 		div_drag = null,			// reference to the div drag
 		div_box = null,				// div drag box: top, right, bottom and left margin (decrease number calls of set_trc)
 		pointer = {x: 0, y: 0},		// mouse pointer position (this properties are set in handler_onmousemove() - needed for autoscroll)
+		threshold = {x: 0,			// initial x, y position of mouse pointer
+					y: 0,
+					value: 7,		// threshold distance value
+					flag: false},	// threshold flag
 		shift_key = false,			// (boolean) true if shift key is pressed (set in handler_mousedown)
 		clone_class = false,		// (boolean) true if clicked element contains clone in class name (set in handler_mousedown)
 		
@@ -402,6 +406,10 @@ REDIPS.drag = (function () {
 			X = pointer.x = evt.clientX;
 			Y = pointer.y = evt.clientY;
 		}
+		// set initial threshold position (needed for calculating distance)
+		threshold.x = X;
+		threshold.y = Y;
+		threshold.flag = false;
 		// remember previous object if defined or set to the clicked object
 		REDIPS.drag.obj_old = obj_old = obj || this;
 		// set reference to the clicked object
@@ -1007,9 +1015,9 @@ REDIPS.drag = (function () {
 					}	
 				}
 			}
-			// clicked element was not moved - mouse button was clicked and released
-			// just call myhandler_notmoved public event handler
-			else if (!moved) {
+			// clicked element was not moved - DIV element didn't cross threshold value
+			// just call myhandler_notmoved event handler
+			else if (!cloned && !threshold.flag) {
 				REDIPS.drag.myhandler_notmoved();
 			}
 			// delete cloned element if dropped on the start position
@@ -1201,6 +1209,7 @@ REDIPS.drag = (function () {
 			bound = REDIPS.drag.bound,	// read "bound" public property (maybe code will be faster, and it will be easier to reference in onmousemove handler)
 			sca,						// current scrollable container area
 			X, Y,						// X and Y position of mouse pointer
+			deltaX, deltaY,				// delta from initial position
 			i,							// needed for local loop
 			scrollPosition;				// scroll position variable needed for autoscroll call
 		// define X and Y position (pointer.x and pointer.y are needed in set_trc() and autoscroll methods) for touchscreen devices
@@ -1213,6 +1222,9 @@ REDIPS.drag = (function () {
 			X = pointer.x = evt.clientX;
 			Y = pointer.y = evt.clientY;
 		}
+		// calculate delta from initial position
+		deltaX = Math.abs(threshold.x - X);
+		deltaY = Math.abs(threshold.y - Y);
 		// if "moved" flag isn't set (this is the first moment when object is moved)
 		if (!moved) {
 			// if moved object is element and has clone in class name or clone_shiftKey is enabled and shift key is pressed
@@ -1258,18 +1270,14 @@ REDIPS.drag = (function () {
 				calculate_cells();
 				// set current table, row and column
 				set_trc();
-				// if element is moved then call myhandler_moved
-				if (mode === 'cell') {
-					REDIPS.drag.myhandler_moved();
-				}
-				// if mode === "row" and row is cloned then set "cloned" to "true" and call row_cloned event handler
-				else if (cloned) {
-					// call row_cloned event handler
-					REDIPS.drag.myhandler_row_cloned();
-				}
-				// row is only moved -> call row_moved event handler
-				else {
-					REDIPS.drag.myhandler_row_moved();
+				// call event handler (row cloned/moved)
+				if (mode === 'row') {
+					if (cloned) {
+						REDIPS.drag.myhandler_row_cloned();
+					}
+					else {
+						REDIPS.drag.myhandler_row_moved();
+					}
 				}
 				// set color for the current table cell and remember previous position and color
 				// set_position() must go after calling myhandler_moved() and myhandler_row_moved() if user wants to
@@ -1289,6 +1297,15 @@ REDIPS.drag = (function () {
 		}
 		// set moved_flag
 		moved = true;
+		// if REDIPS.drag works in "cell" mode and DIV element is moved out of defined threshold distance 
+		if (mode === 'cell' && (deltaX > threshold.value || deltaY > threshold.value) && !threshold.flag) {
+			// set threshold flag
+			threshold.flag = true;
+			// set position (highlight current position)
+			set_position();
+			// call myhandler_moved
+			REDIPS.drag.myhandler_moved();
+		}
 		// set left and top styles for the moved element if element is inside window
 		// this conditions will stop element on window bounds
 		if (X > obj_margin[3] && X < window_width - obj_margin[1]) {
@@ -1754,8 +1771,8 @@ REDIPS.drag = (function () {
 	setTdStyle = function (ti, ri, ci, t) {
 		// reference to the table row, loop variable and td.style
 		var tr, i, s;
-		// if drag mode is "cell"
-		if (mode === 'cell') {
+		// if drag mode is "cell" and threshold distance is prevailed
+		if (mode === 'cell' && threshold.flag) {
 			// set TD style reference
 			s = tables[ti].rows[ri].cells[ci].style;
 			// TD background color - tdStyle is undefined then highlight TD otherwise return previous background color
@@ -1784,7 +1801,7 @@ REDIPS.drag = (function () {
 			}
 		}
 		// or drag mode is "row"
-		else {
+		else if (mode === 'row') {
 			// set reference to the current table row
 			tr = tables[ti].rows[ri];
 			// set colors to table cells (respectively) or first color to all cells (in case of settings hover to the row)

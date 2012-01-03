@@ -1,5 +1,9 @@
 Changes for REDIPS.drag library
 
+4.6.5
+- added threshold value (after threshold value is prevailed then events will be fired) - only for cell mode
+- known BUG - IE8 not play nicely with example11 - TODO
+
 4.6.4
 - fixed bug for disabled tables inside DIV element
 - fixed "nolayout" option for nested tables
