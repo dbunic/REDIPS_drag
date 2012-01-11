@@ -59,6 +59,18 @@ redips_init = function () {
 		// display message
 		msg.innerHTML = 'Dropped to the source';
 	};
+	/*
+	// how to cancel row drop to the table
+	rd.myhandler_row_dropped_before = function () {
+		//
+		// JS logic
+		//
+		// return source row to its original state
+		rd.row_opacity(rd.obj_old, 100);
+		// cancel row drop
+		return false;
+	}
+	*/
 	// row position was changed - event handler
 	rd.myhandler_row_changed = function () {
 		// get target and source position (method returns positions as array)

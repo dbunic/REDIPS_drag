@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 4.6.5
-Jan 3, 2012.
+Version 4.6.6
+Jan 11, 2012.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -28,7 +28,7 @@ var REDIPS = REDIPS || {};
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">Drag and drop table rows</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">Drag and Drop table content</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-content-shift/">JavaScript drag and drop plus content shift</a>
- * @version 4.6.5
+ * @version 4.6.6
  */
 REDIPS.drag = (function () {
 		// methods
@@ -67,6 +67,7 @@ REDIPS.drag = (function () {
 		empty_cell,					// method removes elements from table cell
 		shift_cells,				// method shifts table content to the left or right (useful for content where the order should be preserved)
 		move_object,				// method moves object to the destination table, row and cell
+		delete_object,				// method deletes DIV element
 		animation,					// object animation
 		get_table_index,			// find table index - because tables array is sorted on every element click
 		get_position,				// returns position in format: tableIndex, rowIndex and cellIndex (input parameter is optional)
@@ -142,6 +143,7 @@ REDIPS.drag = (function () {
 		trash_ask_row = true,			// (boolean) confirm row deletion
 		drop_option = 'multiple',		// (string) drop_option has the following options: multiple, single, switch, switching and overwrite
 		shift_option = 'horizontal1',	// (string) property defines shift modes: horizontal1, horizontal2, vertical1 and vertical2
+		multiple_drop = 'bottom',		// (string) defines position of dropped element in case of 'multiple' drop option
 		delete_cloned = true,			// (boolean) delete cloned div if the cloned div is dragged outside of any table
 		delete_shifted = false,			// (boolean) delete last shifted elements in table
 		source_cell = null,				// (object) source table cell (defined in onmousedown and in onmouseup)
@@ -378,7 +380,7 @@ REDIPS.drag = (function () {
 			mouseButton = evt.button;
 		}
 		// exit from event handler if:
-		// 1) control to form elements and links should pass
+		// 1) control should pass to form elements and links
 		// 2) device is not touch device and left mouse button is not pressed
 		if (elementControl(evt) || (!evt.touches && mouseButton !== 1)) {
 			return true;
@@ -477,11 +479,11 @@ REDIPS.drag = (function () {
 		}
 		// reset "moved" flag (needed for clone object in handler_onmousemove) and "cloned" flag
 		moved = cloned = false;
-		// activate onmousemove and onmouseup event handlers on document object if left mouse button was clicked
+		// activate onmousemove and ontouchmove event handlers on document object
 		REDIPS.event.add(document, 'mousemove', handler_onmousemove);
-		REDIPS.event.add(document, 'mouseup', handler_onmouseup);
-		// activate ontouchmove and ontouchend event handlers on document object for touchscreen devices
 		REDIPS.event.add(document, 'touchmove', handler_onmousemove);
+		// activate onmouseup and ontouchend event handlers on document object
+		REDIPS.event.add(document, 'mouseup', handler_onmouseup);
 		REDIPS.event.add(document, 'touchend', handler_onmouseup);
 		// get IE (all versions) to allow dragging outside the window (?!)
 		// http://stackoverflow.com/questions/1685326/responding-to-the-onmousemove-event-outside-of-the-browser-window-in-ie
@@ -726,7 +728,8 @@ REDIPS.drag = (function () {
 			rp,								// reference to the redips property of row below inserted row
 			src,							// reference to the source row (row that should be deleted)
 			rowIndex,						// index of row that should be deleted
-			delete_srow;					// private method - delete source row
+			delete_srow,					// private method - delete source row
+			drop;							// if false then dropping row will be canceled
 		// define private method - delete source row
 		delete_srow = function () {
 			// if row is not animated and source row was marked as "empty row" then row will be colored (not deleted)
@@ -759,74 +762,83 @@ REDIPS.drag = (function () {
 		tr = table_mini.getElementsByTagName('tr')[0];
 		// destroy mini table (node still exists in memory)
 		table_mini.parentNode.removeChild(table_mini);
-		// if target cell is "trash" (row is moved to the "trash" cell)
-		if (!animated && target_cell.className.indexOf(REDIPS.drag.trash_cname) > -1) {
-			// test if cloned row is directly dropped to the "trash" cell (call row_deleted event handler)
-			if (cloned) {
-				REDIPS.drag.myhandler_row_deleted();
-			}
-			// row is not cloned
-			else {
-				// if trash_ask_row is "true" then user should be asked
-				if (REDIPS.drag.trash_ask_row) {
-					// ask user if is sure
-					if (confirm('Are you sure you want to delete row?')) {
+		// call myhandler_row_dropped_before() - this handler can return "false" value
+		drop = REDIPS.drag.myhandler_row_dropped_before(rowIndex);
+		// if handler returned false then row dropping will be canceled
+		if (drop !== false) {
+			// if target cell is "trash" (row is moved to the "trash" cell)
+			if (!animated && target_cell.className.indexOf(REDIPS.drag.trash_cname) > -1) {
+				// test if cloned row is directly dropped to the "trash" cell (call row_deleted event handler)
+				if (cloned) {
+					REDIPS.drag.myhandler_row_deleted();
+				}
+				// row is not cloned
+				else {
+					// if trash_ask_row is "true" then user should be asked
+					if (REDIPS.drag.trash_ask_row) {
+						// ask user if is sure
+						if (confirm('Are you sure you want to delete row?')) {
+							// delete source row and call row_deleted event handler
+							delete_srow();
+							REDIPS.drag.myhandler_row_deleted();
+						}
+						// user is not sure - undelete
+						else {
+							// delete empty_row property from source row because empty_row will be set on next move
+							// otherwise row would be overwritten and that's no good
+							delete obj_old.redips.empty_row;
+							// just call undeleted handler
+							REDIPS.drag.myhandler_row_undeleted();
+						}
+					}
+					// trask_ask_row is set to "false" - source row can be deleted
+					else {
 						// delete source row and call row_deleted event handler
 						delete_srow();
 						REDIPS.drag.myhandler_row_deleted();
 					}
-					// user is not sure - undelete
-					else {
-						// delete empty_row property from source row because empty_row will be set on next move
-						// otherwise row would be overwritten and that's no good
-						delete obj_old.redips.empty_row;
-						// just call undeleted handler
-						REDIPS.drag.myhandler_row_undeleted();
+				}
+			}
+			// target cell is not "trash" cell
+			else {
+				// if called from animation() or row is not cloned then delete source row
+				if (animated || !cloned) {
+					delete_srow();
+				}
+				// if row is not dropped to the last row position
+				if (r_row < tbl.rows.length) {
+					// insert row before current row
+					ts.insertBefore(tr, tbl.rows[r_row]);
+					// set reference to the redips property of row below inserted row
+					rp = tbl.rows[r_row + 1].redips;
+					// if the row below current row is marked as empty_row then delete this row
+					if (rp && rp.empty_row) {
+						ts.deleteRow(r_row + 1);
 					}
 				}
-				// trask_ask_row is set to "false" - source row can be deleted
+				// row is dropped to the last row position
 				else {
-					// delete source row and call row_deleted event handler
-					delete_srow();
-					REDIPS.drag.myhandler_row_deleted();
+					// row should be appended
+					ts.appendChild(tr);
+				}
+				// delete empty_row property from inserted/appended row because empty_row will be set on next move
+				// copy_properties() in row_clone() copied empty_row property to the row in mini_table
+				// otherwise row would be overwritten and that's no good
+				delete tr.redips.empty_row;
+				// call row_dropped event handler if row_drop() was not called from animation()
+				if (!animated) {
+					REDIPS.drag.myhandler_row_dropped(target_cell);
 				}
 			}
+			// if row contains TABLE(S) then recall init_table() to properly initialize tables array and set custom properties
+			// no matter if row was moved or deleted
+			if (tr.getElementsByTagName('table').length > 0) {
+				init_tables();
+			}
 		}
-		// target cell is not "trash" cell
+		// myhandler_row_dropped_before() returned "false" (it's up to user to return source row opacity to its original state) 
 		else {
-			// if called from animation() or row is not cloned then delete source row
-			if (animated || !cloned) {
-				delete_srow();
-			}
-			// if row is not dropped to the last row position
-			if (r_row < tbl.rows.length) {
-				// insert row before current row
-				ts.insertBefore(tr, tbl.rows[r_row]);
-				// set reference to the redips property of row below inserted row
-				rp = tbl.rows[r_row + 1].redips;
-				// if the row below current row is marked as empty_row then delete this row
-				if (rp && rp.empty_row) {
-					ts.deleteRow(r_row + 1);
-				}
-			}
-			// row is dropped to the last row position
-			else {
-				// row should be appended
-				ts.appendChild(tr);
-			}
-			// delete empty_row property from inserted/appended row because empty_row will be set on next move
-			// copy_properties() in row_clone() copied empty_row property to the row in mini_table
-			// otherwise row would be overwritten and that's no good
-			delete tr.redips.empty_row;
-			// call row_dropped event handler if row_drop() was not called from animation()
-			if (!animated) {
-				REDIPS.drag.myhandler_row_dropped(target_cell);
-			}
-		}
-		// if row contains TABLE(S) then recall init_table() to properly initialize tables array and set custom properties
-		// no matter if row was moved or deleted
-		if (tr.getElementsByTagName('table').length > 0) {
-			init_tables();
+			// row_opacity(obj_old, 100);
 		}
 	};
 
@@ -914,10 +926,10 @@ REDIPS.drag = (function () {
 		if (obj.releaseCapture) {
 			obj.releaseCapture();
 		}
-		// detach mousemove and touchmove event handlers
+		// detach mousemove and touchmove event handlers on document object
 		REDIPS.event.remove(document, 'mousemove', handler_onmousemove);
 		REDIPS.event.remove(document, 'touchmove', handler_onmousemove);
-		// detach mouseup and touchend event handlers
+		// detach mouseup and touchend event handlers on document object
 		REDIPS.event.remove(document, 'mouseup', handler_onmouseup);
 		REDIPS.event.remove(document, 'touchend', handler_onmouseup);
 		// detach div_drag.onselectstart handler to enable select for IE7/IE8 browser 
@@ -1142,8 +1154,22 @@ REDIPS.drag = (function () {
 			if (REDIPS.drag.drop_option === 'shift' && has_childs(target_cell)) {
 				shift_cells(source_cell, target_cell);
 			}
-			// append object to the target cell
-			target_cell.appendChild(obj);
+			// insert (to top) or append (to bottom) object to the target cell
+			if (REDIPS.drag.multiple_drop === 'top' && target_cell.hasChildNodes()) {
+				target_cell.insertBefore(obj, target_cell.firstChild);
+			}
+			else {
+				target_cell.appendChild(obj);
+
+			}
+			/*
+			 * this is FIX for Safari Mobile
+			 * it seems that Safari Mobile loses registrated events (traditional model) assigned to the DIV element
+			 * other browsers works just fine
+			obj.onmousedown = handler_onmousedown;
+			obj.ontouchstart = handler_onmousedown;
+			obj.ondblclick = handler_ondblclick;
+			 */
 			// call myhandler_dropped because clone_limit could call myhandler_clonedend1 or myhandler_clonedend2
 			REDIPS.drag.myhandler_dropped(target_cell);
 			// if object is cloned
@@ -2580,6 +2606,40 @@ REDIPS.drag = (function () {
 
 
 	/**
+	 * Method deletes DIV element from table.
+	 * Input parameter is DIV reference or id of DIV element.
+	 * @param {String|HTMLElement} el Id of DIV element or reference of DIV element that should be deleted. 
+	 * @example
+	 * // delete DIV element in myhandler_dropped() event handler
+	 * rd.myhandler_dropped = function () {
+	 *     rd.delete_object(rd.obj);
+	 * }
+	 *  
+	 * // delete DIV element with id="d1"
+	 * rd.delete_object('d1'); 
+	 * @public
+	 * @function
+	 * @name REDIPS.drag#delete_object
+	 */
+	delete_object = function (el) {
+		var div, i;
+		// if "el" is DIV reference then remove DIV element
+		if (typeof(el) === 'object' && el.nodeName === 'DIV') {
+			el.parentNode.removeChild(el);
+		}
+		// else try to delete DIV element with its ID
+		else if (typeof(el) === 'string') {
+			// search for DIV element inside current drag area (drag elements and scrollable containers)
+			div = document.getElementById(el);
+			// if div element exists then it will be deleted
+			if (div) {
+				div.parentNode.removeChild(div);
+			}
+		}
+	};
+
+
+	/**
 	 * This method can select tables by class name and mark them as enabled / disabled.
 	 * Instead of class name, it it possible to send table reference for enable / disable.
 	 * By default, all tables are enabled to accept dropped elements.
@@ -3710,6 +3770,17 @@ REDIPS.drag = (function () {
 		 */
 		shift_option : shift_option,
 		/**
+		 * Property defines "top" or "bottom" position of dropped element in table cell (if cell already contains DIV elements).
+		 * It has affect only in case of drop_option="multiple".
+		 * @type String
+		 * @name REDIPS.drag#multiple_drop
+		 * @default bottom
+		 * @example
+		 * // place dropped elements to cell top
+		 * REDIPS.drag.multiple_drop = 'top';
+		 */
+		multiple_drop : multiple_drop,
+		/**
 		 * Delete cloned DIV element if dropped outside of any table.
 		 * If property is set to "false" then cloned DIV element will be dropped to the last possible table cell.
 		 * @type Boolean
@@ -3791,6 +3862,7 @@ REDIPS.drag = (function () {
 		relocate : relocate,
 		empty_cell : empty_cell,
 		move_object : move_object,
+		delete_object : delete_object,
 		get_position : get_position,
 		row_opacity : row_opacity,
 		row_empty : row_empty,
@@ -3961,6 +4033,14 @@ REDIPS.drag = (function () {
 		 * @event
 		 */
 		myhandler_row_dropped : function () {},
+		/**
+		 * Event handler invoked if mouse button is released but before row is dropped to the table.
+		 * If boolen "false" is returned from event handler then row drop will be canceled. 
+		 * @name REDIPS.drag#myhandler_row_dropped_before
+		 * @function
+		 * @event
+		 */	
+		myhandler_row_dropped_before : function () {},
 		/**
 		 * Event handler invoked if row is moved around and dropped to the home position.
 		 * @param {HTMLElement} [target_cell] Reference to the target table cell.

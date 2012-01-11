@@ -1,5 +1,10 @@
 Changes for REDIPS.drag library
 
+4.6.6
+- added option multiple_drop with options "top" and "bottom" (default value is "bottom") - thanks to Mark Jacobs
+- added event handler myhandler_row_dropped_before() - if false is return from this event handler then row drop will be canceled
+- added public method delete_object() 
+
 4.6.5
 - added threshold value (after threshold value is prevailed then events will be fired) - only for cell mode
 - known BUG - IE8 not play nicely with example11 - TODO
