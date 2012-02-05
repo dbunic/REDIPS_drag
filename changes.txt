@@ -1,5 +1,9 @@
 Changes for REDIPS.drag library
 
+4.6.7
+- method shift_cells is declared as public
+- fixed bug in case of enable_drag() for newly added DIV element to the table
+
 4.6.6
 - added option multiple_drop with options "top" and "bottom" (default value is "bottom") - thanks to Mark Jacobs
 - added event handler myhandler_row_dropped_before() - if false is return from this event handler then row drop will be canceled

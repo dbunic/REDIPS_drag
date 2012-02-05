@@ -1,4 +1,4 @@
-REDIPS.drag 4.6.6
+REDIPS.drag 4.6.7
 ============
 
 ## What's REDIPS.drag?
@@ -40,6 +40,7 @@ REDIPS.drag is a JavaScript drag and drop library focused on dragging table cont
 * REDIPS.drag.relocate() - relocates all child nodes from source table cell to the target table cell
 * REDIPS.drag.empty_cell() - removes elements from table cell
 * REDIPS.drag.move_object() - method will calculate parameters and start animation (DIV element to the destination table cell)
+* REDIPS.drag.shift_cells() - method shifts table content horizontally or vertically (REDIPS.drag.shift_option defines the way of how content will be shifted)
 * REDIPS.drag.delete_object() - method deletes DIV element (input parameter is DIV reference or element id)
 * REDIPS.drag.get_position() - returns DIV element position as array (tableIndex, rowIndex and cellIndex)
 * REDIPS.drag.row_opacity() - sets opacity to table row (el, opacity, color)

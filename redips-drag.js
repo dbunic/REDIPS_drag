@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 4.6.6
-Jan 11, 2012.
+Version 4.6.7
+Feb 5, 2012.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -28,7 +28,7 @@ var REDIPS = REDIPS || {};
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">Drag and drop table rows</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">Drag and Drop table content</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-content-shift/">JavaScript drag and drop plus content shift</a>
- * @version 4.6.6
+ * @version 4.6.7
  */
 REDIPS.drag = (function () {
 		// methods
@@ -2469,6 +2469,7 @@ REDIPS.drag = (function () {
 	 * @public
 	 * @function
 	 * @name REDIPS.drag#enable_drag
+	 * @see <a href="#enable_table">enable_table</a>
 	 */
 	enable_drag = function (enable_flag, el, type) {
 		// define local variables
@@ -2535,9 +2536,9 @@ REDIPS.drag = (function () {
 		for (i = 0, j = 0; i < divs.length; i++) {
 			// if DIV element contains "drag" class name
 			if (regex_drag.test(divs[i].className)) {
-				// add reference to the DIV container in initialization process
+				// add reference to the DIV container (initialization or newly added element to the table)
 				// this property should not be changed in later element enable/disable
-				if (enable_flag === 'init') {
+				if (enable_flag === 'init' || divs[i].redips === undefined) {
 					// create a "property object" in which all custom properties will be saved
 					divs[i].redips = {};
 					divs[i].redips.container = div_drag;
@@ -2650,6 +2651,7 @@ REDIPS.drag = (function () {
 	 * @public
 	 * @function
 	 * @name REDIPS.drag#enable_table
+	 * @see <a href="#enable_drag">enable_drag</a>
 	 */
 	enable_table = function (enable_flag, el) {
 		var i;
@@ -2968,8 +2970,18 @@ REDIPS.drag = (function () {
 	 * Useful for sorting table content in any direction.
 	 * @param {HTMLElement} td1 Source table cell.
 	 * @param {HTMLElement} td2 Target table cell.
-	 * @private
-	 * @memberOf REDIPS.drag#
+	 * @example
+	 * // define first and last table cell
+	 * var firstCell = document.getElementById('firstCellOnTable'),
+	 *     lastCell = document.getElementById('lastCellOnTable');
+	 * // enable animation
+	 * REDIPS.drag.animation_shift = true;
+	 * // shift content
+	 * REDIPS.drag.shift_cells(lastCell, firstCell);
+	 * @public
+	 * @function
+	 * @name REDIPS.drag#shift_cells
+	 * @see <a href="#shift_option">shift_option</a>
 	 */
 	shift_cells = function (td1, td2) {
 		var tbl1, tbl2,	// table reference of source and target cell
@@ -3763,6 +3775,7 @@ REDIPS.drag = (function () {
 		 * vertical2 - vertical shift (each column is treated separately)
 		 * @type String
 		 * @name REDIPS.drag#shift_option
+		 * @see <a href="#shift_cells">shift_cells</a>
 		 * @default horizontal1
 		 * @example
 		 * // DIV elements will be shifted vertically (each column is treated separately)
@@ -3862,6 +3875,7 @@ REDIPS.drag = (function () {
 		relocate : relocate,
 		empty_cell : empty_cell,
 		move_object : move_object,
+		shift_cells : shift_cells,
 		delete_object : delete_object,
 		get_position : get_position,
 		row_opacity : row_opacity,
