@@ -12,18 +12,18 @@
 	<b>Accepted parameters:</b>
 	<br/>
 	<?php
-		// accept parameters (p is array)
-		$p = $_REQUEST['p'];
+		// accept JSON parameter (and Un-quote string if needed)
+		$p = stripslashes($_REQUEST['p']);
 		// decode JSON object (it shouldn't be decoded as associative array)
 		$arr = json_decode($p);
 		// open loop through each array element
 		foreach ($arr as $p){
-			// prepare parameters
+			// set id, row index and cell index
 			$id = $p[0];
-			$col = $p[1];
-			$row = $p[2];
+			$row = $p[1];
+			$cell = $p[2];
 			// instead of print, you can store accepted parameteres to the database
-			print "Id=$id Row=$row Cell=$col<br>";
+			print "Id=$id Row=$row Cell=$cell<br>";
 		}
 	?>
 </body>
