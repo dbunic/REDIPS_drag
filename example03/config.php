@@ -17,7 +17,7 @@ $db_conn = mysql_connect($db_host, $db_user, $db_pwd);
 mysql_select_db($db_name, $db_conn);
 
 
-// function executes SQL statement and returns result set as array
+// function executes SQL statement and returns result set as Array
 function sqlQuery($sql) {
 	global $db_conn;
 	// execute query	

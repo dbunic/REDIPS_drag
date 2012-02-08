@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 4.6.7
-Feb 5, 2012.
+Version 4.6.8
+Feb 8, 2012.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -28,7 +28,7 @@ var REDIPS = REDIPS || {};
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">Drag and drop table rows</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">Drag and Drop table content</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-content-shift/">JavaScript drag and drop plus content shift</a>
- * @version 4.6.7
+ * @version 4.6.8
  */
 REDIPS.drag = (function () {
 		// methods
@@ -164,7 +164,7 @@ REDIPS.drag = (function () {
 	 * Drag container initialization. It should be called at least once (it is possible to call a method multiple times).
 	 * Every page should have at least one drag container.
 	 * If REDIPS.drag.init() is called without input parameter, library will search for drag container with id="drag".
-	 * Only tables inside drag container will be scaned. It is possible to have several drag containers totaly separated (elements from one container will not be visible to other drag containers). 
+	 * Only tables inside drag container will be scanned. It is possible to have several drag containers totaly separated (elements from one container will not be visible to other drag containers). 
 	 * @param {String} [dc] Drag container Id (default id "drag").
 	 * @example
 	 * // init drag container (with default id="drag")
@@ -2781,77 +2781,81 @@ REDIPS.drag = (function () {
 
 
 	/**
-	 * Method scans table(s) content and prepares query string for submitting to the server.
-	 * Input parameter defines table index to scan or if not defined then all tables will be scanned.
-	 * @param {Integer} [tbl] Table index. If not defined then all tables will be scanned.
+	 * Method scans table content and prepares query string or JSON format for submitting to the server.
+	 * Input parameters are id / table reference and optional output format.
+	 * @param {String|HTMLElement} tbl Id or reference of table that will be scanned.
+	 * @param {String} [type] Type defines output format. If set to "json" then output will be JSON format otherwise output will be query string.
 	 * @example
-	 * query string will be in format:
-	 * 'p[]='+id+'_'+t+'_'+r+'_'+c+'&p[]='+id+'_'+t+'_'+r+'_'+c + ...
+	 * Query string:
+	 * 'p[]='+id+'_'+r+'_'+c+'&p[]='+id+'_'+r+'_'+c + ...
+	 * 
+	 * JSON
+	 * [["id",r,c],["id",r,c],...]
+	 * 
 	 * id - element id
-	 * t  - table index
 	 * r  - row index
 	 * c  - cell index
+	 * 
+	 * Query string example:
+	 * p[]=d1_1_0&p[]=d2_1_1&p[]=d3_5_2&p[]=d4_5_3
+	 * 
+	 * JSON example:
+	 * [["d1",1,0],["d2",1,1],["d3",5,2],["d4",5,3]]
 	 * @public
 	 * @function
 	 * @name REDIPS.drag#save_content
 	 */
-	save_content = function (tbl) {
+	save_content = function (tbl, type) {
 		var query = '',		// define query parameter
 			tbl_start,		// table loop starts from tbl_start parameter
 			tbl_end,		// table loop ends on tbl_end parameter
 			tbl_rows,		// number of table rows
 			cells,			// number of cells in the current row
 			tbl_cell,		// reference to the table cell		
-			t, r, c, d;		// variables used in for loops
-		// sort "tables" array to the original order
-		tables.sort(function (a, b) {
-			return a.redips.idx - b.redips.idx;
-		});
-		// if input parameter is undefined, then method will return content from all tables
-		if (tbl === undefined) {
-			tbl_start = 0;
-			tbl_end = tables.length - 1;
+			id, r, c, d,	// variables used in for loops
+			JSONobj = [];	// prepare JSON object
+		// if input parameter is string, then set reference to the table
+		if (typeof(tbl) === 'string') {
+			tbl = document.getElementById(tbl);
 		}
-		// if input parameter is out of range then method will return content from first table
-		else if (tbl < 0 || tbl > tables.length - 1) {
-			tbl_start = tbl_end = 0;
-		}
-		// else return content from specified table
-		else {
-			tbl_start = tbl_end = tbl;
-		}
-		// iterate through tables
-		for (t = tbl_start; t <= tbl_end; t++) {
+		// tbl should be reference to the TABLE object
+		if (tbl !== undefined && typeof(tbl) === 'object' && tbl.nodeName === 'TABLE') {
 			// define number of table rows
-			tbl_rows = tables[t].rows.length;
+			tbl_rows = tbl.rows.length;
 			// iterate through each table row
 			for (r = 0; r < tbl_rows; r++) {
 				// set the number of cells in the current row
-				cells = tables[t].rows[r].cells.length;
+				cells = tbl.rows[r].cells.length;
 				// iterate through each table cell
 				for (c = 0; c < cells; c++) {
 					// set reference to the table cell
-					tbl_cell = tables[t].rows[r].cells[c];
+					tbl_cell = tbl.rows[r].cells[c];
 					// if cells isn't empty (no matter is it allowed or denied table cell) 
 					if (tbl_cell.childNodes.length > 0) {
 						// cell can contain many DIV elements
 						for (d = 0; d < tbl_cell.childNodes.length; d++) {
 							// childNodes should be DIVs, not \n childs
 							if (tbl_cell.childNodes[d].nodeName === 'DIV') { // and yes, it should be uppercase
-								query += 'p[]=' + tbl_cell.childNodes[d].id + '_' + t + '_' + r + '_' + c + '&';
+								// DIV element ID
+								id = tbl_cell.childNodes[d].id;
+								// preparare query string
+								query += 'p[]=' + id + '_' +  r + '_' + c + '&';
+								// push values for DIV element as Array to the Array
+								JSONobj.push([id, r, c]);
 							}
 						}
 					}
 				}
 			}
+			// prepare query string in JSON format (only if array isn't empty)
+			if (type === 'json' && JSONobj.length > 0) {
+				query = JSON.stringify(JSONobj);
+			}
+			else {
+				// cut last '&' from query string
+				query = query.substring(0, query.length - 1);
+			}
 		}
-		// cut last '&' from query string
-		query = query.substring(0, query.length - 1);
-		// sort "tables" array according to redips.sort (tables with higher redips.sort parameter will go to the array top)
-		// otherwise nested tables will not work after saving content
-		tables.sort(function (a, b) {
-			return b.redips.sort - a.redips.sort;
-		});
 		// return prepared parameters (if tables are empty, returned value could be empty too) 
 		return query;
 	};

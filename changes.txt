@@ -1,5 +1,11 @@
 Changes for REDIPS.drag library
 
+4.6.8
+- modified save_content() method
+  * first parameter is id or table reference
+  * second parameter is optional and defines output in JSON format
+  * table index is not contained in output because save_content() scans content for asked table (table is already known)
+
 4.6.7
 - method shift_cells is declared as public
 - fixed bug in case of enable_drag() for newly added DIV element to the table
@@ -11,7 +17,7 @@ Changes for REDIPS.drag library
 
 4.6.5
 - added threshold value (after threshold value is prevailed then events will be fired) - only for cell mode
-- known BUG - IE8 not play nicely with example11 - TODO
+- known BUG - IE8 not playing nicely with example11 - TODO
 
 4.6.4
 - fixed bug for disabled tables inside DIV element

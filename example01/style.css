@@ -100,10 +100,11 @@ div#drag td {
 
 /* "Click" button */
 .button {
+	margin-bottom: 2px;
 	background-color: #6A93D4;
 	color: white; 
 	border-width: 1px;
-	width: 40px;
+	width: 44px;
 	padding: 0px;
 }
 
