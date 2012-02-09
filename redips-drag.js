@@ -2788,17 +2788,17 @@ REDIPS.drag = (function () {
 	 * @example
 	 * Query string:
 	 * 'p[]='+id+'_'+r+'_'+c+'&p[]='+id+'_'+r+'_'+c + ...
-	 * 
-	 * JSON
+	 *  
+	 * JSON:
 	 * [["id",r,c],["id",r,c],...]
-	 * 
+	 *  
 	 * id - element id
 	 * r  - row index
 	 * c  - cell index
-	 * 
+	 *  
 	 * Query string example:
 	 * p[]=d1_1_0&p[]=d2_1_1&p[]=d3_5_2&p[]=d4_5_3
-	 * 
+	 *  
 	 * JSON example:
 	 * [["d1",1,0],["d2",1,1],["d3",5,2],["d4",5,3]]
 	 * @public
