@@ -80,8 +80,8 @@ redips_init = function () {
 
 // save elements and their positions
 save = function () {
-	// scan second table (timetable)
-	var content = REDIPS.drag.save_content(1);
+	// scan timetable content
+	var content = REDIPS.drag.save_content('table2');
 	// and save content
 	window.location.href = 'db_save.php?' + content;
 };

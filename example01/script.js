@@ -7,6 +7,7 @@
 // define redips_init variable
 var redips_init;
 
+
 // redips initialization
 redips_init = function () {
 	// reference to the REDIPS.drag library and message line
@@ -67,40 +68,52 @@ redips_init = function () {
 	};
 };
 
+
 // toggles trash_ask parameter defined at the top
 function toggle_confirm(chk) {
 	REDIPS.drag.trash_ask = chk.checked;
 }
+
 
 // toggles delete_cloned parameter defined at the top
 function toggle_delete_cloned(chk) {
 	REDIPS.drag.delete_cloned = chk.checked;
 }
 
+
 // enables / disables dragging
 function toggle_dragging(chk) {
 	REDIPS.drag.enable_drag(chk.checked);
 }
+
 
 // function sets drop_option parameter defined at the top
 function set_drop_option(radio_button) {
 	REDIPS.drag.drop_option = radio_button.value;
 }
 
+
 // show prepared content for saving
-function save() {
-	// scan first table
-	var content = REDIPS.drag.save_content(0);
+function save(type) {
+	// define table_content variable
+	var table_content;
+	// prepare table content of first table in JSON format or as plain query string (depends on value of "type" variable)
+	table_content = REDIPS.drag.save_content('table1', type);
 	// if content doesn't exist
-	if (content === '') {
+	if (!table_content) {
 		alert('Table is empty!');
 	}
 	// display query string
+	else if (type === 'json') {
+		//window.open('/my/multiple-parameters-json.php?p=' + table_content, 'Mypop', 'width=350,height=260,scrollbars=yes');
+		window.open('multiple-parameters-json.php?p=' + table_content, 'Mypop', 'width=350,height=260,scrollbars=yes');
+	}
 	else {
-		//window.open('/my/multiple-parameters.php?' + content, 'Mypop', 'width=350,height=160,scrollbars=yes');
-		window.open('multiple-parameters.php?' + content, 'Mypop', 'width=350,height=260,scrollbars=yes');
+		//window.open('/my/multiple-parameters.php?' + table_content, 'Mypop', 'width=350,height=160,scrollbars=yes');
+		window.open('multiple-parameters.php?' + table_content, 'Mypop', 'width=350,height=260,scrollbars=yes');
 	}
 }
+
 
 // add onload event listener
 if (window.addEventListener) {
