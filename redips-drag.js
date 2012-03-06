@@ -2785,6 +2785,7 @@ REDIPS.drag = (function () {
 	 * Input parameters are id / table reference and optional output format.
 	 * @param {String|HTMLElement} tbl Id or reference of table that will be scanned.
 	 * @param {String} [type] Type defines output format. If set to "json" then output will be JSON format otherwise output will be query string.
+	 * @return {String} Returns table content as query string or in JSON format.
 	 * @example
 	 * Query string:
 	 * 'p[]='+id+'_'+r+'_'+c+'&p[]='+id+'_'+r+'_'+c + ...
