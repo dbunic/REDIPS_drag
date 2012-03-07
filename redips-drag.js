@@ -2644,6 +2644,7 @@ REDIPS.drag = (function () {
 	 * This method can select tables by class name and mark them as enabled / disabled.
 	 * Instead of class name, it it possible to send table reference for enable / disable.
 	 * By default, all tables are enabled to accept dropped elements.
+	 * @param {Boolean} enable_flag Enable / disable one or more tables.
 	 * @param {String|HTMLElement} el Class name of table(s) to enable/disable or table reference to enable/disable. 
 	 * @example
 	 * // disable tables with class name 'mini'
