@@ -3454,12 +3454,16 @@ REDIPS.drag = (function () {
 	 * Function returns a string in which all of the preceding and trailing white space has been
 	 * removed, and in which all internal sequences of white is replaced with one white space. 
 	 * @param {String} str Input string.
-	 * @return {Integer} Returns normalized string.
+	 * @return {String} Returns normalized string.
 	 * @private
 	 * @memberOf REDIPS.drag#
 	 */
 	normalize = function (str) {
-		return str.replace(/^\s+|\s+$/g, '').replace(/\s{2,}/g, ' ');
+		if (str !== undefined) {
+			str = str.replace(/^\s+|\s+$/g, '').replace(/\s{2,}/g, ' ');
+		}
+		// return normalized string (without preceding and trailing spaces)
+		return str;
 	};
 
 
@@ -3606,7 +3610,8 @@ REDIPS.drag = (function () {
 		 * Reference to source table cell.
 		 * @type HTMLElement
 		 * @see <a href="#previous_cell">previous_cell</a>
-		 * @see <a href="#current_cell">current_cell</a> 
+		 * @see <a href="#current_cell">current_cell</a>
+		 * @see <a href="#target_cell">target_cell</a> 
 		 * @name REDIPS.drag#source_cell
 		 */
 		source_cell : source_cell,
@@ -3614,7 +3619,8 @@ REDIPS.drag = (function () {
 		 * Reference to previous table cell.
 		 * @type HTMLElement
 		 * @see <a href="#source_cell">source_cell</a>
-		 * @see <a href="#current_cell">current_cell</a> 
+		 * @see <a href="#current_cell">current_cell</a>
+		 * @see <a href="#target_cell">target_cell</a> 
 		 * @name REDIPS.drag#previous_cell
 		 */
 		previous_cell : previous_cell,
@@ -3622,7 +3628,8 @@ REDIPS.drag = (function () {
 		 * Reference to current table cell.
 		 * @type HTMLElement
 		 * @see <a href="#source_cell">source_cell</a>
-		 * @see <a href="#previous_cell">previous_cell</a> 
+		 * @see <a href="#previous_cell">previous_cell</a>
+		 * @see <a href="#target_cell">target_cell</a> 
 		 * @name REDIPS.drag#current_cell
 		 */	
 		current_cell : current_cell,
