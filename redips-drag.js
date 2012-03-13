@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 4.6.8
-Feb 8, 2012.
+Version 4.6.9
+Mar 13, 2012.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -30,7 +30,7 @@ var REDIPS = REDIPS || {};
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">Drag and drop table rows</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">Drag and Drop table content</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-content-shift/">JavaScript drag and drop plus content shift</a>
- * @version 4.6.8
+ * @version 4.6.9
  */
 REDIPS.drag = (function () {
 		// methods
@@ -2815,7 +2815,8 @@ REDIPS.drag = (function () {
 			tbl_end,		// table loop ends on tbl_end parameter
 			tbl_rows,		// number of table rows
 			cells,			// number of cells in the current row
-			tbl_cell,		// reference to the table cell		
+			tbl_cell,		// reference to the table cell
+			cn,				// reference to the child node
 			id, r, c, d,	// variables used in for loops
 			JSONobj = [];	// prepare JSON object
 		// if input parameter is string, then set reference to the table
@@ -2838,14 +2839,14 @@ REDIPS.drag = (function () {
 					if (tbl_cell.childNodes.length > 0) {
 						// cell can contain many DIV elements
 						for (d = 0; d < tbl_cell.childNodes.length; d++) {
-							// childNodes should be DIVs, not \n childs
-							if (tbl_cell.childNodes[d].nodeName === 'DIV') { // and yes, it should be uppercase
-								// DIV element ID
-								id = tbl_cell.childNodes[d].id;
-								// preparare query string
-								query += 'p[]=' + id + '_' +  r + '_' + c + '&';
+							// set reference to the child node
+							cn = tbl_cell.childNodes[d];
+							// childNode should be DIV with containing "drag" class name
+							if (cn.nodeName === 'DIV' && cn.className.indexOf('drag') > -1) { // and yes, it should be uppercase
+								// prepare query string
+								query += 'p[]=' + cn.id + '_' +  r + '_' + c + '&';
 								// push values for DIV element as Array to the Array
-								JSONobj.push([id, r, c]);
+								JSONobj.push([cn.id, r, c]);
 							}
 						}
 					}
