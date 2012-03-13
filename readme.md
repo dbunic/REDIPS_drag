@@ -55,6 +55,7 @@ REDIPS.drag is a JavaScript drag and drop library focused on dragging table cont
 A reference documentation with a list of public properties and methods contained in REDIPS.drag library.
 
 * [http://www.redips.net/javascript/redips-drag-documentation/](REDIPS.drag documentation)
+* [http://www.redips.net/javascript/redips-drag-documentation-appendix-a/](REDIPS.drag documentation - Appendix A)
 
 ## Demos
 
