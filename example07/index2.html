@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+	<head>
+		<meta name="author" content="Darko Bunic"/>
+		<meta name="description" content="Drag and drop table content with JavaScript"/>
+		<meta name="viewport" content="width=device-width, user-scalable=no"/><!-- "position: fixed" fix for Android 2.2+ -->
+		<link rel="stylesheet" href="style.css" type="text/css" media="screen"/>
+		<script type="text/javascript" src="../header.js"></script>
+		<script type="text/javascript" src="../redips-drag-min.js"></script>
+		<script type="text/javascript" src="script2.js"></script>
+		<title>Example 7: E F</title>
+	</head>
+	<body>
+		<div id="main_container">
+			<!-- tables inside this DIV could have draggable content -->
+			<div id="drag">
+	
+				<!-- left container -->
+				<div id="left">
+					<table id="table1">
+						<colgroup>
+							<col width="100"/>
+						</colgroup>
+						<tbody>
+							<!-- clone 2 elements + last element -->
+							<tr><td class="dark"><div id="e" class="drag orange clone">E</div></td></tr>
+							<tr><td class="dark"><div id="f" class="drag green clone">F</div></td></tr>
+							<tr><td class="trash">Trash</td></tr>
+						</tbody>
+					</table>
+				</div><!-- left container -->
+				
+				<!-- right container -->
+				<div id="right">
+					<table id="table2">
+						<colgroup>
+							<col width="100"/>
+							<col width="100"/>
+							<col width="100"/>
+							<col width="100"/>
+						</colgroup>
+						<tbody>
+							<!--
+								table cells marked with class name "mark" as special
+								DIV element cannot be placed to this cells except if there is exception
+								see myhandler_cloned how to make exception for cloned "e" elements
+							-->
+							<tr>
+								<td class="mark"></td>
+								<td class="mark"></td>
+								<td class="mark"></td>
+								<td class="upper_right mark"></td>
+							</tr>
+							<tr>
+								<td class="mark"></td>
+								<td class="mark"></td>
+								<td class="mark"></td>
+								<th class="mark"></th>
+							</tr>
+							<tr>
+								<td class="mark"></td>
+								<td class="mark"></td>
+								<td class="mark"></td>
+								<th class="mark"></th>
+							</tr>
+							<tr>
+								<td class="last"></td>
+								<th class="last"></th>
+								<th class="last"></th>
+								<th class="last"></th>
+							</tr>
+							<tr>
+								<td class="lower_left last"></td>
+								<th class="last"></th>
+								<th class="last"></th>
+								<th class="last"></th>
+							</tr>
+						</tbody>
+					</table>
+				</div><!-- right container -->
+			</div><!-- drag container -->
+			<div id="message">
+				E - can be placed everywhere
+				<br/>
+				F - can be placed to the table bottom
+			</div>
+		</div><!-- main container -->
+	</body>
+</html>
