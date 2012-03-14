@@ -143,6 +143,7 @@ REDIPS.drag = (function () {
 		trash_cname = 'trash',			// (string) cell class name where draggable element will be destroyed
 		trash_ask = true,				// (boolean) confirm element deletion
 		trash_ask_row = true,			// (boolean) confirm row deletion
+		save_pname = 'p',				// (string) save content parameter name
 		drop_option = 'multiple',		// (string) drop_option has the following options: multiple, single, switch, switching and overwrite
 		shift_option = 'horizontal1',	// (string) property defines shift modes: horizontal1, horizontal2, vertical1 and vertical2
 		multiple_drop = 'bottom',		// (string) defines position of dropped element in case of 'multiple' drop option
@@ -2805,20 +2806,22 @@ REDIPS.drag = (function () {
 	 *  
 	 * JSON example:
 	 * [["d1",1,0],["d2",1,1],["d3",5,2],["d4",5,3]]
+	 * @see <a href="#save_pname">save_pname</a>
 	 * @public
 	 * @function
 	 * @name REDIPS.drag#save_content
 	 */
 	save_content = function (tbl, type) {
-		var query = '',		// define query parameter
-			tbl_start,		// table loop starts from tbl_start parameter
-			tbl_end,		// table loop ends on tbl_end parameter
-			tbl_rows,		// number of table rows
-			cells,			// number of cells in the current row
-			tbl_cell,		// reference to the table cell
-			cn,				// reference to the child node
-			id, r, c, d,	// variables used in for loops
-			JSONobj = [];	// prepare JSON object
+		var query = '',						// define query parameter
+			tbl_start,						// table loop starts from tbl_start parameter
+			tbl_end,						// table loop ends on tbl_end parameter
+			tbl_rows,						// number of table rows
+			cells,							// number of cells in the current row
+			tbl_cell,						// reference to the table cell
+			cn,								// reference to the child node
+			id, r, c, d,					// variables used in for loops
+			JSONobj = [],					// prepare JSON object
+			pname = REDIPS.drag.save_pname;	// set parameter name (default is 'p')
 		// if input parameter is string, then set reference to the table
 		if (typeof(tbl) === 'string') {
 			tbl = document.getElementById(tbl);
@@ -2844,7 +2847,7 @@ REDIPS.drag = (function () {
 							// childNode should be DIV with containing "drag" class name
 							if (cn.nodeName === 'DIV' && cn.className.indexOf('drag') > -1) { // and yes, it should be uppercase
 								// prepare query string
-								query += 'p[]=' + cn.id + '_' +  r + '_' + c + '&';
+								query += pname + '[]=' + cn.id + '_' +  r + '_' + c + '&';
 								// push values for DIV element as Array to the Array
 								JSONobj.push([cn.id, r, c]);
 							}
@@ -3642,7 +3645,7 @@ REDIPS.drag = (function () {
 		 * @type HTMLElement
 		 * @see <a href="#source_cell">source_cell</a>
 		 * @see <a href="#current_cell">current_cell</a>
-		 * @see <a href="#previous_cell">previous_cell</a>  
+		 * @see <a href="#previous_cell">previous_cell</a>
 		 * @name REDIPS.drag#target_cell
 		 */
 		target_cell : target_cell,
@@ -3758,6 +3761,15 @@ REDIPS.drag = (function () {
 		 * @default true
 		 */
 		trash_ask_row : trash_ask_row,
+		/**
+		 * Save content parameter name. Parameter name should be short because it will be repeated for every DIV element.
+		 * It is irrelevant in case of JSON format.
+		 * @type String
+		 * @see <a href="#save_content">save_content</a>
+		 * @name REDIPS.drag#save_pname
+		 * @default p
+		 */
+		save_pname : save_pname,
 		/**
 		 * Property defines working types of REDIPS.drag library: multiple, single, switch, switching, overwrite and shift.
 		 * @type String

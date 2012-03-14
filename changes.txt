@@ -2,6 +2,7 @@ Changes for REDIPS.drag library
 
 4.6.9
 - fixed bug in save_content() - DIV elements without "drag" class name are skipped - thanks to CG Developer
+- added parameter REDIPS.drag.save_pname to define parameter name in save_content() method
 
 4.6.8
 - modified save_content() method
