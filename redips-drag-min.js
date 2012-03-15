@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 4.6.9
-Mar 13, 2012.
+Version 4.6.10
+Mar 15, 2012.
 */
 "use strict";var REDIPS=REDIPS||{};REDIPS.drag=(function(){var init,init_tables,enable_drag,enable_table,img_onmousemove,handler_onmousedown,handler_ondblclick,table_top,handler_onmouseup,handler_onmousemove,element_drop,element_deleted,cell_changed,handler_onresize,set_trc,set_position,setTdStyle,getTdStyle,box_offset,calculate_cells,getScrollPosition,autoscrollX,autoscrollY,clone_div,copy_properties,clone_limit,elementControl,get_style,find_parent,find_cell,save_content,relocate,empty_cell,shift_cells,move_object,delete_object,animation,get_table_index,get_position,row_opacity,row_empty,row_clone,row_drop,form_elements,normalize,has_childs,obj_margin=null,window_width=0,window_height=0,scroll_width=null,scroll_height=null,edge={page:{x:0,y:0},div:{x:0,y:0},flag:{x:0,y:0}},scroll_object,bgstyle_old,scrollable_container=[],tables=[],sort_idx,moved,cloned,cloned_id=[],currentCell=[],div_drag=null,div_box=null,pointer={x:0,y:0},threshold={x:0,y:0,value:7,flag:false},shift_key=false,clone_class=false,table=null,table_old=null,table_source=null,row=null,row_old=null,row_source=null,cell=null,cell_old=null,cell_source=null,obj=false,obj_old=false,mode='cell',hover={color_td:'#E7AB83',color_tr:'#E7AB83'},bound=25,speed=20,only={div:[],cname:'only',other:'deny'},mark={action:'deny',cname:'mark',exception:[]},border='solid',border_disabled='dotted',opacity_disabled,trash_cname='trash',trash_ask=true,trash_ask_row=true,save_pname='p',drop_option='multiple',shift_option='horizontal1',multiple_drop='bottom',delete_cloned=true,delete_shifted=false,source_cell=null,current_cell=null,previous_cell=null,target_cell=null,animation_pause=20,animation_step=2,animation_shift=false,shift_after=true,an_counter=0,clone_shiftKey=false,clone_shiftKey_row=false,row_empty_color='White';init=function(dc){var self=this,i,imgs,redips_clone;if(dc===undefined){dc='drag';}
 div_drag=document.getElementById(dc);if(!document.getElementById('redips_clone')){redips_clone=document.createElement('div');redips_clone.id='redips_clone';redips_clone.style.width=redips_clone.style.height='1px';div_drag.appendChild(redips_clone);}
@@ -85,7 +85,7 @@ calculate_cells();}
 table_old=row_old=cell_old=null;};element_drop=function(){var drop=REDIPS.drag.myhandler_dropped_before(target_cell);if(drop!==false){if(REDIPS.drag.drop_option==='shift'&&has_childs(target_cell)){shift_cells(source_cell,target_cell);}
 if(REDIPS.drag.multiple_drop==='top'&&target_cell.hasChildNodes()){target_cell.insertBefore(obj,target_cell.firstChild);}
 else{target_cell.appendChild(obj);}
-REDIPS.drag.myhandler_dropped(target_cell);if(cloned){REDIPS.drag.myhandler_cloned_dropped(target_cell);clone_limit();}}
+obj.onmousedown=handler_onmousedown;obj.ontouchstart=handler_onmousedown;obj.ondblclick=handler_ondblclick;REDIPS.drag.myhandler_dropped(target_cell);if(cloned){REDIPS.drag.myhandler_cloned_dropped(target_cell);clone_limit();}}
 else if(cloned){obj.parentNode.removeChild(obj);}};element_deleted=function(){var param;REDIPS.drag.myhandler_deleted();if(cloned){clone_limit();}
 if(REDIPS.drag.drop_option==='shift'&&REDIPS.drag.shift_after){switch(REDIPS.drag.shift_option){case'vertical2':param='lastInColumn';break;case'horizontal2':param='lastInRow';break;default:param='last';}
 shift_cells(source_cell,find_cell(param,source_cell)[2]);}};handler_onmousemove=function(e){var evt=e||window.event,bound=REDIPS.drag.bound,sca,X,Y,deltaX,deltaY,i,scrollPosition;if(evt.touches){X=pointer.x=evt.touches[0].clientX;Y=pointer.y=evt.touches[0].clientY;}

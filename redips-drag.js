@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 4.6.9
-Mar 13, 2012.
+Version 4.6.10
+Mar 15, 2012.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -30,7 +30,7 @@ var REDIPS = REDIPS || {};
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">Drag and drop table rows</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">Drag and Drop table content</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-content-shift/">JavaScript drag and drop plus content shift</a>
- * @version 4.6.9
+ * @version 4.6.10
  */
 REDIPS.drag = (function () {
 		// methods
@@ -1163,16 +1163,13 @@ REDIPS.drag = (function () {
 			}
 			else {
 				target_cell.appendChild(obj);
-
 			}
-			/*
-			 * this is FIX for Safari Mobile
-			 * it seems that Safari Mobile loses registrated events (traditional model) assigned to the DIV element
-			 * other browsers works just fine
+			// this is FIX for Safari Mobile
+			// it seems that Safari Mobile loses registrated events (traditional model) assigned to the DIV element
+			// other browsers works just fine
 			obj.onmousedown = handler_onmousedown;
 			obj.ontouchstart = handler_onmousedown;
 			obj.ondblclick = handler_ondblclick;
-			 */
 			// call myhandler_dropped because clone_limit could call myhandler_clonedend1 or myhandler_clonedend2
 			REDIPS.drag.myhandler_dropped(target_cell);
 			// if object is cloned
