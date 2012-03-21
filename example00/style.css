@@ -43,3 +43,13 @@ div#drag td{
 	border: 2px solid SteelBlue;
 	background-color: white;
 }
+
+/* "Load" button (needed for AJAX version) */
+.button {
+	margin: 10px;
+	background-color: #6A93D4;
+	color: white; 
+	border-width: 1px;
+	width: 44px;
+	padding: 0px;
+}
