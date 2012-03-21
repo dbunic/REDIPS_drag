@@ -3,6 +3,7 @@ Changes for REDIPS.drag library
 4.6.10
 - fixed bug for dropped elements in iPad
   * it seems that Safari Mobile loses registrated events (traditional model) assigned to the DIV element
+  * in element_drop() is added definition of event listener after appendChild/insertBefore (obj.onmousedown = handler_onmousedown; ...)
 
 4.6.9
 - fixed bug in save_content() - DIV elements without "drag" class name are skipped - thanks to CG Developer
