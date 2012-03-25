@@ -48,8 +48,16 @@ redips_init = function () {
 	rd.myhandler_notcloned = function () {
 		msg.innerHTML = 'Not cloned';
 	};
-	rd.myhandler_deleted = function () {
-		msg.innerHTML = 'Deleted';
+	rd.myhandler_deleted = function (cloned) {
+		// if cloned element is directly moved to the trash
+		if (cloned) {
+			// set id of original element (read from redips property)
+			// var id_original = rd.obj.redips.id_original;
+			msg.innerHTML = 'Deleted (c)';
+		}
+		else {
+			msg.innerHTML = 'Deleted';
+		}
 	};
 	rd.myhandler_undeleted = function () {
 		msg.innerHTML = 'Undeleted';

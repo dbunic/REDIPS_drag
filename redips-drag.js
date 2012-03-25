@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 4.6.10
-Mar 15, 2012.
+Version 4.6.11
+Mar 25, 2012.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -30,7 +30,7 @@ var REDIPS = REDIPS || {};
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">Drag and drop table rows</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">Drag and Drop table content</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-content-shift/">JavaScript drag and drop plus content shift</a>
- * @version 4.6.10
+ * @version 4.6.11
  */
 REDIPS.drag = (function () {
 		// methods
@@ -1195,8 +1195,9 @@ REDIPS.drag = (function () {
 	element_deleted = function () {
 		// set param needed to find last cell (for case where REDIPS.drag.shift_after === true)
 		var param;
-		// call myhandler_deleted() method
-		REDIPS.drag.myhandler_deleted();
+		// call myhandler_deleted() method and send cloned flag
+		// inside myhandler_deleted it's possible to know wether cloned element is directly moved to the trash
+		REDIPS.drag.myhandler_deleted(cloned);
 		// if object is cloned, update climit1_X or climit2_X classname
 		if (cloned) {
 			clone_limit();
@@ -2260,6 +2261,8 @@ REDIPS.drag = (function () {
 		cloned_id[div.id] += 1;
 		// copy custom properties to the DIV element and child DIV elements and set onmousedown/ondblclick event handlers
 		copy_properties(div, div_cloned);
+		// add id of original element to the redips property
+		div_cloned.redips.id_original = div.id;
 		// return reference to the cloned DIV element	
 		return (div_cloned);
 	};
@@ -4025,6 +4028,7 @@ REDIPS.drag = (function () {
 		myhandler_notcloned : function () {},
 		/**
 		 * Event handler invoked if element is deleted (dropped to the "trash" table cell).
+		 * @param {Boolean} [cloned] True if cloned element is directly moved to the trash (in one move). If cloned element is dropped to the table and then moved to the trash then "cloned" parameter will be set to false.
 		 * @name REDIPS.drag#myhandler_deleted
 		 * @function
 		 * @event
