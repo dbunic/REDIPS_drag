@@ -1,8 +1,7 @@
 Changes for REDIPS.drag library
 
 4.6.11
-- added boolean parameter "cloned" to the myhandler_deleted event handler
-- id of original DIV element is added to the redips property (it can be read within event handler -> rd.obj.redips.id_original)
+- added boolean parameter "cloned" to the myhandler_deleted event handler (reference of original DIV element is stored in REDIPS.drag.obj_old)
 
 4.6.10
 - fixed bug for dropped elements in iPad

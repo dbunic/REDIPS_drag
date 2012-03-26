@@ -2261,8 +2261,6 @@ REDIPS.drag = (function () {
 		cloned_id[div.id] += 1;
 		// copy custom properties to the DIV element and child DIV elements and set onmousedown/ondblclick event handlers
 		copy_properties(div, div_cloned);
-		// add id of original element to the redips property
-		div_cloned.redips.id_original = div.id;
 		// return reference to the cloned DIV element	
 		return (div_cloned);
 	};
