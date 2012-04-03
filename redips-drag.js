@@ -2845,7 +2845,7 @@ REDIPS.drag = (function () {
 							// childNode should be DIV with containing "drag" class name
 							if (cn.nodeName === 'DIV' && cn.className.indexOf('drag') > -1) { // and yes, it should be uppercase
 								// prepare query string
-								query += pname + '[]=' + cn.id + '_' +  r + '_' + c + '&';
+								query += pname + '[]=' + cn.id + '_' + r + '_' + c + '&';
 								// push values for DIV element as Array to the Array
 								JSONobj.push([cn.id, r, c]);
 							}
