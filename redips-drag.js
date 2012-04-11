@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 4.6.11
-Mar 25, 2012.
+Version 4.6.12
+Apr 11, 2012.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -2904,6 +2904,10 @@ REDIPS.drag = (function () {
 		};
 		// test if "from" cell is equal to "to" cell then do nothing
 		if (from === to) {
+			return;
+		}
+		// "from" and "to" should be element nodes, if not then return from method
+		if (typeof(from) !== 'object' || typeof(to) !== 'object') {
 			return;
 		}
 		// define childnodes length before loop

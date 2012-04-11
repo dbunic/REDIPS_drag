@@ -1,5 +1,8 @@
 Changes for REDIPS.drag library
 
+4.6.12
+- added control inside REDIPS.drag.relocate() method - "from" and "to" input parameters should be element nodes
+
 4.6.11
 - added boolean parameter "cloned" to the myhandler_deleted event handler (reference of original DIV element is stored in REDIPS.drag.obj_old)
 
