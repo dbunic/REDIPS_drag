@@ -37,6 +37,7 @@ body{
 	-moz-border-radius: 4px; /* FF */
 }
 
+
 /* drag container*/
 #drag{
 	margin: auto;
@@ -62,7 +63,6 @@ body{
 		}
 
 
-
 /* tables general */
 div#drag table{
 	background-color: #eee;
@@ -81,6 +81,7 @@ div#drag table{
 		padding: 2px;
 	}
 
+
 /* right tables */
 #right table {
 	float: left;
@@ -96,6 +97,7 @@ div#drag table{
 		display: table;
 	}
 
+
 /* hover div (initially this DIV is hidden on the page top) */
 #hover_div {
 	width: 240px;
@@ -110,18 +112,29 @@ div#drag table{
 }
 
 
+/* instructions below left table */
+.instructions {
+	width: 240px;
+	margin-top: 15px;
+	color: #555;
+	font-size: 11px;
+	text-align: justify;
+}
+
 /* style tooltip content and content in dropped element */
 .content {
 	margin: 5px;
 	text-align: left;
 }
-
 	.content h3 {
 		text-align: center;
 	}
 	.content img {
-		marign: auto;
-		border: 1px solid #ddd;
+		marign: 10px;
+		float: left;
+	}
+	.clear {
+		clear: both;
 	}
 
 

@@ -29,7 +29,6 @@ $rnd_text = substr($lorem_ipsum, 0, strrpos(substr($lorem_ipsum, 0, $len), ' '))
 <div class="content">
 <h3>Question - <?php print($id) ?></h3>
 <img src="flower.png" width="100"/>
-<br/>
-<br/>
 <?php print($rnd_text)?>
+<div class="clear"></div>
 </div>

@@ -58,8 +58,27 @@ body {
 				page-break-before: always;
 			}
 
+
+/* style tooltip content and content in dropped element */
+.content {
+	margin: 5px;
+	text-align: left;
+}
+	.content h3 {
+		text-align: center;
+	}
+	.content img {
+		marign: 10px;
+		float: left;
+	}
+	.clear {
+		clear: both;
+	}
+
+
 /* hide needless title, DIV containers and buttons */
 .title,
+.instructions,
 div#left,
 div#left_container,
 div#redips_clone,
