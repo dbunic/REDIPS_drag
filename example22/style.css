@@ -1,0 +1,162 @@
+/*
+
+Darko Bunic
+http://www.redips.net/
+May, 2011.
+
+*/
+
+body{
+	font-family: arial;
+	margin: 0px; /* for IE6 / IE7 */
+}
+
+/* page title */
+.title{
+	margin: auto;
+	display: table;
+	text-align: center;
+}
+
+/* drag objects (DIV inside table cells) */
+.drag{
+	cursor: move;
+	margin: auto;
+	background-color: white;
+	text-align: center;
+	font-size: 10pt;
+	opacity: 0.7;
+	filter: alpha(opacity=70);
+	/* without width, IE6/7 will not apply filter/opacity to the element ?! */
+	/* IE needs element layout */
+	width: 130px;
+	height: 24px;
+	line-height: 24px;
+	border: 2px solid #BF6A30;
+	/* round corners */
+	border-radius: 8px; /* Opera, Chrome */
+	-moz-border-radius: 8px; /* FF */
+}
+
+/* drag container*/
+#drag{
+	margin: auto;
+	width: 900px;
+	display: table;
+}
+		/* container for the left table */
+		#left_container{
+			width: 260px;
+			float: left;
+			margin-right: 20px;
+			/* needed for IE8 to calculate width of left container */
+			border-bottom: 1px solid white;
+		}
+			#left {
+				width: 460px;
+			}
+		/* container for the right table */
+		#right{
+			/* align div to the right */
+			float: right;
+			background-color: #eee;
+		}
+
+
+/* tables general */
+div#drag table{
+	background-color: #eee;
+	border-collapse: collapse;
+}
+	/* table cells */
+	div#drag td{
+		height: 40px;
+		border: 1px solid white;
+		/* needed for FF3/FF4 because highlighting left table cell was working strange */
+		/* if DIV element was dragged fast then left table cell was properly highlighted */
+		/* otherwise was not ... setting border-left to 0px solved this problem */
+		border-left: 0px;
+		text-align: center;
+		font-size: 10pt;
+		padding: 0px;
+	}
+
+/* right tables */
+#right table {
+	float: left;
+	background-color: #808EA3;
+	width: 400px;
+}
+	.maintd{
+		background-color: #808EA3;
+		height: 400px;
+	}
+
+/* right table form styles */
+.myform {
+  width: 350px;
+  margin: auto;
+  padding: 10px;
+  text-align: left;
+}
+
+/* input elements */
+.myform input.text {
+  padding: 5px;
+  font-size: 1.2em;
+  width: 335px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  border-top: #999 solid 1px;
+  border-left: #CCD9E5 solid 1px;
+  border-right: #CCD9E5 solid 1px;
+  border-bottom: #CCD9E5 solid 1px;
+  background-color: #E8F2FA;
+  margin-bottom: 10px;
+}
+
+/* focus element color */
+.myform input.text:focus {
+  background-color: #fff;
+}
+
+/* form title */
+.myform h1 {
+  line-height: 55px;
+  -webkit-border-top-left-radius: 8px;
+  -webkit-border-top-right-radius: 8px;
+  -moz-border-radius-topleft: 8px;
+  -moz-border-radius-topright: 8px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  background: #ccc;
+  color: #fff;
+  margin-bottom: 10px;
+  padding: 0 22px;
+}
+
+/* button */
+.button {
+	margin-top: 10px;
+	background-color: #6A93D4;
+	color: white; 
+	border-width: 1px;
+	width: 60px;
+	padding: 0px;
+}
+
+/* message displayed after AJAX request is finished */
+#message {
+	padding-left: 10px;
+	color: #6A93D4;
+}
+
+/* instructions below left table */
+.instructions {
+	width: 450px;
+	margin-top: 15px;
+	color: #555;
+	font-size: 11px;
+	text-align: justify;
+}
