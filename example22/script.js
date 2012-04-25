@@ -111,7 +111,7 @@ redips.send_request = function (obj, id) {
 	redips.request.open('GET', redips.ajax_detail + '?id=' + id, true);
 	// the onreadystatechange event is triggered every time the readyState changes
 	redips.request.onreadystatechange = function () {
-		//  request finished and response is ready
+		// request is finished and response is ready
 		if (redips.request.readyState === 4) {
 			if (redips.request.status === 200) {
 				obj.innerHTML = redips.request.responseText;
@@ -154,7 +154,7 @@ redips.save = function (button) {
 		var status,		// status from the AJAX service (it should return string "OK")
 			message,	// displayed message to the user
 			delay;		// delay (in milliseconds) after displayed message will be deleted
-		//  request finished and response is ready
+		// request is finished and response is ready
 		if (redips.request.readyState === 4) {
 			// response is OK
 			if (redips.request.status === 200) {
@@ -188,7 +188,7 @@ redips.save = function (button) {
 };
 
 
-// method clears diplayed message
+// method clears displayed message
 redips.clear_message = function () {
 	var msg = document.getElementById('message');
 	// if message field exist then clear message
