@@ -1,5 +1,8 @@
 Changes for REDIPS.drag library
 
+4.6.13
+- myhandler_deleted call is moved to the end inside element_deleted method
+
 4.6.12
 - added control inside REDIPS.drag.relocate() method - "from" and "to" input parameters should be element nodes
 
