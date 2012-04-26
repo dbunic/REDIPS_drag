@@ -3913,6 +3913,7 @@ REDIPS.drag = (function () {
 		getScrollPosition : getScrollPosition,
 		get_style : get_style,
 		find_parent : find_parent,
+		find_cell : find_cell,
 		/* Element Event Handlers */
 		/**
 		 * Event handler invoked if a mouse button is pressed down while the mouse pointer is over DIV element.
