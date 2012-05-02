@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 4.6.13
-Apr 25, 2012.
+Version 4.6.14
+May 2, 2012.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -30,7 +30,7 @@ var REDIPS = REDIPS || {};
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">Drag and drop table rows</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">Drag and Drop table content</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-content-shift/">JavaScript drag and drop plus content shift</a>
- * @version 4.6.13
+ * @version 4.6.14
  */
 REDIPS.drag = (function () {
 		// methods
@@ -129,6 +129,7 @@ REDIPS.drag = (function () {
 		// border_td and border_tr are initially undefined
 		hover = {color_td: '#E7AB83',
 				color_tr: '#E7AB83'},
+		autoscroll = true,			// (boolean) enable/disable autoscroll function (default is true)
 		bound = 25,					// (integer) bound width for autoscroll
 		speed = 20,					// (integer) scroll speed in milliseconds
 		only = {div: [],			// (array) DIVid -> classname, defined DIV elements can be placed only to the marked table cell with class name 'only'
@@ -1353,115 +1354,118 @@ REDIPS.drag = (function () {
 			// if new location is inside table and new location is different then old location
 			cell_changed();
 		}
-		// calculate horizontally crossed page bound
-		edge.page.x = bound - (window_width / 2  > X ? X - obj_margin[3] : window_width - X - obj_margin[1]);
-		// if element crosses page bound then set scroll direction and call auto scroll 
-		if (edge.page.x > 0) {
-			// in case when object is only half visible
-			if (edge.page.x > bound) {
-				edge.page.x = bound;
-			}
-			// get horizontal window scroll position
-			scrollPosition = getScrollPosition()[0];
-			// set scroll direction
-			edge.page.x *= X < window_width / 2 ? -1 : 1;
-			// if page bound is crossed and this two cases aren't met:
-			// 1) scrollbar is on the left and user wants to scroll left
-			// 2) scrollbar is on the right and user wants to scroll right
-			if (!((edge.page.x < 0 && scrollPosition <= 0) || (edge.page.x > 0 && scrollPosition >= (scroll_width - window_width)))) {
-				// fire autoscroll function (this should happen only once)
-				if (edge.flag.x++ === 0) {
-					// reset onscroll event
-					REDIPS.event.remove(window, 'scroll', calculate_cells);
-					// call window autoscroll 
-					autoscrollX(window);
+		// if autoscroll option is enabled (by default it is but it can be turned off)
+		if (REDIPS.drag.autoscroll) {
+			// calculate horizontally crossed page bound
+			edge.page.x = bound - (window_width / 2  > X ? X - obj_margin[3] : window_width - X - obj_margin[1]);
+			// if element crosses page bound then set scroll direction and call auto scroll 
+			if (edge.page.x > 0) {
+				// in case when object is only half visible
+				if (edge.page.x > bound) {
+					edge.page.x = bound;
 				}
-			}
-		}
-		else {
-			edge.page.x = 0;
-		}
-		// calculate vertically crossed page bound
-		edge.page.y = bound - (window_height / 2 > Y ? Y - obj_margin[0] : window_height - Y - obj_margin[2]);
-		// if element crosses page bound
-		if (edge.page.y > 0) {
-			// set max crossed bound
-			if (edge.page.y > bound) {
-				edge.page.y = bound;
-			}
-			// get vertical window scroll position
-			scrollPosition = getScrollPosition()[1];
-			// set scroll direction
-			edge.page.y *= Y < window_height / 2 ? -1 : 1;
-			// if page bound is crossed and this two cases aren't met:
-			// 1) scrollbar is on the page top and user wants to scroll up
-			// 2) scrollbar is on the page bottom and user wants to scroll down
-			if (!((edge.page.y < 0 && scrollPosition <= 0) || (edge.page.y > 0 && scrollPosition >= (scroll_height - window_height)))) {
-				// fire autoscroll (this should happen only once)
-				if (edge.flag.y++ === 0) {
-					// reset onscroll event
-					REDIPS.event.remove(window, 'scroll', calculate_cells);
-					// call window autoscroll
-					autoscrollY(window);
-				}
-			}
-		}
-		else {
-			edge.page.y = 0;
-		}
-		// test if dragged object is in scrollable container
-		// this code will be executed only if scrollable container (DIV with overflow other than 'visible) exists on page
-		for (i = 0; i < scrollable_container.length; i++) {
-			// set current scrollable container area
-			sca = scrollable_container[i];
-			// if dragged object is inside scrollable container and scrollable container has enabled autoscroll option
-			if (sca.autoscroll && X < sca.offset[1] && X > sca.offset[3] && Y < sca.offset[2] && Y > sca.offset[0]) {
-				// calculate horizontally crossed page bound
-				edge.div.x = bound - (sca.midstX  > X ? X - obj_margin[3] - sca.offset[3] : sca.offset[1] - X - obj_margin[1]);
-				// if element crosses page bound then set scroll direction and call auto scroll 
-				if (edge.div.x > 0) {
-					// in case when object is only half visible (page is scrolled on that object)
-					if (edge.div.x > bound) {
-						edge.div.x = bound;
-					}
-					// set scroll direction: negative - left, positive - right
-					edge.div.x *= X < sca.midstX ? -1 : 1; 
-					// remove onscroll event handler and call autoscrollY function only once
+				// get horizontal window scroll position
+				scrollPosition = getScrollPosition()[0];
+				// set scroll direction
+				edge.page.x *= X < window_width / 2 ? -1 : 1;
+				// if page bound is crossed and this two cases aren't met:
+				// 1) scrollbar is on the left and user wants to scroll left
+				// 2) scrollbar is on the right and user wants to scroll right
+				if (!((edge.page.x < 0 && scrollPosition <= 0) || (edge.page.x > 0 && scrollPosition >= (scroll_width - window_width)))) {
+					// fire autoscroll function (this should happen only once)
 					if (edge.flag.x++ === 0) {
-						REDIPS.event.remove(sca.div, 'scroll', calculate_cells);
-						autoscrollX(sca.div);
+						// reset onscroll event
+						REDIPS.event.remove(window, 'scroll', calculate_cells);
+						// call window autoscroll 
+						autoscrollX(window);
 					}
 				}
-				else {
-					edge.div.x = 0;
-				}
-				// calculate vertically crossed page bound
-				edge.div.y = bound - (sca.midstY  > Y ? Y - obj_margin[0] - sca.offset[0] : sca.offset[2] - Y - obj_margin[2]);
-				// if element crosses page bound then set scroll direction and call auto scroll
-				if (edge.div.y > 0) {
-					// in case when object is only half visible (page is scrolled on that object)
-					if (edge.div.y > bound) {
-						edge.div.y = bound;
-					}
-					// set scroll direction: negative - up, positive - down
-					edge.div.y *= Y < sca.midstY ? -1 : 1;
-					// remove onscroll event handler and call autoscrollY function only once
-					if (edge.flag.y++ === 0) {
-						REDIPS.event.remove(sca.div, 'scroll', calculate_cells);
-						autoscrollY(sca.div);
-					}
-				}
-				else {
-					edge.div.y = 0;
-				}
-				// break the loop (checking for other scrollable containers is not needed) 
-				break;
 			}
-			// otherwise (I mean dragged object isn't inside any of scrollable container) reset crossed edge
 			else {
-				edge.div.x = edge.div.y = 0;
-			} 
-		}
+				edge.page.x = 0;
+			}
+			// calculate vertically crossed page bound
+			edge.page.y = bound - (window_height / 2 > Y ? Y - obj_margin[0] : window_height - Y - obj_margin[2]);
+			// if element crosses page bound
+			if (edge.page.y > 0) {
+				// set max crossed bound
+				if (edge.page.y > bound) {
+					edge.page.y = bound;
+				}
+				// get vertical window scroll position
+				scrollPosition = getScrollPosition()[1];
+				// set scroll direction
+				edge.page.y *= Y < window_height / 2 ? -1 : 1;
+				// if page bound is crossed and this two cases aren't met:
+				// 1) scrollbar is on the page top and user wants to scroll up
+				// 2) scrollbar is on the page bottom and user wants to scroll down
+				if (!((edge.page.y < 0 && scrollPosition <= 0) || (edge.page.y > 0 && scrollPosition >= (scroll_height - window_height)))) {
+					// fire autoscroll (this should happen only once)
+					if (edge.flag.y++ === 0) {
+						// reset onscroll event
+						REDIPS.event.remove(window, 'scroll', calculate_cells);
+						// call window autoscroll
+						autoscrollY(window);
+					}
+				}
+			}
+			else {
+				edge.page.y = 0;
+			}
+			// test if dragged object is in scrollable container
+			// this code will be executed only if scrollable container (DIV with overflow other than 'visible) exists on page
+			for (i = 0; i < scrollable_container.length; i++) {
+				// set current scrollable container area
+				sca = scrollable_container[i];
+				// if dragged object is inside scrollable container and scrollable container has enabled autoscroll option
+				if (sca.autoscroll && X < sca.offset[1] && X > sca.offset[3] && Y < sca.offset[2] && Y > sca.offset[0]) {
+					// calculate horizontally crossed page bound
+					edge.div.x = bound - (sca.midstX  > X ? X - obj_margin[3] - sca.offset[3] : sca.offset[1] - X - obj_margin[1]);
+					// if element crosses page bound then set scroll direction and call auto scroll 
+					if (edge.div.x > 0) {
+						// in case when object is only half visible (page is scrolled on that object)
+						if (edge.div.x > bound) {
+							edge.div.x = bound;
+						}
+						// set scroll direction: negative - left, positive - right
+						edge.div.x *= X < sca.midstX ? -1 : 1; 
+						// remove onscroll event handler and call autoscrollY function only once
+						if (edge.flag.x++ === 0) {
+							REDIPS.event.remove(sca.div, 'scroll', calculate_cells);
+							autoscrollX(sca.div);
+						}
+					}
+					else {
+						edge.div.x = 0;
+					}
+					// calculate vertically crossed page bound
+					edge.div.y = bound - (sca.midstY  > Y ? Y - obj_margin[0] - sca.offset[0] : sca.offset[2] - Y - obj_margin[2]);
+					// if element crosses page bound then set scroll direction and call auto scroll
+					if (edge.div.y > 0) {
+						// in case when object is only half visible (page is scrolled on that object)
+						if (edge.div.y > bound) {
+							edge.div.y = bound;
+						}
+						// set scroll direction: negative - up, positive - down
+						edge.div.y *= Y < sca.midstY ? -1 : 1;
+						// remove onscroll event handler and call autoscrollY function only once
+						if (edge.flag.y++ === 0) {
+							REDIPS.event.remove(sca.div, 'scroll', calculate_cells);
+							autoscrollY(sca.div);
+						}
+					}
+					else {
+						edge.div.y = 0;
+					}
+					// break the loop (checking for other scrollable containers is not needed) 
+					break;
+				}
+				// otherwise (I mean dragged object isn't inside any of scrollable container) reset crossed edge
+				else {
+					edge.div.x = edge.div.y = 0;
+				} 
+			}
+		} // if autoscroll is enabled
 		// stop all propagation of the event in the bubbling phase.
 		// (save system resources by turning off event bubbling / propagation)
 		evt.cancelBubble = true;
@@ -2564,7 +2568,7 @@ REDIPS.drag = (function () {
 				// add enabled property to the DIV element (true or false)
 				divs[i].redips.enabled = enabled;
 			}
-			// attach onscroll event to the DIV element in init phase only if DIV element has overwflow other than default value 'visible'
+			// attach onscroll event to the DIV element in init phase only if DIV element has overflow other than default value 'visible'
 			// and that means scrollable DIV container
 			else if (enable_flag === 'init') {
 				// ask for overflow style
@@ -3670,6 +3674,13 @@ REDIPS.drag = (function () {
 		 * REDIPS.drag.hover.border_td = '2px solid red';
 		 */
 		hover : hover,
+		/**
+		 * Enable / disable autoscroll option. By default autoscroll is enabled but it can be usefull in some cases to completely turn off autoscroll (if application doesn't need autoscrolling page nor autoscrolling DIV container). Turning off autoscroll will speed up application because extra calculations will be skipped.
+		 * @type Boolean
+		 * @name REDIPS.drag#autoscroll
+		 * @default true
+		 */
+		autoscroll: autoscroll,
 		/**
 		 * Bound size for triggering page autoscroll or autoscroll of scrollable DIV container.
 		 * @type Integer
