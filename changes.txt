@@ -8,6 +8,7 @@ Changes for REDIPS.drag library
 4.6.14
 - added public property REDIPS.drag.autoscroll with default value "true"
   If set to "false" then autoscroll option will be completely turned off for page and any DIV container with CSS style overflow set to anything but 'visible'
+- added third optional "skip" parameter to the find_parent() method
 
 4.6.13
 - myhandler_deleted call is moved to the end inside element_deleted method
