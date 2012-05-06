@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 4.6.14
-May 2, 2012.
+Version 4.6.15
+May 6, 2012.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -30,7 +30,7 @@ var REDIPS = REDIPS || {};
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">Drag and drop table rows</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">Drag and Drop table content</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-content-shift/">JavaScript drag and drop plus content shift</a>
- * @version 4.6.14
+ * @version 4.6.15
  */
 REDIPS.drag = (function () {
 		// methods
@@ -141,6 +141,7 @@ REDIPS.drag = (function () {
 		border = 'solid',				// (string) border style for enabled elements
 		border_disabled = 'dotted',		// (string) border style for disabled elements
 		opacity_disabled,				// (integer) set opacity for disabled elements
+		table_sort = true,				// (boolean) sort tables on DIV element click
 		trash_cname = 'trash',			// (string) cell class name where draggable element will be destroyed
 		trash_ask = true,				// (boolean) confirm element deletion
 		trash_ask_row = true,			// (boolean) confirm row deletion
@@ -422,9 +423,11 @@ REDIPS.drag = (function () {
 		REDIPS.drag.obj = obj = this;
 		// set true or false if clicked element contains "clone" class name (needed for clone element and clone table row)
 		clone_class = obj.className.indexOf('clone') > -1 ? true : false;
-		// set current table group in "tables" array to the array top
-		// table_top() should go before definition of "mode" property 
-		table_top(obj);
+		// if table_sort is set to true (this is default) then set current table group in "tables" array to the array top
+		// table_top() should go before definition of "mode" property
+		if (REDIPS.drag.table_sort) {
+			table_top(obj);
+		}
 		// if clicked element doesn't belong to the current container then environment should be changed
 		if (div_drag !== obj.redips.container) {
 			div_drag = obj.redips.container;
@@ -3907,6 +3910,16 @@ REDIPS.drag = (function () {
 		 * @default White
 		 */
 		row_empty_color : row_empty_color,
+		/**
+		 * Table sort is feature where tables inside drop container are sorted on each element click.
+		 * Clicked DIV element defines table that should be placed on the array top.
+		 * Tables order is important for highlighting current cell in case of nested tables.
+		 * But sometimes this feature should be turned off when one table overlays the other using "position" style relative, fixed or absolute.
+		 * @type Boolean
+		 * @name REDIPS.drag#table_sort
+		 * @default true
+		 */
+		table_sort : table_sort,
 		/* public methods (documented in main code) */
 		init : init,
 		enable_drag : enable_drag,
