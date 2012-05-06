@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+	<head>
+		<meta name="author" content="Darko Bunic"/>
+		<meta name="description" content="Drag and drop table content with JavaScript"/>
+		<meta name="viewport" content="width=device-width, user-scalable=no"/><!-- "position: fixed" fix for Android 2.2+ -->
+		<link rel="stylesheet" href="style.css" type="text/css" media="screen"/>
+		<script type="text/javascript" src="../header.js"></script>
+		<script type="text/javascript" src="../redips-drag-min.js"></script>
+		<script type="text/javascript" src="script.js"></script>
+		<title>Example 23: Shopping cart</title>
+	</head>
+	<body>
+		
+		<!-- tables inside this DIV could have draggable content -->
+		<div id="drag">
+			<!-- left container -->
+			<div id="left_container">
+				<!-- this block will become sticky (with a little JavaScript help)-->
+				<div id="left">
+					<table id="table1">
+						<colgroup>
+							<col width="150"/>
+							<col width="300"/>
+						</colgroup>
+						<!-- items should have code length = 3 -->
+						<tr>
+							<td><div id="i00" class="drag clone">Item00</div></td>
+							<td class="mark desc">Description 0</td>
+						</tr>
+						<tr>
+							<td><div id="i01" class="drag clone">Item01</div></td>
+							<td class="mark desc">Description 1</td>
+						</tr>
+						<tr>
+							<td><div id="i02" class="drag clone">Item02</div></td>
+							<td class="mark desc">Description 2</td>
+						</tr>
+						<tr>
+							<td><div id="i03" class="drag clone">Item03</div></td>
+							<td class="mark desc">Description 3</td>
+						</tr>
+						<tr>
+							<td><div id="i04" class="drag clone">Item04</div></td>
+							<td class="mark desc">Description 4</td>
+						</tr>
+						<tr>
+							<td><div id="i05" class="drag clone">Item05</div></td>
+							<td class="mark desc">Description 5</td>
+						</tr>
+						<tr>
+							<td><div id="i06" class="drag clone">Item06</div></td>
+							<td class="mark desc">Description 6</td>
+						</tr>
+						<tr>
+							<td><div id="i07" class="drag clone">Item07</div></td>
+							<td class="mark desc">Description 7</td>
+						</tr>
+					</table>
+					<div id="message"></div>
+				</div>
+			</div><!-- left container -->
+			
+			<!-- right container -->
+			<div id="right">
+				<table>
+					<colgroup>
+						<col width="300"/>
+					</colgroup>
+					<tr class="maintd">
+						<td class="trash">Drop here</td>
+					</tr>
+				</table>
+				<div style="clear:both"/>
+				<!-- list of dropeed elements -->
+				<form id="myform">
+					<ol id="drop_list">
+					</ol>
+					<input id="save_button" type="button" value="Save" class="button" onclick="redips.save()" title="Save form"/>
+				</form>
+			</div>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,121 @@
+/*
+
+Darko Bunic
+http://www.redips.net/
+May, 2012.
+
+*/
+
+body {
+	font-family: arial;
+	margin: 0px;
+}
+
+/* drag objects (DIV inside table cells) */
+.drag {
+	cursor: move;
+	margin: auto;
+	background-color: white;
+	text-align: center;
+	font-size: 10pt;
+	opacity: 0.7;
+	filter: alpha(opacity=70);
+	width: 125px;
+	height: 24px;
+	line-height: 24px;
+	border: 2px solid #BF6A30;
+	/* round corners */
+	border-radius: 8px; /* Opera, Chrome */
+	-moz-border-radius: 8px; /* FF */
+}
+
+/* drag container*/
+#drag {
+	margin: auto;
+	width: 800px;
+	display: table;
+}
+		/* container for the left table */
+		#left_container {
+			width: 260px;
+			float: left;
+			margin-right: 20px;
+			/* needed for IE8 to calculate width of left container */
+			border-bottom: 1px solid white;
+		}
+			#left {
+				width: 460px;
+			}
+		/* container for the right table */
+		#right {
+			/* align div to the right */
+			float: right;
+			background-color: #eee;
+		}
+
+/* tables general */
+div#drag table {
+	background-color: #eee;
+	border-collapse: collapse;
+}
+	/* table cells */
+	div#drag td {
+		height: 40px;
+		border: 1px solid white;
+		/* needed for FF3/FF4 because highlighting left table cell was working strange */
+		/* if DIV element was dragged fast then left table cell was properly highlighted */
+		/* otherwise was not ... setting border-left to 0px solved this problem */
+		border-left: 0px;
+		text-align: center;
+		font-size: 10pt;
+		padding: 0px;
+	}
+
+/* right table */
+#right table {
+	float: left;
+	background-color: #808EA3;
+	width: 300px;
+}
+	.maintd {
+		background-color: #808EA3;
+		height: 300px;
+		color: #eee;
+	}
+
+/* OL element beneath right table */
+#drop_list {
+	padding-top: 13px;
+}
+
+/* button */
+.button {
+	margin: 0 0 10px 10px;
+	background-color: #6A93D4;
+	color: white; 
+	border-width: 1px;
+	width: 60px;
+	padding: 0px;
+	/* button is initially hidden */
+	display: none;
+}
+
+/* delete link before item name (span element) */
+.deleteItem {
+	color: #555;
+	padding-right: 5px;
+	font-size: 11px;
+	cursor: pointer;
+}
+
+/* message beneath left table */
+#message {
+	padding: 10px;
+	color: #6A93D4;
+}
+
+/* description (right column in left table) */
+.desc {
+	padding-left: 10px !important;
+	text-align: left !important;
+}
