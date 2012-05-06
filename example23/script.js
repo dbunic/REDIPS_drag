@@ -155,7 +155,7 @@ redips.addItem = function (obj) {
 	var li  = document.createElement('li'),
 		input = document.createElement('input'),
 		span = document.createElement('span'),
-		text = obj.innerText,
+		text = obj.innerText || obj.textContent,
 		txtLi = document.createTextNode(text),
 		txtSpan = document.createTextNode(redips.delete_text);
 	// set properties for hidden input element: type, name and value (substring is needed because cloned element contains sufix "c0" like i01c0)
@@ -188,12 +188,14 @@ redips.deleteItem = function (e) {
 		span = evt.srcElement;
 	}
 	else {
-		span = evt.target.nodeName;
+		span = evt.target;
 	}
 	// set reference for parent LI element
 	li = REDIPS.drag.find_parent('LI', span);
-	// define item text
-	text = li.innerText.substring(redips.delete_text.length);
+	// define item text (cross browser - Firefox uses the W3C-compliant textContent property)
+	text = li.innerText || li.textContent;
+	// cut out "[delete]" string
+	text = text.substring(redips.delete_text.length);
 	// delete item from the list
 	li.parentNode.removeChild(li);
 	// display message
