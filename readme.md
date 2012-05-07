@@ -54,17 +54,17 @@ REDIPS.drag is a JavaScript drag and drop library focused on dragging table cont
 
 A reference documentation with a list of public properties and methods contained in REDIPS.drag library.
 
-* [http://www.redips.net/javascript/redips-drag-documentation/](REDIPS.drag documentation)
-* [http://www.redips.net/javascript/redips-drag-documentation-appendix-a/](REDIPS.drag documentation - Appendix A)
+* [REDIPS.drag documentation](http://www.redips.net/javascript/redips-drag-documentation/)
+* [REDIPS.drag documentation - Appendix A](http://www.redips.net/javascript/redips-drag-documentation-appendix-a/)
 
 ## Demos
 
 Live demo shows REDIPS.drag library in action: 
 
-* [http://www.redips.net/javascript/drag-and-drop-table-content-animation/](Drag and drop table content plus animation)
-* [http://www.redips.net/javascript/drag-and-drop-content-shift/](JavaScript drag and drop plus content shift)
-* [http://www.redips.net/javascript/drag-and-drop-table-content/](Drag and drop table rows)
-* [http://www.redips.net/javascript/drag-and-drop-table-row/](Drag and Drop table content)
+* [Drag and drop table content plus animation](http://www.redips.net/javascript/drag-and-drop-table-content-animation/)
+* [JavaScript drag and drop plus content shift](http://www.redips.net/javascript/drag-and-drop-content-shift/)
+* [Drag and drop table rows](http://www.redips.net/javascript/drag-and-drop-table-content/)
+* [Drag and Drop table content](http://www.redips.net/javascript/drag-and-drop-table-row/)
 
 ## YouTube
 
