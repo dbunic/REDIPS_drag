@@ -1,5 +1,8 @@
 Changes for REDIPS.drag library
 
+4.6.16
+- fixed relocate() method - discarded "REDIPS.drag.obj !== from.childNodes[i]" condition from element filter
+
 4.6.15
 - added public property REDIPS.drag.table_sort with default value "true"
   Table sort is feature where tables inside drop container are sorted on each element click. Sometimes this feature should be turned off when one table overlays the other using "position" style relative, fixed or absolute.

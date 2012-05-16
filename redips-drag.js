@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 4.6.15
-May 6, 2012.
+Version 4.6.16
+May 16, 2012.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -30,7 +30,7 @@ var REDIPS = REDIPS || {};
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">Drag and drop table rows</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">Drag and Drop table content</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-content-shift/">JavaScript drag and drop plus content shift</a>
- * @version 4.6.15
+ * @version 4.6.16
  */
 REDIPS.drag = (function () {
 		// methods
@@ -2943,8 +2943,8 @@ REDIPS.drag = (function () {
 			}
 			// loop through all child nodes in table cell
 			for (i = 0; i < cn; i++) {
-				// relocate (with animation) only DIV elements (exclude relocation for currently dragged element)
-				if (from.childNodes[i].nodeType === 1 && from.childNodes[i].nodeName === 'DIV' && REDIPS.drag.obj !== from.childNodes[i]) {
+				// relocate (with animation) only DIV elements
+				if (from.childNodes[i].nodeType === 1 && from.childNodes[i].nodeName === 'DIV') {
 					// increase animated counter (counter is initially set to 0)
 					an_counter++;
 					// move DIV element to the target cell
@@ -2957,8 +2957,8 @@ REDIPS.drag = (function () {
 			// loop through all child nodes in table cell
 			// 'j', not 'i' because NodeList objects in the DOM are live
 			for (i = 0, j = 0; i < cn; i++) {
-				// relocate only DIV elements (exclude relocation for currently dragged element)
-				if (from.childNodes[j].nodeType === 1 && from.childNodes[j].nodeName === 'DIV' && REDIPS.drag.obj !== from.childNodes[j]) {
+				// relocate only DIV elements
+				if (from.childNodes[j].nodeType === 1 && from.childNodes[j].nodeName === 'DIV') {
 					to.appendChild(from.childNodes[j]);
 				}
 				// skip text nodes, attribute nodes ...
@@ -3496,9 +3496,10 @@ REDIPS.drag = (function () {
 
 
 	/**
-	 * Function returns "true" if input element contains child nodes with nodeType === 1
+	 * Method returns "true" if input element contains child nodes with nodeType === 1.
+	 * Other node types (like text node) are ignored.
 	 * @param {HTMLElement} el Input element.
-	 * @return {Boolean} Returns normalized string.
+	 * @return {Boolean} Returns true or false.
 	 * @private
 	 * @memberOf REDIPS.drag#
 	 */
