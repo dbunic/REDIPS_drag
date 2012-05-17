@@ -3,7 +3,7 @@ Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
 Version 4.6.16
-May 16, 2012.
+May 17, 2012.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -562,7 +562,7 @@ REDIPS.drag = (function () {
 			tmp,	// temporary storage (needed for exchanging array members)
 			group;	// tables group
 		// find table for clicked DIV element
-		e = find_parent('TABLE', obj.parentNode);
+		e = find_parent('TABLE', obj);
 		// set tables group
 		group = e.redips.nestedGroup;
 		// set highest "redips.sort" parameter to the current table group
@@ -2721,6 +2721,8 @@ REDIPS.drag = (function () {
 	 * @name REDIPS.drag#find_parent
 	 */
 	find_parent = function (tag_name, el, skip) {
+		// move "el" one level up (to prevent finding node itself)
+		el = el.parentNode;
 		// if skip is not defined then set it to 0
 		if (skip === undefined) {
 			skip = 0;
@@ -2737,7 +2739,6 @@ REDIPS.drag = (function () {
 	    // return found element
 	    return el;
 	};
-
 
 
 	/**
@@ -3441,14 +3442,16 @@ REDIPS.drag = (function () {
 				el = ip;
 			}
 			// find parent TD element (because "ip" could be the child element of table cell - DIV drag)
-			el = find_parent('TD', el);
+			if (el.nodeName !== 'TD') {
+				el = find_parent('TD', el);
+			}
 			// node should be table cell
 			if (el && el.nodeName === 'TD') {
 				// define cellIndex and rowIndex 
 				ci = el.cellIndex;
 				ri = el.parentNode.rowIndex;
 				// find table
-				tbl = find_parent('TABLE', el.parentNode);
+				tbl = find_parent('TABLE', el);
 				// define table index
 				ti = tbl.redips.idx;
 				// prepare array with tableIndex, rowIndex and cellIndex (3 elements)

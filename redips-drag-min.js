@@ -3,7 +3,7 @@ Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
 Version 4.6.16
-May 16, 2012.
+May 17, 2012.
 */
 "use strict";var REDIPS=REDIPS||{};REDIPS.drag=(function(){var init,init_tables,enable_drag,enable_table,img_onmousemove,handler_onmousedown,handler_ondblclick,table_top,handler_onmouseup,handler_onmousemove,element_drop,element_deleted,cell_changed,handler_onresize,set_trc,set_position,setTdStyle,getTdStyle,box_offset,calculate_cells,getScrollPosition,autoscrollX,autoscrollY,clone_div,copy_properties,clone_limit,elementControl,get_style,find_parent,find_cell,save_content,relocate,empty_cell,shift_cells,move_object,delete_object,animation,get_table_index,get_position,row_opacity,row_empty,row_clone,row_drop,form_elements,normalize,has_childs,obj_margin=null,window_width=0,window_height=0,scroll_width=null,scroll_height=null,edge={page:{x:0,y:0},div:{x:0,y:0},flag:{x:0,y:0}},scroll_object,bgstyle_old,scrollable_container=[],tables=[],sort_idx,moved,cloned,cloned_id=[],currentCell=[],div_drag=null,div_box=null,pointer={x:0,y:0},threshold={x:0,y:0,value:7,flag:false},shift_key=false,clone_class=false,table=null,table_old=null,table_source=null,row=null,row_old=null,row_source=null,cell=null,cell_old=null,cell_source=null,obj=false,obj_old=false,mode='cell',hover={color_td:'#E7AB83',color_tr:'#E7AB83'},autoscroll=true,bound=25,speed=20,only={div:[],cname:'only',other:'deny'},mark={action:'deny',cname:'mark',exception:[]},border='solid',border_disabled='dotted',opacity_disabled,table_sort=true,trash_cname='trash',trash_ask=true,trash_ask_row=true,save_pname='p',drop_option='multiple',shift_option='horizontal1',multiple_drop='bottom',delete_cloned=true,delete_shifted=false,source_cell=null,current_cell=null,previous_cell=null,target_cell=null,animation_pause=20,animation_step=2,animation_shift=false,shift_after=true,an_counter=0,clone_shiftKey=false,clone_shiftKey_row=false,row_empty_color='White';init=function(dc){var self=this,i,imgs,redips_clone;if(dc===undefined){dc='drag';}
 div_drag=document.getElementById(dc);if(!document.getElementById('redips_clone')){redips_clone=document.createElement('div');redips_clone.id='redips_clone';redips_clone.style.width=redips_clone.style.height='1px';div_drag.appendChild(redips_clone);}
@@ -37,7 +37,7 @@ moved=cloned=false;REDIPS.event.add(document,'mousemove',handler_onmousemove);RE
 if(table!==null&&row!==null&&cell!==null){bgstyle_old=getTdStyle(table,row,cell);}
 position=get_style(tables[table_source],'position');if(position!=='fixed'){position=get_style(tables[table_source].parentNode,'position');}
 offset=box_offset(obj,position);obj_margin=[Y-offset[0],offset[1]-X,offset[2]-Y,X-offset[3]];div_drag.onselectstart=function(e){evt=e||window.event;if(!elementControl(evt)){if(evt.shiftKey){document.selection.clear();}
-return false;}};return false;};handler_ondblclick=function(e){REDIPS.drag.myhandler_dblclicked();};table_top=function(obj){var e,i,tmp,group;e=find_parent('TABLE',obj.parentNode);group=e.redips.nestedGroup;for(i=0;i<tables.length;i++){if(tables[i].redips.nestedGroup===group){tables[i].redips.sort=sort_idx*100+tables[i].redips.nestedLevel;}}
+return false;}};return false;};handler_ondblclick=function(e){REDIPS.drag.myhandler_dblclicked();};table_top=function(obj){var e,i,tmp,group;e=find_parent('TABLE',obj);group=e.redips.nestedGroup;for(i=0;i<tables.length;i++){if(tables[i].redips.nestedGroup===group){tables[i].redips.sort=sort_idx*100+tables[i].redips.nestedLevel;}}
 tables.sort(function(a,b){return b.redips.sort-a.redips.sort;});sort_idx++;};row_clone=function(el){var table_mini,offset,row_obj,last_idx,empty_row=true,cr,div,i,j;if(el.nodeName==='DIV'){div=el;el=find_parent('TR',el);if(el.redips===undefined){el.redips={};}
 el.redips.div=div;return el;}
 else{row_obj=el;if(row_obj.redips===undefined){row_obj.redips={};}
@@ -207,7 +207,7 @@ j++;}}}};delete_object=function(el){var div,i;if(typeof(el)==='object'&&el.nodeN
 else if(typeof(el)==='string'){div=document.getElementById(el);if(div){div.parentNode.removeChild(div);}}};enable_table=function(enable_flag,el){var i;if(typeof(el)==='object'&&el.nodeName==='TABLE'){el.redips.enabled=enable_flag;}
 else{for(i=0;i<tables.length;i++){if(tables[i].className.indexOf(el)>-1){tables[i].redips.enabled=enable_flag;}}}};get_style=function(el,style_name){var val;if(el&&el.currentStyle){val=el.currentStyle[style_name];}
 else if(el&&window.getComputedStyle){val=document.defaultView.getComputedStyle(el,null)[style_name];}
-return val;};find_parent=function(tag_name,el,skip){if(skip===undefined){skip=0;}
+return val;};find_parent=function(tag_name,el,skip){el=el.parentNode;if(skip===undefined){skip=0;}
 while(el&&el.nodeName!==tag_name){el=el.parentNode;if(el&&el.nodeName===tag_name&&skip>0){skip--;el=el.parentNode;}}
 return el;};find_cell=function(param,el){var tbl=find_parent('TABLE',el),ri,ci,c;switch(param){case'firstInColumn':ri=0;ci=el.cellIndex;break;case'firstInRow':ri=el.parentNode.rowIndex;ci=0;break;case'lastInColumn':ri=tbl.rows.length-1;ci=el.cellIndex;break;case'lastInRow':ri=el.parentNode.rowIndex;ci=tbl.rows[0].cells.length-1;break;case'last':ri=tbl.rows.length-1;ci=tbl.rows[0].cells.length-1;break;default:ri=ci=0;}
 c=tbl.rows[ri].cells[ci];return[ri,ci,c];};save_content=function(tbl,type){var query='',tbl_start,tbl_end,tbl_rows,cells,tbl_cell,cn,id,r,c,d,JSONobj=[],pname=REDIPS.drag.save_pname;if(typeof(tbl)==='string'){tbl=document.getElementById(tbl);}
@@ -251,7 +251,8 @@ else{toi=tables[table_old].redips.idx;}
 toi_source=tables[table_source].redips.idx;arr=[toi,row,cell,toi_source,row_source,cell_source];}
 else{if(typeof(ip)==='string'){el=document.getElementById(ip);}
 else{el=ip;}
-el=find_parent('TD',el);if(el&&el.nodeName==='TD'){ci=el.cellIndex;ri=el.parentNode.rowIndex;tbl=find_parent('TABLE',el.parentNode);ti=tbl.redips.idx;arr=[ti,ri,ci];}}
+if(el.nodeName!=='TD'){el=find_parent('TD',el);}
+if(el&&el.nodeName==='TD'){ci=el.cellIndex;ri=el.parentNode.rowIndex;tbl=find_parent('TABLE',el);ti=tbl.redips.idx;arr=[ti,ri,ci];}}
 return arr;};get_table_index=function(idx){var i;for(i=0;i<tables.length;i++){if(tables[i].redips.idx===idx){break;}}
 return i;};normalize=function(str){if(str!==undefined){str=str.replace(/^\s+|\s+$/g,'').replace(/\s{2,}/g,' ');}
 return str;};has_childs=function(el){var i;for(i=0;i<el.childNodes.length;i++){if(el.childNodes[i].nodeType===1){return true;}}

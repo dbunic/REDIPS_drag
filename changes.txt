@@ -2,6 +2,7 @@ Changes for REDIPS.drag library
 
 4.6.16
 - fixed relocate() method - discarded "REDIPS.drag.obj !== from.childNodes[i]" condition from element filter
+- fixed find_parent() method - prevented finding node itself (el = el.parentNode) - find_parent() from now starts from parent node
 
 4.6.15
 - added public property REDIPS.drag.table_sort with default value "true"
