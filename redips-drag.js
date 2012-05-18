@@ -3,7 +3,7 @@ Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
 Version 4.6.16
-May 17, 2012.
+May 18, 2012.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -942,11 +942,11 @@ REDIPS.drag = (function () {
 		// detach div_drag.onselectstart handler to enable select for IE7/IE8 browser 
 		div_drag.onselectstart = null;
 		// reset left and top styles
-		obj.style.left = 0;
-		obj.style.top  = 0;
+		obj.style.left = '';
+		obj.style.top  = '';
 		// return z-index and position style to 'static' (this is default element position) 
-		obj.style.zIndex = -1;
-		obj.style.position = 'static';
+		obj.style.zIndex = '';
+		obj.style.position = '';
 		// document.body.scroll... only works in compatibility (aka quirks) mode,
 		// for standard mode, use: document.documentElement.scroll...
 		scroll_width  = document.documentElement.scrollWidth;
@@ -3359,8 +3359,8 @@ REDIPS.drag = (function () {
 		// animation is finished
 		else {
 			// return z-index and position style to 'static' (this is default element position) 
-			p.obj.style.zIndex = -1;
-			p.obj.style.position = 'static';
+			p.obj.style.zIndex = '';
+			p.obj.style.position = '';
 			// set animation flag to false (to enable DIV dragging)
 			p.obj.redips.animated = false;
 			// if moved element is cell then append element to the target cell
