@@ -3226,6 +3226,11 @@ REDIPS.drag = (function () {
 		h1 = pos[2] - pos[0];
 		x1 = pos[3];
 		y1 = pos[0];
+		// if input parameter "clone" is true and DIV element is moving then clone DIV element instead of moving original element
+		// this should go after definition of start coordinates x1 and y1
+		if (ip.clone === true && p.mode === 'cell') {
+			p.obj = clone_div(p.obj, true);
+		}
 		// if target parameted is undefined then use current position in table 
 		if (ip.target === undefined) {
 			ip.target = get_position();
