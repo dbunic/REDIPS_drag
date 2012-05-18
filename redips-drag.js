@@ -449,6 +449,7 @@ REDIPS.drag = (function () {
 		calculate_cells();
 		// set high z-index if object isn't "clone" type (clone object is motionless) for "cell" mode only
 		if (!clone_class && mode === 'cell') {
+			// http://foohack.com/2007/10/top-5-css-mistakes/ (how z-index works)
 			obj.style.zIndex = 999;
 		}
 		// reset table row and cell indexes (needed in case of enable / disable tables)
