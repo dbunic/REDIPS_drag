@@ -1,5 +1,12 @@
 Changes for REDIPS.drag library
 
+4.6.17
+- added "clone" and "overwrite" options to the move_object() method
+- improved get_position() method
+- added "clone" and "overwrite" checkboxes to example18
+- calling myhandler_cloned placed inside clone_div() method
+- added private method reset_styles()
+
 4.6.16
 - fixed relocate() method - discarded "REDIPS.drag.obj !== from.childNodes[i]" condition from element filter
 - fixed find_parent() method - prevented finding node itself (el = el.parentNode) - find_parent() from now starts from parent node

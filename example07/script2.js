@@ -4,12 +4,13 @@
 /* enable strict mode */
 "use strict";
 
-// define redips_init variable
-var redips_init;
+// create redips container
+var redips = {};
+
 
 // redips initialization
-redips_init = function () {
-	// reference to the REDIPS.drag
+redips.init = function () {
+	// reference to the REDIPS.drag library
 	var rd = REDIPS.drag;
 	// initialization
 	rd.init();
@@ -19,11 +20,11 @@ redips_init = function () {
 	rd.drop_option = 'single';
 	// do not ask on delete
 	rd.trash_ask = false;
-	// event handler after element is cloned
+	// event handler invoked after element is cloned
 	rd.myhandler_cloned = function () {
 		// set id of cloned element
 		var cloned_id = rd.obj.id;
-		// if id of cloned element begins with "e" then make exception (allow DIV element to access cell with class name "mark")
+		// if id of cloned element begins with "e" then make exception (allow DIV element to access cells with class name "mark")
 		if (cloned_id.substr(0, 1) === 'e') {   
 			rd.mark.exception[cloned_id] = 'mark';
 		}
@@ -33,8 +34,8 @@ redips_init = function () {
 
 // add onload event listener
 if (window.addEventListener) {
-	window.addEventListener('load', redips_init, false);
+	window.addEventListener('load', redips.init, false);
 }
 else if (window.attachEvent) {
-	window.attachEvent('onload', redips_init);
+	window.attachEvent('onload', redips.init);
 }

@@ -17,7 +17,9 @@
 		<center>
 			<!-- buttons -->
 			<div id="buttons">
-				<input type="button" value="Move" class="button" id="btn_move" onclick="javascript:move()"/>
+					<input type="button" value="Move" class="button" id="btn_move" onclick="redips.move()"/><span></span> <!-- empty span element is needed for applying right margin in CSS -->
+					<input type="checkbox" class="checkbox" onclick="redips.toggle_clone(this)" title="Clone DIV element"/><span class="message_line">Clone</span>
+					<input type="checkbox" class="checkbox" onclick="redips.toggle_overwrite(this)" title="Overwrite content"/><span class="message_line">Overwrite</span>
 			</div>
 			<!-- drag region -->
 			<div id="drag">
@@ -97,6 +99,17 @@
 						</tr>
 					</tbody>
 				</table>
+			</div>
+			<div class="instructions">
+				Every click on "Move" button will move DIV element to the random table cell (except the start position).
+				If "Clone" checkbox is set then instead of moving DIV element it will be cloned and moved to the random cell.
+				Cloned DIV element will be appended to the existing cell content unless "Overwrite" checkbox is checked.
+				<br/>
+				<br/>
+				Please see JS code in script.js file and try to replace callback function with the line below.
+				Actually, callback function will start animation again.
+				Once started, animation will not stop until page is refreshed.
+				It's a very attractive effect.
 			</div>
 		</center>
 	</body>

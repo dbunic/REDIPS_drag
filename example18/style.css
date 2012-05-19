@@ -22,10 +22,14 @@ body {
 
 /* button area above tables */
 #buttons {
-	text-align: right;
+	text-align: left;
 	border-color: white;
 	padding-bottom: 0px;
 }
+	/* space between form elements above table */
+	#buttons span {
+		margin-right: 10px;
+	}
 
 /* set border-collapse for tables */
 table {
@@ -93,4 +97,14 @@ th {
 	/* round corners */
 	border-radius: 5px; /* Opera, Chrome */
 	-moz-border-radius: 5px; /* FF */
+}
+
+
+/* instructions below left table */
+.instructions {
+	width: 580px;
+	margin-top: 15px;
+	color: #555;
+	font-size: 11px;
+	text-align: justify;
 }
