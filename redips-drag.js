@@ -2235,9 +2235,9 @@ REDIPS.drag = (function () {
 	
 
 	/**
-	 * Method clones DIV element, returns cloned element reference and calls myhandler_cloned() event handler with input parameter of cloned element.
+	 * Method clones DIV element and returns cloned element reference.
 	 * "clone" class name will not be copied in cloned element (in case if source element contains "clone" class name).
-	 * This method is called internally also.
+	 * This method is called internally when DIV elements are cloned.
 	 * @param {HTMLElement} div DIV element to clone.
 	 * @param {Boolean} [drag] If set to true, then cloned DIV element will be ready for dragging (otherwise element will be only cloned).
 	 * @return {HTMLElement} Returns cloned DIV element.
@@ -3127,7 +3127,7 @@ REDIPS.drag = (function () {
 
 
 	/**
-	 * Method will calculate parameters and start animation (DIV element to the destination table cell).
+	 * Method will calculate parameters and start animation (DIV element to the target table cell).
 	 * If "target" property is not defined then current location will be used. Here is properties definition of input parameter:
 	 * <ul>
 	 * <li>{String} id - id of element to animate - DIV element or row handler (div class="drag row")</li>
@@ -3149,6 +3149,7 @@ REDIPS.drag = (function () {
 	 * <li>Array[0] - table_mini</li>
 	 * <li>Array[1] - source row</li>
 	 * </ul>
+	 * If "clone" parameter is set to true then myhandler_cloned() event handler will be invoked with input parameter of cloned element.
 	 * @param {Object} ip Object with properties: id, mode, source, target and callback.
 	 * @return {Array} Returns reference of two elements in array. In "cell" mode both elements are dragged element, while in "row" mode first element is table_mini and second element is source row.
 	 * @example
@@ -3173,7 +3174,8 @@ REDIPS.drag = (function () {
 	 *     target: [0, 1, 2]
 	 * });
 	 *  
-	 * // clone DIV element with reference "mydiv", move to the first table, second row, third cell and overwrite all content in target cell
+	 * // clone DIV element with reference "mydiv", move to the first table, second row,
+	 * // third cell and overwrite all content in target cell
 	 * rd.move_object({
 	 *     obj: mydiv,
 	 *     clone: true,
@@ -3189,6 +3191,7 @@ REDIPS.drag = (function () {
 	 *           target: [0, 6],         // target position
 	 *           callback: enable_button // function to call after animation is over
 	 *        });
+	 * @see <a href="#event:myhandler_cloned">myhandler_cloned</a>
 	 * @public
 	 * @function
 	 * @name REDIPS.drag#move_object
@@ -4080,11 +4083,11 @@ REDIPS.drag = (function () {
 		 */	
 		myhandler_changed : function () {},
 		/**
-		 * Event handler invoked after DIV element is cloned - interactively by moving DIV element or by calling clone_div() method.
-		 * If event handler is called from clone_div() method then reference of cloned element is sent as input parameter.
-		 * Otherwise, reference of cloned DIV element is set to REDIPS.drag.obj while reference of original element to REDIPS.drag.obj_old public property.
+		 * Event handler invoked after DIV element is cloned - interactively by moving DIV element or by calling move_object() in "cell" mode with "clone" option.
+		 * If event handler is called from move_object() then reference of cloned element is sent as input parameter.
+		 * Otherwise, reference of cloned DIV element is set to REDIPS.drag.obj while reference of original element is set to REDIPS.drag.obj_old public property.
 		 * @param {HTMLElement} [cloned_element] Cloned element reference.
-		 * @see <a href="#clone_div">clone_div</a>
+		 * @see <a href="#move_object">move_object</a>
 		 * @name REDIPS.drag#myhandler_cloned
 		 * @function
 		 * @event
