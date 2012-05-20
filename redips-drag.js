@@ -2795,15 +2795,15 @@ REDIPS.drag = (function () {
 			ri = tbl.rows.length - 1;
 			ci = el.cellIndex;
 			break;
-		// last in row
+		// last in row (cell index for current row)
 		case 'lastInRow':
 			ri = el.parentNode.rowIndex;
-			ci = tbl.rows[0].cells.length - 1;
+			ci = tbl.rows[ri].cells.length - 1;
 			break;
-		// last in table
+		// last in table (cell index for last row)
 		case 'last':
 			ri = tbl.rows.length - 1;
-			ci = tbl.rows[0].cells.length - 1;
+			ci = tbl.rows[ri].cells.length - 1;
 			break;
 		// define cell reference for first table cell (row and column indexes are 0) 
 		default:

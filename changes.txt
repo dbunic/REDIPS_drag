@@ -6,6 +6,7 @@ Changes for REDIPS.drag library
 - added "clone" and "overwrite" checkboxes to example18
 - calling myhandler_cloned placed inside clone_div() method
 - added private method reset_styles()
+- fixed find_cell() method for cases "lastInRow" and "last" (instead of using index of first row it's used index of current row and last row) - thanks to Bruno Jesus
 
 4.6.16
 - fixed relocate() method - discarded "REDIPS.drag.obj !== from.childNodes[i]" condition from element filter
