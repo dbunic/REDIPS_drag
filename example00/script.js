@@ -4,23 +4,19 @@
 /* enable strict mode */
 "use strict";
 
-// define functions
-var redips_init,
-	load_table,
-	rd;
 
-	
-// redips initialization
-redips_init = function () {
-	// reference to the REDIPS.drag lib
-	rd = REDIPS.drag;
-	// initialization
-	rd.init();
+// create redips container
+var redips = {};
+
+
+// REDIPS.drag initialization
+redips.init = function () {
+	REDIPS.drag.init();
 };
 
 
 // new table using AJAX/jQuery to the drag container 
-load_table = function (button) {
+redips.load_table = function (button) {
 	// parameter (example for ajax request)
 	var id = 1;
 	// disable button (it can be clicked only once)
@@ -36,7 +32,7 @@ load_table = function (button) {
 			// load new table
 			$('#load_content').html(result);
 			// run REDIPS.drag initialization
-			rd.init();
+			REDIPS.drag.init();
 		}
 	});
 };
@@ -44,8 +40,8 @@ load_table = function (button) {
 
 // add onload event listener
 if (window.addEventListener) {
-	window.addEventListener('load', redips_init, false);
+	window.addEventListener('load', redips.init, false);
 }
 else if (window.attachEvent) {
-	window.attachEvent('onload', redips_init);
+	window.attachEvent('onload', redips.init);
 }
