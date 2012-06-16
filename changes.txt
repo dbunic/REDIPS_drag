@@ -1,5 +1,11 @@
 Changes for REDIPS.drag library
 
+4.6.18
+- fixing REDIPS.drag.clone_div() method
+  * "climitX_Y" class name is removed from cloned DIV element
+  * reduced iteration with DOM
+ -fixed example23 (added regex instead of redips.code_length property)
+
 4.6.17
 - added "clone" and "overwrite" options to the move_object() method
 - improved get_position() method

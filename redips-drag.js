@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 4.6.17
-May 20, 2012.
+Version 4.6.18
+Jun 16, 2012.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -30,7 +30,7 @@ var REDIPS = REDIPS || {};
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">Drag and drop table rows</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">Drag and Drop table content</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-content-shift/">JavaScript drag and drop plus content shift</a>
- * @version 4.6.17
+ * @version 4.6.18
  */
 REDIPS.drag = (function () {
 		// methods
@@ -2246,7 +2246,8 @@ REDIPS.drag = (function () {
 	 * @name REDIPS.drag#clone_div
 	 */
 	clone_div = function (div, drag) {
-		var div_cloned = div.cloneNode(true),	// cloned DIV element 
+		var div_cloned = div.cloneNode(true),	// cloned DIV element
+			cname = div_cloned.className,		// set class names of cloned DIV element
 			offset,								// offset of the original object
 			offset_dragged;						// offset of the new object (cloned)
 		// if cloned DIV element should be ready for dragging
@@ -2269,8 +2270,11 @@ REDIPS.drag = (function () {
 		if (div_cloned.setCapture) {
 			div_cloned.setCapture();
 		}
-		// remove clone from the class name
-		div_cloned.className = div_cloned.className.replace('clone', '');
+		// remove "clone" and "climitX_Y" class names
+		cname = cname.replace('clone', '');
+		cname = cname.replace(/climit(\d)_(\d+)/, '');
+		// set class names with normalized spaces to the cloned DIV element
+		div_cloned.className = normalize(cname);
 		// if counter is undefined, set 0
 		if (cloned_id[div.id] === undefined) {
 			cloned_id[div.id] = 0;

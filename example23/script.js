@@ -1,4 +1,4 @@
-/*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
+/*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: false, strict: true, newcap: true, immed: true, maxerr: 14 */
 /*global window: false,  ActiveXObject: false, REDIPS: true */
 
 /* enable strict mode */
@@ -13,7 +13,6 @@ redips.configuration = function () {
 	redips.right = 'right';					// id of right DIV container
 	redips.form = 'myform';					// id of form beneath right table
 	redips.ajax_save = 'db_save.php';		// submit form to the server
-	redips.code_length = 3;					// item code length
 	redips.delete_text = '[delete]';		// delete text before item
 	redips.request = null;					// AJAX request
 	redips.ol = null;						// OL (Ordered List) reference (reference is set in redips.init)
@@ -158,10 +157,10 @@ redips.addItem = function (obj) {
 		text = obj.innerText || obj.textContent,
 		txtLi = document.createTextNode(text),
 		txtSpan = document.createTextNode(redips.delete_text);
-	// set properties for hidden input element: type, name and value (substring is needed because cloned element contains sufix "c0" like i01c0)
+	// set properties for hidden input element: type, name and value (regex is needed because cloned element contains sufix "c0" like i01c0 that should be discarded)
 	input.type = 'hidden';
 	input.name = 'p[]';
-	input.value = obj.id.substring(0, redips.code_length);
+	input.value = obj.id.match(/(.*)?c\d+/)[1];
 	// create span node
 	span.appendChild(txtSpan);
 	span.onclick = redips.deleteItem;
