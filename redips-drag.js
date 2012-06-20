@@ -1099,7 +1099,8 @@ REDIPS.drag = (function () {
 						REDIPS.drag.obj_old = obj_old = target_elements[0];
 						// append obj_old to the source cell
 						source_cell.appendChild(obj_old);
-						// FIX for Safari Mobile
+						// register event listeners (FIX for Safari Mobile)
+						// it seems that Safari Mobile loses registrated events (traditional model) assigned to the DIV element (other browsers work just fine without this line)
 						register_events(obj_old);
 					}
 				}
@@ -1170,9 +1171,7 @@ REDIPS.drag = (function () {
 			else {
 				target_cell.appendChild(obj);
 			}
-			// FIX for Safari Mobile
-			// it seems that Safari Mobile loses registrated events (traditional model) assigned to the DIV element
-			// other browsers work just fine
+			// register event listeners (FIX for Safari Mobile)
 			register_events(obj);
 			// call myhandler_dropped because clone_limit could call myhandler_clonedend1 or myhandler_clonedend2
 			REDIPS.drag.myhandler_dropped(target_cell);
@@ -2312,7 +2311,7 @@ REDIPS.drag = (function () {
 		div_cloned.id = div.id + 'c' + cloned_id[div.id];
 		// increment cloned_id for cloned element
 		cloned_id[div.id] += 1;
-		// copy custom properties to the DIV element and child DIV elements and set onmousedown/ondblclick event handlers
+		// copy custom properties to the DIV element and child DIV elements and register event handlers
 		copy_properties(div, div_cloned);
 		// return reference to the cloned DIV element	
 		return (div_cloned);
@@ -2938,6 +2937,7 @@ REDIPS.drag = (function () {
 		var i, j,	// loop variables
 			tbl2,	// target table
 			cn,		// number of child nodes
+			div,	// DIV element (needed in for loop)
 			move;	// move object (private function)
 		// define private move function (after animation is finished table will be enabled)
 		move = function (el, to) {
@@ -2996,7 +2996,12 @@ REDIPS.drag = (function () {
 			for (i = 0, j = 0; i < cn; i++) {
 				// relocate only DIV elements
 				if (from.childNodes[j].nodeType === 1 && from.childNodes[j].nodeName === 'DIV') {
-					to.appendChild(from.childNodes[j]);
+					// set DIV element
+					div = from.childNodes[j];
+					// append DIV element to the table cell
+					to.appendChild(div);
+					// register event listeners (FIX for Safari Mobile)
+					register_events(div);
 				}
 				// skip text nodes, attribute nodes ...
 				else {
@@ -3434,6 +3439,8 @@ REDIPS.drag = (function () {
 					empty_cell(p.target_cell);
 				}
 				p.target_cell.appendChild(p.obj);
+				// register event listeners (FIX for Safari Mobile)
+				register_events(p.obj);
 			}
 			// else element is row
 			else {
