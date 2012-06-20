@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 4.6.18
-Jun 16, 2012.
+Version 4.6.19
+Jun 20, 2012.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -30,7 +30,7 @@ var REDIPS = REDIPS || {};
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">Drag and drop table rows</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">Drag and Drop table content</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-content-shift/">JavaScript drag and drop plus content shift</a>
- * @version 4.6.18
+ * @version 4.6.19
  */
 REDIPS.drag = (function () {
 		// methods
@@ -47,6 +47,7 @@ REDIPS.drag = (function () {
 		element_drop,				// drop element to the table cell
 		element_deleted,			// actions needed after element is deleted (call event handler, updatig, climit1_X or climit2_X classnames, content shifting ...)
 		reset_styles,				// reset object styles after element is dropped
+		register_events,			// register event listeners for DIV element
 		cell_changed,				// private method called from handler_onmousemove(), autoscrollX(), autoscrollY()
 		handler_onresize,			// onresize window event handler
 		set_trc,					// function sets current table, row and cell
@@ -1094,9 +1095,12 @@ REDIPS.drag = (function () {
 					// source_cell is defined in onmouseup
 					if (target_elements[0] !== undefined) { //fixes issue with nested DIVS
 						// save reference of switched element in REDIPS.drag.obj_old property
-						REDIPS.drag.obj_old = target_elements[0];
 						// '0', not 'i' because NodeList objects in the DOM are live
-						source_cell.appendChild(target_elements[0]);
+						REDIPS.drag.obj_old = obj_old = target_elements[0];
+						// append obj_old to the source cell
+						source_cell.appendChild(obj_old);
+						// FIX for Safari Mobile
+						register_events(obj_old);
 					}
 				}
 				// drop element to the table cell
@@ -1166,12 +1170,10 @@ REDIPS.drag = (function () {
 			else {
 				target_cell.appendChild(obj);
 			}
-			// this is FIX for Safari Mobile
+			// FIX for Safari Mobile
 			// it seems that Safari Mobile loses registrated events (traditional model) assigned to the DIV element
-			// other browsers works just fine
-			obj.onmousedown = handler_onmousedown;
-			obj.ontouchstart = handler_onmousedown;
-			obj.ondblclick = handler_ondblclick;
+			// other browsers work just fine
+			register_events(obj);
 			// call myhandler_dropped because clone_limit could call myhandler_clonedend1 or myhandler_clonedend2
 			REDIPS.drag.myhandler_dropped(target_cell);
 			// if object is cloned
@@ -1189,6 +1191,32 @@ REDIPS.drag = (function () {
 	};
 
 
+	/**
+	 * Register event listeners for DIV element.
+	 * DIV elements should have only onmousedown, ontouchstart and ondblclick attached (using traditional event registration model).
+	 * I had a problem with advanced event registration model.
+	 * In case of using advanced model, selected text and dragged DIV element were in collision.
+	 * It looks like selected text was able to drag instead of DIV element.
+	 * @param {HTMLElement} div Register event listeners for onmousedown, ontouchstart and ondblclick to the DIV element.
+	 * @param {Boolean} [flag] If set to false then event listeners will be deleted.
+	 * @private
+	 * @memberOf REDIPS.drag#
+	 */
+	register_events = function (div, flag) {
+		// if flag is se to false, then remove event listeners on DIV element
+		if (flag === false) {
+			div.onmousedown = null;
+			div.ontouchstart = null;
+			div.ondblclick = null;
+		}
+		else {
+			div.onmousedown = handler_onmousedown;
+			div.ontouchstart = handler_onmousedown;
+			div.ondblclick = handler_ondblclick;
+		}
+	};
+
+	
 	/**
 	 * After element is dropped, styles need to be reset.
 	 * @param {HTMLElement} el Element reference.
@@ -2314,9 +2342,7 @@ REDIPS.drag = (function () {
 				e2.redips.container = e1.redips.container;
 				// set onmousedown, ontouchstart and ondblclick event handler if source element is enabled
 				if (e1.redips.enabled) {
-					e2.onmousedown = handler_onmousedown;
-					e2.ontouchstart = handler_onmousedown;
-					e2.ondblclick = handler_ondblclick;
+					register_events(e2);
 				}
 			}
 		};
@@ -2395,9 +2421,8 @@ REDIPS.drag = (function () {
 				if (limit_type === 2) {
 					// cut "drag" class
 					classes = classes.replace('drag', '');
-					// remove onmousedown and ontouchstart event handler
-					obj_old.onmousedown = null;
-					obj_old.ontouchstart = null;
+					// remove attached event listener from source element
+					register_events(obj_old, false);
 					// set cursor style to auto
 					obj_old.style.cursor = 'auto';
 					// call myhandler_clonedend2 handler
@@ -2509,8 +2534,6 @@ REDIPS.drag = (function () {
 			autoscroll,		// boolean - if scrollable container will have autoscroll option (default is true)
 			enabled,		// enabled property (true or false) 
 			cb,				// box offset for container box (cb)
-			handler1,		// onmousedown or null event handler
-			handler2,		// ondblclick or null event handler
 			position,		// if table container has position:fixed then "page scroll" offset should not be added
 			regex_drag = /\bdrag\b/i,	// regular expression to search "drag" class name
 			regex_noautoscroll = /\bnoautoscroll\b/i;	// regular expression to search "noautoscroll" class name
@@ -2518,15 +2541,12 @@ REDIPS.drag = (function () {
 		opacity = REDIPS.drag.opacity_disabled;
 		// define onmousedown/ondblclick handlers and styles
 		if (enable_flag === true || enable_flag === 'init') {
-			handler1 = handler_onmousedown;
-			handler2 = handler_ondblclick;
 			borderStyle = REDIPS.drag.border;
 			cursor = 'move';
 			enabled = true;
 		}
 		// else remove event handlers
 		else {
-			handler1 = handler2 = null;
 			borderStyle = REDIPS.drag.border_disabled;
 			cursor = 'auto';
 			enabled = false;
@@ -2579,11 +2599,9 @@ REDIPS.drag = (function () {
 					divs[i].style.opacity = opacity / 100;
 					divs[i].style.filter = 'alpha(opacity=' + opacity + ')';					
 				}
-				// DIV elements should have only onmousedown, ontouchstart and ondblclick attached (using traditional event registration model)
-				// I had problems with using advanced event registration model and text selection / dragging text selection
-				divs[i].onmousedown = handler1;
-				divs[i].ontouchstart = handler1;
-				divs[i].ondblclick = handler2;
+				// register event listener for DIV element
+				register_events(divs[i], enabled);
+				// set styles for DIV element
 				divs[i].style.borderStyle = borderStyle;
 				divs[i].style.cursor = cursor;
 				// add enabled property to the DIV element (true or false)
