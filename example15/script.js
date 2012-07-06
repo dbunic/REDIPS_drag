@@ -20,7 +20,7 @@ redips_init = function () {
 	// set hover border for current TD and TR
 	rd.hover.border_td = '2px solid #32568E';
 	rd.hover.border_tr = '2px solid #32568E';
-	// drop row before highlighted row (if row is dropped to other tables)
+	// drop row after highlighted row (if row is dropped to other tables)
 	// possible values are "before" and "after"
 	rd.row_position = 'after';
 	// row was clicked - event handler
