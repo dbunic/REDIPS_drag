@@ -1,5 +1,9 @@
 Changes for REDIPS.drag library
 
+4.6.20
+- added public property REDIPS.drag.row_position (property defines position where row will be dropped regarding highlighted row if dropped to other tables - in case of one table, this property doesn't have any effect)
+- redips-drag-min.js is compressed by using Google Closure Compiler
+
 4.6.19
 - added private method "register events", registering event listener is now in one place
 - fixed bug for Safari Mobile in case of "switch", "switching" and "shift" mode

@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 4.6.19
-Jun 20, 2012.
+Version 4.6.20
+Jul 06, 2012.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -30,7 +30,7 @@ var REDIPS = REDIPS || {};
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">Drag and drop table rows</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">Drag and Drop table content</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-content-shift/">JavaScript drag and drop plus content shift</a>
- * @version 4.6.19
+ * @version 4.6.20
  */
 REDIPS.drag = (function () {
 		// methods
@@ -164,7 +164,8 @@ REDIPS.drag = (function () {
 		an_counter = 0,					// (integer) counter of animated elements to be shifted before table should be enabled
 		clone_shiftKey = false,			// (boolean) if true, elements could be cloned with pressed SHIFT key
 		clone_shiftKey_row = false,		// (boolean) if true, rows could be cloned with pressed SHIFT key
-		row_empty_color = 'White';		// (string) color of empty row
+		row_empty_color = 'White',		// (string) color of empty row
+		row_position = 'before';		// (string) drop row before or after highlighted row (values are "before" or "after") 
 
 
 	/**
@@ -732,10 +733,10 @@ REDIPS.drag = (function () {
 	row_drop = function (r_table, r_row, table_mini) {
 		// local variable definition
 		var tbl = tables[r_table],			// reference to the current table
-			ts = tbl.rows[0].parentNode,	// reference to the table section element (where row will be inserted / appended)
+			ts = tbl.rows[0].parentNode,	// reference to the HTMLTableSectionElement (where row will be inserted / appended)
 			animated = false,				// (boolean) flag shows if row is animated or dragged by user
 			tr,								// reference to the TR in mini table
-			rp,								// reference to the redips property of row below inserted row
+			hr,								// reference to the highlighted row where dragged row is dropped
 			src,							// reference to the source row (row that should be deleted)
 			rowIndex,						// index of row that should be deleted
 			delete_srow,					// private method - delete source row
@@ -816,14 +817,25 @@ REDIPS.drag = (function () {
 					delete_srow();
 				}
 				// if row is not dropped to the last row position
+				// this "if else" is needed for IE8 ... it's seems that row should be dropped always inside table but somehow IE8 manages to set row index greater than last row
 				if (r_row < tbl.rows.length) {
-					// insert row before current row
-					ts.insertBefore(tr, tbl.rows[r_row]);
-					// set reference to the redips property of row below inserted row
-					rp = tbl.rows[r_row + 1].redips;
-					// if the row below current row is marked as empty_row then delete this row
-					if (rp && rp.empty_row) {
-						ts.deleteRow(r_row + 1);
+					// insert row before (above) current row
+					if (table === table_source || REDIPS.drag.row_position === 'before') {
+						// insert row before current (highlighted) row
+						ts.insertBefore(tr, tbl.rows[r_row]);
+						// set reference to the highlighted row
+						hr = tbl.rows[r_row + 1];
+					}
+					// insert row after (below) current row
+					else {
+						// insert row after current (highlighted) row
+						ts.insertBefore(tr, tbl.rows[r_row].nextSibling);
+						// set reference to the highlighted row
+						hr = tbl.rows[r_row];
+					}
+					// if table contains only "empty" row then this row should be deleted after inserting or appending to such table
+					if (hr && hr.redips && hr.redips.empty_row) {
+						ts.deleteRow(hr.rowIndex);
 					}
 				}
 				// row is dropped to the last row position
@@ -1889,13 +1901,27 @@ REDIPS.drag = (function () {
 				if (REDIPS.drag.hover.border_tr !== undefined) {
 					// set border (highlight) - source row will not have any border
 					if (t === undefined) {
-						// if row is moved above source row 
-						if (table === table_source && row > row_source) {
-							s.borderBottom = REDIPS.drag.hover.border_tr;
+						// target is current table
+						if (table === table_source) {
+							// if row is moved above source row in current table
+							if (row < row_source) {
+								s.borderTop = REDIPS.drag.hover.border_tr;
+							}
+							// if row is moved below source row in current table 
+							else {
+								s.borderBottom = REDIPS.drag.hover.border_tr;
+							}
 						}
-						// if row is moved to other table or below source row
-						else if (table !== table_source || row < row_source) {
-							s.borderTop = REDIPS.drag.hover.border_tr;
+						// target is other table (where row will be placed is defined with public property REDIPS.drag.row_position)
+						else {
+							// highlight top border
+							if (REDIPS.drag.row_position === 'before') {
+								s.borderTop = REDIPS.drag.hover.border_tr;
+							}
+							// highlight bottom border
+							else {
+								s.borderBottom = REDIPS.drag.hover.border_tr;
+							}
 						}
 					}
 					// return previous state borderTop and borderBottom (exit from TD)
@@ -4007,6 +4033,15 @@ REDIPS.drag = (function () {
 		 * @default White
 		 */
 		row_empty_color : row_empty_color,
+		/**
+		 * Property defines position of dragged row where it will be dropped regarding highlighted row (before or after highlighted row).
+		 * This property has effect only if row is dropped to other tables.
+		 * In case of only one table position is defined relatively to source row position (middle row will be dropped before highlighted row if dragged to the table top or after highlighted row in other case).
+		 * @type String
+		 * @name REDIPS.drag#row_position
+		 * @default before
+		 */
+		row_position : row_position,
 		/**
 		 * Table sort is feature where tables inside drop container are sorted on each element click.
 		 * Clicked DIV element defines table that should be placed on the array top.
