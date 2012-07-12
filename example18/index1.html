@@ -17,11 +17,12 @@
 		<center>
 			<!-- buttons -->
 			<div id="buttons">
-				<input type="button" value="Move" class="button" id="btn_move" onclick="redips.move()"/>
+				<input type="button" value="Move down" class="button" id="btn_move1" onclick="redips.move(1)"/>
+				<input type="button" value="Move up" class="button" id="btn_move2" onclick="redips.move(0)"/>
 			</div>
 			<!-- drag region -->
 			<div id="drag">
-				<table id="table1">
+				<table id="table0">
 					<colgroup>
 						<col width="70"/>
 						<col width="70"/>
@@ -97,6 +98,87 @@
 						</tr>
 					</tbody>
 				</table>
+				
+				<br/>
+				<br/>
+				
+				<table id="table1">
+					<colgroup>
+						<col width="70"/>
+						<col width="70"/>
+						<col width="70"/>
+						<col width="70"/>
+						<col width="70"/>
+						<col width="70"/>
+						<col width="70"/>
+					</colgroup>
+					<tbody>
+						<tr class="rl">
+							<td><div class="drag blue">Drag</div></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+						<tr class="rd">
+							<td></td>
+							<td><div class="drag blue">and</div></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+						<tr class="rl">
+							<td></td>
+							<td></td>
+							<td><div class="drag blue">drop</div></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+						<tr class="rd">
+							<td></td>
+							<td></td>
+							<td></td>
+							<td><div class="drag blue">table</div></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+						<tr class="rl">
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td><div class="drag blue">content</div></td>
+							<td></td>
+							<td></td>
+						</tr>
+						<tr class="rd">
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td><div class="drag blue">with</div></td>
+							<td></td>
+						</tr>
+						<tr class="rl">
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td><div class="drag blue">JavaScript</div></td>
+						</tr>
+					</tbody>
+				</table>
+
 			</div>
 		</center>
 	</body>

@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 4.6.20
-Jul 06, 2012.
+Version 4.6.21
+Jul 12, 2012.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -30,7 +30,7 @@ var REDIPS = REDIPS || {};
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">Drag and drop table rows</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">Drag and Drop table content</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-content-shift/">JavaScript drag and drop plus content shift</a>
- * @version 4.6.20
+ * @version 4.6.21
  */
 REDIPS.drag = (function () {
 		// methods
@@ -604,18 +604,19 @@ REDIPS.drag = (function () {
 	 * <li>method will clone row and return reference of the cloned row</li>
 	 * </ul> 
 	 * @param {HTMLElement} el DIV class="row" or TR (current row)
+	 * @param {String} [row_mode] If set to "animated" then search for last row will not include search for "rowhandler" DIV element.
 	 * @return {HTMLElement} Returns reference of the current row or clone current row and return reference of the cloned row.
 	 * @see <a href="#handler_onmousedown">handler_onmousedown</a>
 	 * @see <a href="#handler_onmousemove">handler_onmousemove</a>
 	 * @private
 	 * @memberOf REDIPS.drag#
 	 */
-	row_clone = function (el) {
+	row_clone = function (el, row_mode) {
 		var table_mini,			// original table is cloned and all rows except picked row are deleted
 			offset,				// offset of source TR
 			row_obj,			// reference to the row object
 			last_idx,			// last row index in cloned table
-			empty_row = true,	// (boolean) flag indicates if dragged row is last row and should be marked as "empty row"
+			empty_row,			// (boolean) flag indicates if dragged row is last row and should be marked as "empty row"
 			cr,					// current row (needed for searc if dragged row is last row)
 			div,				// reference to the <DIV class="drag row"> element
 			i, j;				// loop variables
@@ -660,15 +661,28 @@ REDIPS.drag = (function () {
 			}
 			// find last row index in cloned table
 			last_idx = table_mini.rows.length - 1;
+			// if row mode is "animated" then definition of last row in table is simple
+			if (row_mode === 'animated') {
+				if (last_idx === 0) {
+					empty_row = true;
+				}
+				else {
+					empty_row = false;
+				}
+			}
+			// else set initially empty_row to true (it can be set to false in lower loop) 
+			else {
+				empty_row = true;
+			}
 		    // test if dragged row is the last row and delete all rows but current row
 			// the trick is to find rowhandler in cells except current cell and that's fine for user interface
-			// if rows are animated, then "rowhandler" cells don't have to exsist and here will be a problem
-			// but for now it is good enough
+			// if rows are animated, then "rowhandler" cells don't have to exsist and user should take care about marking last row as "empty row"
 			for (i = last_idx; i >= 0; i--) {
 				// if row is not the current row
 				if (i !== row_obj.rowIndex) {
-					// search for "rowhandler cell" in row (empty_row is set to "true" by default)
-					if (empty_row === true) {
+					// search for "rowhandler cell" in table row if row mode is not "animated" (user drags row)
+					// this lines are skipped in case of animated mode (
+					if (empty_row === true && row_mode === undefined) {
 						// set current row
 						cr = table_mini.rows[i];
 						// open loop to go through each cell
@@ -743,8 +757,8 @@ REDIPS.drag = (function () {
 			drop;							// if false then dropping row will be canceled
 		// define private method - delete source row
 		delete_srow = function () {
-			// if row is not animated and source row was marked as "empty row" then row will be colored (not deleted)
-			if (!animated && obj_old.redips.empty_row) {
+			// if source row was marked as "empty row" then row will be colored (not deleted)
+			if (obj_old.redips.empty_row) {
 				// content of table cells will be deleted and background color will be set to default color
 				row_opacity(obj_old, 'empty', REDIPS.drag.row_empty_color);
 			}
@@ -817,7 +831,6 @@ REDIPS.drag = (function () {
 					delete_srow();
 				}
 				// if row is not dropped to the last row position
-				// this "if else" is needed for IE8 ... it's seems that row should be dropped always inside table but somehow IE8 manages to set row index greater than last row
 				if (r_row < tbl.rows.length) {
 					// insert row before (above) current row
 					if (table === table_source || REDIPS.drag.row_position === 'before') {
@@ -833,15 +846,20 @@ REDIPS.drag = (function () {
 						// set reference to the highlighted row
 						hr = tbl.rows[r_row];
 					}
-					// if table contains only "empty" row then this row should be deleted after inserting or appending to such table
-					if (hr && hr.redips && hr.redips.empty_row) {
-						ts.deleteRow(hr.rowIndex);
-					}
 				}
 				// row is dropped to the last row position
+				// it's possible to set target row index greater then number of rows - in this case row will be appended to the table end
 				else {
 					// row should be appended
 					ts.appendChild(tr);
+					// set reference to the upper row
+					// after row is appended, upper row should be tested if contains "empty_row" set to true  
+					// this could happen in case when row is moved to the table with only one empty row
+					hr = tbl.rows[0];
+				}
+				// if table contains only "empty" row then this row should be deleted after inserting or appending to such table
+				if (hr && hr.redips && hr.redips.empty_row) {
+					ts.deleteRow(hr.rowIndex);
 				}
 				// delete empty_row property from inserted/appended row because empty_row will be set on next move
 				// copy_properties() in row_clone() copied empty_row property to the row in mini_table
@@ -3204,7 +3222,7 @@ REDIPS.drag = (function () {
 	 * </ul>
 	 * If "clone" parameter is set to true then myhandler_cloned() event handler will be invoked with input parameter of cloned element.
 	 * @param {Object} ip Object with properties: id, mode, source, target and callback.
-	 * @return {Array} Returns reference of two elements in array. In "cell" mode both elements are dragged element, while in "row" mode first element is table_mini and second element is source row.
+	 * @return {Array|Boolean} Returns reference of two elements in array or false. In "cell" mode both elements are dragged element, while in "row" mode first element is table_mini and second element is source row or it could be false if "empty_row" try to move.
 	 * @example
 	 * // move element with id="a1" to the current location and after
 	 * // animation is finished display alert "Finished"  
@@ -3279,16 +3297,24 @@ REDIPS.drag = (function () {
 			row = ip.source[1];
 			// set source row
 			obj_old = p.obj_old = tables[i].rows[row];
+			// if row is marked as empty row then it will not be moved and method will return false
+			if (obj_old.redips && obj_old.redips.empty_row === true) {
+				return false;
+			}
 			// set reference to the mini table - cloned from source row (TABLE element)
-			p.obj = row_clone(p.obj_old);
+			p.obj = row_clone(p.obj_old, 'animated');
 		}
 		// test if element is row handler
 		else if (p.obj && p.obj.className.indexOf('row') > -1) {
 			p.mode = 'row';
 			// find TR element and remember reference to the source row (TR element)
 			p.obj = p.obj_old = obj_old = find_parent('TR', p.obj);
+			// if row is marked as empty row then it will not be moved and method will return false
+			if (obj_old.redips && obj_old.redips.empty_row === true) {
+				return false;
+			}
 			// set reference to the mini table - cloned from source row (TABLE element)
-			p.obj = row_clone(p.obj_old);
+			p.obj = row_clone(p.obj_old, 'animated');
 		}
 		// animation mode is "cell"
 		else {
@@ -3331,6 +3357,10 @@ REDIPS.drag = (function () {
 		// set index for row and cell (target input parameter is array)
 		row = ip.target[1];
 		col = ip.target[2];
+		// if target row index is greater then number of rows in target table then set last row index
+		if (row > tables[i].rows.length - 1) {
+			row = tables[i].rows.length - 1;
+		}
 		// set reference to the target cell
 		p.target_cell = tables[i].rows[row].cells[col];
 		// set width, height and coordinates of target cell

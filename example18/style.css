@@ -79,6 +79,12 @@ th {
 	border-color: #FF8A58;
 }
 
+/* blue DIV elements */
+.blue {
+	border-color: LightBlue;
+}
+
+
 /* row dark */
 .rd {
 	background-color: #ddd;
