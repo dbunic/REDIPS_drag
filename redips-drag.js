@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 4.6.21
-Jul 12, 2012.
+Version 4.6.22
+Jul 25, 2012.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -30,7 +30,7 @@ var REDIPS = REDIPS || {};
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">Drag and drop table rows</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">Drag and Drop table content</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-content-shift/">JavaScript drag and drop plus content shift</a>
- * @version 4.6.21
+ * @version 4.6.22
  */
 REDIPS.drag = (function () {
 		// methods
@@ -257,6 +257,9 @@ REDIPS.drag = (function () {
 			nested_tables,		// nested tables nodelist (search for nested tables for every "ground" table)
 			td,					// td nodeList (needed for search rowspan attribute)
 			rowspan;			// flag to set if table contains rowspaned cells
+		// empty tables array
+		// http://stackoverflow.com/questions/1232040/how-to-empty-an-array-in-javascript
+		tables.length = 0;
 		// collect tables inside DIV id="drag" and make static nodeList
 		tables_nodeList = div_drag.getElementsByTagName('table');
 		// loop through tables and define table sort parameter

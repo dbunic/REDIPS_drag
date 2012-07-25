@@ -1,5 +1,8 @@
 Changes for REDIPS.drag library
 
+4.6.22
+- added line tables.length = 0; inside init_tables() to empty array "tables" (it's needed in case of multiple drag container with different number of tables)
+
 4.6.21
 - when last row is moved from table with move_object() method, it will be marked as "empty_row"
 - if row index for target table in move_object() method is greater then number of rows in target table then moved row will be appended to the table end
