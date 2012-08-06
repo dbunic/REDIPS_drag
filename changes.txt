@@ -1,5 +1,8 @@
 Changes for REDIPS.drag library
 
+4.6.23
+- fixed bug in case of canceling drop in "switch" mode - thanks to Robin
+
 4.6.22
 - added line tables.length = 0; inside init_tables() to empty array "tables" (it's needed in case of multiple drag container with different number of tables)
 

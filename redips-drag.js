@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 4.6.22
-Jul 25, 2012.
+Version 4.6.23
+Aug 06, 2012.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -30,7 +30,7 @@ var REDIPS = REDIPS || {};
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">Drag and drop table rows</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">Drag and Drop table content</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-content-shift/">JavaScript drag and drop plus content shift</a>
- * @version 4.6.22
+ * @version 4.6.23
  */
 REDIPS.drag = (function () {
 		// methods
@@ -954,6 +954,7 @@ REDIPS.drag = (function () {
 			mt_tr,						// needed for returning color to the table cell (mt_tr - "mini table" "table_row")
 			X, Y,						// X and Y position of mouse pointer
 			i,							// used in local loop
+			drop,						// if false then dropped DIV element (in case of drop_option="switch") will be canceled
 			// define target elements and target elements length needed for switching table cells
 			// target_elements_length is needed because nodeList objects in the DOM are live 
 			// please see http://www.redips.net/javascript/nodelist-objects-are-live/
@@ -1119,31 +1120,38 @@ REDIPS.drag = (function () {
 				}
 			}
 			else if (REDIPS.drag.drop_option === 'switch') {
-				// remove dragged element from DOM (source cell) - node still exists in memory
-				obj.parentNode.removeChild(obj);
-				// move object from the destination to the source cell
-				target_elements = target_cell.getElementsByTagName('div');
-				target_elements_length = target_elements.length;
-				for (i = 0; i < target_elements_length; i++) {
-					// source_cell is defined in onmouseup
-					if (target_elements[0] !== undefined) { //fixes issue with nested DIVS
-						// save reference of switched element in REDIPS.drag.obj_old property
-						// '0', not 'i' because NodeList objects in the DOM are live
-						REDIPS.drag.obj_old = obj_old = target_elements[0];
-						// append obj_old to the source cell
-						source_cell.appendChild(obj_old);
-						// register event listeners (FIX for Safari Mobile)
-						// it seems that Safari Mobile loses registrated events (traditional model) assigned to the DIV element (other browsers work just fine without this line)
-						register_events(obj_old);
+				// call myhandler_dropped_before event handler
+				drop = REDIPS.drag.myhandler_dropped_before(target_cell);
+				// if event handler didn't return "false" then proceed normaly (otherwise dropped element will be returned to the source table cell)
+				if (drop !== false) {
+					// returned value is not false and it should be forced to true to avoid double call of myhandler_dropped_before event handler
+					drop = true;
+					// remove dragged element from DOM (source cell) - node still exists in memory
+					obj.parentNode.removeChild(obj);
+					// move object from the destination to the source cell
+					target_elements = target_cell.getElementsByTagName('div');
+					target_elements_length = target_elements.length;
+					for (i = 0; i < target_elements_length; i++) {
+						// source_cell is defined in onmouseup
+						if (target_elements[0] !== undefined) { //fixes issue with nested DIVS
+							// save reference of switched element in REDIPS.drag.obj_old property
+							// '0', not 'i' because NodeList objects in the DOM are live
+							REDIPS.drag.obj_old = obj_old = target_elements[0];
+							// append obj_old to the source cell
+							source_cell.appendChild(obj_old);
+							// register event listeners (FIX for Safari Mobile)
+							// it seems that Safari Mobile loses registrated events (traditional model) assigned to the DIV element (other browsers work just fine without this line)
+							register_events(obj_old);
+						}
+					}
+					// if destination element exists, then elements are switched
+					if (target_elements_length) {
+						// call myhandler_switched because clone_limit could call myhandler_clonedend1 or myhandler_clonedend2
+						REDIPS.drag.myhandler_switched();
 					}
 				}
-				// drop element to the table cell
-				element_drop();
-				// if destination element exists, then elements are switched
-				if (target_elements_length) {
-					// call myhandler_switched because clone_limit could call myhandler_clonedend1 or myhandler_clonedend2
-					REDIPS.drag.myhandler_switched();
-				}
+				// drop element to the table cell with input parameter "drop" as boolean flag (needed to prevent double call of myhandler_dropped_before event handler)
+				element_drop(drop);
 			}
 			// overwrite destination table cell with dragged content 
 			else if (REDIPS.drag.drop_option === 'overwrite') {
@@ -1184,12 +1192,15 @@ REDIPS.drag = (function () {
 	/**
 	 * Element drop. This function is called from handler_onmouseup. Function appends element to the table cell and calls event handlers.
 	 * If myhandler_dropped_before() returned "false" then element will not be dropped to the current cell.
+	 * @param {Boolean} [drop] If "undefined" then myhandler_dropped_before will be called (in case of "overwrite" and "drop"). In case of "switch" myhandler_dropped_before is already called and "drop" parameter can have values "true" (forced value to avoid double calling) and "false" (cancel dropping).
 	 * @private
 	 * @memberOf REDIPS.drag#
 	 */
-	element_drop = function () {
-		// call myhandler_dropped_before() - this handler can return "false" value
-		var drop = REDIPS.drag.myhandler_dropped_before(target_cell);
+	element_drop = function (drop) {
+		// call myhandler_dropped_before() if is not already called - this handler can return "false" value
+		if (drop === undefined) {
+			drop = REDIPS.drag.myhandler_dropped_before(target_cell);
+		}
 		// if handler returns false then element drop should be canceled
 		if (drop !== false) {
 			// shift table content if drop_option is set to "shift" and target cell is not empty
