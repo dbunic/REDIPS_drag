@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 4.6.23
-Aug 06, 2012.
+Version 4.7.0
+Aug 17, 2012.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -30,7 +30,7 @@ var REDIPS = REDIPS || {};
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">Drag and drop table rows</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">Drag and Drop table content</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-content-shift/">JavaScript drag and drop plus content shift</a>
- * @version 4.6.23
+ * @version 4.7.0
  */
 REDIPS.drag = (function () {
 		// methods
@@ -70,6 +70,8 @@ REDIPS.drag = (function () {
 		relocate,					// relocate objects from source cell to the target cell (source and target cells are input parameters)
 		empty_cell,					// method removes elements from table cell
 		shift_cells,				// method shifts table content to the left or right (useful for content where the order should be preserved)
+		cell_list,					// method returns cell list with new coordinates (it takes care about rowspan/colspan cells) 
+		max_cols,					// method returns maximum number of columns in a table
 		move_object,				// method moves object to the destination table, row and cell
 		delete_object,				// method deletes DIV element
 		animation,					// object animation
@@ -3123,36 +3125,43 @@ REDIPS.drag = (function () {
 			pos1,		// start position (used for settings of pos variable)
 			pos2,		// end cell (target) position
 			d,			// direction (1 - left, -1 - right)
+			cl,			// cell list in form of [row, cell] -> table_cell (it takes care about rowspan and colspan)
+			t1, t2,		// temporary source and target cell needed for relocate
 			c1, c2,		// source and target cell needed for relocate
 			soption,	// shift option read from public parameter
 			rows,		// row number
 			cols,		// column number (column number is defined from first row)
 			x, y,		// column / row
-			max;		// maximum number or rows or columns
+			max;
 		// if DIV element is dropped to the source cell then there's nothing to do - just return from method
 		if (td1 === td2) {
 			return;
 		}
 		// set shift option from public property
 		soption = REDIPS.drag.shift_option;
-		// set source and target position (pos1 is used for setting pos variable in switch (soption) case)
-		pos1 = [td1.parentNode.rowIndex, td1.cellIndex];
-		pos2 = [td2.parentNode.rowIndex, td2.cellIndex];
 		// set table reference for source and target table cell
 		tbl1 = find_parent('TABLE', td1);
 		tbl2 = find_parent('TABLE', td2);
+		// prepare cell index (this will take care about rowspan and cellspan cases)
+		cl = cell_list(tbl2);
+		// set source position only if both locations are from the same table
+		if (tbl1 === tbl2) {
+			pos1 = [td1.redips.rowIndex, td1.redips.cellIndex];
+		}
+		// set source and target position (pos1 is used for setting pos variable in switch (soption) case)
+		pos2 = [td2.redips.rowIndex, td2.redips.cellIndex];
 		// define number of rows and columns for target table (it's used as row and column index) 
 		rows = tbl2.rows.length - 1;
-		cols = tbl2.rows[0].cells.length - 1;
+		cols = max_cols(tbl2);
 		// set start position for shifting (depending on shift option value)
 		switch (soption) {
 		case 'vertical2':
-			// if source and target cells are from the same table and from the same column then use pos1 otherwise set last cell in column
-			pos = (tbl1 === tbl2 && td1.cellIndex === td2.cellIndex) ? pos1 : find_cell('lastInColumn', td2);
+			// if source and target are from the same table and from the same column then use pos1 otherwise set last cell in column
+			pos = (tbl1 === tbl2 && td1.cellIndex === td2.cellIndex) ? pos1 : [rows, td2.redips.cellIndex];
 			break;
 		case 'horizontal2':
-			// if source and target cell are from the same table and from the same row then use pos1 otherwise set last cell in row
-			pos = (tbl1 === tbl2 && td1.parentNode.rowIndex === td2.parentNode.rowIndex) ? pos1 : find_cell('lastInRow', td2);
+			// if source and target are from the same table and from the same row then use pos1 otherwise set last cell in row
+			pos = (tbl1 === tbl2 && td1.parentNode.rowIndex === td2.parentNode.rowIndex) ? pos1 : [td2.redips.rowIndex, cols];
 			break;
 		// vertical1 and horizontal1 shift option
 		default:
@@ -3184,7 +3193,7 @@ REDIPS.drag = (function () {
 		// while loop - goes from source to target position
 		while (pos[0] !== pos2[0] || pos[1] !== pos2[1]) {
 			// define target cell
-			c2 = tbl2.rows[pos[0]].cells[pos[1]];
+			t2 = cl[pos[0] + '-' + pos[1]];
 			// increment row index
 			pos[x] += d;
 			// if row is highest row
@@ -3197,17 +3206,123 @@ REDIPS.drag = (function () {
 				pos[x] = 0;
 				pos[y]++;
 			}
-			// define source cell
-			c1 = tbl2.rows[pos[0]].cells[pos[1]];
-			// relocate cell content with animation
-			if (REDIPS.drag.animation_shift) {
-				relocate(c1, c2, 'animation');
+			// define temp source cell
+			t1 = cl[pos[0] + '-' + pos[1]];
+			// if temp1 cell source cell exists then remember location to c1
+			if (t1 !== undefined) {
+				c1 = t1;
 			}
-			// relocate cell content without animation
-			else {
-				relocate(c1, c2);
+			// if temp2 cell source cell exists then remember location to c2
+			if (t2 !== undefined) {
+				c2 = t2;
+			}
+			// shift DIV if exists (t1 and c2) or (c1 and t2)
+			if ((t1 !== undefined && c2 !== undefined) || (c1 !== undefined && t2 !== undefined)) {
+				// relocate cell content with animation
+				if (REDIPS.drag.animation_shift) {
+					relocate(c1, c2, 'animation');
+				}
+				// relocate cell content without animation
+				else {
+					relocate(c1, c2);
+				}
 			}
 		}
+	};
+
+
+	/**
+	 * Determining a table cell's X and Y position/index.
+	 * @see <a href="http://www.javascripttoolbox.com/temp/table_cellindex.html">http://www.javascripttoolbox.com/temp/table_cellindex.html</a>
+	 * @see <a href="http://www.barryvan.com.au/2012/03/determining-a-table-cells-x-and-y-positionindex/">http://www.barryvan.com.au/2012/03/determining-a-table-cells-x-and-y-positionindex/</a>
+	 * @private
+	 * @memberOf REDIPS.drag#
+	 */
+	cell_list = function (table) {
+		var matrix = [],
+			matrixrow,
+			lookup = {},
+			c,			// current cell
+			ri,			// row index
+			rowspan,
+			colspan,
+			firstAvailCol,
+			tr,			// TR collection
+			i, j, k, l;	// loop variables
+		// set HTML collection of table rows
+		tr = table.rows;
+		// open loop for each TR element
+		for (i = 0; i < tr.length; i++) {
+			// open loop for each cell within current row
+			for (j = 0; j < tr[i].cells.length; j++) {
+				// define current cell
+				c = tr[i].cells[j];
+				// set row index
+				ri = c.parentNode.rowIndex;
+				// define cell rowspan and colspan values
+				rowspan = c.rowSpan || 1;
+				colspan = c.colSpan || 1;
+				// if matrix for row index is not defined then initialize array
+				matrix[ri] = matrix[ri] || [];
+				// find first available column in the first row
+				for (k = 0; k < matrix[ri].length + 1; k++) {
+					if (typeof(matrix[ri][k]) === 'undefined') {
+						firstAvailCol = k;
+						break;
+					}
+				}
+				// set cell coordinates and reference to the table cell
+				lookup[ri + '-' + firstAvailCol] = c;
+				// create a "property object" in which "real" row/cell index will be saved
+				if (c.redips === undefined) {
+					c.redips = {};
+				}
+				// save row and cell index to the cell
+				c.redips.rowIndex = ri;
+				c.redips.cellIndex = firstAvailCol;
+				for (k = ri; k < ri + rowspan; k++) {
+					matrix[k] = matrix[k] || [];
+					matrixrow = matrix[k];
+					for (l = firstAvailCol; l < firstAvailCol + colspan; l++) {
+						matrixrow[l] = 'x';
+					}
+				}
+			}
+		}
+		return lookup;
+	};
+
+
+	/**
+	 * Method returns number of maximum columns in table (some row may contain merged cells).
+	 * @param {HTMLElement|String} table TABLE element.
+	 * @private
+	 * @memberOf REDIPS.drag#
+	 */
+	max_cols = function (table) {
+		var	tr = table.rows,	// define number of rows in current table
+			span,				// sum of colSpan values
+			max = 0,			// maximum number of columns
+			i, j;				// loop variable
+		// if input parameter is string then overwrite it with table reference
+		if (typeof(table) === 'string') {
+			table = document.getElementById(table);
+		}
+		// open loop for each TR within table
+		for (i = 0; i < tr.length; i++) {
+			// reset span value
+			span = 0;
+			// sum colspan value for each table cell
+			for (j = 0; j < tr[i].cells.length; j++) {
+				span += tr[i].cells[j].colSpan || 1;
+			}
+			// set maximum value
+			if (span > max) {
+				max = span;
+			}
+		}
+		// return maximum value
+		return max;
 	};
 
 

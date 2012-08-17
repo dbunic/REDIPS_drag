@@ -1,5 +1,8 @@
 Changes for REDIPS.drag library
 
+4.7.0
+- added support for rowspan/colspan cells in "shift" mode
+
 4.6.23
 - fixed bug in case of canceling drop in "switch" mode - thanks to Robin
 
