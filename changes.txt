@@ -1,5 +1,8 @@
 Changes for REDIPS.drag library
 
+4.7.1
+- fixed bug with undefined target_cell in myhandler_switched() - thanks to Doc
+
 4.7.0
 - added support for rowspan/colspan cells in "shift" mode
 
