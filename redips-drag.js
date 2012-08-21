@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 4.7.1
-Aug 20, 2012.
+Version 4.7.2
+Aug 21, 2012.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -30,7 +30,7 @@ var REDIPS = REDIPS || {};
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">Drag and drop table rows</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">Drag and Drop table content</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-content-shift/">JavaScript drag and drop plus content shift</a>
- * @version 4.7.1
+ * @version 4.7.2
  */
 REDIPS.drag = (function () {
 		// methods
@@ -872,7 +872,12 @@ REDIPS.drag = (function () {
 				delete tr.redips.empty_row;
 				// call row_dropped event handler if row_drop() was not called from animation()
 				if (!animated) {
-					REDIPS.drag.myhandler_row_dropped(target_cell);
+					// in case of dragging last row from the table src will be reference to the empty row
+					if (src.nodeName !== 'TABLE') {
+						src = find_parent('TABLE', src);
+					}
+					// call user event handler
+					REDIPS.drag.myhandler_row_dropped(tr, src, rowIndex);
 				}
 			}
 			// if row contains TABLE(S) then recall init_table() to properly initialize tables array and set custom properties
@@ -4397,7 +4402,9 @@ REDIPS.drag = (function () {
 		myhandler_row_notmoved : function () {},
 		/**
 		 * Event handler invoked after row is dropped to the table cell.
-		 * @param {HTMLElement} [target_cell] Reference to the target table cell.
+		 * @param {HTMLElement} [target_row] Reference to the target row (dropped row).
+		 * @param {HTMLElement} [source_table] Source table reference. If the row is dropped to the same table then this reference and "target_row" will be in correlation. Actually, "source_table" will contain "target_row".
+		 * @param {Integer} [source_row_index] Source row index.
 		 * @name REDIPS.drag#myhandler_row_dropped
 		 * @function
 		 * @event

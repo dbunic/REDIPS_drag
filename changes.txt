@@ -1,5 +1,8 @@
 Changes for REDIPS.drag library
 
+4.7.2
+- added optional parameters target_row, source_table and source_row_index to the myhandler_row_dropped event handler
+
 4.7.1
 - fixed bug with undefined target_cell in myhandler_switched() - thanks to Doc
 
