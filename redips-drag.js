@@ -3,7 +3,7 @@ Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
 Version 4.7.2
-Aug 21, 2012.
+Sep 4, 2012.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -192,9 +192,8 @@ REDIPS.drag = (function () {
 			i,					// used in local for loops
 			imgs,				// collect images inside div=drag
 			redips_clone;		// reference to the DIV element needed for cloned elements 
-
-		// if drag container is undefined, then set reference to the DIV element with id="drag"
-		if (dc === undefined) {
+		// if drag container is undefined or input parameter is not a string, then set reference to DIV element with default id="drag"
+		if (dc === undefined || typeof(dc) !== 'string') {
 			dc = 'drag';
 		}
 		// set reference to the drag container
