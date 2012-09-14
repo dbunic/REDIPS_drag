@@ -1,5 +1,8 @@
 Changes for REDIPS.drag library
 
+4.7.3
+- fixed myhandler_dropped_before() in case of "overwrite" drag mode (bottom DIV element was deleted before calling myhandler_dropped_before event handler)  
+
 4.7.2
 - added optional parameters target_row, source_table and source_row_index to the myhandler_row_dropped event handler
 

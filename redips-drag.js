@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 4.7.2
-Sep 4, 2012.
+Version 4.7.3
+Sep 14, 2012.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -30,7 +30,7 @@ var REDIPS = REDIPS || {};
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">Drag and drop table rows</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">Drag and Drop table content</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-content-shift/">JavaScript drag and drop plus content shift</a>
- * @version 4.7.2
+ * @version 4.7.3
  */
 REDIPS.drag = (function () {
 		// methods
@@ -1128,8 +1128,13 @@ REDIPS.drag = (function () {
 			else if (REDIPS.drag.drop_option === 'switch') {
 				// call myhandler_dropped_before event handler
 				drop = REDIPS.drag.myhandler_dropped_before(target_cell);
-				// if event handler didn't return "false" then proceed normaly (otherwise dropped element will be returned to the source table cell)
-				if (drop !== false) {
+				// if returned value is false then only call element_drop with input parameter "false" to delete cloned element (if needed)
+				// dragged DIV element will be returned to the initial position
+				if (drop === false) {
+					element_drop(false);
+				}
+				// normal procedure for "switch" drag option
+				else {
 					// remove dragged element from DOM (source cell) - node still exists in memory
 					obj.parentNode.removeChild(obj);
 					// move object from the destination to the source cell
@@ -1149,31 +1154,32 @@ REDIPS.drag = (function () {
 						}
 					}
 					// element_drop() should be called before myhandler_switched() otherwise target_cell will be undefined
-					// input parameter (true/false) will prevent double call of myhandler_dropped_before()
-					element_drop(true);
-					// if destination element exists, then elements are switched
+					element_drop();
+					// if destination element exists, then elements will be switched
 					if (target_elements_length) {
 						// call myhandler_switched because clone_limit could call myhandler_clonedend1 or myhandler_clonedend2
 						REDIPS.drag.myhandler_switched();
 					}
 				}
-				// dropped element will be returned to the source cell
-				else {
-					// input parameter (false/true) will prevent double call of myhandler_dropped_before()
-					element_drop(false);
-				}
 			}
-			// overwrite destination table cell with dragged content 
+			// overwrite destination cell with dragged content 
 			else if (REDIPS.drag.drop_option === 'overwrite') {
-				// empty target cell
-				empty_cell(target_cell);
-				// drop element to the table cell
-				element_drop();
+				// call myhandler_dropped_before event handler
+				drop = REDIPS.drag.myhandler_dropped_before(target_cell);
+				// if event handler didn't return "false" then proceed normaly (otherwise dropped element will be returned to the source table cell)
+				if (drop !== false) {
+					// empty target cell
+					empty_cell(target_cell);
+				}
+				// drop element to the table cell (or delete cloned element if drop="false")
+				element_drop(drop);
 			}
 			// else call myhandler_dropped_before(), append object to the cell and call myhandler_dropped() 
 			else {
-				// drop element to the table cell
-				element_drop();
+				// call myhandler_dropped_before event handler
+				drop = REDIPS.drag.myhandler_dropped_before(target_cell);
+				// drop element to the table cell (or delete cloned element if drop="false")
+				element_drop(drop);
 			}
 			// force naughty browsers (IE6, IE7 ...) to redraw source and destination row (element.className = element.className does the trick)
 			// but careful (table_source || row_source could be null if clone element was clicked in denied table cell)
@@ -1200,18 +1206,14 @@ REDIPS.drag = (function () {
 
 
 	/**
-	 * Element drop. This function is called from handler_onmouseup. Function appends element to the table cell and calls event handlers.
-	 * If myhandler_dropped_before() returned "false" then element will not be dropped to the current cell.
-	 * @param {Boolean} [drop] If "undefined" then myhandler_dropped_before will be called (in case of "overwrite" and "drop"). In case of "switch" myhandler_dropped_before is already called and "drop" parameter can have values "true" (forced value to avoid double calling) and "false" (cancel dropping).
+	 * Element drop. This method is called from handler_onmouseup and appends element to the target table cell.
+	 * If input parameter "drop" is set to "false" (this is actually return value from myhandler_dropped_before) then DIV elements will not be dropped (only cloned element will be deleted).
+	 * @param {Boolean} [drop] If not "false" then DIV element will be dropped to the cell.
 	 * @private
 	 * @memberOf REDIPS.drag#
 	 */
 	element_drop = function (drop) {
-		// call myhandler_dropped_before() if is not already called - this handler can return "false" value
-		if (drop === undefined) {
-			drop = REDIPS.drag.myhandler_dropped_before(target_cell);
-		}
-		// if handler returns false then element drop should be canceled
+		// if input parameter is not "false" then DIV element will be dropped to the table cell
 		if (drop !== false) {
 			// shift table content if drop_option is set to "shift" and target cell is not empty
 			// has_child() is private method
