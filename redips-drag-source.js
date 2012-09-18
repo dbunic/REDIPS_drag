@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 4.7.3
-Sep 14, 2012.
+Version 4.7.4
+Sep 18, 2012.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -1199,6 +1199,8 @@ REDIPS.drag = (function () {
 			}
 			// recalculate table cells and scrollers because cell content could change row dimensions 
 			calculate_cells();
+			// call final event handler
+			REDIPS.drag.myhandler_final();
 		}
 		// reset old positions
 		table_old = row_old = cell_old = null;
@@ -3852,8 +3854,9 @@ REDIPS.drag = (function () {
 		// when row is moved then REDIPS.drag will create mini table with one row
 		// all browsers (IE8, Opera11, FF3.6, Chrome10) can set opacity to the table
 		else {
-			el.style.opacity = opacity / 100; // set opacity for FF, Chrome, Opera
-			el.style.filter = 'alpha(opacity=' + opacity + ')';  // set opacity for IE		
+			el.style.opacity = opacity / 100;					// set opacity for FF, Chrome, Opera
+			el.style.filter = 'alpha(opacity=' + opacity + ')';	// set opacity for IE
+			el.style.backgroundColor = color ? color : '';		// set background color 
 		}
 	};
 
@@ -4195,7 +4198,7 @@ REDIPS.drag = (function () {
 		 */
 		shift_after : shift_after,
 		/**
-		 * Color of empty row.
+		 * "Empty row" color. When last row from table is moved then this color will be set to "empty row".
 		 * @type String
 		 * @see <a href="#row_empty">row_empty</a>
 		 * @name REDIPS.drag#row_empty_color
@@ -4377,7 +4380,22 @@ REDIPS.drag = (function () {
 		 * @event
 		 */	
 		myhandler_undeleted	: function () {},
-		
+		/**
+		 * Event handler invoked after any DIV element action.
+		 * For example, if drop option is set to "multiple" (this is default) and DIV element is dropped to the table cell then the following order of event handlers will be performed:
+		 * <ol>
+		 * <li>myhandler_dropped_before</li>
+		 * <li>myhandler_dropped (only if myhandler_dropped_before doesn't return false)</li>
+		 * <li>myhandler_final</li>
+		 * <ol>
+		 * So, myhandler_final will be called after deleting DIV element, cloning, switching and so on.
+		 * Its main purpose is to execute some common code (like "cleaning") after any DIV element action.
+		 * @name REDIPS.drag#myhandler_final
+		 * @function
+		 * @event
+		 */	
+		myhandler_final	: function () {},
+
 		/* Row Event Handlers */
 		/**
 		 * Event handler invoked if a mouse button is pressed down while the mouse pointer is over row handler (div class="drag row").
