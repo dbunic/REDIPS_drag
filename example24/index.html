@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+	<head>
+		<meta name="author" content="Darko Bunic"/>
+		<meta name="description" content="Drag and drop table content with JavaScript"/>
+		<meta name="viewport" content="width=device-width, user-scalable=no"/><!-- "position: fixed" fix for Android 2.2+ -->
+		<link rel="stylesheet" href="style.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../header.js"></script>
+		<script type="text/javascript" src="../redips-drag-min.js"></script>
+		<script type="text/javascript" src="redips-table-min.js"></script>
+		<script type="text/javascript" src="script.js"></script>
+		<title>Example 24: Table editor</title>
+	</head>
+	<body>
+		<!-- tables inside this DIV could have draggable content -->
+		<div id="drag">
+			<!-- left container -->
+			<div id="left">
+				<div class="instructions">
+				<strong>Building blocks</strong>
+				<br/>
+				Drag blocks to the right to build your application.
+				</div>
+				<table id="tblComponents">
+					<colgroup>
+						<col width="150"/>
+					</colgroup>
+					<tbody>
+						<tr><td class="mark"><div class="drag clone" id="te1">Text</div></td></tr>
+						<tr><td class="mark"><div class="drag clone" id="co1">Contacts</div></td></tr>
+						<tr><td class="mark"><div class="drag clone" id="ca1">Category</div></td></tr>
+						<tr><td class="mark"><div class="drag clone" id="da1">Date picker</div></td></tr>
+						<tr><td class="mark"><div class="drag clone" id="li1">Link</div></td></tr>
+						<tr><td class="mark"><div class="drag clone" id="im1">Image</div></td></tr>
+						<tr><td class="mark"><div class="drag clone" id="vs1">Video sharing</div></td></tr>
+						<tr><td class="mark"><div class="drag clone" id="go1">Google Map</div></td></tr>
+						<tr><td class="mark"><div class="drag clone" id="qu1">Question</div></td></tr>
+						<tr><td class="mark"><div class="drag clone" id="nu1">Number</div></td></tr>
+						<tr><td class="mark"><div class="drag clone" id="mo1">Money</div></td></tr>
+						<tr><td class="mark"><div class="drag clone" id="du1">Duration</div></td></tr>
+						<tr><td class="mark"><div class="drag clone" id="ps1">Progress slider</div></td></tr>
+						<tr><td class="mark"><div class="drag clone" id="ca2">Calculation</div></td></tr>
+						<tr><td class="mark"><div class="drag clone" id="ap1">App reference</div></td></tr>
+					</tbody>
+				</table>
+			</div><!-- left container -->
+			
+			<!-- right container -->
+			<div id="right">
+				<!-- toolbox -->
+				<table id="tblToolbox">
+					<tbody>
+						<tr>
+							<td class="mark">
+								<input type="button" value="Merge" class="button mButton" onclick="redips.merge()" title="Merge marked cells horizontally"/>
+							</td>
+							<td class="mark">
+								<input type="button" value="Split" class="button mButton" onclick="redips.split()" title="Split marked cells horizontally"/>
+							</td>
+							<!--
+							<td class="mark">
+								<input type="button" value="Split H" class="button" onclick="redips.split('h')" title="Split marked table cell horizontally"/>
+								<input type="button" value="Split V" class="button" onclick="redips.split('v')" title="Split marked table cell vertically"/>
+							</td>
+							<td class="mark">
+								<input type="button" value="Row +" class="button" onclick="redips.row('insert')" title="Add table row"/>
+								<input type="button" value="Row -" class="button" onclick="redips.row('delete')" title="Delete table row"/>
+							</td>
+							<td class="mark">
+								<input type="button" value="Col +" class="button" onclick="redips.column('insert')" title="Add table column"/>
+								<input type="button" value="Col -" class="button" onclick="redips.column('delete')" title="Delete table column"/>
+							</td>
+							<td class="trash">Trash</td>
+							-->
+						</tr>
+					</tbody>
+				</table>
+				<!-- main table -->
+				<table id="tblEditor">
+					<colgroup>
+						<col width="150"/>
+						<col width="150"/>
+						<col width="150"/>
+						<col width="150"/>
+						<col width="50"/>
+					</colgroup>
+					<tbody>
+						<tr>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<!-- table cells should be ignored for REDIPS.table lib -->
+							<td class="mark ignore">
+								<div>
+									<span onclick="redips.rowDelete(this)" class="rowTool">x</span>
+									/
+									<span onclick="redips.rowInsert(this)" class="rowTool">+</span>
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<!-- save button -->
+				<input type="button" value="Save" class="button sButton" onclick="redips.save()" title="Save form"/><span id="sMessage"></span>
+				<!-- demo message (needed to display JSON message) -->
+				<div id="message"/>
+			</div><!-- right container -->
+		</div><!-- drag container -->
+
+	</body>
+</html>

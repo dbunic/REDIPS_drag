@@ -3,6 +3,8 @@ Changes for REDIPS.drag library
 4.7.4
 - added myhandler_final() event handler
 - the color gets ignored in case a row is moved - bug fixed thanks to Rüdiger Kaatz
+- added example24
+- redips-drag.js renamed to redips-drag-source.js
 
 4.7.3
 - fixed myhandler_dropped_before() in case of "overwrite" drag mode (bottom DIV element was deleted before calling myhandler_dropped_before event handler)  

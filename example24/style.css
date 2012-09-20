@@ -1,0 +1,177 @@
+/*
+
+Darko Bunic
+http://www.redips.net/
+Apr, 2012.
+
+*/
+
+body {
+	font-family: arial;
+	margin: 0px;
+}
+
+/* drag object (DIV elements) */
+.drag {
+	margin: 2px auto;
+	/* needed when details container is displayed to be wrapped nicely */
+	display: table;
+	text-align: center;
+	width: 120px;
+	height: 28px;
+	line-height: 28px;
+	color: #555;
+	border: 1px solid #bebebe;
+	background-color: #dbdbdb;
+	/* round corners */
+	border-radius: 4px;
+	/* opacity */
+	opacity: 0.9;
+	filter: alpha(opacity=90);
+}
+
+/* drag container*/
+#drag {
+	margin: 20px auto;
+	background-color: #f6f6f6;
+	border: 2px dashed LightBlue;
+	width: 900px;
+	display: table;
+	font-size: 10pt;
+}
+		/* left table (components) */
+		#left {
+			margin-right: 20px;
+			width: 150px;
+			float: left;
+			/* needed for IE8 to calculate width of left container */
+			border-bottom: 1px solid white;
+		}
+		/* right table (table editor) */
+		#right {
+			margin-top: 10px;
+			float: left;
+			background-color: white;
+			border: 1px solid #eee;
+			/* round corners */
+			border-radius: 4px;
+		}
+
+
+/* both tables inside drag container */
+div#drag table {
+	border-collapse: collapse;
+	border-spacing: 1px;
+}
+
+
+/* left table - table with components */
+#tblComponents {
+	margin: 4px;
+}
+	table#tblComponents td {
+		height: 34px;
+		width: 80px;
+		border: 1px solid #f6f6f6;
+	}	
+
+
+/* right table - table editor */
+#tblEditor {
+	color: #777;
+	margin: 7px;
+	z-index: 0;
+}
+	/* only TD for table editor (and not for any other descendant node)*/
+	table#tblEditor > tbody > tr > td {
+ 		border: 1px solid #ddd;
+		padding: 0px;
+		text-align: center;
+		height: 35px;
+/* 		width: 500px; */
+	}
+	/* style for form elements */
+	#tblEditor input {
+		cursor: auto;
+	}
+
+
+/* instructions below left table */
+.instructions {
+	width: 130px;
+	margin: 15px;
+	font-size: 11px;
+	color: #333;
+	text-align: center;
+}
+
+/* component header inside DIV element*/
+/* title, + and X are placed in one row table */
+.cHeader {
+	margin: 0px 5px;
+}
+	.cHeader td {
+		height: 22px;
+	}
+	/* "+" button */
+	.hLeft {
+		cursor: pointer;
+		color: #469999;
+		font-weight: bold;
+		width: 10px;
+	}
+	/* title */
+	.hTitle {
+		width: 470px;
+	}
+	/* "X" button */*
+	.hRight {
+		cursor: pointer;
+		color: #FF7575;
+		font-weight: bold;
+		width: 10px !important;
+	}
+
+/* component details (initially details are hidden) */
+.cDetails {
+ 	display: none;
+	border-top: 1px solid #bebebe;
+	background-color: #A9C2EA;
+	padding: 5px;
+	text-align: left;
+}
+
+/* x / + tools for each table row */
+.rowTool {
+	cursor: pointer;
+}
+
+/* button styles (merge, split, save) */
+.button {
+	background-color: #6A93D4;
+	color: white; 
+	border-width: 1px;
+	padding: 0px;
+}
+	/* save button */
+	.sButton {
+		width: 60px;
+		margin: 10px;
+	}
+	/* merge and split button */
+	.mButton {
+		width: 45px;
+	}
+
+/* save message displayed after AJAX request is finished */
+#sMessage {
+	padding-left: 10px;
+	color: #6A93D4;
+}
+
+/* needed only for demo */
+#message {
+	width: 500px;
+	color: #333;
+	font-size: 11px;
+}
