@@ -89,11 +89,20 @@
 				<!-- animation checkbox -->
 				<input type="checkbox" class="checkbox" onclick="toggle_animation(this)" title="Enable / disable animation" checked=""/>Animation
 				<br/>
-				<!-- shift after element is deleted checkbox -->
-				<input type="checkbox" class="checkbox" onclick="toggle_shift_after(this)" title="Enable / disable content shifting after element is deleted" checked=""/>Shift content (after element is deleted)
-				<br/>
 				<!-- confirm before delete object -->
 				<input type="checkbox" class="checkbox" onclick="toggle_confirm(this)" title="Show confirm delete dialog"/>Show confirm delete dialog
+				<br/>
+				<br/>
+				Shift after options:
+				<br/>
+				<!-- shift table content when DIV element is dropped to the non empty cell -->
+				<input type="radio" name="shift_after" class="checkbox" onclick="toggle_shift_after(this)" value="default" title="Default" checked="true"/>Default - shift content only if DIV element is dropped to the non empty cell
+				<br/>
+				<!-- shift after element is deleted checkbox -->
+				<input type="radio" name="shift_after" class="checkbox" onclick="toggle_shift_after(this)" value="delete" title="Enable / disable content shifting after element is deleted"/>Delete - same as "default" + shift content after element is deleted
+				<br/>
+				<!-- always shift table content -->
+				<input type="radio" name="shift_after" class="checkbox" onclick="toggle_shift_after(this)" value="always" title="Always shit table content"/>Always - always shift table content
 				<br/>
 				<br/>
 				<!-- shift modes -->

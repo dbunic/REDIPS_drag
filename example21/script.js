@@ -50,7 +50,7 @@ toggle_animation = function (chk) {
 
 // enable / disable shift after element is deleted
 toggle_shift_after = function (chk) {
-	REDIPS.drag.shift_after = chk.checked;
+	REDIPS.drag.shift_after = chk.value;
 };
 
 

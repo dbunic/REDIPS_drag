@@ -3,7 +3,7 @@ Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
 Version 4.7.4
-Sep 18, 2012.
+Sep 27, 2012.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -162,7 +162,7 @@ REDIPS.drag = (function () {
 		animation_pause = 20,			// animation pause (lower values mean the animation plays faster)
 		animation_step = 2,				// animation step (minimum is 1)
 		animation_shift = false,		// (boolean) shift drop option animation (if set to true, table content will be relocated with animation in case of "shift" drop option)
-		shift_after = true,				// (boolean) shift elements to empty cell after DIV element is moved to the trash cell.
+		shift_after = 'default',		// (string) shift elements always, if DIV element is dropped to the empty cell as well or if DIV element is deleted
 		an_counter = 0,					// (integer) counter of animated elements to be shifted before table should be enabled
 		clone_shiftKey = false,			// (boolean) if true, elements could be cloned with pressed SHIFT key
 		clone_shiftKey_row = false,		// (boolean) if true, rows could be cloned with pressed SHIFT key
@@ -1217,9 +1217,9 @@ REDIPS.drag = (function () {
 	element_drop = function (drop) {
 		// if input parameter is not "false" then DIV element will be dropped to the table cell
 		if (drop !== false) {
-			// shift table content if drop_option is set to "shift" and target cell is not empty
-			// has_child() is private method
-			if (REDIPS.drag.drop_option === 'shift' && has_childs(target_cell)) {
+			// shift table content if drop_option is set to "shift" and target cell is not empty or shift_after option is set to always
+			// has_child() is a private method
+			if (REDIPS.drag.drop_option === 'shift' && (has_childs(target_cell) || REDIPS.drag.shift_after === 'always')) {
 				shift_cells(source_cell, target_cell);
 			}
 			// insert (to top) or append (to bottom) object to the target cell
@@ -1302,8 +1302,8 @@ REDIPS.drag = (function () {
 		if (cloned) {
 			clone_limit();
 		}
-		// shift table content if drop_option is set to "shift" and shift_after is set to true and DIV element is deleted
-		if (REDIPS.drag.drop_option === 'shift' && REDIPS.drag.shift_after) {
+		// shift table content if drop_option is set to "shift" and shift_after is set to "delete" or "always"
+		if (REDIPS.drag.drop_option === 'shift' && (REDIPS.drag.shift_after === 'delete' || REDIPS.drag.shift_after === 'always')) {
 			// define last table cell in column, row or table - depending on shift_option value
 			switch (REDIPS.drag.shift_option) {
 			case 'vertical2':
@@ -4188,13 +4188,15 @@ REDIPS.drag = (function () {
 		 */
 		animation_shift : animation_shift,
 		/**
-		 * Shift elements to empty cell after DIV element is deleted (moved to the trash cell).
-		 * If set to false, table content will not be shifted.
+		 * shift_after option has the following values: default, delete and always.
+		 * default - table content will be shifted only if DIV element is dropped to the non empty cell
+		 * delete - same as "default" + shift table content after DIV element is moved to trash
+		 * always - table content will be always shifted
 		 * This property will have effect only if drop_option is set to "shift".
-		 * @type Boolean
+		 * @type String
 		 * @see <a href="#drop_option">drop_option</a>
 		 * @name REDIPS.drag#shift_after
-		 * @default true
+		 * @default delete
 		 */
 		shift_after : shift_after,
 		/**
