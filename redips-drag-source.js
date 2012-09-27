@@ -4198,7 +4198,7 @@ REDIPS.drag = (function () {
 		 * @type String
 		 * @see <a href="#drop_option">drop_option</a>
 		 * @name REDIPS.drag#shift_after
-		 * @default delete
+		 * @default default
 		 */
 		shift_after : shift_after,
 		/**
