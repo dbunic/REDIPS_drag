@@ -4189,9 +4189,11 @@ REDIPS.drag = (function () {
 		animation_shift : animation_shift,
 		/**
 		 * shift_after option has the following values: default, delete and always.
-		 * default - table content will be shifted only if DIV element is dropped to the non empty cell
-		 * delete - same as "default" + shift table content after DIV element is moved to trash
-		 * always - table content will be always shifted
+		 * <ul>
+		 * <li>default - table content will be shifted only if DIV element is dropped to the non empty cell</li>
+		 * <li>delete - same as "default" + shift table content after DIV element is moved to trash</li>
+		 * <li>always - table content will be always shifted</li>
+		 * </ul>
 		 * This property will have effect only if drop_option is set to "shift".
 		 * @type String
 		 * @see <a href="#drop_option">drop_option</a>
