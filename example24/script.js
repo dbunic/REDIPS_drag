@@ -154,7 +154,7 @@ redips.divDelete = function (el) {
 };
 
 
-// method hides details of DIV elements sent as input parameter 
+// method shows/hides details of DIV elements sent as input parameter 
 redips.details = function (el, type) {
 	var div_drag = REDIPS.drag.find_parent('DIV', el),	// find parent DIV element
 		tbl = div_drag.childNodes[0],	// first child node is table
@@ -165,7 +165,9 @@ redips.details = function (el, type) {
 		td.innerHTML = '';
 		div.style.display = 'block';
 		div.style.zIndex = 999;
-		div.style.position = 'fixed';
+		// element with position: absolute is taken out of the normal flow of the page and positioned at the desired coordinates relative to its containing block
+		// http://www.quirksmode.org/css/position.html
+		div.style.position = 'absolute';
 		// http://foohack.com/2007/10/top-5-css-mistakes/ (how z-index works)
 		// setting z-index and opacity were messing things up (so opacity should be turned off) 
 		div_drag.style.opacity = 1;
