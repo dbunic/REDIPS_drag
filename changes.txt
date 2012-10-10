@@ -1,5 +1,8 @@
 Changes for REDIPS.drag library
 
+4.7.5
+- added "cloned" as optional input parameter to the myhandler_moved() event handler
+
 4.7.4
 - added myhandler_final() event handler
 - the color gets ignored in case a row is moved - bug fixed thanks to Rüdiger Kaatz

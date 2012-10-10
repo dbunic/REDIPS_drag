@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 4.7.4
-Sep 27, 2012.
+Version 4.7.5
+Oct 10, 2012.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -30,7 +30,7 @@ var REDIPS = REDIPS || {};
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">Drag and drop table rows</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">Drag and Drop table content</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-content-shift/">JavaScript drag and drop plus content shift</a>
- * @version 4.7.4
+ * @version 4.7.5
  */
 REDIPS.drag = (function () {
 		// methods
@@ -1433,8 +1433,8 @@ REDIPS.drag = (function () {
 			threshold.flag = true;
 			// set position (highlight current position)
 			set_position();
-			// call myhandler_moved
-			REDIPS.drag.myhandler_moved();
+			// call myhandler_moved with cloned as input parameter
+			REDIPS.drag.myhandler_moved(cloned);
 		}
 		// set left and top styles for the moved element if element is inside window
 		// this conditions will stop element on window bounds
@@ -3904,7 +3904,7 @@ REDIPS.drag = (function () {
 		 */
 		obj	: obj,
 		/**
-		 * Previously moved DIV element (before clicked or cloned).
+		 * Previously moved DIV element (before clicked or cloned). In case when DIV element is cloned, obj is reference of current (cloned) DIV element while obj_old is reference of bottom (origin) DIV element.
 		 * @type HTMLElement
 		 * @name REDIPS.drag#obj_old
 		 */
@@ -4264,6 +4264,7 @@ REDIPS.drag = (function () {
 		myhandler_dblclicked : function () {},
 		/**
 		 * Event handler invoked if element is moved from home position.
+		 * @param {Boolean} [cloned] True if moved element is actually a cloned DIV. Needed for cases when obj or obj_old should be used.
 		 * @name REDIPS.drag#myhandler_moved
 		 * @function
 		 * @event
