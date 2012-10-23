@@ -2998,11 +2998,13 @@ REDIPS.drag = (function () {
 	/**
 	 * Method relocates DIV elements from source table cell to the target table cell (with optional animation).
 	 * If animation is enabled, then target table will be disabled until animated element reaches destination cell.
+	 * In animation mode, myhandler_relocated() will be called after animation is finished.
 	 * @param {HTMLElement} from Source table cell.
 	 * @param {HTMLElement} to Target table cell.
 	 * @param {String} [mode] Relocation mode "instant" or "animation". Default is "instant".
 	 * @public
 	 * @function
+	 * @see <a href="#event:myhandler_relocated">myhandler_relocated</a>
 	 * @name REDIPS.drag#relocate
 	 */
 	relocate = function (from, to, mode) {
@@ -4311,6 +4313,7 @@ REDIPS.drag = (function () {
 		/**
 		 * Event handler invoked after all DIV elements are relocated and before table is enabled (DIV elements enabled for dragging).
 		 * This event can be triggered after single call of relocate() method or after all DIV elements are shifted in "shift" mode.
+		 * It is called only if animation is turned on.
 		 * @name REDIPS.drag#myhandler_relocated
 		 * @see <a href="#relocate">relocate</a>
 		 * @function
