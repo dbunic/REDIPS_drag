@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 4.7.5
-Oct 10, 2012.
+Version 4.7.6
+Oct 23, 2012.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -30,7 +30,7 @@ var REDIPS = REDIPS || {};
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">Drag and drop table rows</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">Drag and Drop table content</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-content-shift/">JavaScript drag and drop plus content shift</a>
- * @version 4.7.5
+ * @version 4.7.6
  */
 REDIPS.drag = (function () {
 		// methods
@@ -3025,7 +3025,11 @@ REDIPS.drag = (function () {
 					an_counter--;
 					// after last element is shifted, enable table
 					if (an_counter === 0) {
+						// call event handler after relocation is finished
+						REDIPS.drag.myhandler_relocated();
+						// set reference to the table
 						tbl = REDIPS.drag.find_parent('TABLE', div);
+						// enable DIV elements for dragging
 						REDIPS.drag.enable_table(true, tbl);
 					}
 				}
@@ -4304,6 +4308,15 @@ REDIPS.drag = (function () {
 		 * @event
 		 */	
 		myhandler_switched : function () {},
+		/**
+		 * Event handler invoked after all DIV elements are relocated and before table is enabled (DIV elements enabled for dragging).
+		 * This event can be triggered after single call of relocate() method or after all DIV elements are shifted in "shift" mode.
+		 * @name REDIPS.drag#myhandler_relocated
+		 * @see <a href="#relocate">relocate</a>
+		 * @function
+		 * @event
+		 */	
+		myhandler_relocated : function () {},
 		/**
 		 * Event handler invoked on every change of current (highlighted) table cell.
 		 * @param {HTMLElement} [current_cell] Reference to the current (highlighted) table cell.

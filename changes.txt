@@ -1,5 +1,8 @@
 Changes for REDIPS.drag library
 
+4.7.6
+- added event handler myhandler_relocated() - event can be triggered after single call of relocate() method or after all DIV elements are shifted in "shift" mode
+
 4.7.5
 - added "cloned" as optional input parameter to the myhandler_moved() event handler
 
