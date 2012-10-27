@@ -63,8 +63,8 @@ Live demo shows REDIPS.drag library in action:
 
 * [Drag and drop table content plus animation](http://www.redips.net/javascript/drag-and-drop-table-content-animation/)
 * [JavaScript drag and drop plus content shift](http://www.redips.net/javascript/drag-and-drop-content-shift/)
-* [Drag and drop table rows](http://www.redips.net/javascript/drag-and-drop-table-content/)
-* [Drag and Drop table content](http://www.redips.net/javascript/drag-and-drop-table-row/)
+* [Drag and Drop table rows](http://www.redips.net/javascript/drag-and-drop-table-row/)
+* [Drag and drop table content](http://www.redips.net/javascript/drag-and-drop-table-content/)
 
 ## YouTube
 
