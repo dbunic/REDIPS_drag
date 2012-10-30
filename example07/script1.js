@@ -15,21 +15,21 @@ redips.init = function () {
 	// initialization
 	rd.init();
 	// set hover color
-	rd.hover.color_td = '#9BB3DA';
+	rd.hover.colorTd = '#9BB3DA';
 	// single element per cell
-	rd.drop_option = 'single';
+	rd.dropMode = 'single';
 	// define A and B source elements for the last row only (element ID and class name of the last row)
 	rd.only.div.a = 'last';
 	rd.only.div.b = 'last';
 	// A and B elements can't be placed to other table cells (this is default value)
 	rd.only.other = 'deny';
 	// after element is cloned define dropping rule for last row (only for clones of A or B element)
-	rd.myhandler_cloned = function () {
+	rd.event.cloned = function () {
 		// define variables
-		var cloned_id = rd.obj.id; // cloned id
+		var clonedId = rd.obj.id; // cloned id
 		// if cloned begins with 'a' or 'b' define dropping rule 'only' for last row
-		if (cloned_id.substr(0, 1) === 'a' || cloned_id.substr(0, 1) === 'b') {   
-			rd.only.div[cloned_id] = 'last';
+		if (clonedId.substr(0, 1) === 'a' || clonedId.substr(0, 1) === 'b') {   
+			rd.only.div[clonedId] = 'last';
 		}
 	};
 	// or cloned elements can be defined one by one

@@ -15,8 +15,8 @@ redips.configuration = function () {
 	redips.components = 'tblComponents';// left table id (table containing components)
 	redips.tableEditor = 'tblEditor';	// right table id (table editor)
 	redips.tableEditorDivs = document.getElementById(redips.tableEditor).getElementsByTagName('DIV');	// live collection of DIV elements inside table editor
-	redips.ajax_field = 'db_field.php';	// get component details (via AJAX)
-	redips.ajax_save = 'db_save.php';	// save page (via AJAX)
+	redips.ajaxField = 'db_field.php';	// get component details (via AJAX)
+	redips.ajaxSave = 'db_save.php';	// save page (via AJAX)
 	redips.cDetails = 'cDetails';		// component detail class name (it should be the same as is in CSS file)
 	redips.markedColor = '#A9C2EA';		// marked cells background color
 	// layout (HTML code) for component placed to the table editor 
@@ -42,10 +42,10 @@ redips.init = function () {
 	redips.request = redips.initXMLHttpClient();
 	// initialize REDIPS.drag library
 	rd.init();
-	// set drop option as "single" - DIV element can be dropped only to the empty cells
-	rd.drop_option = 'single';
+	// set drop mode as "single" - DIV element can be dropped only to the empty cells
+	rd.dropMode = 'single';
 	// event handler invoked on click on DIV element
-	rd.myhandler_clicked = function () {
+	rd.event.clicked = function () {
 		var div,	// DIV element reference
 			i;		// loop variable
 		// loop goes through all DIV elements inside table editor
@@ -59,28 +59,28 @@ redips.init = function () {
 		}
 	};
 	// event handler invoked before DIV element is dropped to the table cell
-	rd.myhandler_dropped_before = function (target_cell) {
+	rd.event.droppedBefore = function (targetCell) {
 		// set new width to the dropped DIV element
-		var width = target_cell.offsetWidth;
+		var width = targetCell.offsetWidth;
 		// set width and reset height value
 		rd.obj.style.width = (width - 2) + 'px';
 		rd.obj.style.height = '';
 	};
 	// event handler invoked in a moment when DIV element is dropped to the table
-	rd.myhandler_dropped = function (target_cell) {
+	rd.event.dropped = function (targetCell) {
 		var st,		// source table
 			id;		// DIV id
 		// deselect target cell id needed
-		rt.mark(false, target_cell);
+		rt.mark(false, targetCell);
 		// define source table
-		st = rd.find_parent('TABLE', rd.source_cell);
+		st = rd.findParent('TABLE', rd.td.source);
 		// if source table is table editor then expand DIV element
 		if (redips.components === st.id) {
 			// define id of dropped DIV element (only first three characters because cloned element will have addition in id)
 			id = rd.obj.id.substring(0, 3);
 //			rd.obj.style.borderColor = 'white';
 			// send request (input parameter is object reference)
-			redips.get_component(rd.obj, id);
+			redips.getComponent(rd.obj, id);
 		}
 	};
 };
@@ -116,9 +116,9 @@ redips.initXMLHttpClient = function () {
 
 
 // executed when DIV element is dropped to the right table
-redips.get_component = function (obj, id) {
+redips.getComponent = function (obj, id) {
 	// open asynchronus request
-	redips.request.open('GET', redips.ajax_field + '?id=' + id, true);
+	redips.request.open('GET', redips.ajaxField + '?id=' + id, true);
 	// the onreadystatechange event is triggered every time the readyState changes
 	redips.request.onreadystatechange = function () {
 		// prepare title and layout
@@ -141,7 +141,7 @@ redips.get_component = function (obj, id) {
 
 // delete DIV element from table editor
 redips.divDelete = function (el) {
-	var div = REDIPS.drag.find_parent('DIV', el),	// set reference to the DIV element
+	var div = REDIPS.drag.findParent('DIV', el),	// set reference to the DIV element
 		rcell = el.parentNode.cells[1],				// set reference to the right cell of DIV element header
 		name = rcell.innerText || rcell.textContent;// set name in a cross-browser manner
 	// set name to lower case
@@ -156,9 +156,9 @@ redips.divDelete = function (el) {
 
 // method shows/hides details of DIV elements sent as input parameter 
 redips.details = function (el, type) {
-	var div_drag = REDIPS.drag.find_parent('DIV', el),	// find parent DIV element
-		tbl = div_drag.childNodes[0],	// first child node is table
-		div = div_drag.childNodes[1],	// second child node is hidden DIV (with containing component details)
+	var divDrag = REDIPS.drag.findParent('DIV', el),	// find parent DIV element
+		tbl = divDrag.childNodes[0],	// first child node is table
+		div = divDrag.childNodes[1],	// second child node is hidden DIV (with containing component details)
 		td = tbl.rows[0].cells[0];		// set reference of the first cell in table header
 	// show component details
 	if (type === undefined || type === 'show') {
@@ -170,7 +170,7 @@ redips.details = function (el, type) {
 		div.style.position = 'absolute';
 		// http://foohack.com/2007/10/top-5-css-mistakes/ (how z-index works)
 		// setting z-index and opacity were messing things up (so opacity should be turned off) 
-		div_drag.style.opacity = 1;
+		divDrag.style.opacity = 1;
 	}
 	// hide component details
 	else {
@@ -179,7 +179,7 @@ redips.details = function (el, type) {
 		div.style.zIndex = -1;
 		div.style.position = '';
 		// return opacity value (if opacity is removed from style.css then this line should be removed as well)
-		div_drag.style.opacity = 0.9;
+		divDrag.style.opacity = 0.9;
 	}
 };
 
@@ -208,9 +208,9 @@ redips.save = function () {
 			// component id (only first three characters because cloned element will have addition in id)
 			component.id = div.id.substring(0, 3);
 			// component position
-			pos = REDIPS.drag.get_position(div);	// get component position in editor table and remove first item from array (table index is not needed)
-			pos.shift();							// remove first item from array (table index is not needed)
-			component.position = pos;				// add position to the component
+			pos = REDIPS.drag.getPosition(div);	// get component position in editor table and remove first item from array (table index is not needed)
+			pos.shift();						// remove first item from array (table index is not needed)
+			component.position = pos;			// add position to the component
 			// set form reference (there shoud be only one form inside DIV component)
 			frm = div.getElementsByTagName('FORM')[0];
 			// call method to scan component form and return all form elements with their values
@@ -224,7 +224,7 @@ redips.save = function () {
 		json = JSON.stringify(JSONobj);
 	}
 	// open asynchronus request (POST method)
-	redips.request.open('POST', redips.ajax_save, true);
+	redips.request.open('POST', redips.ajaxSave, true);
 	// set content type for POST method
 	redips.request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 	// the onreadystatechange event is triggered every time the readyState changes
@@ -302,7 +302,7 @@ redips.split = function () {
 
 // insert row (below current row)
 redips.rowInsert = function (el) {
-	var row = REDIPS.drag.find_parent('TR', el),	// find source row (skip inner row)
+	var row = REDIPS.drag.findParent('TR', el),	// find source row (skip inner row)
 		top_row,									// cells reference in top row of the table editor
 		nr,											// new table row
 		lc;											// last cell in newly inserted row
@@ -322,7 +322,7 @@ redips.rowInsert = function (el) {
 // remove table row from the table editor
 redips.rowDelete = function (el) {
 	// find source row (skip inner row)
-	var row = REDIPS.drag.find_parent('TR', el);
+	var row = REDIPS.drag.findParent('TR', el);
 	// confirm deletion
 	if (confirm('Delete row?')) {
 		// delete row from table editor

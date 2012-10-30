@@ -15,12 +15,12 @@ redipsInit = function () {
 	// initialization
 	rd.init();
 	// dragged elements can be placed to the empty cells only
-	rd.drop_option = 'single';
+	rd.dropMode = 'single';
 	// elements could be cloned with pressed SHIFT key
-	rd.clone_shiftKey = true;
+	rd.cloneKey.div = true;
 	// every change of current TD will have different background color
-	rd.myhandler_changed = function () {
-		rd.hover.color_td = rndColor();
+	rd.event.changed = function () {
+		rd.hover.colorTd = rndColor();
 	};
 };
 

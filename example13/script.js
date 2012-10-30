@@ -4,33 +4,33 @@
 /* enable strict mode */
 "use strict";
 
-var redips_init,		// define redips_init variable
-	set_hover_color,	// set hover color method
-	rd;					// reference to the REDIPS.drag library
+var redipsInit,		// define redipsInit variable
+	setHoverColor,	// set hover color method
+	rd;				// reference to the REDIPS.drag library
 
 // redips initialization
-redips_init = function () {
+redipsInit = function () {
 	// set reference to the REDIPS.drag library
 	rd = REDIPS.drag;
 	// initialization
 	rd.init();
-	// elements could be cloned with pressed SHIFT key
-	rd.clone_shiftKey = true;
+	// enable cloning DIV elements with pressed SHIFT key
+	rd.cloneKey.div = true;
 	// handler clicked - set hover color
-	rd.myhandler_clicked = function (current_cell) {
-		set_hover_color(current_cell);
+	rd.event.clicked = function (currentCell) {
+		setHoverColor(currentCell);
 	};
 	// handler changed - set hover color
-	rd.myhandler_changed = function (current_cell) {
-		set_hover_color(current_cell);
+	rd.event.changed = function (currentCell) {
+		setHoverColor(currentCell);
 	};
 };
 
 
 // set hover color
-set_hover_color = function (cell) {
+setHoverColor = function (cell) {
 	var color,
-		tbl = rd.find_parent('TABLE', cell);
+		tbl = rd.findParent('TABLE', cell);
 	// set hover color depending in nested level
 	switch (tbl.redips.nestedLevel) {
 	// "ground" level table
@@ -51,14 +51,14 @@ set_hover_color = function (cell) {
 		break;
 	}
 	// set hover color
-	rd.hover.color_td = color; 
+	rd.hover.colorTd = color; 
 };
 
 
 // add onload event listener
 if (window.addEventListener) {
-	window.addEventListener('load', redips_init, false);
+	window.addEventListener('load', redipsInit, false);
 }
 else if (window.attachEvent) {
-	window.attachEvent('onload', redips_init);
+	window.attachEvent('onload', redipsInit);
 }

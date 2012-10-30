@@ -5,24 +5,24 @@
 "use strict";
 
 // define redips_init variable
-var redips_init;
+var redipsInit;
 
 // redips initialization
-redips_init = function () {
+redipsInit = function () {
 	// reference to the REDIPS.drag lib
 	var rd = REDIPS.drag;
 	// initialization
 	rd.init();
-	// dragged elements can be placed to the empty cells only
-	rd.drop_option = 'single';
-	// elements could be cloned with pressed SHIFT key
-	rd.clone_shiftKey = true;
+	// dragged elements can be placed only to the empty cells
+	rd.dropMode = 'single';
+	// enable cloning DIV elements with pressed SHIFT key
+	rd.cloneKey.div = true;
 };
 
 // add onload event listener
 if (window.addEventListener) {
-	window.addEventListener('load', redips_init, false);
+	window.addEventListener('load', redipsInit, false);
 }
 else if (window.attachEvent) {
-	window.attachEvent('onload', redips_init);
+	window.attachEvent('onload', redipsInit);
 }

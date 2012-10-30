@@ -5,50 +5,50 @@
 "use strict";
 
 // define redips_init variable
-var redips_init;
+var redipsInit;
 
 
 // redips initialization
-redips_init = function () {
+redipsInit = function () {
 	// reference to the REDIPS.drag library and message line
 	var	rd = REDIPS.drag,
 		msg = document.getElementById('message');
 	// how to display disabled elements
-	rd.border_disabled = 'solid';	// border style for disabled element will not be changed (default is dotted)
-	rd.opacity_disabled = 60;		// disabled elements will have opacity effect
+	rd.style.borderDisabled = 'solid';	// border style for disabled element will not be changed (default is dotted)
+	rd.style.opacityDisabled = 60;		// disabled elements will have opacity effect
 	// initialization
 	rd.init();
 	// only "smile" can be placed to the marked cell
 	rd.mark.exception.d8 = 'smile';
 	// prepare handlers
-	rd.myhandler_clicked = function () {
+	rd.event.clicked = function () {
 		msg.innerHTML = 'Clicked';
 	};
-	rd.myhandler_dblclicked = function () {
+	rd.event.dblClicked = function () {
 		msg.innerHTML = 'Dblclicked';
 	};
-	rd.myhandler_moved  = function () {
+	rd.event.moved  = function () {
 		msg.innerHTML = 'Moved';
 	};
-	rd.myhandler_notmoved = function () {
+	rd.event.notMoved = function () {
 		msg.innerHTML = 'Not moved';
 	};
-	rd.myhandler_dropped = function () {
+	rd.event.dropped = function () {
 		msg.innerHTML = 'Dropped';
 	};
-	rd.myhandler_switched = function () {
+	rd.event.switched = function () {
 		msg.innerHTML = 'Switched';
 	};
-	rd.myhandler_clonedend1 = function () {
+	rd.event.clonedEnd1 = function () {
 		msg.innerHTML = 'Cloned end1';
 	};
-	rd.myhandler_clonedend2 = function () {
+	rd.event.clonedEnd2 = function () {
 		msg.innerHTML = 'Cloned end2';
 	};
-	rd.myhandler_notcloned = function () {
+	rd.event.notCloned = function () {
 		msg.innerHTML = 'Not cloned';
 	};
-	rd.myhandler_deleted = function (cloned) {
+	rd.event.deleted = function (cloned) {
 		// if cloned element is directly moved to the trash
 		if (cloned) {
 			// set id of original element (read from redips property)
@@ -59,18 +59,18 @@ redips_init = function () {
 			msg.innerHTML = 'Deleted';
 		}
 	};
-	rd.myhandler_undeleted = function () {
+	rd.event.undeleted = function () {
 		msg.innerHTML = 'Undeleted';
 	};
-	rd.myhandler_cloned = function () {
+	rd.event.cloned = function () {
 		// display message
 		msg.innerHTML = 'Cloned';
 		// append 'd' to the element text (Clone -> Cloned)
 		rd.obj.innerHTML += 'd';
 	};
-	rd.myhandler_changed = function () {
+	rd.event.changed = function () {
 		// get target and source position (method returns positions as array)
-		var pos = rd.get_position();
+		var pos = rd.getPosition();
 		// display current row and current cell
 		msg.innerHTML = 'Changed: ' + pos[1] + ' ' + pos[2];
 	};
@@ -78,26 +78,31 @@ redips_init = function () {
 
 
 // toggles trash_ask parameter defined at the top
-function toggle_confirm(chk) {
-	REDIPS.drag.trash_ask = chk.checked;
+function toggleConfirm(chk) {
+	if (chk.checked === true) {
+		REDIPS.drag.trash.question = 'Are you sure you want to delete DIV element?';
+	}
+	else {
+		REDIPS.drag.trash.question = null;
+	}
 }
 
 
 // toggles delete_cloned parameter defined at the top
-function toggle_delete_cloned(chk) {
-	REDIPS.drag.delete_cloned = chk.checked;
+function toggleDeleteCloned(chk) {
+	REDIPS.drag.deleteCloned = chk.checked;
 }
 
 
 // enables / disables dragging
-function toggle_dragging(chk) {
-	REDIPS.drag.enable_drag(chk.checked);
+function toggleDragging(chk) {
+	REDIPS.drag.enableDrag(chk.checked);
 }
 
 
 // function sets drop_option parameter defined at the top
-function set_drop_option(radio_button) {
-	REDIPS.drag.drop_option = radio_button.value;
+function setMode(radioButton) {
+	REDIPS.drag.dropMode = radioButton.value;
 }
 
 
@@ -106,7 +111,7 @@ function save(type) {
 	// define table_content variable
 	var table_content;
 	// prepare table content of first table in JSON format or as plain query string (depends on value of "type" variable)
-	table_content = REDIPS.drag.save_content('table1', type);
+	table_content = REDIPS.drag.saveContent('table1', type);
 	// if content doesn't exist
 	if (!table_content) {
 		alert('Table is empty!');
@@ -125,8 +130,8 @@ function save(type) {
 
 // add onload event listener
 if (window.addEventListener) {
-	window.addEventListener('load', redips_init, false);
+	window.addEventListener('load', redipsInit, false);
 }
 else if (window.attachEvent) {
-	window.attachEvent('onload', redips_init);
+	window.attachEvent('onload', redipsInit);
 }

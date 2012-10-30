@@ -5,75 +5,66 @@
 "use strict";
 
 
-var redips_init,	// define redips_init variable
+var redipsInit,		// define redipsInit variable
 	save,			// save elements and their positions
 	report,			// function shows subject occurring in timetable
-	report_button,	// show/hide report buttons
-	show_all,		// function show all subjects in timetable
-	print_message,	// print message
-	div_nl;			// node list of DIV elements in table2 (global variable needed in report() and visibility() function)
+	reportButton,	// show/hide report buttons
+	showAll,		// function show all subjects in timetable
+	printMessage,	// print message
+	divNodeList;	// node list of DIV elements in table2 (global variable needed in report() and visibility() function)
 
 
 // redips initialization
-redips_init = function () {
+redipsInit = function () {
 	var	rd = REDIPS.drag;			// reference to the REDIPS.drag object
 	// initialization
 	rd.init();
-	rd.drop_option = 'single';		// dragged elements can be placed to the empty cells only
-	rd.hover.color_td = '#9BB3DA';	// set hover color
-	rd.trash_ask = false;			// do not ask on delete
-	rd.clone_shiftKey = true;		// elements could be cloned with pressed SHIFT key
+	// REDIPS.drag settings
+	rd.dropMode = 'single';			// dragged elements can be placed only to the empty cells
+	rd.hover.colorTd = '#9BB3DA';	// set hover color
+	rd.cloneKey.div = true;			// enable cloning DIV elements with pressed SHIFT key
 	// prepare node list of DIV elements in table2
-	div_nl = document.getElementById('table2').getElementsByTagName('div');
+	divNodeList = document.getElementById('table2').getElementsByTagName('div');
 	// show / hide report buttons (needed for dynamic version - with index.php)
-	report_button();
-	// after element is dropped, print message
-	rd.myhandler_dropped = function () {
-		var	obj_old = rd.obj_old,					// original object
-			target_cell = rd.target_cell,			// Target cell
-			target_row = rd.target_cell.parentNode,	// Target row
-			marked_cell = rd.marked_cell,			// marked cells
-			mark_cname = rd.mark_cname,				// name of marked cells
-			i, obj_new, mark_found;					// local variables
-		// if checkbox is checked and original element is clone type then clone school subject to the week
-		if (document.getElementById('week').checked === true && obj_old.className.indexOf('clone') > -1) {
+	reportButton();
+	// element is dropped
+	rd.event.dropped = function () {
+		var	objOld = rd.objOld,					// original object
+			targetCell = rd.td.target,			// target cell
+			targetRow = targetCell.parentNode,	// target row
+			i, objNew;							// local variables
+		// if checkbox is checked and original element is of clone type then clone spread subjects to the week
+		if (document.getElementById('week').checked === true && objOld.className.indexOf('clone') > -1) {
 			// loop through table cells
-			for (i = 0; i < target_row.cells.length; i++) {
-				// skip if table cell is not empty (true for cell where element is currently dropped)
-				if (target_row.cells[i].childNodes.length > 0) {
-					continue;
-				}
-				// search for "mark" class name
-				mark_found = target_row.cells[i].className.indexOf(mark_cname) > -1 ? true : false;
-				// if current cell is marked and access type is 'deny' or current cell is not marked and access type is "allow"
-				// then skip this table cell
-				if ((mark_found === true && marked_cell === 'deny') || (mark_found === false && marked_cell === 'allow')) {
+			for (i = 0; i < targetRow.cells.length; i++) {
+				// skip cell if cell has some content (first column is not empty because it contains label)
+				if (targetRow.cells[i].childNodes.length > 0) {
 					continue;
 				}
 				// clone DIV element
-				obj_new = rd.clone_div(obj_old);
+				objNew = rd.cloneObject(objOld);
 				// append to the table cell
-				target_row.cells[i].appendChild(obj_new);
+				targetRow.cells[i].appendChild(objNew);
 			}
 		}
 		// print message only if target and source table cell differ
-		if (rd.target_cell !== rd.source_cell) { 
-			print_message('Content has been changed!');
+		if (rd.td.target !== rd.td.source) { 
+			printMessage('Content has been changed!');
 		}
 		// show / hide report buttons
-		report_button();
+		reportButton();
 	};
 
 	// after element is deleted from the timetable, print message
-	rd.myhandler_deleted = function () {
-		print_message('Content has been deleted!');
+	rd.event.deleted = function () {
+		printMessage('Content has been deleted!');
 		// show / hide report buttons
-		report_button();
+		reportButton();
 	};
 	
 	// if any element is clicked, then make all subjects in timetable visible
-	rd.myhandler_clicked = function () {
-		show_all();
+	rd.event.clicked = function () {
+		showAll();
 	};
 };
 
@@ -81,7 +72,7 @@ redips_init = function () {
 // save elements and their positions
 save = function () {
 	// scan timetable content
-	var content = REDIPS.drag.save_content('table2');
+	var content = REDIPS.drag.saveContent('table2');
 	// and save content
 	window.location.href = 'db_save.php?' + content;
 };
@@ -101,10 +92,10 @@ report = function (subject) {
 		num = 0,	// number of found subject
 		str = '';	// result string
 	// show all elements
-	show_all();
+	showAll();
 	// create array from node list (node list is global variable)
-	for (i = 0; i < div_nl.length; i++) {
-		div[i] = div_nl[i];
+	for (i = 0; i < divNodeList.length; i++) {
+		div[i] = divNodeList[i];
 	}
 	// sort div elements by the cellIndex (days in week) and rowIndex (hours)
 	div.sort(function (a, b) {
@@ -143,7 +134,7 @@ report = function (subject) {
 
 
 // show/hide report buttons
-report_button = function () {
+reportButton = function () {
 	var	id,			// element id
 		i,			// loop variable
 		count,		// number of subjects in timetable
@@ -151,10 +142,10 @@ report_button = function () {
 		// prepare subjects
 		subject = {'en': 0, 'ph': 0, 'ma': 0, 'bi': 0, 'ch': 0, 'it': 0, 'ar': 0, 'hi': 0, 'et': 0};
 	// loop goes through all collected elements
-	for (i = 0; i < div_nl.length; i++) {
+	for (i = 0; i < divNodeList.length; i++) {
 		// define only first two letters of ID
 		// (cloned elements have appended c1, c2, c3 ...)
-		id = div_nl[i].id.substr(0, 2);
+		id = divNodeList[i].id.substr(0, 2);
 		// increase subject occurring
 		subject[id]++;
 	}
@@ -180,23 +171,24 @@ report_button = function () {
 
 
 // print message
-print_message = function (message) {
+printMessage = function (message) {
 	document.getElementById('message').innerHTML = message;
 };
 
 
 // function show all subjects in timetable
-show_all = function () {
+showAll = function () {
 	var	i; // loop variable
-	for (i = 0; i < div_nl.length; i++) {
-		div_nl[i].style.visibility = 'visible';
+	for (i = 0; i < divNodeList.length; i++) {
+		divNodeList[i].style.visibility = 'visible';
 	}
 };
 
+
 // add onload event listener
 if (window.addEventListener) {
-	window.addEventListener('load', redips_init, false);
+	window.addEventListener('load', redipsInit, false);
 }
 else if (window.attachEvent) {
-	window.attachEvent('onload', redips_init);
+	window.attachEvent('onload', redipsInit);
 }

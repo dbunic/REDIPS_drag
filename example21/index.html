@@ -87,31 +87,31 @@
 
 			<div class="mycontrols">
 				<!-- animation checkbox -->
-				<input type="checkbox" class="checkbox" onclick="toggle_animation(this)" title="Enable / disable animation" checked=""/>Animation
+				<input type="checkbox" class="checkbox" onclick="toggleAnimation(this)" title="Enable / disable animation" checked=""/>Animation
 				<br/>
 				<!-- confirm before delete object -->
-				<input type="checkbox" class="checkbox" onclick="toggle_confirm(this)" title="Show confirm delete dialog"/>Show confirm delete dialog
+				<input type="checkbox" class="checkbox" onclick="toggleConfirm(this)" title="Show confirm delete dialog"/>Show confirm delete dialog
 				<br/>
 				<br/>
 				Shift after options:
 				<br/>
 				<!-- shift table content when DIV element is dropped to the non empty cell -->
-				<input type="radio" name="shift_after" class="checkbox" onclick="toggle_shift_after(this)" value="default" title="Default" checked="true"/>Default - shift content only if DIV element is dropped to the non empty cell
+				<input type="radio" name="shift_after" class="checkbox" onclick="toggleShiftAfter(this)" value="default" title="Default" checked="true"/>Default - shift content only if DIV element is dropped to the non empty cell
 				<br/>
 				<!-- shift after element is deleted checkbox -->
-				<input type="radio" name="shift_after" class="checkbox" onclick="toggle_shift_after(this)" value="delete" title="Enable / disable content shifting after element is deleted"/>Delete - same as "default" + shift content after element is deleted
+				<input type="radio" name="shift_after" class="checkbox" onclick="toggleShiftAfter(this)" value="delete" title="Enable / disable content shifting after element is deleted"/>Delete - same as "default" + shift content after element is deleted
 				<br/>
 				<!-- always shift table content -->
-				<input type="radio" name="shift_after" class="checkbox" onclick="toggle_shift_after(this)" value="always" title="Always shit table content"/>Always - always shift table content
+				<input type="radio" name="shift_after" class="checkbox" onclick="toggleShiftAfter(this)" value="always" title="Always shit table content"/>Always - always shift table content
 				<br/>
 				<br/>
 				<!-- shift modes -->
 				<span class="text">Shift options:</span>
 				<br/>
-				<input type="radio" name ="shift_mode" onclick="shift_option(this)" title="Horizontal1" value="horizontal1" checked="true"/>horizontal 1 - element shift can affect more rows<br/>
-				<input type="radio" name ="shift_mode" onclick="shift_option(this)" title="Horizontal1" value="horizontal2"/>horizontal 2 - each row is treated separately<br/>
-				<input type="radio" name ="shift_mode" onclick="shift_option(this)" title="Horizontal1" value="vertical1"/>vertical 1 - element shift can affect more columns<br/>
-				<input type="radio" name ="shift_mode" onclick="shift_option(this)" title="Horizontal1" value="vertical2"/>vertical 2 - each column is treated separately
+				<input type="radio" name ="shift_mode" onclick="shiftMode(this)" title="Horizontal1" value="horizontal1" checked="true"/>horizontal 1 - element shift can affect more rows<br/>
+				<input type="radio" name ="shift_mode" onclick="shiftMode(this)" title="Horizontal1" value="horizontal2"/>horizontal 2 - each row is treated separately<br/>
+				<input type="radio" name ="shift_mode" onclick="shiftMode(this)" title="Horizontal1" value="vertical1"/>vertical 1 - element shift can affect more columns<br/>
+				<input type="radio" name ="shift_mode" onclick="shiftMode(this)" title="Horizontal1" value="vertical2"/>vertical 2 - each column is treated separately
 			</div>
 		</div>
 	</body>

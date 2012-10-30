@@ -12,8 +12,8 @@ redips.configuration = function () {
 	redips.left = 'left';					// id of left DIV container
 	redips.right = 'right';					// id of right DIV container
 	redips.form = 'myform';					// id of form beneath right table
-	redips.ajax_save = 'db_save.php';		// submit form to the server
-	redips.delete_text = '[delete]';		// delete text before item
+	redips.ajaxSave = 'db_save.php';		// submit form to the server
+	redips.deleteText = '[delete]';		// delete text before item
 	redips.request = null;					// AJAX request
 	redips.ol = null;						// OL (Ordered List) reference (reference is set in redips.init)
 };
@@ -26,9 +26,7 @@ redips.init = function () {
 	// set script configuration
 	redips.configuration();
 	// elements can be dropped only to the empty table cells
-	rd.drop_option = 'single';
-	// drop zone is defined as a trash (confirmation is not needed)
-	rd.trash_ask = false;
+	rd.dropMode = 'single';
 	// create XMLHttp request object
 	redips.request = redips.initXMLHttpClient();
 	// set reference to the ul
@@ -36,7 +34,7 @@ redips.init = function () {
 	// REDIPS.drag initialization
 	rd.init();
 	// after element is dropped to the trash cell (append it to the list below table)
-	rd.myhandler_deleted = function (target_cell) {
+	rd.event.deleted = function (targetCell) {
 		redips.addItem(rd.obj);
 	};
 };
@@ -89,7 +87,7 @@ redips.save = function () {
 	// cut last '&' from params string
 	params = params.substring(0, params.length - 1);
 	// open asynchronus request (POST method)
-	redips.request.open('POST', redips.ajax_save, true);
+	redips.request.open('POST', redips.ajaxSave, true);
 	// set content type for POST method
 	redips.request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 	// the onreadystatechange event is triggered every time the readyState changes
@@ -119,7 +117,7 @@ redips.save = function () {
 				*/
 				// demo code
 				message = redips.request.responseText;
-				delay = 4000;
+				delay = 3000;
 			}
 			// if request status isn't OK
 			else {
@@ -156,7 +154,7 @@ redips.addItem = function (obj) {
 		span = document.createElement('span'),
 		text = obj.innerText || obj.textContent,
 		txtLi = document.createTextNode(text),
-		txtSpan = document.createTextNode(redips.delete_text);
+		txtSpan = document.createTextNode(redips.deleteText);
 	// set properties for hidden input element: type, name and value (regex is needed because cloned element contains sufix "c0" like i01c0 that should be discarded)
 	input.type = 'hidden';
 	input.name = 'p[]';
@@ -190,11 +188,11 @@ redips.deleteItem = function (e) {
 		span = evt.target;
 	}
 	// set reference for parent LI element
-	li = REDIPS.drag.find_parent('LI', span);
+	li = REDIPS.drag.findParent('LI', span);
 	// define item text (cross browser - Firefox uses the W3C-compliant textContent property)
 	text = li.innerText || li.textContent;
 	// cut out "[delete]" string
-	text = text.substring(redips.delete_text.length);
+	text = text.substring(redips.deleteText.length);
 	// delete item from the list
 	li.parentNode.removeChild(li);
 	// display message

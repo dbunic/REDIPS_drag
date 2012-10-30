@@ -4,11 +4,11 @@
 /* enable strict mode */
 "use strict";
 
-// define redips_init variable
-var redips_init;
+// define redipsInit variable
+var redipsInit;
 
 // redips initialization
-redips_init = function () {
+redipsInit = function () {
 	var rd = REDIPS.drag;	// reference to the REDIPS.drag class
 	// DIV container initialization
 	rd.init('drag1');
@@ -20,8 +20,8 @@ redips_init = function () {
 
 // add onload event listener
 if (window.addEventListener) {
-	window.addEventListener('load', redips_init, false);
+	window.addEventListener('load', redipsInit, false);
 }
 else if (window.attachEvent) {
-	window.attachEvent('onload', redips_init);
+	window.attachEvent('onload', redipsInit);
 }

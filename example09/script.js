@@ -5,39 +5,39 @@
 "use strict";
 
 
-var redips_init,		// define redips_init variable
-	toggle_animation,	// enable / disable animation
-	start_positions,	// remember initial positions of DIV elements
+var redipsInit,			// define redipsInit variable
+	toggleAnimation,	// enable / disable animation
+	startPositions,		// remember initial positions of DIV elements
 	pos = {},			// initial positions of DIV elements
 	rd = REDIPS.drag;	// reference to the REDIPS.drag lib
 
 
 // redips initialization
-redips_init = function () {
+redipsInit = function () {
 	// initialization
 	rd.init();
 	// enable animation on shifted elements
-	rd.animation_shift = true;
+	rd.animation.shift = true;
 	// save initial DIV positions to "pos" object (it should go after initialization)
-	start_positions();
+	startPositions();
 	// in a moment when DIV element is moved, set drop_option property (shift or single)
-	rd.myhandler_moved = function () {
+	rd.event.moved = function () {
 		// find parent table of moved element
-		var tbl = rd.find_parent('TABLE', rd.obj);
+		var tbl = rd.findParent('TABLE', rd.obj);
 		// if table id is table1
 		if (tbl.id === 'table1') {
-			rd.drop_option = 'shift';
+			rd.dropMode = 'shift';
 		}
 		else {
-			rd.drop_option = 'single';
+			rd.dropMode = 'single';
 		}
 	};
 	// when DIV element is double clicked return it to the initial position
-	rd.myhandler_dblclicked = function () {
+	rd.event.dblClicked = function () {
 		// set dblclicked DIV id
 		var id = rd.obj.id;
 		// move DIV element to initial position
-		rd.move_object({
+		rd.moveObject({
 			id: id,			// DIV element id
 			target: pos[id]	// target position
 		});
@@ -46,7 +46,8 @@ redips_init = function () {
 
 
 // function scans DIV elements and saves their positions to the "pos" object
-start_positions = function () {
+startPositions = function () {
+	// define local varialbles
 	var divs, id, i, position;
 	// collect DIV elements from dragging area
 	divs = document.getElementById('drag').getElementsByTagName('div');
@@ -57,7 +58,7 @@ start_positions = function () {
 		// if element id is defined, then save element position 
 		if (id) {
 			// set element position
-			position = rd.get_position(divs[i]);
+			position = rd.getPosition(divs[i]);
 			// if div has position (filter obj_new) 
 			if (position.length > 0) {
 				pos[id] = position;
@@ -68,15 +69,15 @@ start_positions = function () {
 
 
 // enable / disable animation
-toggle_animation = function (chk) {
-	REDIPS.drag.animation_shift = chk.checked;
+toggleAnimation = function (chk) {
+	REDIPS.drag.animation.shift = chk.checked;
 };
 
 
 // add onload event listener
 if (window.addEventListener) {
-	window.addEventListener('load', redips_init, false);
+	window.addEventListener('load', redipsInit, false);
 }
 else if (window.attachEvent) {
-	window.attachEvent('onload', redips_init);
+	window.attachEvent('onload', redipsInit);
 }

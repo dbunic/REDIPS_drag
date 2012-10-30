@@ -4,30 +4,28 @@
 /* enable strict mode */
 "use strict";
 
-var redips_init,
-	shift_option,
-	toggle_animation,
-	toggle_shift_after,
-	toggle_confirm,
+var redipsInit,
+	shiftMode,
+	toggleAnimation,
+	toggleShiftAfter,
+	toggleConfirm,
 	counter = 0;
 
 
 // redips initialization
-redips_init = function () {
+redipsInit = function () {
 	// reference to the REDIPS.drag library
 	var	rd = REDIPS.drag;
 	// initialization
 	rd.init();
-	// set drop option to "shift"
-	rd.drop_option = 'shift';
+	// set mode option to "shift"
+	rd.dropMode = 'shift';
 	// enable animation on shifted elements
-	rd.animation_shift = true;
+	rd.animation.shift = true;
 	// set animation loop pause
-	rd.animation_pause = 20;
-	// do not ask on delete
-	rd.trash_ask = false;
+	rd.animation.pause = 20;
 	// add counter to cloned element name
-	rd.myhandler_cloned = function () {
+	rd.event.cloned = function () {
 		// increase counter
 		counter++;
 		// append to the DIV element name
@@ -37,33 +35,38 @@ redips_init = function () {
 
 
 // set shift_mode
-shift_option = function (radio) {
-	REDIPS.drag.shift_option = radio.value;
+shiftMode = function (radio) {
+	REDIPS.drag.shift.mode= radio.value;
 };
 
 
 // enable / disable animation
-toggle_animation = function (chk) {
-	REDIPS.drag.animation_shift = chk.checked;
+toggleAnimation = function (chk) {
+	REDIPS.drag.animation.shift = chk.checked;
 };
 
 
 // enable / disable shift after element is deleted
-toggle_shift_after = function (chk) {
-	REDIPS.drag.shift_after = chk.value;
+toggleShiftAfter = function (chk) {
+	REDIPS.drag.shift.after = chk.value;
 };
 
 
 // toggles trash_ask parameter defined at the top
-toggle_confirm = function (chk) {
-	REDIPS.drag.trash_ask = chk.checked;
+toggleConfirm = function (chk) {
+	if (chk.checked === true) {
+		REDIPS.drag.trash.question = 'Are you sure you want to delete DIV element?';
+	}
+	else {
+		REDIPS.drag.trash.question = null;
+	}
 };
 
 
 // add onload event listener
 if (window.addEventListener) {
-	window.addEventListener('load', redips_init, false);
+	window.addEventListener('load', redipsInit, false);
 }
 else if (window.attachEvent) {
-	window.attachEvent('onload', redips_init);
+	window.attachEvent('onload', redipsInit);
 }

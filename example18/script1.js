@@ -14,17 +14,17 @@ var redips = {};
 redips.init = function () {
 	// reference to the REDIPS.drag library
 	var	rd = REDIPS.drag;
-	// set button reference (needed in redips.button_enable() method)
+	// set button reference (needed in redips.buttonEnable() method)
 	redips.button1 = document.getElementById('btn_move1');
 	redips.button2 = document.getElementById('btn_move2');
 	// initialization
 	rd.init();
 	// animation pause (lower values mean the animation plays faster)
-	rd.animation_pause = 40;
+	rd.animation.pause = 40;
 	// animation step (minimum is 1)
-	rd.animation_step = 2;
+	rd.animation.step = 2;
 	// define color for "empty row"
-	rd.row_empty_color = 'LightBlue';
+	rd.rowEmptyColor = 'LightBlue';
 };
 
 
@@ -37,22 +37,22 @@ redips.move = function (tbl) {
 		row,				// returned value from move_object method (array with source row and mini table reference or false in case of moving "empty row")
 		idx;				// index of the last row in table
 	// last row index
-	idx = redips.last_row('table' + tbl);
+	idx = redips.lastRow('table' + tbl);
 	// move row to the table bottom
-	row = rd.move_object({
+	row = rd.moveObject({
 			mode: 'row',					// animation mode - row
 			source: [1 - tbl, 0],			// source position (table index and row index)
 			target: [tbl, idx],				// target position
-			callback: redips.button_enable	// function to call after animation is finished
+			callback: redips.buttonEnable	// function to call after animation is finished
 		});
 	// in case of moving "empty row", method will return false and no row will be moved
 	if (row) {
 		// disable "Move" buttons
-		redips.button_enable(false);
+		redips.buttonEnable(false);
 		// set opacity for moved row (row[0] is reference of cloned row - mini table)
-		rd.row_opacity(row[0], 85);
+		rd.rowOpacity(row[0], 85);
 		// set opacity for source row and change source row background color (row[1] is reference of source row)
-		rd.row_opacity(row[1], 20, 'LightBlue');
+		rd.rowOpacity(row[1], 20, 'LightBlue');
 	}
 };
 
@@ -61,7 +61,7 @@ redips.move = function (tbl) {
  * Function returns index of the last row in table.
  * @param {String} table_id Table id.
  */
-redips.last_row = function (table_id) {
+redips.lastRow = function (table_id) {
 	// define table reference and index of the last row
 	// row index is greater then last row in table so, row will be appended to the table end
 	var tbl = document.getElementById(table_id),
@@ -75,7 +75,7 @@ redips.last_row = function (table_id) {
  * Function enables/disables "Move" button and DIV elements.
  * @param {Boolean} flag enable or disable buttons and DIV elements.
  */
-redips.button_enable = function (flag) {
+redips.buttonEnable = function (flag) {
 	// if input parameter is not boolean type, then enable_rows is called from callback function
 	// callback function sends reference of moved element
 	if (typeof(flag) !== 'boolean') {
@@ -85,7 +85,7 @@ redips.button_enable = function (flag) {
 	redips.button1.disabled = !flag;
 	redips.button2.disabled = !flag;
 	// enable/disable DIV elements in dragging container
-	REDIPS.drag.enable_drag(flag, 'drag', 'subtree');
+	REDIPS.drag.enableDrag(flag, 'drag', 'subtree');
 };
 
 

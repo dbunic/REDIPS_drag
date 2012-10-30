@@ -15,20 +15,20 @@
 				// initialization
 				rd.init();
 				// set hover color
-				rd.hover.color_td = '#E7C7B2';
+				rd.hover.colorTd = '#E7C7B2';
 				// set drop option to 'shift'
-				rd.drop_option = 'shift';
+				rd.dropMode = 'shift';
 				// set shift mode to vertical2
-				rd.shift_option = 'vertical2';
+				rd.shift.mode = 'vertical2';
 				// enable animation on shifted elements
-				rd.animation_shift = true;
+				rd.animation.shift = true;
 				// set animation loop pause
-				rd.animation_pause = 20;
+				rd.animation.pause = 20;
 				// display action in the message line (list of all event handlers can be found at the drag.js bottom)
-				rd.myhandler_clicked	= function () {document.getElementById('message').innerHTML = 'Element is clicked'}
-				rd.myhandler_moved		= function () {document.getElementById('message').innerHTML = 'Element is moved'}
-				rd.myhandler_notmoved	= function () {document.getElementById('message').innerHTML = 'Element is not moved'}
-				rd.myhandler_dropped	= function () {document.getElementById('message').innerHTML = 'Element is dropped'}
+				rd.event.clicked	= function () {document.getElementById('message').innerHTML = 'Element is clicked'}
+				rd.event.moved		= function () {document.getElementById('message').innerHTML = 'Element is moved'}
+				rd.event.notMoved	= function () {document.getElementById('message').innerHTML = 'Element is not moved'}
+				rd.event.dropped	= function () {document.getElementById('message').innerHTML = 'Element is dropped'}
 			}
 		</script>
 		<title>www.redips.net</title>
@@ -36,7 +36,7 @@
 	<body>
 		<center>
 			<h2><a href="http://www.redips.net/javascript/drag-and-drop-table-content/" title="www.redips.net">REDIPS_drag</a> / <a href="http://www.redips.net/javascript/redips-drag-documentation/" title="REDIPS.drag documentation">Documentation</a> / <a href="http://www.redips.net/javascript/redips-drag-documentation-appendix-a/" title="REDIPS.drag documentation - Appendix A">Appendix A</a></h2>
-			<h3>Drag and drop table content/rows with JavaScript - Version 4.7.6 (<a href="changes.txt">changes</a>)</h3>
+			<h3>Drag and drop table content/rows with JavaScript - Version 5.0.0 (<a href="changes.txt">changes</a>)</h3>
 		</center>
 		<!-- tables inside this DIV could have draggable content -->
 		<div id="drag">

@@ -4,82 +4,81 @@
 /* enable strict mode */
 "use strict";
 
-var redips_init;
+var redipsInit;
 
 // redips initialization
-redips_init = function () {
+redipsInit = function () {
 	// reference to the REDIPS.drag library and message line
 	var	rd = REDIPS.drag,
 		msg = document.getElementById('msg');
 	// initialization
 	rd.init();
 	// set hover colors for TD and TR
-	rd.hover.color_td = '#FFCFAE';
-	rd.hover.color_tr = '#9BB3DA';
-	// don't ask on element delete but ask for row delete
-	rd.trash_ask = false;
-	rd.trash_ask_row = true;
+	rd.hover.colorTd = '#FFCFAE';
+	rd.hover.colorTr = '#9BB3DA';
+	// confirm row deletion
+	rd.trash.questionRow = 'Are you sure you want to delete table row?';
 	// enable clone element and row with shift key
-	rd.clone_shiftKey = rd.clone_shiftKey_row = true;
+	rd.cloneKey.div = rd.cloneKey.row = true;
 	// mark row in second table as empty
-	rd.row_empty('tbl2', 1);
+	rd.rowEmpty('tbl2', 1);
 	//
 	// row event handlers
 	//
 	// row clicked (display message and set hover color for "row" mode)
-	rd.myhandler_row_clicked = function () {
+	rd.event.rowClicked = function () {
 		msg.innerHTML = 'Clicked';
 	};
 	// row row_dropped
-	rd.myhandler_row_dropped = function () {
+	rd.event.rowDropped = function () {
 		msg.innerHTML = 'Dropped';
 	};
 	// row was dropped to the source - event handler
 	// mini table (cloned row) will be deleted and source row should return to original state
-	rd.myhandler_row_dropped_source = function () {
+	rd.event.rowDroppedSource = function () {
 		// make source row completely visible (no opacity)
-		rd.row_opacity(rd.obj_old, 100);
+		rd.rowOpacity(rd.objOld, 100);
 		// display message
 		msg.innerHTML = 'Dropped to the source';
 	};
 	// row changed
-	rd.myhandler_row_changed = function () {
+	rd.event.rowChanged = function () {
 		// get target and source position (method returns positions as array)
-		var pos = rd.get_position();
+		var pos = rd.getPosition();
 		// display current table and current row
 		msg.innerHTML = 'Changed: ' + pos[0] + ' ' + pos[1];
 	};
 
 	// row was moved - event handler
-	rd.myhandler_row_moved = function () {
+	rd.event.rowMoved = function () {
 		// set opacity for moved row
 		// rd.obj is reference of cloned row (mini table)
-		rd.row_opacity(rd.obj, 85);
+		rd.rowOpacity(rd.obj, 85);
 		// set opacity for source row and change source row background color
-		// obj.obj_old is reference of source row
-		rd.row_opacity(rd.obj_old, 20, 'White');
+		// obj.objOld is reference of source row
+		rd.rowOpacity(rd.objOld, 20, 'White');
 		// display message
 		msg.innerHTML = 'Moved';
 	};
 	// row notmoved
-	rd.myhandler_row_notmoved = function () {
+	rd.event.rowNotMoved = function () {
 		msg.innerHTML = 'Not moved';
 	};
 	// row cloned
-	rd.myhandler_row_cloned = function () {
+	rd.event.rowCloned = function () {
 		msg.innerHTML = 'Cloned';
 	};
 	// row not cloned (dropped to the source row)
-	rd.myhandler_row_notcloned = function () {
+	rd.event.rowNotCloned = function () {
 		msg.innerHTML = 'Not cloned';
 	};
 	// row deleted
-	rd.myhandler_row_deleted = function () {
+	rd.event.rowDeleted = function () {
 		msg.innerHTML = 'Deleted';
 	};
 	// row is undeleted (return source row to original state)
-	rd.myhandler_row_undeleted = function () {
-		rd.row_opacity(rd.obj_old, 100);
+	rd.event.rowUndeleted = function () {
+		rd.rowOpacity(rd.objOld, 100);
 		// display message
 		msg.innerHTML = 'Undeleted';
 	};
@@ -88,8 +87,8 @@ redips_init = function () {
 
 // add onload event listener
 if (window.addEventListener) {
-	window.addEventListener('load', redips_init, false);
+	window.addEventListener('load', redipsInit, false);
 }
 else if (window.attachEvent) {
-	window.attachEvent('onload', redips_init);
+	window.attachEvent('onload', redipsInit);
 }

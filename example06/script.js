@@ -4,26 +4,26 @@
 /* enable strict mode */
 "use strict";
 
-// define redips_init variable
-var redips_init;
+// define redipsInit variable
+var redipsInit;
 
 // redips initialization
-redips_init = function () {
+redipsInit = function () {
 	// reference to the REDIPS.drag lib
 	var rd = REDIPS.drag;
 	// initialization
 	rd.init();
 	// dragged elements can be placed to the empty cells only
-	rd.drop_option = 'single';
+	rd.dropMode = 'single';
 	// elements could be cloned with pressed SHIFT key
-	rd.clone_shiftKey = true;
+	rd.cloneKey.div = true;
 	// define dropped handler
-	rd.myhandler_dropped = function (target_cell) {
+	rd.event.dropped = function (targetCell) {
 		var tbl,	// table reference of dropped element
 			id,		// id of scrollable container
 			msg;	// message
 		// find table of target cell
-		tbl = rd.find_parent('TABLE', target_cell);
+		tbl = rd.findParent('TABLE', targetCell);
 		// test if table belongs to scrollable container
 		if (tbl.sca !== undefined) {
 			// every table has defined scrollable container (if table belongs to scrollable container)
@@ -54,8 +54,8 @@ redips_init = function () {
 
 // add onload event listener
 if (window.addEventListener) {
-	window.addEventListener('load', redips_init, false);
+	window.addEventListener('load', redipsInit, false);
 }
 else if (window.attachEvent) {
-	window.attachEvent('onload', redips_init);
+	window.attachEvent('onload', redipsInit);
 }

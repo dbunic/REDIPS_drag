@@ -13,8 +13,8 @@ redips.configuration = function () {
 	redips.height = '350px';				// height of DIV element dropped to the right table
 	redips.left = 'left';					// id of left DIV container
 	redips.right = 'right';					// id of right DIV container
-	redips.ajax_detail = 'db_ajax.php';		// get content from database (via AJAX)
-	redips.ajax_save = 'db_save.php';		// submit form to the server
+	redips.ajaxDetail = 'db_ajax.php';		// get content from database (via AJAX)
+	redips.ajaxSave = 'db_save.php';		// submit form to the server
 	redips.size = {w: 0, h: 0};				// size of DIV elements in question table
 	redips.pname = '';						// person name
 	redips.request = null;					// AJAX request
@@ -28,15 +28,15 @@ redips.init = function () {
 	// set script configuration
 	redips.configuration();
 	// elements can be dropped only to the empty table cells
-	REDIPS.drag.drop_option = 'single';
+	REDIPS.drag.dropMode = 'single';
 	// create XMLHttp request object
 	redips.request = redips.initXMLHttpClient();
 	// REDIPS.drag initialization
 	rd.init();
 	// remember width & height of DIV element if element is clicked in left container
-	rd.myhandler_clicked = function (current_cell) {
+	rd.event.clicked = function (currentCell) {
 		// define container (from current cell)
-		var c = rd.find_parent('DIV', current_cell);
+		var c = rd.findParent('DIV', currentCell);
 		// remember width & height
 		if (c.id === redips.left) {
 			redips.size.w = rd.obj.style.width;
@@ -46,21 +46,21 @@ redips.init = function () {
 	};
 	// event handler called before DIV element is dropped to the table
 	// in case when DIV element changes location from left to right DIV container or vice versa 
-	rd.myhandler_dropped_before = function (target_cell) {
+	rd.event.droppedBefore = function (targetCell) {
 		var id = rd.obj.id,	// define id of DIV element
 			sc,				// source container
 			tc;				// target container
 		// define target container (it is DIV element)
-		tc = rd.find_parent('DIV', target_cell);
+		tc = rd.findParent('DIV', targetCell);
 		// define source container
-		sc = rd.find_parent('DIV', rd.source_cell);
+		sc = rd.findParent('DIV', rd.td.source);
 		// if element is dropped from left to the right container
 		// (right table doesn't have id)
 		if (sc.id === redips.left && tc.id === redips.right) {
 			// save person name
 			redips.pname = rd.obj.innerHTML;
 			// send request (input parameter is object reference)
-			redips.send_request(rd.obj, id);
+			redips.sendRequest(rd.obj, id);
 			// width & height parameter is set as global variable
 			rd.obj.style.width = redips.width;
 			rd.obj.style.height = redips.height;
@@ -106,9 +106,9 @@ redips.initXMLHttpClient = function () {
 
 
 // executed when DIV element is dropped to the right table (dropzone)
-redips.send_request = function (obj, id) {
+redips.sendRequest = function (obj, id) {
 	// open asynchronus request
-	redips.request.open('GET', redips.ajax_detail + '?id=' + id, true);
+	redips.request.open('GET', redips.ajaxDetail + '?id=' + id, true);
 	// the onreadystatechange event is triggered every time the readyState changes
 	redips.request.onreadystatechange = function () {
 		// request is finished and response is ready
@@ -129,7 +129,7 @@ redips.send_request = function (obj, id) {
 // method parses form elements and submits to the server
 redips.save = function (button) {
 	var frm = document.getElementById('myform'),
-		div = REDIPS.drag.find_parent('DIV', button),
+		div = REDIPS.drag.findParent('DIV', button),
 		msg = document.getElementById('message'),
 		el,
 		params = '',
@@ -146,7 +146,7 @@ redips.save = function (button) {
 	// cut last '&' from params string
 	params = params.substring(0, params.length - 1);
 	// open asynchronus request (POST method)
-	redips.request.open('POST', redips.ajax_save, true);
+	redips.request.open('POST', redips.ajaxSave, true);
 	// set content type for POST method
 	redips.request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 	// the onreadystatechange event is triggered every time the readyState changes
@@ -180,7 +180,7 @@ redips.save = function (button) {
 			}
 			// display message and set timeout to delete message
 			msg.innerHTML = message;
-		    setTimeout(redips.clear_message, delay);
+		    setTimeout(redips.clearMessage, delay);
 	    }
 	};
 	// send request
@@ -189,7 +189,7 @@ redips.save = function (button) {
 
 
 // method clears displayed message
-redips.clear_message = function () {
+redips.clearMessage = function () {
 	var msg = document.getElementById('message');
 	// if message field exist then clear message
 	// it's possible that user will drop back DIV element before message is cleared

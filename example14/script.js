@@ -5,39 +5,39 @@
 "use strict";
 
 
-var redips_init,		// define redips_init variable
-	toggle_animation,	// animation for shift option
-	set_drop_option;	// function sets drop_option parameter
+var redipsInit,		// define redipsInit variable
+	toggleAnimation,// animation for shift option
+	setDropMode;	// function sets dropMode parameter
 
 // redips initialization
-redips_init = function () {
+redipsInit = function () {
 	// reference to the REDIPS.drag lib
 	var rd = REDIPS.drag;
 	// initialization
 	rd.init();
 	// set shift drop option
-	rd.drop_option = 'shift';
-	// enable animation on shifted elements
-	rd.animation_shift = true;
+	rd.dropMode = 'shift';
+	// enable animation for shifted elements
+	rd.animation.shift = true;
 };
 
 
 // function sets drop_option parameter
-set_drop_option = function (radio_button) {
-	REDIPS.drag.drop_option = radio_button.value;
+setDropMode = function (radioButton) {
+	REDIPS.drag.dropMode = radioButton.value;
 };
 
 
 // enable / disable animation
-toggle_animation = function (chk) {
-	REDIPS.drag.animation_shift = chk.checked;
+toggleAnimation = function (chk) {
+	REDIPS.drag.animation.shift = chk.checked;
 };
 
 
 // add onload event listener
 if (window.addEventListener) {
-	window.addEventListener('load', redips_init, false);
+	window.addEventListener('load', redipsInit, false);
 }
 else if (window.attachEvent) {
-	window.attachEvent('onload', redips_init);
+	window.attachEvent('onload', redipsInit);
 }

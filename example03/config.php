@@ -8,7 +8,6 @@ $db_name = 'enter_database_name';
 $db_user = 'enter_user_name';
 $db_pwd  = 'enter_user_password';
 
-
 // reset record set to null ($rs is used in timetable function)
 $rs = null;
 

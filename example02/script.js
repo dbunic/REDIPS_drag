@@ -4,17 +4,17 @@
 /* enable strict mode */
 "use strict";
 
-// define redips_init variable
-var redips_init;
+// define redipsInit variable
+var redipsInit;
 
 // redips initialization
-redips_init = function () {
+redipsInit = function () {
 	var num = 0,			// number of successfully placed elements
 		rd = REDIPS.drag;	// reference to the REDIPS.drag lib
 	// initialization
 	rd.init();
 	// set hover color
-	rd.hover.color_td = '#9BB3DA';
+	rd.hover.colorTd = '#9BB3DA';
 	// define green elements for green cells
 	rd.mark.exception.green = 'green_cell';
 	rd.mark.exception.greenc0 = 'green_cell';
@@ -24,12 +24,13 @@ redips_init = function () {
 	rd.mark.exception.orangec0 = 'orange_cell';
 	rd.mark.exception.orangec1 = 'orange_cell';
 	// this function (event handler) is called after element is dropped
-	rd.myhandler_dropped = function () {
-		var msg; // message text
+	rd.event.dropped = function () {
+		// message text
+		var msg;
 		// if the DIV element was placed on allowed cell then 
-		if (rd.target_cell.className.indexOf(rd.mark.exception[rd.obj.id]) !== -1) {
+		if (rd.td.target.className.indexOf(rd.mark.exception[rd.obj.id]) !== -1) {
 			// make it a unmovable
-			rd.enable_drag(false, rd.obj.id);
+			rd.enableDrag(false, rd.obj.id);
 			// increase counter
 			num++;
 			// prepare and display message
@@ -46,8 +47,8 @@ redips_init = function () {
 
 // add onload event listener
 if (window.addEventListener) {
-	window.addEventListener('load', redips_init, false);
+	window.addEventListener('load', redipsInit, false);
 }
 else if (window.attachEvent) {
-	window.attachEvent('onload', redips_init);
+	window.attachEvent('onload', redipsInit);
 }

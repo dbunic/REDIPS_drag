@@ -4,32 +4,32 @@
 /* enable strict mode */
 "use strict";
 
-// define redips_init variable
-var redips_init;
+// define redipsInit variable
+var redipsInit;
 
 // redips initialization
-redips_init = function () {
+redipsInit = function () {
 	// set REDIPS.drag reference
 	var	rd = REDIPS.drag;
 	// lib initialization
 	rd.init();
 	// set hover color for TR
-	rd.hover.color_tr = '#ddd';
+	rd.hover.colorTr = '#ddd';
 	// define color for empty row
-	rd.row_empty_color = '#eee';
+	rd.rowEmptyColor = '#eee';
 	// row was clicked - enable / disable tables
-	rd.myhandler_row_clicked = function () {
+	rd.event.rowClicked = function () {
 		// find table
-		var tbl = rd.find_parent('TABLE', rd.obj);
+		var tbl = rd.findParent('TABLE', rd.obj);
 		// if row belongs to the "main" table
 		if (tbl.className.indexOf('main') > -1) {
-			rd.enable_table(false, 'view');
-			rd.enable_table(true, 'main');
+			rd.enableTable(false, 'view');
+			rd.enableTable(true, 'main');
 		}
 		// row belongs to the "view" table
 		else {
-			rd.enable_table(true, 'view');
-			rd.enable_table(false, 'main');
+			rd.enableTable(true, 'view');
+			rd.enableTable(false, 'main');
 		}
 	};
 };
@@ -37,8 +37,8 @@ redips_init = function () {
 
 // add onload event listener
 if (window.addEventListener) {
-	window.addEventListener('load', redips_init, false);
+	window.addEventListener('load', redipsInit, false);
 }
 else if (window.attachEvent) {
-	window.attachEvent('onload', redips_init);
+	window.attachEvent('onload', redipsInit);
 }

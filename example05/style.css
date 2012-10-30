@@ -23,6 +23,7 @@ body{
 		border: 2px dashed navy;
 		width: 710px;
 		height: 304px;
+		padding: 3px;
 	}
 
 		/* container for the left table */

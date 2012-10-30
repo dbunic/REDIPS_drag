@@ -1,5 +1,10 @@
 Changes for REDIPS.drag library
 
+5.0.0
+- big code cleaning
+- majority of properties, methods and event handlers are renamed (camelCase syntax is used)
+- added option to set delete confirmation question (for deleting DIV element and row)
+
 4.7.6
 - added event handler myhandler_relocated() - event can be triggered after single call of relocate() method or after all DIV elements are shifted in "shift" mode
 

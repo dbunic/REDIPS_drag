@@ -24,14 +24,14 @@ redips.init = function () {
 	var rd = REDIPS.drag;
 	// set script configuration
 	redips.configuration();
-	// set reference to the hover_div
-	redips.hover_div = document.getElementById('hover_div');
+	// set reference to the hoverDiv
+	redips.hoverDiv = document.getElementById('hover_div');
 	// initially hide all tables in right container except first table
-	redips.hide_tables();
+	redips.hideTables();
 	// set class="single" to the table cells question table (left table)
-	redips.single_content();
+	redips.singleContent();
 	// set onmouseover & onmouseout to all div elements inside DIV id="drag"
-	redips.set_events();
+	redips.setEvents();
 	// create XMLHttp request object
 	redips.request = redips.initXMLHttpClient();
 	// set fixed position for the left container
@@ -39,45 +39,45 @@ redips.init = function () {
 	// initialization
 	rd.init();
 	// drop option is switch - content can be exchanged
-	rd.drop_option = 'switch';
+	rd.dropMode = 'switch';
 	// in a moment when dragging starts, remove mouseover event and hide hover tooltip
-	rd.myhandler_moved = function () {
-		REDIPS.event.remove(rd.obj, 'mouseover', redips.show_tooltip);
-		redips.hide_tooltip();
+	rd.event.moved = function () {
+		REDIPS.event.remove(rd.obj, 'mouseover', redips.showTooltip);
+		redips.hideTooltip();
 	};
 	// enable cloning option only for DIV elements in right table 
-	rd.myhandler_clicked = function () {
+	rd.event.clicked = function () {
 		// find container id
-		var cid = redips.find_container(rd.obj);
+		var cid = redips.findContainer(rd.obj);
 		// set cloning option with shiftKey only for right DIV container
 		if (cid === redips.right) {
-			rd.clone_shiftKey = true;
+			rd.cloneKey.div = true;
 		}
 		else {
-			rd.clone_shiftKey = false;
+			rd.cloneKey.div = false;
 		}
 		// set hover color for original DIV elements and for cloned DIV elements
 		if (rd.obj.className.indexOf('clnd') === -1) {
-			rd.hover.color_td = redips.hover1;
+			rd.hover.colorTd = redips.hover1;
 		}
 		else {
-			rd.hover.color_td = redips.hover2;
+			rd.hover.colorTd = redips.hover2;
 		}
 	};
 	// event handler called before DIV element is dropped to the table
 	// in case when DIV element changes location from left to right DIV container or vice versa 
-	rd.myhandler_dropped_before = function (target_cell) {
+	rd.event.droppedBefore = function (targetCell) {
 		var id = rd.obj.id,	// define id of DIV element
 			tcid,			// target container id
 			scid;			// source container id
 		// find target container id and source container id
-		tcid = redips.find_container(target_cell);
-		scid = redips.find_container(rd.source_cell);
+		tcid = redips.findContainer(targetCell);
+		scid = redips.findContainer(rd.td.source);
 		// if element is dropped from question table to the one of right tables
 		// (right tables doesn't have id)
 		if (scid === redips.left && tcid === redips.right) {
 			// send request (input parameter is object reference)
-			redips.send_request(rd.obj, id);
+			redips.sendRequest(rd.obj, id);
 			rd.obj.style.width = redips.width; // width parameter
 			rd.obj.style.height = '';
 		}
@@ -89,10 +89,10 @@ redips.init = function () {
 		}
 	};
 	// after DIV element is dropped, 
-	rd.myhandler_dropped = function (target_cell) {
+	rd.event.dropped = function (targetCell) {
 		// target container id
-		var tcid = redips.find_container(target_cell);
-		// target container is defined in myhandler_dropped_before()
+		var tcid = redips.findContainer(targetCell);
+		// target container is defined in event.droppedBefore()
 		if (tcid === redips.left) {
 			// if cloned element is dropped to the left table then delete it
 			if (rd.obj.className.indexOf('clnd') !== -1) {
@@ -101,18 +101,18 @@ redips.init = function () {
 			}
 			// else return mouseover event (needed for tooltip in left table)
 			else {
-				REDIPS.event.add(rd.obj, 'mouseover', redips.show_tooltip);
+				REDIPS.event.add(rd.obj, 'mouseover', redips.showTooltip);
 			}
 		}
 	};
 	// add "clnd" (cloned) class name to the cloned elements
 	// needed to delete cloned elements in case when dropped to the left table
-	rd.myhandler_cloned = function () {
+	rd.event.cloned = function () {
 		if (rd.obj.className.indexOf('clnd') === -1) {
 			rd.obj.className += ' clnd';
 		}
 		// set hover color for cloned elements
-		rd.hover.color_td = redips.hover2;
+		rd.hover.colorTd = redips.hover2;
 	};
 };
 
@@ -147,7 +147,7 @@ redips.initXMLHttpClient = function () {
 
 
 // send request to the server and display response in obj.innerHTML
-redips.send_request = function (obj, id) {
+redips.sendRequest = function (obj, id) {
 	// open asynchronus request
 	redips.request.open('GET', redips.content_url + '?id=' + id, true);
 	// the onreadystatechange event is triggered every time the readyState changes
@@ -168,7 +168,7 @@ redips.send_request = function (obj, id) {
 
 
 // show tooltip (when mouse is over element of question table) 
-redips.show_tooltip = function (e) {
+redips.showTooltip = function (e) {
 	var element = e.target || e.srcElement,	// define element from the fired event
 		id = element.id,					// id of the DIV element is question ID (written as inner HTML)
 		box = element,						// remember box object (needed for offset calculation)
@@ -187,18 +187,18 @@ redips.show_tooltip = function (e) {
 	}
 	while (box && box.nodeName !== 'BODY');
 	// set popup near to the element
-	redips.hover_div.style.top  = (oTop + 22) + 'px';
-	redips.hover_div.style.left = oLeft + 'px';
+	redips.hoverDiv.style.top  = (oTop + 22) + 'px';
+	redips.hoverDiv.style.left = oLeft + 'px';
 	// send request (input parameter is object reference)
-	redips.send_request(redips.hover_div, id);
+	redips.sendRequest(redips.hoverDiv, id);
 	// set visibility
-	redips.hover_div.style.visibility = 'visible';
+	redips.hoverDiv.style.visibility = 'visible';
 };
 
 
 // hide tooltip
-redips.hide_tooltip = function () {
-	redips.hover_div.style.visibility = 'hidden';	
+redips.hideTooltip = function () {
+	redips.hoverDiv.style.visibility = 'hidden';	
 };
 
 
@@ -218,7 +218,7 @@ redips.toggle = function (btn, page_id) {
 
 
 // set onmouseover & onmouseout to all div elements inside DIV id="drag"
-redips.set_events = function () {
+redips.setEvents = function () {
 	var regex_drag = /\bdrag\b/i,	// regular expression to search "drag" class name
 		div, i;
 	// collect all div elements inside DIV id="drag"
@@ -226,8 +226,8 @@ redips.set_events = function () {
 	for (i = 0; i < div.length; i++) {
 		// only DIV elements that contains "drag" in class name
 		if (regex_drag.test(div[i].className)) {
-			REDIPS.event.add(div[i], 'mouseover', redips.show_tooltip);
-			REDIPS.event.add(div[i], 'mouseout', redips.hide_tooltip);
+			REDIPS.event.add(div[i], 'mouseover', redips.showTooltip);
+			REDIPS.event.add(div[i], 'mouseout', redips.hideTooltip);
 		}
 	}
 	// remember size (width and height) of DIV elements in question table
@@ -239,7 +239,7 @@ redips.set_events = function () {
 
 // initially hide all page containers but first page container
 // tables are closed in P block - page container
-redips.hide_tables = function () {
+redips.hideTables = function () {
 	var div, i;
 	// collect page containers in right DIV container
 	div = document.getElementById(redips.right).getElementsByTagName('div');
@@ -251,7 +251,7 @@ redips.hide_tables = function () {
 
 
 // set class="single" to all cells in question table (left table)
-redips.single_content = function () {
+redips.singleContent = function () {
 	var cell, i;
 	// collect table cells from left table
 	cell = document.getElementById('table1').getElementsByTagName('td');
@@ -262,8 +262,9 @@ redips.single_content = function () {
 	}
 };
 
+
 // find container and return container id
-redips.find_container = function (c) {
+redips.findContainer = function (c) {
 	// loop up until found target DIV container 
 	while (c && c.id !== redips.left && c.id !== redips.right) {
 		c = c.parentNode;
@@ -271,6 +272,7 @@ redips.find_container = function (c) {
     // return container id
     return c.id;
 };
+
 
 // add onload event listener
 if (window.addEventListener) {
