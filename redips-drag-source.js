@@ -100,14 +100,14 @@ REDIPS.drag = (function () {
 				flag: {x: 0, y: 0}},// flags are needed to prevent multiple calls of autoScrollX and autoScrollY from onmousemove event handler
 		scroll_object,				// scroll_object
 		bgstyle_old,				// (object) old td styles (background color and border styles)
-		scrollable_container = [],	// scrollable container areas (contains autoscroll areas, reference to the container and scroll direction)
+		scrollContainer = [],	// scrollable container areas (contains autoscroll areas, reference to the container and scroll direction)
 		tables = [],				// table offsets and row offsets (initialized in onload event)
-		sort_idx,					// sort index needed for sorting tables in tableTop()
+		sortIdx,					// sort index needed for sorting tables in tableTop()
 		moved,						// (boolean) true if element is moved
 		cloned,						// (boolean) true if element is cloned
 		cloned_id = [],				// needed for increment ID of cloned elements
 		currentCell = [],			// current cell bounds (top, right, bottom, left) and "containTable" flag for nested tables
-		div_drag = null,			// reference to the div drag
+		dragContainer = null,		// drag container reference
 		div_box = null,				// div drag box: top, right, bottom and left margin (decrease number calls of setTableRowColumn)
 		pointer = {x: 0, y: 0},		// mouse pointer position (this properties are set in handlerOnMouseMove() - needed for autoscroll)
 		threshold = {x: 0,			// initial x, y position of mouse pointer
@@ -180,7 +180,7 @@ REDIPS.drag = (function () {
 				deleted : function () {},
 				dropped : function () {},
 				droppedBefore : function () {},
-//				finish : function () {},
+				finish : function () {},
 				moved : function () {},
 				notCloned : function () {},
 				notMoved : function () {},
@@ -201,11 +201,12 @@ REDIPS.drag = (function () {
 
 
 	/**
-	 * Drag container initialization. It should be called at least once (it is possible to call a method multiple times).
+	 * Drag container initialization. It should be called at least once and it's possible to call a method many times.
 	 * Every page should have at least one drag container.
 	 * If REDIPS.drag.init() is called without input parameter, library will search for drag container with id="drag".
-	 * Only tables inside drag container will be scanned. It is possible to have several drag containers totaly separated (elements from one container will not be visible to other drag containers). 
-	 * @param {String} [dc] Drag container Id (default id "drag").
+	 * Only tables inside drag container will be scanned. It is possible to have several drag containers totaly separated (elements from one container will not be visible to other drag containers).
+	 * "init" method calls initTables and enableDrag.
+	 * @param {String} [dc] Drag container Id (default is "drag").
 	 * @example
 	 * // init drag container (with default id="drag")
 	 * REDIPS.drag.init();
@@ -213,6 +214,8 @@ REDIPS.drag = (function () {
 	 * // init drag container with id="drag1"
 	 * REDIPS.drag.init('drag1');
 	 * @public
+	 * @see <a href="#initTables">initTables</a>
+	 * @see <a href="#enableDrag">enableDrag</a>
 	 * @function
 	 * @name REDIPS.drag#init
 	 */
@@ -227,7 +230,7 @@ REDIPS.drag = (function () {
 			dc = 'drag';
 		}
 		// set reference to the drag container
-		div_drag = document.getElementById(dc);
+		dragContainer = document.getElementById(dc);
 		// append DIV id="redips_clone" if DIV doesn't exist (needed for cloning DIV elements)
 		// if automatic creation isn't precise enough, user can manually create and place element with id="redips_clone" to prevent window expanding
 		// (then this code will be skipped)
@@ -235,19 +238,21 @@ REDIPS.drag = (function () {
 			redips_clone = document.createElement('div');
 			redips_clone.id = 'redips_clone';
 			redips_clone.style.width = redips_clone.style.height = '1px';
-			div_drag.appendChild(redips_clone);
+			dragContainer.appendChild(redips_clone);
 		}
 		// attach onmousedown event handler to the DIV elements
 		// attach onscroll='calculateCells' for DIV elements with 'scroll' in class name (prepare scrollable container areas)
 		enableDrag('init');
-		// initialize table array (it should go after enableDrag because sca is attached to the table if table belongs to the scrollable container)
+		// initialize table array
+		// here was the following comment: "initTables should go after enableDrag because sca is attached to the table if table belongs to the scrollable container"
+		// not sure about order of enableDrag and initTable - needed some further testing
 		initTables();
 		// set initial window width/height, scroll width/height and define onresize event handler
 		// onresize event handler calls calculate columns
 		handlerOnResize();
 		REDIPS.event.add(window, 'resize', handlerOnResize);
 		// collect images inside drag container
-		imgs = div_drag.getElementsByTagName('img');
+		imgs = dragContainer.getElementsByTagName('img');
 		// disable onmousemove/ontouchmove event for images to prevent default action of onmousemove event (needed for IE to enable dragging on image)
 		for (i = 0; i < imgs.length; i++) {
 			REDIPS.event.add(imgs[i], 'mousemove', imgOnMouseMove);
@@ -272,36 +277,59 @@ REDIPS.drag = (function () {
 
 
 	/**
-	 * Tables initialization. Method searches for all tables inside drag container and prepares "tables" array.
-	 * Tables in "redips_clone" drag container are ignored (could happen if initTables() is called after rowClone() method).
-	 * Tables with className "nolayout" are ignored (table in DIV element can be dragged as any other content). 
+	 * Tables layout initialization (preparing internal "tables" array).
+	 * Method searches for all tables inside defined selectors and prepares "tables" array. Defaule selector is "#drag table".
+	 * Tables with className "nolayout" are ignored (e.g. table with "nolayout" class name in DIV element can be dragged as any other content). 
 	 * "tables" array is one of the main parts of REDIPS.drag library.
-	 * @private
-	 * @memberOf REDIPS.drag#
+	 * @example
+	 * // call initTables after new empty table is added to the div#drag
+	 * // REDIPS.init() method will also work but with some overhead 
+	 * REDIPS.drag.initTables();
+	 *  
+	 * // change default selector for table search (div#sticky may contain table that is attached out of defaule drag container)
+	 * // this means that table should not be a part of div#drag, but it should be positioned within drag container otherwise dragging will not work
+	 * REDIPS.drag.initTables('#drag table, #sticky table');
+	 *  
+	 * // if new table is not empty and contains DIV elements then they should be enabled also
+	 * // DIV elements in "drag" container are enabled by default
+	 * REDIPS.drag.initTables('#drag table, #sticky table');
+	 * REDIPS.drag.enableDrag(true, '#sticky div');
+	 * @param {String} [selector] Defines selector for table search (default id "#drag table").
+	 * @public
+	 * @function
+	 * @name REDIPS.drag#initTables
 	 */
-	initTables = function () {
+	initTables = function (selector) {
 		var	i, j, k,			// loop variables
+			tblSelector,		// table selectors
 			element,			// used in searhing parent nodes of found tables below div id="drag"
 			level,				// (integer) 0 - ground table, 1 - nested table, 2 - nested nested table, 3 - nested nested nested table ...
-			group_idx,			// tables group index (ground table and its nested tables will have the same group)
-			tables_nodeList,	// live nodelist of tables found inside DIV="drag"
-			nested_tables,		// nested tables nodelist (search for nested tables for every "ground" table)
+			groupIdx,			// tables group index (ground table and its nested tables will have the same group)
+			tableNodeList,		// nodelist of tables found inside defined selectors (querySelector returns node list and it's not alive)
+			nestedTables,		// nested tables nodelist (search for nested tables for every "ground" table)
 			tdNodeList,			// td nodeList (needed for search rowspan attribute)
 			rowspan;			// flag to set if table contains rowspaned cells
 		// empty tables array
 		// http://stackoverflow.com/questions/1232040/how-to-empty-an-array-in-javascript
 		tables.length = 0;
-		// collect tables inside DIV id="drag" and make static nodeList
-		tables_nodeList = div_drag.getElementsByTagName('table');
+		// if selector is undefined then use reference of current drag container
+		if (selector === undefined) {
+			tableNodeList = dragContainer.getElementsByTagName('table');
+		}
+		// otherwise prepare tables node list based on defined selector
+		// node list returned by querySelectorAll is not alive
+		else {
+			tableNodeList = document.querySelectorAll(selector);
+		}
 		// loop through tables and define table sort parameter
-		for (i = 0, j = 0; i < tables_nodeList.length; i++) {
+		for (i = 0, j = 0; i < tableNodeList.length; i++) {
 			// skip table if table belongs to the "redips_clone" container (possible for cloned rows - if initTables() is called after rowClone())
 			// or table has "nolayout" className
-			if (tables_nodeList[i].parentNode.id === 'redips_clone' || tables_nodeList[i].className.indexOf('nolayout') > -1) {
+			if (tableNodeList[i].parentNode.id === 'redips_clone' || tableNodeList[i].className.indexOf('nolayout') > -1) {
 				continue;
 			}
 			// set start element for "do" loop
-			element = tables_nodeList[i].parentNode;
+			element = tableNodeList[i].parentNode;
 			// set initial value for nested level
 			level = 0;
 			// go up through DOM until DIV id="drag" found (drag container)
@@ -313,15 +341,16 @@ REDIPS.drag = (function () {
 				}
 				// go one level up
 				element = element.parentNode;
-			} while (element && element !== div_drag);
+			} while (element && element !== dragContainer);
 			// copy table reference to the static list
-			tables[j] = tables_nodeList[i];
+			tables[j] = tableNodeList[i];
 			// create a "property object" in which all custom properties will be saved (if "redips" property doesn't exist)
 			if (!tables[j].redips) {
 				tables[j].redips = {};
 			}
 			// set redips.container to the table (needed in case when row is cloned)
-			tables[j].redips.container = div_drag;
+			// ATTENTION! Here is needed additional work because table outside div#drag can be added to the "tables" array ...
+			tables[j].redips.container = dragContainer;
 			// set nested level (needed for sorting in "tables" array)
 			// level === 0 - means that this is "ground" table ("ground" table may contain nested tables)
 			tables[j].redips.nestedLevel = level;
@@ -355,31 +384,31 @@ REDIPS.drag = (function () {
 		 * after clicking on DIV element in "ground" table of second group or nested table in second group array order will be: 201, 200 and 100
 		 * after clicking on DIV element in "ground" table of first group array order will be: 100, 201, 200
 		 * 
-		 * actually, sort_idx will be increased and sorted result will be: 300, 201, 200
+		 * actually, sortIdx will be increased and sorted result will be: 300, 201, 200
 		 * and again clicking on element in nested table sorted result will be: 401, 400, 300 
 		 * and so on ...
 		 */
-		for (i = 0, group_idx = sort_idx = 1; i < tables.length; i++) {
+		for (i = 0, groupIdx = sortIdx = 1; i < tables.length; i++) {
 			// if table is "ground" table (lowest level) search for nested tables
 			if (tables[i].redips.nestedLevel === 0) {
 				// set group index for ground table and initial sort index
-				tables[i].redips.nestedGroup = group_idx;
-				tables[i].redips.sort = sort_idx * 100;
+				tables[i].redips.nestedGroup = groupIdx;
+				tables[i].redips.sort = sortIdx * 100;
 				// search for nested tables (if there is any)
-				nested_tables = tables[i].getElementsByTagName('table');
+				nestedTables = tables[i].getElementsByTagName('table');
 				// open loop for every nested table
-				for (j = 0; j < nested_tables.length; j++) {
+				for (j = 0; j < nestedTables.length; j++) {
 					// skip table if table contains "nolayout" className
-					if (nested_tables[j].className.indexOf('nolayout') > -1) {
+					if (nestedTables[j].className.indexOf('nolayout') > -1) {
 						continue;
 					}
 					// set group index and initial sort index
-					nested_tables[j].redips.nestedGroup = group_idx;
-					nested_tables[j].redips.sort = sort_idx * 100 + nested_tables[j].redips.nestedLevel;
+					nestedTables[j].redips.nestedGroup = groupIdx;
+					nestedTables[j].redips.sort = sortIdx * 100 + nestedTables[j].redips.nestedLevel;
 				}
-				// increase group index and sort index (sort_idx is private parameter of REDIPS.drag)
-				group_idx++;
-				sort_idx++;
+				// increase group index and sort index (sortIdx is private parameter of REDIPS.drag)
+				groupIdx++;
+				sortIdx++;
 			}
 		}
 	};
@@ -467,8 +496,8 @@ REDIPS.drag = (function () {
 			tableTop(obj);
 		}
 		// if clicked element doesn't belong to the current container then environment should be changed
-		if (div_drag !== obj.redips.container) {
-			div_drag = obj.redips.container;
+		if (dragContainer !== obj.redips.container) {
+			dragContainer = obj.redips.container;
 			initTables();
 		}
 		// define drag mode ("cell" or "row")
@@ -553,7 +582,7 @@ REDIPS.drag = (function () {
 		obj_margin = [Y - offset[0], offset[1] - X, offset[2] - Y, X - offset[3]];
 		// dissable text selection (but not for links and form elements)
 		// onselectstart is supported by IE browsers, other browsers "understand" return false in onmousedown handler
-		div_drag.onselectstart = function (e) {
+		dragContainer.onselectstart = function (e) {
 			evt = e || window.event;
 			if (!elementControl(evt)) {
 				// this lines are needed for IE8 in case when leftmouse button was clicked and SHIFT key was pressed
@@ -609,15 +638,15 @@ REDIPS.drag = (function () {
 			// "ground" table is table with lowest level hierarchy and with its nested tables creates table group
 			// nested table will be sorted before "ground" table
 			if (tables[i].redips.nestedGroup === group) {
-				tables[i].redips.sort = sort_idx * 100 + tables[i].redips.nestedLevel; // sort = sort_idx * 100 + level
+				tables[i].redips.sort = sortIdx * 100 + tables[i].redips.nestedLevel; // sort = sortIdx * 100 + level
 			}
 		}
 		// sort "tables" array according to redips.sort (tables with higher redips.sort parameter will go to the array top)
 		tables.sort(function (a, b) {
 			return b.redips.sort - a.redips.sort;
 		});
-		// increase sort_idx
-		sort_idx++;
+		// increase sortIdx
+		sortIdx++;
 	};
 
 
@@ -910,7 +939,7 @@ REDIPS.drag = (function () {
 					REDIPS.drag.event.rowDropped(tr, src, rowIndex);
 				}
 			}
-			// if row contains TABLE(S) then recall init_table() to properly initialize tables array and set custom properties
+			// if row contains TABLE(S) then recall initTables() to properly initialize tables array and set custom properties
 			// no matter if row was moved or deleted
 			if (tr.getElementsByTagName('table').length > 0) {
 				initTables();
@@ -1013,8 +1042,8 @@ REDIPS.drag = (function () {
 		// detach mouseup and touchend event handlers on document object
 		REDIPS.event.remove(document, 'mouseup', handlerOnMouseUp);
 		REDIPS.event.remove(document, 'touchend', handlerOnMouseUp);
-		// detach div_drag.onselectstart handler to enable select for IE7/IE8 browser 
-		div_drag.onselectstart = null;
+		// detach dragContainer.onselectstart handler to enable select for IE7/IE8 browser 
+		dragContainer.onselectstart = null;
 		// reset object styles
 		resetStyles(obj);
 		// document.body.scroll... only works in compatibility (aka quirks) mode,
@@ -1223,7 +1252,7 @@ REDIPS.drag = (function () {
 			}
 			targetCell.parentNode.className = targetCell.parentNode.className;
 			*/
-			// if dropped object contains TABLE(S) then recall init_table() to properly initialize tables array (only in cell mode)
+			// if dropped object contains TABLE(S) then recall initTables() to properly initialize tables array (only in cell mode)
 			// if row is dragged and contains tables, then this will be handler in rowDrop() private method
 			if (mode === 'cell' && obj.getElementsByTagName('table').length > 0) {
 				initTables();
@@ -1547,9 +1576,9 @@ REDIPS.drag = (function () {
 			}
 			// test if dragged object is in scrollable container
 			// this code will be executed only if scrollable container (DIV with overflow other than 'visible) exists on page
-			for (i = 0; i < scrollable_container.length; i++) {
+			for (i = 0; i < scrollContainer.length; i++) {
 				// set current scrollable container area
-				sca = scrollable_container[i];
+				sca = scrollContainer[i];
 				// if dragged object is inside scrollable container and scrollable container has enabled autoscroll option
 				if (sca.autoscroll && X < sca.offset[1] && X > sca.offset[3] && Y < sca.offset[2] && Y > sca.offset[0]) {
 					// calculate horizontally crossed page bound
@@ -2082,7 +2111,7 @@ REDIPS.drag = (function () {
 	 * @return {Array} Box offset array: [ top, right, bottom, left ]
 	 * @example
 	 * // calculate box offset for the div id="drag"
-	 * divbox = boxOffset(div_drag);
+	 * divbox = boxOffset(dragContainer);
 	 * @example
 	 * // include scroll position in offset
 	 * offset = boxOffset(row_obj, 'fixed');
@@ -2161,17 +2190,17 @@ REDIPS.drag = (function () {
 			tables[i].redips.row_offset = row_offset;
 		}
 		// calculate box offset for the div id=drag
-		div_box = boxOffset(div_drag);
+		div_box = boxOffset(dragContainer);
 		// update scrollable container areas if needed
-		for (i = 0; i < scrollable_container.length; i++) {
+		for (i = 0; i < scrollContainer.length; i++) {
 			// set container box style position (to exclude page scroll offset from calculation if needed) 
-			position = getStyle(scrollable_container[i].div, 'position');
+			position = getStyle(scrollContainer[i].div, 'position');
 			// get DIV container offset with or without "page scroll" and excluded scroll position of the content
-			cb = boxOffset(scrollable_container[i].div, position, false);
+			cb = boxOffset(scrollContainer[i].div, position, false);
 			// prepare scrollable container areas
-			scrollable_container[i].offset = cb;
-			scrollable_container[i].midstX = (cb[1] + cb[3]) / 2;
-			scrollable_container[i].midstY = (cb[0] + cb[2]) / 2;
+			scrollContainer[i].offset = cb;
+			scrollContainer[i].midstX = (cb[1] + cb[3]) / 2;
+			scrollContainer[i].midstY = (cb[0] + cb[2]) / 2;
 		}
 	};
 
@@ -2598,36 +2627,35 @@ REDIPS.drag = (function () {
 
 
 	/**
-	 * Method attaches / detaches onmousedown, ontouchstart and ondblclick events to DIV elements and attaches onscroll event to the scrollable containers in initialization phase.
+	 * Method attaches / detaches onmousedown, ontouchstart and ondblclick events to DIV elements and attaches onscroll event to the scroll containers in initialization phase.
 	 * It also can be used for element initialization after DIV element was manually added to the table.
 	 * If class attribute of DIV container contains "noautoscroll" class name then autoScroll option will be disabled.
-	 * @param {String|Boolean} enable_flag Enable / disable element (or element subtree like table, dragging container ...).
-	 * @param {String|HTMLElement} [el] Element id (or subtree) to enable / disable. Parameter defines element id or element reference of DIV element(s) to enable / disable.
-	 * @param {String} [type] Type definition for the second parameter el - element or subtree.
+	 * @param {Boolean|String} enableFlag Enable / disable element (or element subtree like table, dragging container ...).
+	 * @param {HTMLElement|String} [el] DIV reference or CSS selector to enable / disable. Parameter defines element reference or CSS selector of DIV elements to enable / disable.
 	 * @example
 	 * // enable element with id="id123"
-	 * enableDrag(true, 'id123');
+	 * rd.enableDrag(true, '#id123');
 	 *  
 	 * // or init manually added element with known id
-	 * REDIPS.drag.enableDrag(true, 'id234');
+	 * REDIPS.drag.enableDrag(true, '#id234');
 	 *  
-	 * // disable all elements in drag1 subtree 
-	 * enableDrag(false, 'drag1', 'subtree')
+	 * // disable all DIV elements in drag1 subtree 
+	 * rd.enableDrag(false, '#drag1 div')
 	 *  
-	 * // init all DIV elements in dragging area (including newly added DIV element)
+	 * // init DIV elements in dragging area (including newly added DIV element)
 	 * REDIPS.drag.enableDrag('init');
 	 *  
-	 * // init added element with known reference
-	 * REDIPS.drag.enableDrag(true, my_el);
+	 * // init added element with reference myElement
+	 * REDIPS.drag.enableDrag(true, myElement);
 	 * @public
 	 * @function
 	 * @name REDIPS.drag#enableDrag
 	 * @see <a href="#enableTable">enableTable</a>
 	 */
-	enableDrag = function (enable_flag, el, type) {
+	enableDrag = function (enable_flag, el) {
 		// define local variables
 		var i, j, k,		// local variables used in loop
-			divs = [],		// collection of div elements contained in tables or one div element
+			div = [],		// collection of div elements contained in tables or one div element
 			tbls = [],		// collection of tables inside scrollable container
 			borderStyle,	// border style (solid or dotted)
 			opacity,		// (integer) set opacity for enabled / disabled elements
@@ -2637,8 +2665,8 @@ REDIPS.drag = (function () {
 			enabled,		// enabled property (true or false) 
 			cb,				// box offset for container box (cb)
 			position,		// if table container has position:fixed then "page scroll" offset should not be added
-			regex_drag = /\bdrag\b/i,	// regular expression to search "drag" class name
-			regex_noautoscroll = /\bnoautoscroll\b/i;	// regular expression to search "noautoscroll" class name
+			regexDrag = /\bdrag\b/i,	// regular expression to search "drag" class name
+			regexNoAutoscroll = /\bnoautoscroll\b/i;	// regular expression to search "noautoscroll" class name
 		// set opacity for disabled elements from public property "opacityDisabled" 
 		opacity = REDIPS.drag.style.opacityDisabled;
 		// define onmousedown/ondblclick handlers and styles
@@ -2653,96 +2681,86 @@ REDIPS.drag = (function () {
 			cursor = 'auto';
 			enabled = false;
 		}
-		// collect DIV elements inside current drag area (drag elements and scrollable containers)
+		// collect DIV elements inside current drag area (drag elements and scroll containers)
 		// e.g. enableDrag(true)
 		if (el === undefined) {
-			divs = div_drag.getElementsByTagName('div');
-		}
-		// collect DIV elements in subtree - e.g. enableDrag(true, 'drag1', 'subtree') 
-		else if (type === 'subtree') {
-			// if second parameter is string
-			if (typeof(el) === 'string') {
-				divs = document.getElementById(el).getElementsByTagName('div');
-			}
-			// otherwise, second parameter is HTMLelement
-			else {
-				divs = el.getElementsByTagName('div');
-			}
+			div = dragContainer.getElementsByTagName('div');
 		}
 		// "type" parameter is not "subtree" and "el" is string - assuming el is id of one element to enable/disable
 		// e.g. enableDrag(true, 'drag1')
 		else if (typeof(el) === 'string') {
-			divs[0] = document.getElementById(el);
+			div = document.querySelectorAll(el);
 		}
 		// prepare array with one div element
 		// e.g. enableDrag(true, el)
 		else {
-			divs[0] = el;
+			div[0] = el;
 		}
-		// attach onmousedown event handler only to DIV elements that have "drag" in class name
-		// allow other div elements inside <div id="drag" ...
-		for (i = 0, j = 0; i < divs.length; i++) {
+		// 
+		// main loop that goes through all DIV elements
+		//
+		for (i = 0, j = 0; i < div.length; i++) {
 			// if DIV element contains "drag" class name
-			if (regex_drag.test(divs[i].className)) {
+			if (regexDrag.test(div[i].className)) {
 				// add reference to the DIV container (initialization or newly added element to the table)
 				// this property should not be changed in later element enable/disable
-				if (enable_flag === 'init' || divs[i].redips === undefined) {
+				if (enable_flag === 'init' || div[i].redips === undefined) {
 					// create a "property object" in which all custom properties will be saved
-					divs[i].redips = {};
-					divs[i].redips.container = div_drag;
+					div[i].redips = {};
+					div[i].redips.container = dragContainer;
 				}
 				// remove opacity mask
 				else if (enable_flag === true && typeof(opacity) === 'number') {
-					divs[i].style.opacity = '';
-					divs[i].style.filter = '';						
+					div[i].style.opacity = '';
+					div[i].style.filter = '';						
 				}
 				// set opacity for disabled elements
 				else if (enable_flag === false && typeof(opacity) === 'number') {
-					divs[i].style.opacity = opacity / 100;
-					divs[i].style.filter = 'alpha(opacity=' + opacity + ')';					
+					div[i].style.opacity = opacity / 100;
+					div[i].style.filter = 'alpha(opacity=' + opacity + ')';					
 				}
 				// register event listener for DIV element
-				registerEvents(divs[i], enabled);
+				registerEvents(div[i], enabled);
 				// set styles for DIV element
-				divs[i].style.borderStyle = borderStyle;
-				divs[i].style.cursor = cursor;
+				div[i].style.borderStyle = borderStyle;
+				div[i].style.cursor = cursor;
 				// add enabled property to the DIV element (true or false)
-				divs[i].redips.enabled = enabled;
+				div[i].redips.enabled = enabled;
 			}
 			// attach onscroll event to the DIV element in init phase only if DIV element has overflow other than default value 'visible'
 			// and that means scrollable DIV container
 			else if (enable_flag === 'init') {
 				// ask for overflow style
-				overflow = getStyle(divs[i], 'overflow');
+				overflow = getStyle(div[i], 'overflow');
 				// if DIV is scrollable
 				if (overflow !== 'visible') {
 					// define onscroll event handler for scrollable container
-					REDIPS.event.add(divs[i], 'scroll', calculateCells);
+					REDIPS.event.add(div[i], 'scroll', calculateCells);
 					// set container box style position (to exclude page scroll offset from calculation if needed) 
-					position = getStyle(divs[i], 'position');
+					position = getStyle(div[i], 'position');
 					// get DIV container offset with or without "page scroll" and excluded scroll position of the content
-					cb = boxOffset(divs[i], position, false);
+					cb = boxOffset(div[i], position, false);
 					// search for noautoscroll option
-					if (regex_noautoscroll.test(divs[i].className)) {
+					if (regexNoAutoscroll.test(div[i].className)) {
 						autoscroll = false;
 					}
 					else {
 						autoscroll = true;
 					}
 					// prepare scrollable container areas
-					scrollable_container[j] = {
-						div			: divs[i],				// reference to the scrollable container
+					scrollContainer[j] = {
+						div			: div[i],				// reference to the scrollable container
 						offset		: cb,					// box offset of the scrollable container
 						midstX		: (cb[1] + cb[3]) / 2,	// middle X
 						midstY		: (cb[0] + cb[2]) / 2,	// middle Y
 						autoscroll	: autoscroll			// autoscroll enabled or disabled (true or false)
 					};
 					// search for tables inside scrollable container
-					tbls = divs[i].getElementsByTagName('table');
+					tbls = div[i].getElementsByTagName('table');
 					// loop goes through found tables inside scrollable area 
 					for (k = 0; k < tbls.length; k++) {
 						// add a reference to the corresponding scrollable area
-						tbls[k].sca = scrollable_container[j];
+						tbls[k].sca = scrollContainer[j];
 					}
 					// increase scrollable container counter
 					j++;
@@ -3505,8 +3523,8 @@ REDIPS.drag = (function () {
 		// set high z-index
 		p.obj.style.zIndex = 999;
 		// if clicked element doesn't belong to the current container then context should be changed
-		if (div_drag !== p.obj.redips.container) {
-			div_drag = p.obj.redips.container;
+		if (dragContainer !== p.obj.redips.container) {
+			dragContainer = p.obj.redips.container;
 			initTables();
 		}
 		// set width, height and coordinates for source position of object
@@ -4189,6 +4207,7 @@ REDIPS.drag = (function () {
 		tableSort : tableSort,
 		/* public methods (documented in main code) */
 		init : init,
+		initTables : initTables,
 		enableDrag : enableDrag,
 		enableTable : enableTable,
 		cloneObject : cloneObject,

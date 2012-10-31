@@ -33,6 +33,7 @@ REDIPS.drag is a JavaScript drag and drop library focused on dragging table cont
 ## Public methods
 
 * REDIPS.drag.init() - drag container initialization
+* REDIPS.drag.initTables() - tables layout initialization
 
 * REDIPS.drag.cloneObject() - clones DIV element and returns reference of the cloned element
 * REDIPS.drag.deleteObject() - method deletes DIV element (input parameter is DIV reference or element id)

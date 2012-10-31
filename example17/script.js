@@ -218,8 +218,8 @@ getId = function (el) {
  * @param {Boolean} Flag enable or disable elements in both dragging containers.
  */
 enableElements = function (flag) {
-	rd.enableDrag(flag, 'drag1', 'subtree');
-	rd.enableDrag(flag, 'drag2', 'subtree');
+	rd.enableDrag(flag, '#drag1 div');
+	rd.enableDrag(flag, '#drag2 div');
 	// enable/disable buttons "Reset" and "Shuffle"
 	enableButtons(flag);
 };
@@ -252,7 +252,7 @@ enableRows = function (flag) {
 			// test the property (filter properties of the prototype) and if element id begins with "r"
 			// other DIV elements are DIV elements
 			if (loc.hasOwnProperty(id) && id.substring(0, 1) === 'r') {
-				rd.enableDrag(flag, id);
+				rd.enableDrag(flag, '#' + id);
 			}
 		}
 	}

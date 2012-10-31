@@ -84,8 +84,8 @@ redips.buttonEnable = function (flag) {
 	// enable/disable button (reference is set in redips.init)
 	redips.button1.disabled = !flag;
 	redips.button2.disabled = !flag;
-	// enable/disable DIV elements in dragging container
-	REDIPS.drag.enableDrag(flag, 'drag', 'subtree');
+	// enable/disable DIV elements in drag container
+	REDIPS.drag.enableDrag(flag);
 };
 
 

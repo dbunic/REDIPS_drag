@@ -31,8 +31,8 @@ redips.load_table = function (button) {
 		success: function (result) {
 			// load new table
 			$('#load_content').html(result);
-			// run REDIPS.drag initialization
-			REDIPS.drag.init();
+			// rescan tables
+			REDIPS.drag.initTables();
 		}
 	});
 };
