@@ -105,7 +105,7 @@ REDIPS.drag = (function () {
 		sortIdx,					// sort index needed for sorting tables in tableTop()
 		moved,						// (boolean) true if element is moved
 		cloned,						// (boolean) true if element is cloned
-		cloned_id = [],				// needed for increment ID of cloned elements
+		clonedId = [],				// needed for increment ID of cloned elements
 		currentCell = [],			// current cell bounds (top, right, bottom, left) and "containTable" flag for nested tables
 		dragContainer = null,		// drag container reference
 		div_box = null,				// div drag box: top, right, bottom and left margin (decrease number calls of setTableRowColumn)
@@ -1055,8 +1055,8 @@ REDIPS.drag = (function () {
 		// this could happen if "clone" element is placed inside forbidden table cell
 		if (cloned && mode === 'cell' && (table === null || row === null || cell === null)) {
 			obj.parentNode.removeChild(obj);
-			// decrease cloned_id counter
-			cloned_id[objOld.id] -= 1;
+			// decrease clonedId counter
+			clonedId[objOld.id] -= 1;
 			REDIPS.drag.event.notCloned();
 		}
 		// if DIV element was clicked and left button was released, but element is placed inside unmovable table cell
@@ -1141,8 +1141,8 @@ REDIPS.drag = (function () {
 			// delete cloned element if dropped on the start position
 			else if (cloned && table_source === table && row_source === row && cell_source === cell) {
 				obj.parentNode.removeChild(obj);
-				// decrease cloned_id counter
-				cloned_id[objOld.id] -= 1;
+				// decrease clonedId counter
+				clonedId[objOld.id] -= 1;
 				REDIPS.drag.event.notCloned();
 			}
 			// delete cloned element if dropped outside current table and deleteCloned flag is true
@@ -1150,8 +1150,8 @@ REDIPS.drag = (function () {
 					(X < target_table.redips.offset[3] || X > target_table.redips.offset[1] ||
 					Y < target_table.redips.offset[0] || Y > target_table.redips.offset[2])) {
 				obj.parentNode.removeChild(obj);
-				// decrease cloned_id counter
-				cloned_id[objOld.id] -= 1;
+				// decrease clonedId counter
+				clonedId[objOld.id] -= 1;
 				REDIPS.drag.event.notCloned();
 			}
 			// remove object if destination cell has "trash" in class name
@@ -2405,48 +2405,48 @@ REDIPS.drag = (function () {
 	 * @name REDIPS.drag#cloneObject
 	 */
 	cloneObject = function (div, drag) {
-		var div_cloned = div.cloneNode(true),	// cloned DIV element
-			cname = div_cloned.className,		// set class names of cloned DIV element
+		var divCloned = div.cloneNode(true),	// cloned DIV element
+			cname = divCloned.className,		// set class names of cloned DIV element
 			offset,								// offset of the original object
-			offset_dragged;						// offset of the new object (cloned)
+			offsetDragged;						// offset of the new object (cloned)
 		// if cloned DIV element should be ready for dragging
 		if (drag === true) {
 			// append cloned element to the DIV id="redips_clone"
-			document.getElementById('redips_clone').appendChild(div_cloned);
+			document.getElementById('redips_clone').appendChild(divCloned);
 			// set high z-index
-			div_cloned.style.zIndex = 999;
+			divCloned.style.zIndex = 999;
 			// set style to fixed to allow dragging DIV object
-			div_cloned.style.position = 'fixed';
+			divCloned.style.position = 'fixed';
 			// set offset for original and cloned element
 			offset = boxOffset(div);
-			offset_dragged = boxOffset(div_cloned);
+			offsetDragged = boxOffset(divCloned);
 			// calculate top and left offset of the new object
-			div_cloned.style.top   = (offset[0] - offset_dragged[0]) + 'px';
-			div_cloned.style.left  = (offset[3] - offset_dragged[3]) + 'px';
+			divCloned.style.top   = (offset[0] - offsetDragged[0]) + 'px';
+			divCloned.style.left  = (offset[3] - offsetDragged[3]) + 'px';
 		}
 		// get IE (all versions) to allow dragging outside the window (?!)
 		// this was needed here also -  despite setCaputure in onmousedown
-		if (div_cloned.setCapture) {
-			div_cloned.setCapture();
+		if (divCloned.setCapture) {
+			divCloned.setCapture();
 		}
 		// remove "clone" and "climitX_Y" class names
 		cname = cname.replace('clone', '');
 		cname = cname.replace(/climit(\d)_(\d+)/, '');
 		// set class names with normalized spaces to the cloned DIV element
-		div_cloned.className = normalize(cname);
+		divCloned.className = normalize(cname);
 		// if counter is undefined, set 0
-		if (cloned_id[div.id] === undefined) {
-			cloned_id[div.id] = 0;
+		if (clonedId[div.id] === undefined) {
+			clonedId[div.id] = 0;
 		}
 		// set id for cloned element (append id of "clone" element - tracking the origin)
 		// id is separated with "c" ("_" is already used to compound id, table, row and column)  
-		div_cloned.id = div.id + 'c' + cloned_id[div.id];
-		// increment cloned_id for cloned element
-		cloned_id[div.id] += 1;
+		divCloned.id = div.id + 'c' + clonedId[div.id];
+		// increment clonedId for cloned element
+		clonedId[div.id] += 1;
 		// copy custom properties to the DIV element and child DIV elements and register event handlers
-		copyProperties(div, div_cloned);
+		copyProperties(div, divCloned);
 		// return reference to the cloned DIV element	
-		return (div_cloned);
+		return (divCloned);
 	};
 
 
