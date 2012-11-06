@@ -2528,19 +2528,19 @@ REDIPS.drag = (function () {
 	 */
 	cloneLimit = function () {
 		// declare local variables 
-		var match_arr,	// match array
-			limit_type,	// limit type (1 - clone becomes "normal" drag element at last; 2 - clone element stays immovable)
+		var matchArray,	// match array
+			limitType,	// limit type (1 - clone becomes "normal" drag element at last; 2 - clone element stays immovable)
 			limit,		// limit number
 			classes;	// class names of clone element
 		// set classes variable for clone object (objOld is reference to the clone object not cloned)
 		classes = objOld.className;
 		// match climit class name		
-		match_arr = classes.match(/climit(\d)_(\d+)/);
+		matchArray = classes.match(/climit(\d)_(\d+)/);
 		// if class name contains climit option
-		if (match_arr !== null) {
-			// prepare limit_type (1 or 2) and limit
-			limit_type = parseInt(match_arr[1], 10); 
-			limit = parseInt(match_arr[2], 10);
+		if (matchArray !== null) {
+			// prepare limitType (1 or 2) and limit
+			limitType = parseInt(matchArray[1], 10); 
+			limit = parseInt(matchArray[2], 10);
 			// decrease limit number and cut out "climit" class
 			limit -= 1;
 			classes = classes.replace(/climit\d_\d+/g, '');
@@ -2549,7 +2549,7 @@ REDIPS.drag = (function () {
 				// no more cloning, cut "clone" from class names
 				classes = classes.replace('clone', '');
 				// if limit type is 2 then clone object becomes immovable
-				if (limit_type === 2) {
+				if (limitType === 2) {
 					// cut "drag" class
 					classes = classes.replace('drag', '');
 					// remove attached event listener from source element
@@ -2566,7 +2566,7 @@ REDIPS.drag = (function () {
 			}
 			// return "climit" class but with decreased limit_number
 			else {
-				classes = classes + ' climit' + limit_type + '_' + limit;
+				classes = classes + ' climit' + limitType + '_' + limit;
 			}
 			// normalize spaces and return classes to the clone object 
 			objOld.className = normalize(classes);
@@ -2592,7 +2592,7 @@ REDIPS.drag = (function () {
 		var flag = false,
 			srcName,
 			classes,						// class names of DIV element;
-			regex_nodrag = /\bnodrag\b/i;	// regular expression to search "nodrag" class name 
+			regexNodrag = /\bnodrag\b/i;	// regular expression to search "nodrag" class name 
 		// set source tag name and classes for IE and FF
 		if (evt.srcElement) {
 			srcName = evt.srcElement.nodeName;
@@ -2614,7 +2614,7 @@ REDIPS.drag = (function () {
 		// none of form elements
 		default:
 			// if element has "nodrag" class name then dragging will be skipped 
-			if (regex_nodrag.test(classes)) {
+			if (regexNodrag.test(classes)) {
 				flag = true;
 			}
 			else {
