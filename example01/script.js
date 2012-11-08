@@ -90,7 +90,7 @@ function toggleConfirm(chk) {
 
 // toggles delete_cloned parameter defined at the top
 function toggleDeleteCloned(chk) {
-	REDIPS.drag.deleteCloned = chk.checked;
+	REDIPS.drag.clone.drop = !chk.checked;
 }
 
 

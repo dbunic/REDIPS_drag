@@ -158,17 +158,16 @@ REDIPS.drag = (function () {
 		saveParamName = 'p',			// (string) save content parameter name
 		dropMode = 'multiple',			// (string) dropMode has the following options: multiple, single, switch, switching and overwrite
 		multipleDrop = 'bottom',		// (string) defines position of dropped element in case of 'multiple' drop option
-		deleteCloned = true,			// (boolean) delete cloned div if the cloned div is dragged outside of any table
 		td = {},						// (object) contains reference to source (set in onmousedown), current (set in onmousemove and autoscroll), previous (set in onmousemove and autoscroll) and target cell (set in onmouseup)
 		animation = {pause : 20,		// (object) animation pause (integer), step (integer) and shift (boolean)
 					step: 2,
 					shift: false},
 		shift = {mode : 'horizontal1',	// (object) contains shift modes (horizontal1, horizontal2, vertical1, vertical2) and how to shift elements (always, if DIV element is dropped to the empty cell as well or if DIV element is deleted)
 				after : 'default'},
-		
 		clone = {keyDiv : false,		// (boolean) if true, elements could be cloned with pressed SHIFT key
 				keyRow : false,			// (boolean) if true, rows could be cloned with pressed SHIFT key
-				sendBack : false},		// (boolean) if true, then cloned element can be returned to its source
+				sendBack : false,		// (boolean) if true, then cloned element can be returned to its source
+				drop : false},			// (boolean) if true, then cloned element will be always dropped to the table no matter if dropped outside of the table
 		rowPosition = 'before',			// (string) drop row before or after highlighted row (values are "before" or "after")
 		// (object) event handlers
 		event = {changed : function () {},
@@ -1146,8 +1145,8 @@ REDIPS.drag = (function () {
 				clonedId[objOld.id] -= 1;
 				REDIPS.drag.event.notCloned();
 			}
-			// delete cloned element if dropped outside current table and deleteCloned flag is true
-			else if (cloned && REDIPS.drag.deleteCloned === true &&
+			// delete cloned element if dropped outside current table and clone.drop is set to false
+			else if (cloned && REDIPS.drag.clone.drop === false &&
 					(X < target_table.redips.offset[3] || X > target_table.redips.offset[1] ||
 					Y < target_table.redips.offset[0] || Y > target_table.redips.offset[2])) {
 				obj.parentNode.removeChild(obj);
@@ -4156,23 +4155,18 @@ REDIPS.drag = (function () {
 		 */
 		multipleDrop : multipleDrop,
 		/**
-		 * Delete cloned DIV element if dropped outside of any table.
-		 * If property is set to "false" then cloned DIV element will be dropped to the last possible table cell.
-		 * @type Boolean
-		 * @name REDIPS.drag#deleteCloned
-		 * @default true
-		 */
-		deleteCloned : deleteCloned,
-		/**
-		 * Object has boolean properties to enable cloning DIV elements or table rows with shift key and to enable returning cloned DIV elements to its source. 
+		 * Object defines several rules related to cloning DIV elements like enable cloning with shift key, enable returning cloned DIV element to its source and so on.
 		 * Instead of moving, DIV element / row will be cloned and ready for dragging.
 		 * Just press SHIFT key and try to drag DIV element / row.
-		 * On the other hand, with clone.sendBack property set to true, cloned DIV element will be deleted when dropped to the cell containing its source clone element.
-		 * If exists, "climit" class will be updated (increased by 1).  
+		 * if clone.sendBack property set to true, cloned DIV element will be deleted when dropped to the cell containing its source clone element.
+		 * If exists, "climit" class will be updated (increased by 1).
+		 * clone.drop property defines placing cloned DIV element (dropped outside any table) to the last marked position.
+		 * If this property is set to true, the cloned DIV element will be always placed to the table cell.  
 		 * <ul>
-		 * <li>{Boolean} clone.keyDiv - If set to true, all DIV elements on tables could be cloned with pressed SHIFT key. Default is false</li>
-		 * <li>{Boolean} clone.keyRow - If set to true, table rows could be cloned with pressed SHIFT key. Default is false</li>
-		 * <li>{Boolean} clone.sendBack - If set to true, cloned element can be returned to its source. Default is false</li>
+		 * <li>{Boolean} clone.keyDiv - If set to true, all DIV elements on tables could be cloned with pressed SHIFT key. Default is false.</li>
+		 * <li>{Boolean} clone.keyRow - If set to true, table rows could be cloned with pressed SHIFT key. Default is false.</li>
+		 * <li>{Boolean} clone.sendBack - If set to true, cloned element can be returned to its source. Default is false.</li>
+		 * <li>{Boolean} clone.drop - If set to true, cloned element will be always placed to the table (to the last possible cell) no matter if is dropped outside the table. Default is false.</li>
 		 * </ul>
 		 * @type Object
 		 * @name REDIPS.drag#clone
@@ -4377,9 +4371,9 @@ REDIPS.drag = (function () {
 		 * @event
 		 */	
 		/**
-		 * Event handler invoked if cloned element is dropped on start position or cloned element is dropped outside current table with "deleteCloned" property set to true.
+		 * Event handler invoked if cloned element is dropped on start position or cloned element is dropped outside current table with "clone.drop" property set to false.
 		 * This event handler could be also invoked if "clone" type element is placed inside forbidden table cell.
-		 * @see <a href="#deleteCloned">deleteCloned</a>
+		 * @see <a href="#clone">clone.drop</a>
 		 * @name REDIPS.drag#event:notCloned
 		 * @function
 		 * @event

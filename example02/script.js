@@ -30,7 +30,7 @@ redipsInit = function () {
 		// if the DIV element was placed on allowed cell then 
 		if (rd.td.target.className.indexOf(rd.mark.exception[rd.obj.id]) !== -1) {
 			// make it a unmovable
-			rd.enableDrag(false, rd.obj.id);
+			rd.enableDrag(false, rd.obj);
 			// increase counter
 			num++;
 			// prepare and display message
