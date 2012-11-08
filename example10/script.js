@@ -16,7 +16,7 @@ redipsInit = function () {
 	// dragged elements can be placed only to the empty cells
 	rd.dropMode = 'single';
 	// enable cloning DIV elements with pressed SHIFT key
-	rd.cloneKey.div = true;
+	rd.clone.keyDiv = true;
 };
 
 // add onload event listener

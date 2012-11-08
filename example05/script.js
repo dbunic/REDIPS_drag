@@ -17,7 +17,7 @@ redipsInit = function () {
 	// dragged elements can be placed to the empty cells only
 	rd.dropMode = 'single';
 	// elements could be cloned with pressed SHIFT key
-	rd.cloneKey.div = true;
+	rd.clone.keyDiv = true;
 	// every change of current TD will have different background color
 	rd.event.changed = function () {
 		rd.hover.colorTd = rndColor();

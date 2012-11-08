@@ -48,12 +48,12 @@ redipsInit = function () {
 toggleXO = function () {
 	// references to the X and O elements
 	if (divO.redips.enabled) {
-		rd.enableDrag(false, 'o');
-		rd.enableDrag(true, 'x');
+		rd.enableDrag(false, '#o');
+		rd.enableDrag(true, '#x');
 	}
 	else {
-		rd.enableDrag(true, 'o');
-		rd.enableDrag(false, 'x');
+		rd.enableDrag(true, '#o');
+		rd.enableDrag(false, '#x');
 	}
 };
 

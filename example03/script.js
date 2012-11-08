@@ -22,7 +22,7 @@ redipsInit = function () {
 	// REDIPS.drag settings
 	rd.dropMode = 'single';			// dragged elements can be placed only to the empty cells
 	rd.hover.colorTd = '#9BB3DA';	// set hover color
-	rd.cloneKey.div = true;			// enable cloning DIV elements with pressed SHIFT key
+	rd.clone.keyDiv = true;			// enable cloning DIV elements with pressed SHIFT key
 	// prepare node list of DIV elements in table2
 	divNodeList = document.getElementById('table2').getElementsByTagName('div');
 	// show / hide report buttons (needed for dynamic version - with index.php)

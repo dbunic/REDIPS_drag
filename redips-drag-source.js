@@ -3,7 +3,7 @@ Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
 Version 5.0.0
-Nov 1, 2012.
+Nov 8, 2012.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -166,8 +166,9 @@ REDIPS.drag = (function () {
 		shift = {mode : 'horizontal1',	// (object) contains shift modes (horizontal1, horizontal2, vertical1, vertical2) and how to shift elements (always, if DIV element is dropped to the empty cell as well or if DIV element is deleted)
 				after : 'default'},
 		
-		cloneKey = {div : false,		// (boolean) if true, elements could be cloned with pressed SHIFT key
-					row : false},		// (boolean) if true, rows could be cloned with pressed SHIFT key
+		clone = {keyDiv : false,		// (boolean) if true, elements could be cloned with pressed SHIFT key
+				keyRow : false,			// (boolean) if true, rows could be cloned with pressed SHIFT key
+				sendBack : false},		// (boolean) if true, then cloned element can be returned to its source
 		rowPosition = 'before',			// (string) drop row before or after highlighted row (values are "before" or "after")
 		// (object) event handlers
 		event = {changed : function () {},
@@ -224,7 +225,7 @@ REDIPS.drag = (function () {
 		var self = this,		// assign reference to current object to "self"
 			i,					// used in local for loops
 			imgs,				// collect images inside div=drag
-			redips_clone;		// reference to the DIV element needed for cloned elements 
+			redipsClone;		// reference to the DIV element needed for cloned elements 
 		// if drag container is undefined or input parameter is not a string, then set reference to DIV element with default id="drag"
 		if (dc === undefined || typeof(dc) !== 'string') {
 			dc = 'drag';
@@ -235,10 +236,10 @@ REDIPS.drag = (function () {
 		// if automatic creation isn't precise enough, user can manually create and place element with id="redips_clone" to prevent window expanding
 		// (then this code will be skipped)
 		if (!document.getElementById('redips_clone')) {
-			redips_clone = document.createElement('div');
-			redips_clone.id = 'redips_clone';
-			redips_clone.style.width = redips_clone.style.height = '1px';
-			dragContainer.appendChild(redips_clone);
+			redipsClone = document.createElement('div');
+			redipsClone.id = 'redips_clone';
+			redipsClone.style.width = redipsClone.style.height = '1px';
+			dragContainer.appendChild(redipsClone);
 		}
 		// attach onmousedown event handler to the DIV elements
 		// attach onscroll='calculateCells' for DIV elements with 'scroll' in class name (prepare scrollable container areas)
@@ -323,7 +324,7 @@ REDIPS.drag = (function () {
 		}
 		// loop through tables and define table sort parameter
 		for (i = 0, j = 0; i < tableNodeList.length; i++) {
-			// skip table if table belongs to the "redips_clone" container (possible for cloned rows - if initTables() is called after rowClone())
+			// skip table if table belongs to the "redipsClone" container (possible for cloned rows - if initTables() is called after rowClone())
 			// or table has "nolayout" className
 			if (tableNodeList[i].parentNode.id === 'redips_clone' || tableNodeList[i].className.indexOf('nolayout') > -1) {
 				continue;
@@ -1275,8 +1276,36 @@ REDIPS.drag = (function () {
 	 * @memberOf REDIPS.drag#
 	 */
 	elementDrop = function (drop) {
+		var cloneSourceDiv = null,	// clone source element (needed if clone.sendBack is set to true)
+			div,					// nodeList of DIV elements in target cell (needed if clone.sendBack is set to true)
+			i;						// local variables
 		// if input parameter is not "false" then DIV element will be dropped to the table cell
 		if (drop !== false) {
+			// if clone.sendBack is set to true then try to find source element in target cell
+			if (clone.sendBack === true) {
+				// search all DIV elements in target cell
+				div = td.target.getElementsByTagName('DIV');
+				// loop through all DIV elements in target cell
+				for (i = 0; i < div.length; i++) {
+					// if DIV in target cell is source of dropped DIV element (dropped DIV id and id of DIV in target cell has the same name beginning like "d12c2" and "d12")
+					// of course, the case where source DIV element is dropped to the cell with cloned DIV element should be excluded (possible in climit1 type)
+					if (obj !== div[i] && obj.id.indexOf(div[i].id) === 0) {
+						// set reference to cloneSourceDiv element
+						cloneSourceDiv = div[i];
+						// break the loop
+						break;
+					}
+				}
+				// if clone source DIV element exists in target cell
+				if (cloneSourceDiv) {
+					// update climit class (increment by 1)
+					cloneLimit(cloneSourceDiv, 1);
+					// delete dropped DIV element
+					obj.parentNode.removeChild(obj);
+					// return from the method (everything is done)
+					return;
+				}
+			}
 			// shift table content if dropMode is set to "shift" and target cell is not empty or shift.after option is set to always
 			// has_child() is a private method
 			if (REDIPS.drag.dropMode === 'shift' && (hasChilds(td.target) || REDIPS.drag.shift.after === 'always')) {
@@ -1298,7 +1327,7 @@ REDIPS.drag = (function () {
 				// call clonedDropped event handler
 				REDIPS.drag.event.clonedDropped(td.target);
 				// update climit1_X or climit2_X classname
-				cloneLimit();
+				cloneLimit(objOld, -1);
 			}
 		}
 		// cloned element should be deleted
@@ -1360,7 +1389,7 @@ REDIPS.drag = (function () {
 		var param;
 		// if object is cloned, update climit1_X or climit2_X classname
 		if (cloned) {
-			cloneLimit();
+			cloneLimit(objOld, -1);
 		}
 		// shift table content if dropMode is set to "shift" and shift.after is set to "delete" or "always"
 		if (REDIPS.drag.dropMode === 'shift' && (REDIPS.drag.shift.after === 'delete' || REDIPS.drag.shift.after === 'always')) {
@@ -1420,7 +1449,7 @@ REDIPS.drag = (function () {
 			// if moved object is element and has clone in class name or cloneShiftKey is enabled and shift key is pressed
 			// then remember previous object, clone object, set cloned flag and call event.cloned
 			// (shiftKey is defined in handler_mousedown)
-			if (mode === 'cell' && (clone_class || (REDIPS.drag.cloneKey.div === true && shiftKey))) {
+			if (mode === 'cell' && (clone_class || (REDIPS.drag.clone.keyDiv === true && shiftKey))) {
 				// remember previous object (original element)
 				REDIPS.drag.objOld = objOld = obj;
 				// clone DIV element ready for dragging
@@ -1438,7 +1467,7 @@ REDIPS.drag = (function () {
 				if (mode === 'row') {
 					// settings of "cloned" flag should go before calling rowClone() because "cloned" is needed in rowClone()
 					// to cut out "clone" class name from <div class="drag row clone"> elements
-					if (clone_class || (REDIPS.drag.cloneKey.row === true && shiftKey)) {
+					if (clone_class || (REDIPS.drag.clone.keyRow === true && shiftKey)) {
 						cloned = true;
 					}
 					// remember reference to the source row
@@ -2516,46 +2545,53 @@ REDIPS.drag = (function () {
 
 
 	/**
-	 * After element is cloned, this method will update climit1_X or climit2_X class names (X defines number of elements to clone).
-	 * Method is called from handlerOnMouseUp method.
+	 * Method updates climit1_X or climit2_X class name (X defines cloning limit).
 	 * <ul>
 	 * <li>climit1_X - after cloning X elements, last element will be normal drag-able element</li>
 	 * <li>climit2_X - after cloning X elements, last element will stay unmovable</li>
 	 * </ul>
+	 * @param {HTMLElement} el Element on which cname class should be updated.
+	 * @param {Integer} value Increment or decrement climit value.
 	 * @see <a href="#handlerOnMouseUp">handlerOnMouseUp</a>
 	 * @private
 	 * @memberOf REDIPS.drag#
 	 */
-	cloneLimit = function () {
+	cloneLimit = function (el, value) {
 		// declare local variables 
 		var matchArray,	// match array
 			limitType,	// limit type (1 - clone becomes "normal" drag element at last; 2 - clone element stays immovable)
 			limit,		// limit number
 			classes;	// class names of clone element
-		// set classes variable for clone object (objOld is reference to the clone object not cloned)
-		classes = objOld.className;
+		// read class name from element
+		classes = el.className;
 		// match climit class name		
 		matchArray = classes.match(/climit(\d)_(\d+)/);
-		// if class name contains climit option
+		// if DIV class contains climit
 		if (matchArray !== null) {
 			// prepare limitType (1 or 2) and limit
 			limitType = parseInt(matchArray[1], 10); 
 			limit = parseInt(matchArray[2], 10);
-			// decrease limit number and cut out "climit" class
-			limit -= 1;
-			classes = classes.replace(/climit\d_\d+/g, '');
+			// if current limit is 0 and should be set to 1 then return "cloning" to the DIV element
+			if (limit === 0 && value === 1) {
+				// add "clone" class to class attribute
+				classes += ' clone';
+				// enable DIV element for climit2 type
+				if (limitType === 2) {
+					enableDrag(true, el);
+				}
+			}
+			// update limit value
+			limit += value;
+			// update climit class name with new limit value
+			classes = classes.replace(/climit\d_\d+/g, 'climit' + limitType + '_' + limit);
 			// test if limit drops to zero
 			if (limit <= 0) {
-				// no more cloning, cut "clone" from class names
+				// no more cloning, cut out "clone" from class name
 				classes = classes.replace('clone', '');
-				// if limit type is 2 then clone object becomes immovable
+				// if limit type is 2 then disable clone element (it will stay in cell)
 				if (limitType === 2) {
-					// cut "drag" class
-					classes = classes.replace('drag', '');
-					// remove attached event listener from source element
-					registerEvents(objOld, false);
-					// set cursor style to auto
-					objOld.style.cursor = 'auto';
+					// disable source DIV element
+					enableDrag(false, el);
 					// call event.clonedEnd2 handler
 					REDIPS.drag.event.clonedEnd2(); 
 				}
@@ -2564,12 +2600,8 @@ REDIPS.drag = (function () {
 					REDIPS.drag.event.clonedEnd1();
 				}
 			}
-			// return "climit" class but with decreased limit_number
-			else {
-				classes = classes + ' climit' + limitType + '_' + limit;
-			}
 			// normalize spaces and return classes to the clone object 
-			objOld.className = normalize(classes);
+			el.className = normalize(classes);
 		}
 	};
 
@@ -2669,13 +2701,13 @@ REDIPS.drag = (function () {
 			regexNoAutoscroll = /\bnoautoscroll\b/i;	// regular expression to search "noautoscroll" class name
 		// set opacity for disabled elements from public property "opacityDisabled" 
 		opacity = REDIPS.drag.style.opacityDisabled;
-		// define onmousedown/ondblclick handlers and styles
+		// set styles for enabled DIV element
 		if (enable_flag === true || enable_flag === 'init') {
 			borderStyle = REDIPS.drag.style.borderEnabled;
 			cursor = 'move';
 			enabled = true;
 		}
-		// else remove event handlers
+		// else set styles for disabled DIV element
 		else {
 			borderStyle = REDIPS.drag.style.borderDisabled;
 			cursor = 'auto';
@@ -2686,13 +2718,11 @@ REDIPS.drag = (function () {
 		if (el === undefined) {
 			div = dragContainer.getElementsByTagName('div');
 		}
-		// "type" parameter is not "subtree" and "el" is string - assuming el is id of one element to enable/disable
-		// e.g. enableDrag(true, 'drag1')
+		// "el" is string (CSS selector) - it can collect one DIV element (like "#d12") or many DIV elements (like "#drag1 div")
 		else if (typeof(el) === 'string') {
 			div = document.querySelectorAll(el);
 		}
-		// prepare array with one div element
-		// e.g. enableDrag(true, el)
+		// prepare array with one div element if el is reference of DIV element
 		else {
 			div[0] = el;
 		}
@@ -2749,11 +2779,11 @@ REDIPS.drag = (function () {
 					}
 					// prepare scrollable container areas
 					scrollContainer[j] = {
-						div			: div[i],				// reference to the scrollable container
-						offset		: cb,					// box offset of the scrollable container
-						midstX		: (cb[1] + cb[3]) / 2,	// middle X
-						midstY		: (cb[0] + cb[2]) / 2,	// middle Y
-						autoscroll	: autoscroll			// autoscroll enabled or disabled (true or false)
+						div : div[i],					// reference to the scrollable container
+						offset : cb,					// box offset of the scrollable container
+						midstX : (cb[1] + cb[3]) / 2,	// middle X
+						midstY : (cb[0] + cb[2]) / 2,	// middle Y
+						autoscroll : autoscroll			// autoscroll enabled or disabled (true or false)
 					};
 					// search for tables inside scrollable container
 					tbls = div[i].getElementsByTagName('table');
@@ -4134,17 +4164,20 @@ REDIPS.drag = (function () {
 		 */
 		deleteCloned : deleteCloned,
 		/**
-		 * Object has boolean properties to enable / disable cloning DIV elements or table rows with shift key.
-		 * Just press SHIFT key and try to drag DIV element / row.
+		 * Object has boolean properties to enable cloning DIV elements or table rows with shift key and to enable returning cloned DIV elements to its source. 
 		 * Instead of moving, DIV element / row will be cloned and ready for dragging.
+		 * Just press SHIFT key and try to drag DIV element / row.
+		 * On the other hand, with clone.sendBack property set to true, cloned DIV element will be deleted when dropped to the cell containing its source clone element.
+		 * If exists, "climit" class will be updated (increased by 1).  
 		 * <ul>
-		 * <li>{Boolean} cloneKey.div - If set to true, all DIV elements on tables could be cloned with pressed SHIFT key. Default is false</li>
-		 * <li>{Boolean} cloneKey.row - If set to true, table rows could be cloned with pressed SHIFT key. Default is false</li>
+		 * <li>{Boolean} clone.keyDiv - If set to true, all DIV elements on tables could be cloned with pressed SHIFT key. Default is false</li>
+		 * <li>{Boolean} clone.keyRow - If set to true, table rows could be cloned with pressed SHIFT key. Default is false</li>
+		 * <li>{Boolean} clone.sendBack - If set to true, cloned element can be returned to its source. Default is false</li>
 		 * </ul>
 		 * @type Object
-		 * @name REDIPS.drag#cloneKey
+		 * @name REDIPS.drag#clone
 		 */
-		cloneKey : cloneKey,
+		clone : clone,
 		/**
 		 * Object contains animation pause, step and animation shift drop option.
 		 * <ul>

@@ -15,7 +15,7 @@ redipsInit = function () {
 	// initialization
 	rd.init();
 	// enable cloning DIV elements with pressed SHIFT key
-	rd.cloneKey.div = true;
+	rd.clone.keyDiv = true;
 	// handler clicked - set hover color
 	rd.event.clicked = function (currentCell) {
 		setHoverColor(currentCell);

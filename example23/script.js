@@ -117,12 +117,12 @@ redips.save = function () {
 				*/
 				// demo code
 				message = redips.request.responseText;
-				delay = 3000;
+				delay = 2000;
 			}
 			// if request status isn't OK
 			else {
 				message = 'Error: [' + redips.request.status + '] ' + redips.request.statusText;
-				delay = 3000;
+				delay = 2000;
 			}
 			// display message and set timeout to delete message
 			redips.display_message(message, delay);

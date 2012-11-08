@@ -7,6 +7,8 @@ Changes for REDIPS.drag library
 - initTables method exposed as public (needed for cases when table is dynamically added or removed)
 - from now lib uses querySelectorAll for tables and div selection (here is compatibility table http://caniuse.com/queryselector)
 - enableDrag uses CSS selector 
+- added clone.sendBack option - if set to true, cloned DIV element could be returned to the source
+- updated documentation
 
 4.7.6
 - added event handler myhandler_relocated() - event can be triggered after single call of relocate() method or after all DIV elements are shifted in "shift" mode

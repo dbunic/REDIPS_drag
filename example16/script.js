@@ -51,10 +51,10 @@ redips.init = function () {
 		var cid = redips.findContainer(rd.obj);
 		// set cloning option with shiftKey only for right DIV container
 		if (cid === redips.right) {
-			rd.cloneKey.div = true;
+			rd.clone.keyDiv = true;
 		}
 		else {
-			rd.cloneKey.div = false;
+			rd.clone.keyDiv = false;
 		}
 		// set hover color for original DIV elements and for cloned DIV elements
 		if (rd.obj.className.indexOf('clnd') === -1) {

@@ -16,7 +16,7 @@ redipsInit = function () {
 	// set hover color for TR
 	rd.hover.colorTr = '#ddd';
 	// define color for empty row
-	rd.rowEmptyColor = '#eee';
+	rd.style.rowEmptyColor = '#eee';
 	// row was clicked - enable / disable tables
 	rd.event.rowClicked = function () {
 		// find table

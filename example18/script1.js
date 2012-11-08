@@ -24,7 +24,7 @@ redips.init = function () {
 	// animation step (minimum is 1)
 	rd.animation.step = 2;
 	// define color for "empty row"
-	rd.rowEmptyColor = 'LightBlue';
+	rd.style.rowEmptyColor = '#d3ebf3';
 };
 
 
