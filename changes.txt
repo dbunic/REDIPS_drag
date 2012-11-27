@@ -9,6 +9,7 @@ Changes for REDIPS.drag library
 - enableDrag uses CSS selector 
 - added clone.sendBack option - if set to true, cloned DIV element could be returned to the source
 - updated documentation
+- added example21 Simple shift
 
 4.7.6
 - added event handler myhandler_relocated() - event can be triggered after single call of relocate() method or after all DIV elements are shifted in "shift" mode

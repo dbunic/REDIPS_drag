@@ -1,0 +1,104 @@
+/*
+
+Darko Bunic
+http://www.redips.net/
+Nov, 2012.
+
+*/
+
+body {
+	font-family: arial;
+	margin: 0px; /* for IE6 / IE7 */
+}
+
+
+/* make drag container visible */
+#drag {
+	border: 2px dashed LightBlue;
+	display: table;
+	margin: auto;
+	padding: 3px;
+}
+
+
+
+/* drag objects (DIV inside table cells) */
+.drag {
+	border: 2px solid #367D94;
+	cursor: move;
+	margin: auto;
+	background-color: white;
+	text-align: center;
+	font-size: 25pt;
+	opacity: 0.7;
+	filter: alpha(opacity=70);
+	width: 87px;
+	height: 40px;
+	line-height: 40px;
+	/* round corners */
+	border-radius: 4px; /* Opera, Chrome */
+	-moz-border-radius: 4px; /* FF */
+}
+
+
+/* tables */
+div#drag table {
+	background-color: #eee;
+	border-collapse: collapse;
+}
+		/* table1 (bottom table) */
+		div#drag #table1 {
+			margin-bottom: 20px;
+		}
+		/* table2 (bottom table) */
+		div#drag #table2 {
+			margin: auto;
+		}
+
+
+/* table cells */
+div#drag td,th {
+	border-style: solid;
+	height: 50px;
+	text-align: center;
+	font-size: 10pt;
+	padding: 2px;
+}
+		/* left table - td */
+		div#drag #table1 td{
+			border-width: 0px 2px 0px 0px;
+			border-color: white;
+		}
+		
+		/* right table - td */
+		div#drag #table2 td{
+			border-width: 0px 3px 3px 0px;
+			border-color: #DDC5B5;
+			font-weight: normal;
+		}
+
+		/* right table - th */
+		div#drag #table2 th{
+			border-width: 3px 0px 0px 3px;
+			border-color: #DDC5B5;
+			font-weight: normal;
+		}
+		
+		/* right table - upper right cell */
+		div#drag #table2 .upper_right{
+			border-width: 0px;
+		}
+
+		/* right table - lower left cell */
+		div#drag #table2 .lower_left{
+			border-width: 0px;
+		}
+
+/* instructions at the bottom */
+.instructions {
+	width: 600px;
+	margin: 15px auto 0px auto;
+	color: #555;
+	font-size: 11px;
+	text-align: justify;
+}

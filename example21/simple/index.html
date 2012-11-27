@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+	<head>
+		<meta name="author" content="Darko Bunic"/>
+		<meta name="description" content="Drag and drop table content with JavaScript"/>
+		<meta name="viewport" content="width=device-width, user-scalable=no"/>
+		<link rel="stylesheet" href="style.css" type="text/css" media="screen"/>
+		<script type="text/javascript">
+			var indexURL = '../../';
+		</script>
+		<script type="text/javascript" src="../../header.js"></script>
+		<script type="text/javascript" src="../../redips-drag-min.js"></script>
+		<script type="text/javascript" src="script.js"></script>
+		<title>Example 21: Simple shift</title>
+	</head>
+	<body>
+		<!-- tables inside this DIV could have draggable content -->
+		<div id="drag">
+			<table id="table1">
+				<colgroup>
+					<col width="100"/>
+					<col width="100"/>
+					<col width="100"/>
+					<col width="100"/>
+					<col width="100"/>
+					<col width="100"/>
+				</colgroup>
+				<tbody>
+					<tr id="myRow">
+						<td><div id="d1" class="drag">1</div></td>
+						<td><div id="d2" class="drag">2</div></td>
+						<td><div id="d3" class="drag">3</div></td>
+						<td><div id="d4" class="drag">4</div></td>
+						<td><div id="d5" class="drag">5</div></td>
+						<td><div id="d6" class="drag">6</div></td>
+					</tr>
+				</tbody>
+			</table>
+
+			<table id="table2">
+				<colgroup>
+					<col width="100"/>
+					<col width="100"/>
+					<col width="100"/>
+				</colgroup>
+				<tbody>
+					<tr>
+						<td></td>
+						<td></td>
+						<td class="upper_right"></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td></td>
+						<th></th>
+					</tr>
+					<tr>
+						<td class="lower_left"></td>
+						<th></th>
+						<th></th>
+					</tr>
+				</tbody>
+			</table>
+		</div><!-- drag container -->
+		<div class="instructions">
+			Content in upper table (table with 1 row) will be shifted to the left after dragging element from upper to the bottom table. Inside event.dropped() handler is JS code that will be executed only in case of dragging from table 0 to table 1. All other movements are ignored.
+		</div>
+
+	</body>
+</html>
