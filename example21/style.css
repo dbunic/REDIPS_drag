@@ -54,6 +54,11 @@ div#drag td{
 	border: 2px solid #FF8A58;
 }
 
+/* forbidden cells */
+.mark {
+	background-color: #ccc;
+}
+
 /* trash cell */
 .trash {
 	color: white;

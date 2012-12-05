@@ -1,5 +1,8 @@
 Changes for REDIPS.drag library
 
+5.0.1
+- "shift" method now takes care about marked cells - thanks to Mark Jacobs
+
 5.0.0
 - big code cleaning
 - majority of properties, methods and event handlers are renamed (camelCase syntax is used)

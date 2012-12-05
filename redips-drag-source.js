@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 5.0.0
-Nov 8, 2012.
+Version 5.0.1
+Dec 5, 2012.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -3224,6 +3224,8 @@ REDIPS.drag = (function () {
 			cl,			// cell list in form of [row, cell] -> table_cell (it takes care about rowspan and colspan)
 			t1, t2,		// temporary source and target cell needed for relocate
 			c1, c2,		// source and target cell needed for relocate
+			m1, m2,		// set flags if source or target cell contains "mark" class name
+			p2,			// remember last possible cell when marked cell occures 
 			soption,	// shift option read from public parameter
 			rows,		// row number
 			cols,		// column number (column number is defined from first row)
@@ -3314,6 +3316,21 @@ REDIPS.drag = (function () {
 			}
 			// shift DIV if exists (t1 and c2) or (c1 and t2)
 			if ((t1 !== undefined && c2 !== undefined) || (c1 !== undefined && t2 !== undefined)) {
+				// set "mark" flags if source or target cell contains "mark" class name
+				m1 = c1.className.indexOf(REDIPS.drag.mark.cname) === -1 ? 0 : 1;
+				m2 = c2.className.indexOf(REDIPS.drag.mark.cname) === -1 ? 0 : 1;
+				// if source cell is forbidden then skip shifting
+				if (m1 === 1) {
+					// if target cell isn't foribdden then remember this location
+					if (m2 === 0) {
+						p2 = c2;
+					}
+					continue;
+				}
+				// set target cell to be last free cell (remembered in previous step)
+				else if (m1 === 0 && m2 === 1) {
+					c2 = p2;
+				}
 				// relocate cell content with animation
 				if (REDIPS.drag.animation.shift) {
 					relocate(c1, c2, 'animation');
