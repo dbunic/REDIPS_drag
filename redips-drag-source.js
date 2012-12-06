@@ -3,7 +3,7 @@ Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
 Version 5.0.1
-Dec 5, 2012.
+Dec 6, 2012.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -34,7 +34,7 @@ var REDIPS = REDIPS || {};
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">Drag and drop table rows</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">Drag and Drop table content</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-content-shift/">JavaScript drag and drop plus content shift</a>
- * @version 5.0.0
+ * @version 5.0.1
  */
 REDIPS.drag = (function () {
 		// methods
@@ -100,7 +100,7 @@ REDIPS.drag = (function () {
 				flag: {x: 0, y: 0}},// flags are needed to prevent multiple calls of autoScrollX and autoScrollY from onmousemove event handler
 		scroll_object,				// scroll_object
 		bgstyle_old,				// (object) old td styles (background color and border styles)
-		scrollContainer = [],	// scrollable container areas (contains autoscroll areas, reference to the container and scroll direction)
+		scrollContainer = [],		// scrollable container areas (contains autoscroll areas, reference to the container and scroll direction)
 		tables = [],				// table offsets and row offsets (initialized in onload event)
 		sortIdx,					// sort index needed for sorting tables in tableTop()
 		moved,						// (boolean) true if element is moved
@@ -116,7 +116,7 @@ REDIPS.drag = (function () {
 					flag: false},	// threshold flag
 		shiftKey = false,			// (boolean) true if shift key is pressed (set in handler_mousedown)
 		clone_class = false,		// (boolean) true if clicked element contains clone in class name (set in handler_mousedown)
-		an_counter = 0,				// (integer) counter of animated elements to be shifted before table should be enabled
+		animationCounter = [],		// (array) counter of animated elements to be shifted before table should be enabled
 		
 		// selected, previous and source table, row and cell (private parameters too)
 		table = null,
@@ -162,8 +162,10 @@ REDIPS.drag = (function () {
 		animation = {pause : 20,		// (object) animation pause (integer), step (integer) and shift (boolean)
 					step: 2,
 					shift: false},
-		shift = {mode : 'horizontal1',	// (object) contains shift modes (horizontal1, horizontal2, vertical1, vertical2) and how to shift elements (always, if DIV element is dropped to the empty cell as well or if DIV element is deleted)
-				after : 'default'},
+		// (object)
+		shift = {mode : 'horizontal1',	// shift modes (horizontal1, horizontal2, vertical1, vertical2) 
+				after : 'default',		// how to shift elements (always, if DIV element is dropped to the empty cell as well or if DIV element is deleted)
+				overflow : 'bunch'},	// what to do with overflowed DIV (bunch, delete, source)
 		clone = {keyDiv : false,		// (boolean) if true, elements could be cloned with pressed SHIFT key
 				keyRow : false,			// (boolean) if true, rows could be cloned with pressed SHIFT key
 				sendBack : false,		// (boolean) if true, then cloned element can be returned to its source
@@ -356,6 +358,8 @@ REDIPS.drag = (function () {
 			tables[j].redips.nestedLevel = level;
 			// set original table index (needed for sorting "tables" array to the original order in saveContent() function)
 			tables[j].redips.idx = j;
+			// define animationCounter per table
+			animationCounter[j] = 0;
 			// prepare td nodeList of current table
 			tdNodeList = tables[j].getElementsByTagName('td');
 			// loop through nodeList and search for rowspaned cells
@@ -3088,6 +3092,7 @@ REDIPS.drag = (function () {
 	relocate = function (from, to, mode) {
 		var i, j,	// loop variables
 			tbl2,	// target table
+			idx2,	// target table index
 			cn,		// number of child nodes
 			div,	// DIV element (needed in for loop)
 			move;	// move object (private function)
@@ -3100,16 +3105,17 @@ REDIPS.drag = (function () {
 				obj: el,
 				target: target,
 				callback: function (div) {
-					var tbl;
-					// decrease animated counter
-					an_counter--;
-					// after last element is shifted, enable table
-					if (an_counter === 0) {
+					var tbl, idx;
+					// set reference to the table and table index
+					tbl = REDIPS.drag.findParent('TABLE', div);
+					idx = tbl.redips.idx;
+					// decrease animation counter per table
+					animationCounter[idx]--;
+					// after last element is placed the table then table should be enabled
+					if (animationCounter[idx] === 0) {
 						// call event handler after relocation is finished
 						REDIPS.drag.event.relocated();
-						// set reference to the table
-						tbl = REDIPS.drag.findParent('TABLE', div);
-						// enable DIV elements for dragging
+						// enable target table
 						REDIPS.drag.enableTable(true, tbl);
 					}
 				}
@@ -3127,21 +3133,22 @@ REDIPS.drag = (function () {
 		cn = from.childNodes.length;
 		// if mode is "animation"
 		if (mode === 'animation') {
-			// if child nodes exists
+			// if child nodes exist
 			if (cn > 0) {
-				// define target table reference
+				// define target table reference and target table index
 				tbl2 = findParent('TABLE', to);
+				idx2 = tbl2.redips.idx;
 				// disable target table
 				REDIPS.drag.enableTable(false, tbl2);
-			}
-			// loop through all child nodes in table cell
-			for (i = 0; i < cn; i++) {
-				// relocate (with animation) only DIV elements
-				if (from.childNodes[i].nodeType === 1 && from.childNodes[i].nodeName === 'DIV') {
-					// increase animated counter (counter is initially set to 0)
-					an_counter++;
-					// move DIV element to the target cell
-					move(from.childNodes[i], to);
+				// loop through all child nodes in table cell
+				for (i = 0; i < cn; i++) {
+					// relocate (with animation) only DIV elements
+					if (from.childNodes[i].nodeType === 1 && from.childNodes[i].nodeName === 'DIV') {
+						// increase animated counter (counter is initially set to 0)
+						animationCounter[idx2]++;
+						// move DIV element to the target cell
+						move(from.childNodes[i], to);
+					}
 				}
 			}
 		}
@@ -3225,7 +3232,8 @@ REDIPS.drag = (function () {
 			t1, t2,		// temporary source and target cell needed for relocate
 			c1, c2,		// source and target cell needed for relocate
 			m1, m2,		// set flags if source or target cell contains "mark" class name
-			p2,			// remember last possible cell when marked cell occures 
+			overflow,		// (boolean) overflow flag
+			p2,			// remember last possible cell when marked cell occures
 			soption,	// shift option read from public parameter
 			rows,		// row number
 			cols,		// column number (column number is defined from first row)
@@ -3285,13 +3293,17 @@ REDIPS.drag = (function () {
 			x = 1;
 			y = 0;
 		}
+		// set overflow flag to true
+		overflow = true;
 		//
 		// loop
 		//
-		// while loop - goes from source to target position
+		// while loop - goes from source to target position (backward)
+		// imagine row with 5 cells, relocation will go like this: 3->4, 2->3, 1->2 and 0->1 
 		while (pos[0] !== pos2[0] || pos[1] !== pos2[1]) {
 			// define target cell
 			t2 = cl[pos[0] + '-' + pos[1]];
+			// increase indexes for row and column to define source cell 
 			// increment row index
 			pos[x] += d;
 			// if row is highest row
@@ -3319,6 +3331,27 @@ REDIPS.drag = (function () {
 				// set "mark" flags if source or target cell contains "mark" class name
 				m1 = c1.className.indexOf(REDIPS.drag.mark.cname) === -1 ? 0 : 1;
 				m2 = c2.className.indexOf(REDIPS.drag.mark.cname) === -1 ? 0 : 1;
+				// detect overflow (actually this is detection of first allowed cell)
+				if (overflow) {
+					// if cell is not marked
+					if (m2 === 0) {
+						if (REDIPS.drag.shift.overflow === 'delete') {
+							emptyCell(c2);
+						}
+						// relocate overflowed content
+						else if (REDIPS.drag.shift.overflow === 'source') {
+							// with animation
+							if (REDIPS.drag.animation.shift) {
+								relocate(c2, td.source, 'animation');
+							}
+							// or without animation
+							else {
+								relocate(c2, td.source);
+							}
+						}
+						overflow = false;
+					}
+				}
 				// if source cell is forbidden then skip shifting
 				if (m1 === 1) {
 					// if target cell isn't foribdden then remember this location
@@ -4201,10 +4234,11 @@ REDIPS.drag = (function () {
 		 */
 		animation : animation,
 		/**
-		 * This object has two properties: shift.after (defines when to shift table content) and shift.mode (how to shift table content).
+		 * Object contains several properties: "shift.after", "shift.mode" and "shift.overflow".
 		 * <ul>
 		 * <li>{String} shift.after - how to shift table content after DIV element is dropped</li>
 		 * <li>{String} shift.mode - shift modes (horizontal / vertical)</li>
+		 * <li>{String} shift.overflow - defines how to behave when DIV element falls off the end</li>
 		 * </ul>
 		 *  
 		 * shift.after option has the following values: "default", "delete" and "always" (this property will have effect only if dropMode is set to "shift"). Default value is "default".
@@ -4221,9 +4255,19 @@ REDIPS.drag = (function () {
 		 * <li>vertical1 - vertical shift (element shift can affect more columns)</li>
 		 * <li>vertical2 - vertical shift (each column is treated separately)</li>
 		 * </ul>
+		 * 
+		 * shift.overflow defines how to behave when DIV element falls off the end. Possible actions are: "bunch", "delete" and "source". Default value is "bunch".
+		 * <ul>
+		 * <li>bunch - overflowed DIV will stay in last cell</li>
+		 * <li>delete - overflowed DIV will be deleted</li>
+		 * <li>source - overflowed DIV will be moved to the source TD</li>
+		 * </ul> 
 		 * @example
 		 * // DIV elements will be shifted vertically (each column is treated separately)
 		 * REDIPS.drag.shift.mode = 'vertical2';
+		 *  
+		 * // delete overflowed DIV element
+		 * REDIPS.drag.shift.overflow = 'delete';
 		 * @type Object
 		 * @see <a href="#dropMode">dropMode</a>
 		 * @see <a href="#shiftCells">shiftCells</a>

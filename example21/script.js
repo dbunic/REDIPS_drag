@@ -6,8 +6,9 @@
 
 var redipsInit,
 	shiftMode,
-	toggleAnimation,
-	toggleShiftAfter,
+	overflow,
+	shiftAnimation,
+	shiftAfter,
 	toggleConfirm,
 	counter = 0;
 
@@ -34,20 +35,26 @@ redipsInit = function () {
 };
 
 
-// set shift_mode
+// set shift mode
 shiftMode = function (radio) {
 	REDIPS.drag.shift.mode= radio.value;
 };
 
 
+// set overflow
+overflow = function (radio) {
+	REDIPS.drag.shift.overflow = radio.value;
+};
+
+
 // enable / disable animation
-toggleAnimation = function (chk) {
+shiftAnimation = function (chk) {
 	REDIPS.drag.animation.shift = chk.checked;
 };
 
 
 // enable / disable shift after element is deleted
-toggleShiftAfter = function (chk) {
+shiftAfter = function (chk) {
 	REDIPS.drag.shift.after = chk.value;
 };
 

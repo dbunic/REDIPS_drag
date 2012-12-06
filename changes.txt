@@ -2,6 +2,7 @@ Changes for REDIPS.drag library
 
 5.0.1
 - "shift" method now takes care about marked cells - thanks to Mark Jacobs
+- added shift.overflow property with the allowed values: "bunch", "delete" and "source" - thanks to Mark Jacobs 
 
 5.0.0
 - big code cleaning
