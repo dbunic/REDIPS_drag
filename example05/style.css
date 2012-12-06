@@ -8,11 +8,11 @@ May, 2010.
 
 body{
 	font-family: arial;
-	margin: 0px; /* for IE6 / IE7 */
+	margin: 0px;
 }
 
 
-/* drag container */
+/* main container */
 #main_container{
 	margin: auto;
 	width: 700px;

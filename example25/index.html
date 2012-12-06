@@ -1,0 +1,149 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+	<head>
+		<meta name="author" content="Darko Bunic"/>
+		<meta name="description" content="Drag and drop table content with JavaScript"/>
+		<meta name="viewport" content="width=device-width, user-scalable=no"/><!-- "position: fixed" fix for Android 2.2+ -->
+		<link rel="stylesheet" href="style.css" type="text/css" media="screen"/>
+		<script type="text/javascript" src="../header.js"></script>
+		<script type="text/javascript" src="../redips-drag-min.js"></script>
+		<script type="text/javascript" src="script.js"></script>
+		<title>Example 25: Multiplication</title>
+	</head>
+	<body>
+		<!-- main container -->
+		<div id="main_container">
+			<!-- drag1 DIV container -->
+			<div id="drag">
+				<!-- first table -->
+				<table>
+					<colgroup>
+						<col width="50"/>
+						<col width="50"/>
+						<col width="50"/>
+						<col width="50"/>
+						<col width="50"/>
+					</colgroup>
+					<tbody>
+						<tr class="upper">
+							<td class="mark"><div class="drag clone">1</div></td>
+							<td class="mark"><div class="drag clone">2</div></td>
+							<td class="mark"><div class="drag clone">3</div></td>
+							<td class="mark"><div class="drag clone">4</div></td>
+							<td class="mark"><div class="drag clone">5</div></td>
+						</tr>
+						<tr class="upper">
+							<td class="mark"><div class="drag clone">6</div></td>
+							<td class="mark"><div class="drag clone">7</div></td>
+							<td class="mark"><div class="drag clone">8</div></td>
+							<td class="mark"><div class="drag clone">9</div></td>
+							<td class="mark"><div class="drag clone">10</div></td>
+						</tr>
+					</tbody>
+				</table>
+
+				<!-- second table -->
+				<table>
+					<colgroup>
+						<col width="50"/>
+						<col width="50"/>
+						<col width="50"/>
+						<col width="50"/>
+						<col width="50"/>
+					</colgroup>
+					<tbody>
+						<tr>
+							<td></td>
+							<td class="mark">x</td>
+							<td class="mark">1</td>
+							<td class="mark">=</td>
+							<td class="mark"></td>
+						</tr>
+						<tr>
+							<td></td>
+							<td class="mark">x</td>
+							<td class="mark">2</td>
+							<td class="mark">=</td>
+							<td class="mark"></td>
+						</tr>
+						<tr>
+							<td></td>
+							<td class="mark">x</td>
+							<td class="mark">3</td>
+							<td class="mark">=</td>
+							<td class="mark"></td>
+						</tr>
+						<tr>
+							<td></td>
+							<td class="mark">x</td>
+							<td class="mark">4</td>
+							<td class="mark">=</td>
+							<td class="mark"></td>
+						</tr>
+						<tr>
+							<td></td>
+							<td class="mark">x</td>
+							<td class="mark">5</td>
+							<td class="mark">=</td>
+							<td class="mark"></td>
+						</tr>
+						<tr>
+							<td></td>
+							<td class="mark">x</td>
+							<td class="mark">6</td>
+							<td class="mark">=</td>
+							<td class="mark"></td>
+						</tr>
+						<tr>
+							<td></td>
+							<td class="mark">x</td>
+							<td class="mark">7</td>
+							<td class="mark">=</td>
+							<td class="mark"></td>
+						</tr>
+						<tr>
+							<td></td>
+							<td class="mark">x</td>
+							<td class="mark">8</td>
+							<td class="mark">=</td>
+							<td class="mark"></td>
+						</tr>
+						<tr>
+							<td></td>
+							<td class="mark">x</td>
+							<td class="mark">9</td>
+							<td class="mark">=</td>
+							<td class="mark"></td>
+						</tr>
+						<tr>
+							<td></td>
+							<td class="mark">x</td>
+							<td class="mark">10</td>
+							<td class="mark">=</td>
+							<td class="mark"></td>
+						</tr>
+					</tbody>
+				</table>
+
+				<!-- third table -->
+				<table>
+					<colgroup>
+						<col width="100"/>
+					</colgroup>
+					<tbody>
+						<tr>
+							<td class="trash">Trash</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<!-- instructions -->
+			<div class="instructions">
+				Try to drag numbers from top table to the first column.
+				After dropping DIV element to the table cell, result will be automatically displayed.
+				REDIPS.drag works in "overwrite" method so dropping number on top of existing content will overwrite bottom element.
+				Numbers placed in first column can be cloned with shift key. Just press shift key and try to drag DIV element.
+			</div>
+		</div>
+	</body>
+</html>

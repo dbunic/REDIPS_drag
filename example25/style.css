@@ -1,0 +1,83 @@
+/*
+
+Darko Bunic
+http://www.redips.net/
+Dec, 2012.
+
+*/
+
+body {
+	font-family: arial;
+	margin: 0px;
+}
+
+/* main container */
+#main_container{
+	margin: auto;
+	width: 570px;
+}
+
+/* make drag container visible */
+#drag {
+	border: 2px dashed LightBlue;
+	display: table;
+	float: left;
+}
+
+/* tables */
+div#drag table {
+	border-collapse: collapse;
+	margin: 15px;
+	font-size: 20pt;
+	text-align: center;
+}
+
+/* table cells */
+div#drag td {
+	border: 1px solid navy;
+	height: 50px;
+	padding: 2px;
+}
+
+/* DIV elements */
+.drag {
+	margin: auto;
+	margin-bottom: 1px;
+	margin-top: 1px;
+	font-size: 20pt;
+	text-align: center;
+	width: 40px;
+	height: 40px;
+	line-height: 40px;
+	border: 2px solid SteelBlue;
+	background-color: white;
+	/* round corners */
+	border-radius: 4px; /* Opera, Chrome */
+	-moz-border-radius: 4px; /* FF */
+}
+
+/* forbidden cells */
+.mark {
+	background-color: #eee;
+}
+
+/* trash cell */
+.trash {
+	color: white;
+	background-color: SteelBlue;
+	font-size: 15pt;
+}
+
+/* instructions  */
+.instructions {
+	float: left;
+	border: 2px dashed LightBlue;
+	display: table;
+	margin-left: 15px;
+	width: 220px;
+	padding: 15px;
+	color: #555;
+	font-size: 12px;
+	text-align: justify;
+	background-color: #eee;
+}

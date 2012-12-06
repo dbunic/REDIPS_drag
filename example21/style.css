@@ -8,7 +8,7 @@ Oct, 2011.
 
 body{
 	font-family: arial;
-	margin: 0px; /* for IE6 / IE7 */
+	margin: 0px;
 }
 
 /* make drag container visible */
