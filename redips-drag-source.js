@@ -3233,12 +3233,12 @@ REDIPS.drag = (function () {
 			c1, c2,		// source and target cell needed for relocate
 			m1, m2,		// set flags if source or target cell contains "mark" class name
 			p2,			// remember last possible cell when marked cell occures
-			soption,	// shift option read from public parameter
+			shiftMode,	// shift.mode read from public parameter
 			rows,		// row number
 			cols,		// column number (column number is defined from first row)
 			x, y,		// column / row
 			max,
-			overflow = true,	// (boolean) overflow flag
+			overflow = false,	// (boolean) overflow flag (initially is set to false)
 			myShift,			// shift method used locally in shiftCells
 			handleOverflow;		// overflow method used locally (handler overflowed cells)
 		// define myShift local method (content will be shifted with or without animation)
@@ -3269,8 +3269,8 @@ REDIPS.drag = (function () {
 		if (td1 === td2) {
 			return;
 		}
-		// set shift option from public property
-		soption = REDIPS.drag.shift.mode;
+		// set shift.mode from public property
+		shiftMode = REDIPS.drag.shift.mode;
 		// set table reference for source and target table cell
 		tbl1 = findParent('TABLE', td1);
 		tbl2 = findParent('TABLE', td2);
@@ -3280,22 +3280,25 @@ REDIPS.drag = (function () {
 		if (tbl1 === tbl2) {
 			pos1 = [td1.redips.rowIndex, td1.redips.cellIndex];
 		}
-		// set source and target position (pos1 is used for setting pos variable in switch (soption) case)
+		else {
+			pos1 = [-1, -1];
+		}
+		// set source and target position (pos1 is used for setting pos variable in switch (shiftMode) case)
 		pos2 = [td2.redips.rowIndex, td2.redips.cellIndex];
 		// define number of rows and columns for target table (it's used as row and column index) 
 		rows = tbl2.rows.length;
 		cols = maxCols(tbl2);
-		// set start position for shifting (depending on shift option value)
-		switch (soption) {
+		// set start position for shifting (depending on shift.mode value)
+		switch (shiftMode) {
 		case 'vertical2':
 			// if source and target are from the same table and from the same column then use pos1 otherwise set last cell in column
-			pos = (tbl1 === tbl2 && td1.cellIndex === td2.cellIndex) ? pos1 : [rows, td2.redips.cellIndex];
+			pos = (tbl1 === tbl2 && td1.redips.cellIndex === td2.redips.cellIndex) ? pos1 : [rows, td2.redips.cellIndex];
 			break;
 		case 'horizontal2':
 			// if source and target are from the same table and from the same row then use pos1 otherwise set last cell in row
 			pos = (tbl1 === tbl2 && td1.parentNode.rowIndex === td2.parentNode.rowIndex) ? pos1 : [td2.redips.rowIndex, cols];
 			break;
-		// vertical1 and horizontal1 shift option
+		// vertical1 and horizontal1 shift.mode
 		default:
 			// set start cell if source and target cells are from the same table otherwise set last cell in table
 			pos = (tbl1 === tbl2) ? pos1 : [rows, cols];
@@ -3303,15 +3306,15 @@ REDIPS.drag = (function () {
 		//
 		// shift direction, max and row / column variables
 		//
-		// set direction (up/down) for vertical shift option
+		// set direction (up/down) for vertical shift.mode
 		// if source cell is prior to the target cell then set direction to the "up", otherwise direction is to the "down"
-		if (soption === 'vertical1' || soption === 'vertical2') {
+		if (shiftMode === 'vertical1' || shiftMode === 'vertical2') {
 			d = (pos[1] * 1000 + pos[0] < pos2[1] * 1000 + pos2[0]) ? 1 : -1;
 			max = rows;
 			x = 0;
 			y = 1;
 		}
-		// set direction (left/right) for horizontal shift option
+		// set direction (left/right) for horizontal shift.mode
 		// if source cell is prior to the target cell then set direction to the "left", otherwise direction is to the "right"
 		else {
 			d = (pos[0] * 1000 + pos[1] < pos2[0] * 1000 + pos2[1]) ? 1 : -1;
@@ -3320,9 +3323,16 @@ REDIPS.drag = (function () {
 			y = 0;
 		}
 		//
+		// set overflow flag
+		//
+		// if source and target tables are different or max cell is defined for row, column or table then set possible overflow
+		if (pos[0] !== pos1[0] && pos[1] !== pos1[1]) {
+			overflow = true;
+		}
+		//
 		// loop
 		//
-		// while loop - goes from source to target position (backward)
+		// while loop - goes from target to source position (backward)
 		// imagine row with 5 cells, relocation will go like this: 3->4, 2->3, 1->2 and 0->1 
 		while (pos[0] !== pos2[0] || pos[1] !== pos2[1]) {
 			// define target cell
@@ -3378,7 +3388,7 @@ REDIPS.drag = (function () {
 				myShift(c1, c2);
 			}
 			// overflow detection (fall off table edge)
-			else if (c1 !== undefined && c2 === undefined) {
+			else if (overflow && c1 !== undefined && c2 === undefined) {
 				// test for "mark" class name for source cell
 				m1 = c1.className.indexOf(REDIPS.drag.mark.cname) === -1 ? 0 : 1;
 				// if edge cell is not marked then handle overflow

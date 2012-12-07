@@ -25,7 +25,9 @@ redipsInit = function () {
 	rd.animation.shift = true;
 	// set animation loop pause
 	rd.animation.pause = 20;
-	// add counter to cloned element
+	// set TD for overflow elements (initially)
+	rd.shift.overflow = document.getElementById('overflow');
+	// add counter to cloned element name
 	// (after cloned DIV element is dropped to the table)
 	rd.event.clonedDropped = function () {
 		// increase counter
