@@ -3,7 +3,7 @@ Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
 Version 5.0.1
-Dec 6, 2012.
+Dec 7, 2012.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -3232,13 +3232,39 @@ REDIPS.drag = (function () {
 			t1, t2,		// temporary source and target cell needed for relocate
 			c1, c2,		// source and target cell needed for relocate
 			m1, m2,		// set flags if source or target cell contains "mark" class name
-			overflow,		// (boolean) overflow flag
 			p2,			// remember last possible cell when marked cell occures
 			soption,	// shift option read from public parameter
 			rows,		// row number
 			cols,		// column number (column number is defined from first row)
 			x, y,		// column / row
-			max;
+			max,
+			overflow = true,	// (boolean) overflow flag
+			myShift,			// shift method used locally in shiftCells
+			handleOverflow;		// overflow method used locally (handler overflowed cells)
+		// define myShift local method (content will be shifted with or without animation)
+		myShift = function (source, target) {
+			if (REDIPS.drag.animation.shift) {
+				relocate(source, target, 'animation');
+			}
+			else {
+				relocate(source, target);
+			}
+		};
+		// handleOverflow - how to handle overflow content
+		handleOverflow = function (target) {
+			if (REDIPS.drag.shift.overflow === 'delete') {
+				emptyCell(target);
+			}
+			// relocate overflowed content
+			else if (REDIPS.drag.shift.overflow === 'source') {
+				myShift(target, td.source);
+			}
+			else if (typeof(REDIPS.drag.shift.overflow) === 'object') {
+				myShift(target, REDIPS.drag.shift.overflow);
+			}
+			// set overflow flag to false (overflow could happen only once)
+			overflow = false;
+		};
 		// if DIV element is dropped to the source cell then there's nothing to do - just return from method
 		if (td1 === td2) {
 			return;
@@ -3257,7 +3283,7 @@ REDIPS.drag = (function () {
 		// set source and target position (pos1 is used for setting pos variable in switch (soption) case)
 		pos2 = [td2.redips.rowIndex, td2.redips.cellIndex];
 		// define number of rows and columns for target table (it's used as row and column index) 
-		rows = tbl2.rows.length - 1;
+		rows = tbl2.rows.length;
 		cols = maxCols(tbl2);
 		// set start position for shifting (depending on shift option value)
 		switch (soption) {
@@ -3293,8 +3319,6 @@ REDIPS.drag = (function () {
 			x = 1;
 			y = 0;
 		}
-		// set overflow flag to true
-		overflow = true;
 		//
 		// loop
 		//
@@ -3333,23 +3357,9 @@ REDIPS.drag = (function () {
 				m2 = c2.className.indexOf(REDIPS.drag.mark.cname) === -1 ? 0 : 1;
 				// detect overflow (actually this is detection of first allowed cell)
 				if (overflow) {
-					// if cell is not marked
-					if (m2 === 0) {
-						if (REDIPS.drag.shift.overflow === 'delete') {
-							emptyCell(c2);
-						}
-						// relocate overflowed content
-						else if (REDIPS.drag.shift.overflow === 'source') {
-							// with animation
-							if (REDIPS.drag.animation.shift) {
-								relocate(c2, td.source, 'animation');
-							}
-							// or without animation
-							else {
-								relocate(c2, td.source);
-							}
-						}
-						overflow = false;
+					// if target cell is marked and source cell is not marked handle overflow (overflow flag will be automatically set to false)
+					if (m1 === 0 && m2 === 1) {
+						handleOverflow(c1);
 					}
 				}
 				// if source cell is forbidden then skip shifting
@@ -3364,13 +3374,16 @@ REDIPS.drag = (function () {
 				else if (m1 === 0 && m2 === 1) {
 					c2 = p2;
 				}
-				// relocate cell content with animation
-				if (REDIPS.drag.animation.shift) {
-					relocate(c1, c2, 'animation');
-				}
-				// relocate cell content without animation
-				else {
-					relocate(c1, c2);
+				// relocate cell content with or without animation
+				myShift(c1, c2);
+			}
+			// overflow detection (fall off table edge)
+			else if (c1 !== undefined && c2 === undefined) {
+				// test for "mark" class name for source cell
+				m1 = c1.className.indexOf(REDIPS.drag.mark.cname) === -1 ? 0 : 1;
+				// if edge cell is not marked then handle overflow
+				if (m1 === 0) {
+					handleOverflow(c1);
 				}
 			}
 		}
@@ -4238,7 +4251,7 @@ REDIPS.drag = (function () {
 		 * <ul>
 		 * <li>{String} shift.after - how to shift table content after DIV element is dropped</li>
 		 * <li>{String} shift.mode - shift modes (horizontal / vertical)</li>
-		 * <li>{String} shift.overflow - defines how to behave when DIV element falls off the end</li>
+		 * <li>{String|HTMLElement} shift.overflow - defines how to behave when DIV element falls off the end</li>
 		 * </ul>
 		 *  
 		 * shift.after option has the following values: "default", "delete" and "always" (this property will have effect only if dropMode is set to "shift"). Default value is "default".
@@ -4258,9 +4271,10 @@ REDIPS.drag = (function () {
 		 * 
 		 * shift.overflow defines how to behave when DIV element falls off the end. Possible actions are: "bunch", "delete" and "source". Default value is "bunch".
 		 * <ul>
-		 * <li>bunch - overflowed DIV will stay in last cell</li>
-		 * <li>delete - overflowed DIV will be deleted</li>
-		 * <li>source - overflowed DIV will be moved to the source TD</li>
+		 * <li>bunch - overflow will stay in last cell</li>
+		 * <li>delete - overflow will be deleted</li>
+		 * <li>source - overflow will be moved to the source TD</li>
+		 * <li>{HTMLElement} - overflow will be moved to user defined HTML element</li>
 		 * </ul> 
 		 * @example
 		 * // DIV elements will be shifted vertically (each column is treated separately)

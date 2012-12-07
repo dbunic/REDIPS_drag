@@ -46,7 +46,7 @@
 					<tr>
 						<td><div class="drag">M</div></td>
 						<td><div class="drag">N</div></td>
-						<td class="mark"></td>
+						<td></td>
 						<td class="mark"></td>
 						<td></td>
 						<td class="mark"></td>
@@ -63,7 +63,7 @@
 						<td><div class="drag">Q</div></td>
 						<td><div class="drag">R</div></td>
 						<td></td>
-						<td></td>
+						<td class="mark"></td>
 						<td></td>
 						<td></td>
 					</tr>
@@ -74,6 +74,7 @@
 				<colgroup>
 					<col width="100"/>
 					<col width="100"/>
+					<col width="300"/>
 				</colgroup>
 				<tbody>
 					<tr>
@@ -81,6 +82,7 @@
 						<td class="mark"><div class="drag clone orange">C</div></td>
 						<!-- trash cell -->
 						<td class="trash">Trash</td>
+						<td id="overflow" class="mark"></td>
 					</tr>
 				</tbody>
 			</table>
@@ -118,8 +120,9 @@
 				<span class="text">Overflow:</span>
 				<br/>
 				<input type="radio" name ="shift_overflow" onclick="overflow(this)" title="Overflow - bunch" value="bunch" checked="true"/>bunch - overflowed DIV will stay in last cell (default)<br/>
-				<input type="radio" name ="shift_overflow" onclick="overflow(this)" title="Overflow - delete" value="delete"/>delete - overflowed DIV will be deleted<br/>
-				<input type="radio" name ="shift_overflow" onclick="overflow(this)" title="Overflow - source" value="source"/>source - overflowed DIV will me moved to the source TD<br/>
+				<input type="radio" name ="shift_overflow" onclick="overflow(this)" title="Overflow - delete" value="delete"/>delete - overflow will be deleted<br/>
+				<input type="radio" name ="shift_overflow" onclick="overflow(this)" title="Overflow - source" value="source"/>source - overflow will me moved to the source TD<br/>
+				<input type="radio" name ="shift_overflow" onclick="overflow(this)" title="Overflow - source" value="user"/>HTMLElement - overflow will me moved to user defined TD<br/>
 			</div>
 		</div>
 	</body>

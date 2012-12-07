@@ -12,7 +12,7 @@ body{
 }
 
 /* make drag container visible */
-#drag{
+div#drag {
 	border: 2px dashed LightBlue;
 	display: table;
 	margin: auto;
@@ -26,16 +26,15 @@ div#drag table {
 }
 
 /* table cells */
-div#drag td{
+div#drag td {
 	border: 1px solid navy;
 	height: 50px;
 	text-align: center;
 	font-size: 10pt;
-	padding: 2px;
 }
 
-/* drag object (DIV inside table cell) */
-.drag{
+/* drag object */
+.drag {
 	margin: auto;
 	text-align: center;
 	width: 87px;
@@ -64,6 +63,16 @@ div#drag td{
 	color: white;
 	background-color: SteelBlue;
 }
+
+/* styles for user defined overflow td */
+td#overflow {
+	padding-bottom: 6px;
+}
+	td#overflow div {
+		float: left;
+		margin-left: 5px;
+		margin-top: 5px;
+	}
 
 /* space between radio/checkbox and text */
 div#drag input {

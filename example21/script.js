@@ -25,8 +25,9 @@ redipsInit = function () {
 	rd.animation.shift = true;
 	// set animation loop pause
 	rd.animation.pause = 20;
-	// add counter to cloned element name
-	rd.event.cloned = function () {
+	// add counter to cloned element
+	// (after cloned DIV element is dropped to the table)
+	rd.event.clonedDropped = function () {
 		// increase counter
 		counter++;
 		// append to the DIV element name
@@ -43,7 +44,12 @@ shiftMode = function (radio) {
 
 // set overflow
 overflow = function (radio) {
-	REDIPS.drag.shift.overflow = radio.value;
+	if (radio.value === 'user') {
+		REDIPS.drag.shift.overflow = document.getElementById('overflow');
+	}
+	else {
+		REDIPS.drag.shift.overflow = radio.value;
+	}
 };
 
 
