@@ -16,8 +16,14 @@
 	<body>
 		<!-- tables inside this DIV could contain drag-able content  -->
 		<div id="drag">
-			<!-- first table -->
-			<table>
+			<select id="dropDown" onchange="setTable(this)">
+				<option value="table1">Table1 - normal</option>
+				<option value="table2">Table2 - rowspan, colspan</option>
+				<option value="table3">Table2 - marked cells</option>
+			</select>
+
+			<!-- table1 -->
+			<table id="table1">
 				<colgroup>
 					<col width="100"/>
 					<col width="100"/>
@@ -47,16 +53,17 @@
 						<td><div class="drag">M</div></td>
 						<td><div class="drag">N</div></td>
 						<td></td>
-						<td class="mark"></td>
 						<td></td>
-						<td class="mark"></td>
+						<td></td>
+						<td></td>
 					</tr>
 					<tr>
 						<td><div class="drag">O</div></td>
 						<td><div class="drag">P</div></td>
-						<td rowspan="2"></td>
 						<td></td>
-						<td colspan="2"></td>
+						<td></td>
+						<td></td>
+						<td></td>
 					</tr>
 					<tr>
 						<td><div class="drag">Q</div></td>
@@ -64,19 +71,112 @@
 						<td></td>
 						<td></td>
 						<td></td>
+						<td></td>
+					</tr>
+				</tbody>
+			</table>
+
+			<!-- table2 -->
+			<table id="table2" style="display: none">
+				<colgroup>
+					<col width="100"/>
+					<col width="100"/>
+					<col width="100"/>
+					<col width="100"/>
+					<col width="100"/>
+					<col width="100"/>
+				</colgroup>
+				<tbody>
+					<tr>
+						<td><div class="drag">A</div></td>
+						<td><div class="drag">B</div></td>
+						<td><div class="drag">C</div></td>
+						<td><div class="drag">D</div></td>
+						<td><div class="drag">E</div></td>
+						<td><div class="drag">F</div></td>
 					</tr>
 					<tr>
-						<td><div class="drag">S</div></td>
-						<td><div class="drag">T</div></td>
+						<td rowspan="3"></td>
 						<td></td>
-						<td class="mark"></td>
+						<td colspan="2"></td>
+						<td></td>
+						<td rowspan="3"></td>
+					</tr>
+					<tr>
+						<td colspan="4"></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td colspan="2"></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
 						<td></td>
 						<td></td>
 					</tr>
 				</tbody>
 			</table>
-			<!-- second table with clone element and trash -->
-			<table>
+
+			<!-- table3 -->
+			<table id="table3" style="display: none">
+				<colgroup>
+					<col width="100"/>
+					<col width="100"/>
+					<col width="100"/>
+					<col width="100"/>
+					<col width="100"/>
+					<col width="100"/>
+				</colgroup>
+				<tbody>
+					<tr>
+						<td class="mark"></td>
+						<td><div class="drag">A</div></td>
+						<td><div class="drag">B</div></td>
+						<td><div class="drag">C</div></td>
+						<td><div class="drag">D</div></td>
+						<td class="mark"></td>
+					</tr>
+					<tr>
+						<td><div class="drag">E</div></td>
+						<td><div class="drag">F</div></td>
+						<td class="mark"></td>
+						<td class="mark"></td>
+						<td><div class="drag">G</div></td>
+						<td><div class="drag">H</div></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td></td>
+						<td class="mark"></td>
+						<td class="mark"></td>
+						<td></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td class="mark"></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td class="mark"></td>
+					</tr>
+				</tbody>
+			</table>
+
+			<!-- table with clone element and trash -->
+			<table id="mini">
 				<colgroup>
 					<col width="100"/>
 					<col width="100"/>

@@ -5,7 +5,10 @@
 "use strict";
 
 // define redipsInit variable
-var redipsInit;
+var redipsInit,
+	setTable,
+	operation = 'addition';
+
 
 // redips initialization
 redipsInit = function () {
@@ -19,16 +22,21 @@ redipsInit = function () {
 	rd.clone.keyDiv = true;
 	// event handler called after DIV is dropped
 	rd.event.dropped = function (targetCell) {
-		var tr,		// current row
-			m1, m2;	// first and second multiplier
+		var tr,			// current row
+			num1, num2;	// numbers for addition or multiplication
 		// set first multiplier
-		m1 = rd.obj.innerHTML * 1;
+		num1 = rd.obj.innerHTML * 1;
 		// set current row
 		tr = rd.findParent('TR', targetCell);
-		// set second multiplier
-		m2 = tr.cells[2].innerHTML * 1;
-		// multiply num1 and num2 and place result to the last cell in the row
-		tr.cells[4].innerHTML = m1 * m2;
+		// set second number
+		num2 = tr.cells[2].innerHTML * 1;
+		// add or multiply num1 and num2 and place result to the last cell in the row
+		if (operation === 'addition') {
+			tr.cells[4].innerHTML = num1 + num2;
+		}
+		else {
+			tr.cells[4].innerHTML = num1 * num2;
+		}
 	};
 	// even handler called when DIV element is moved
 	rd.event.moved = function (cloned) {
@@ -37,13 +45,37 @@ redipsInit = function () {
 		if (!cloned) {
 			// set source row
 			tr = rd.findParent('TR', rd.td.source);
-			// if ...
+			// if number is moved from bottom table then delete result
 			if (tr.className.indexOf('upper') === -1) {
-				// delete result
 				tr.cells[4].innerHTML = '';
 			}
 		}
 	};
+};
+
+
+// set operation
+setTable = function (e) {
+	// set local variables
+	var tables = document.getElementById('drag').getElementsByTagName('table'),
+		i;
+	// set operation (global) - needed in event.dropped
+	operation = e.options[e.selectedIndex].value;
+	// loop goes through all fetched tables within drag container
+	for (i = 0; i < tables.length; i++) {
+		// skip number or mini table
+		if (tables[i].id === 'number' || tables[i].id === 'mini') {
+			continue;
+		}
+		// show selected table
+		else if (tables[i].id === operation) {
+			tables[i].style.display = '';
+		}
+		// hide all other tables
+		else {
+			tables[i].style.display = 'none';
+		}
+	}
 };
 
 

@@ -5,6 +5,7 @@
 "use strict";
 
 var redipsInit,
+	setTable,
 	shiftMode,
 	overflow,
 	shiftAnimation,
@@ -38,9 +39,32 @@ redipsInit = function () {
 };
 
 
+// set current table
+setTable = function (e) {
+	var value = e.options[e.selectedIndex].value,
+		tables = document.getElementById('drag').getElementsByTagName('table'),
+		i;
+	// loop goes through all fetched tables within drag container
+	for (i = 0; i < tables.length; i++) {
+		// skip mini table
+		if (tables[i].id === 'mini') {
+			continue;
+		}
+		// show selected table
+		else if (tables[i].id === value) {
+			tables[i].style.display = '';
+		}
+		// hide all other tables
+		else {
+			tables[i].style.display = 'none';
+		}
+	}
+};
+
+
 // set shift mode
 shiftMode = function (radio) {
-	REDIPS.drag.shift.mode= radio.value;
+	REDIPS.drag.shift.mode = radio.value;
 };
 
 

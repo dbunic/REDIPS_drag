@@ -61,6 +61,11 @@ div#drag td {
 	background-color: #eee;
 }
 
+/* margins for drop down menu */
+#dropDown {
+	margin: 15px 0 0 15px;
+}
+
 /* trash cell */
 .trash {
 	color: white;

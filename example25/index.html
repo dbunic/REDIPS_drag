@@ -8,15 +8,19 @@
 		<script type="text/javascript" src="../header.js"></script>
 		<script type="text/javascript" src="../redips-drag-min.js"></script>
 		<script type="text/javascript" src="script.js"></script>
-		<title>Example 25: Multiplication</title>
+		<title>Example 25: Math 4 Kids</title>
 	</head>
 	<body>
 		<!-- main container -->
 		<div id="main_container">
 			<!-- drag1 DIV container -->
 			<div id="drag">
-				<!-- first table -->
-				<table>
+				<select id="dropDown" onchange="setTable(this)">
+					<option value="addition">Addition</option>
+					<option value="multiplication">Multiplication</option>
+				</select>
+				<!-- numbers -->
+				<table id="number">
 					<colgroup>
 						<col width="50"/>
 						<col width="50"/>
@@ -42,8 +46,91 @@
 					</tbody>
 				</table>
 
-				<!-- second table -->
-				<table>
+				<!-- addition table -->
+				<table id="addition">
+					<colgroup>
+						<col width="50"/>
+						<col width="50"/>
+						<col width="50"/>
+						<col width="50"/>
+						<col width="50"/>
+					</colgroup>
+					<tbody>
+						<tr>
+							<td></td>
+							<td class="mark">+</td>
+							<td class="mark">1</td>
+							<td class="mark">=</td>
+							<td class="mark"></td>
+						</tr>
+						<tr>
+							<td></td>
+							<td class="mark">+</td>
+							<td class="mark">2</td>
+							<td class="mark">=</td>
+							<td class="mark"></td>
+						</tr>
+						<tr>
+							<td></td>
+							<td class="mark">+</td>
+							<td class="mark">3</td>
+							<td class="mark">=</td>
+							<td class="mark"></td>
+						</tr>
+						<tr>
+							<td></td>
+							<td class="mark">+</td>
+							<td class="mark">4</td>
+							<td class="mark">=</td>
+							<td class="mark"></td>
+						</tr>
+						<tr>
+							<td></td>
+							<td class="mark">+</td>
+							<td class="mark">5</td>
+							<td class="mark">=</td>
+							<td class="mark"></td>
+						</tr>
+						<tr>
+							<td></td>
+							<td class="mark">+</td>
+							<td class="mark">6</td>
+							<td class="mark">=</td>
+							<td class="mark"></td>
+						</tr>
+						<tr>
+							<td></td>
+							<td class="mark">+</td>
+							<td class="mark">7</td>
+							<td class="mark">=</td>
+							<td class="mark"></td>
+						</tr>
+						<tr>
+							<td></td>
+							<td class="mark">+</td>
+							<td class="mark">8</td>
+							<td class="mark">=</td>
+							<td class="mark"></td>
+						</tr>
+						<tr>
+							<td></td>
+							<td class="mark">+</td>
+							<td class="mark">9</td>
+							<td class="mark">=</td>
+							<td class="mark"></td>
+						</tr>
+						<tr>
+							<td></td>
+							<td class="mark">+</td>
+							<td class="mark">10</td>
+							<td class="mark">=</td>
+							<td class="mark"></td>
+						</tr>
+					</tbody>
+				</table>
+
+				<!-- multiplication table -->
+				<table id="multiplication" style="display:none">
 					<colgroup>
 						<col width="50"/>
 						<col width="50"/>
@@ -125,8 +212,8 @@
 					</tbody>
 				</table>
 
-				<!-- third table -->
-				<table>
+				<!-- trash -->
+				<table id="mini">
 					<colgroup>
 						<col width="100"/>
 					</colgroup>
