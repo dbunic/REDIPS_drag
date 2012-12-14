@@ -109,10 +109,18 @@
 					</tr>
 				</tbody>
 			</table>
+
+			<br/>
+
+			<!-- rowDropMode options -->
+			<div><input type="radio" name="rowDropMode" class="checkbox" onclick="redips.setRowMode(this)" value="before" title="It has effect only when row is dropped to other table" checked="true"/><span class="messageLine">Before - drop row before highlighted row (when row is dropped to other table)</span></div>
+			<div><input type="radio" name="rowDropMode" class="checkbox" onclick="redips.setRowMode(this)" value="after" title="It has effect only when row is dropped to other table"/><span class="messageLine">After - drop row after highlighted row (when row is dropped to other table)</span></div>
+			<div><input type="radio" name="rowDropMode" class="checkbox" onclick="redips.setRowMode(this)" value="switch" title="Switch source and current row"/><span class="messageLine">Switch - switch source row and highlighted row</span></div>
+			<div><input type="radio" name="rowDropMode" class="checkbox" onclick="redips.setRowMode(this)" value="overwrite" title="Overwrite current row"/><span class="messageLine">Overwrite - highlighted row will be overwritten</span></div>
 		</div>
 		<!-- instructions -->
 		<div class="inst">
-			Clone elements and table rows with SHIFT key
+			DIV elements and table rows can be cloned with SHIFT key
 		</div>
 	</body>
 </html>

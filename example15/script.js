@@ -21,8 +21,7 @@ redipsInit = function () {
 	rd.hover.borderTd = '2px solid #32568E';
 	rd.hover.borderTr = '2px solid #32568E';
 	// drop row after highlighted row (if row is dropped to other tables)
-	// possible values are "before" and "after"
-	rd.rowPosition = 'after';
+	rd.rowDropMode = 'after';
 	// row was clicked - event handler
 	rd.event.rowClicked = function () {
 		// set current element (this is clicked TR)

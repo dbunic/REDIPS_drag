@@ -1,9 +1,14 @@
 Changes for REDIPS.drag library
 
+5.0.2
+- internal cleaning
+- rowOption renamed to rowDropMode
+- rowDropMode now has options: "before" (default), "after", "overwrite" and "switch"
+
 5.0.1
 - "shift" method now takes care about marked cells - thanks to Mark Jacobs
 - added shift.overflow property with the allowed values: "bunch", "delete" and "source" - thanks to Mark Jacobs 
-- added example 25
+- added example25: Math 4 kids
 
 5.0.0
 - big code cleaning

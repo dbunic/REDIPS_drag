@@ -125,3 +125,11 @@ div#drag th {
 	padding: 10px;
 	margin: 0px auto;
 }
+
+/* message cell */
+.messageLine {
+	padding-left: 10px;
+	margin-bottom: 3px;
+	font-size: 12pt;
+	color: #888;
+}

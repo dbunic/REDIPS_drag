@@ -44,7 +44,7 @@ redipsInit = function () {
 	};
 	// row was dropped - move row in opposite table
 	rd.event.rowDropped = function () {
-		// id of element from opposite table (rd.obj_old is source row, redips.div is reference to the <div class="drag row">)
+		// id of element from opposite table (rd.objOld is source row, redips.div is reference to the <div class="drag row">)
 		var	idNew = getId(rd.objOld.redips.div),
 			// returned value from moveObject method
 			row = [];

@@ -4,10 +4,11 @@
 /* enable strict mode */
 "use strict";
 
-var redipsInit;
+// define redips object container
+var redips = {};
 
 // redips initialization
-redipsInit = function () {
+redips.init = function () {
 	// reference to the REDIPS.drag library and message line
 	var	rd = REDIPS.drag,
 		msg = document.getElementById('msg');
@@ -50,7 +51,6 @@ redipsInit = function () {
 		// display current table and current row
 		msg.innerHTML = 'Changed: ' + pos[0] + ' ' + pos[1];
 	};
-
 	// row was moved - event handler
 	rd.event.rowMoved = function () {
 		// set opacity for moved row
@@ -87,10 +87,16 @@ redipsInit = function () {
 };
 
 
+// function sets drop_option parameter defined at the top
+redips.setRowMode = function (radioButton) {
+	REDIPS.drag.rowDropMode = radioButton.value;
+};
+
+
 // add onload event listener
 if (window.addEventListener) {
-	window.addEventListener('load', redipsInit, false);
+	window.addEventListener('load', redips.init, false);
 }
 else if (window.attachEvent) {
-	window.attachEvent('onload', redipsInit);
+	window.attachEvent('onload', redips.init);
 }
