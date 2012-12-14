@@ -1,16 +1,16 @@
 Changes for REDIPS.drag library
 
-5.0.2
+5.0.2 (2012-12-14)
 - internal cleaning
 - rowOption renamed to rowDropMode
 - rowDropMode now has options: "before" (default), "after", "overwrite" and "switch"
 
-5.0.1
+5.0.1 (2012-12-06)
 - "shift" method now takes care about marked cells - thanks to Mark Jacobs
 - added shift.overflow property with the allowed values: "bunch", "delete" and "source" - thanks to Mark Jacobs 
 - added example25: Math 4 kids
 
-5.0.0
+5.0.0 (2012-10-30)
 - big code cleaning
 - majority of properties, methods and event handlers are renamed (camelCase syntax is used)
 - added option to set delete confirmation question (for deleting DIV element and row)
@@ -21,57 +21,57 @@ Changes for REDIPS.drag library
 - updated documentation
 - added example21 Simple shift
 
-4.7.6
+4.7.6 (2012-10-22)
 - added event handler myhandler_relocated() - event can be triggered after single call of relocate() method or after all DIV elements are shifted in "shift" mode
 
-4.7.5
+4.7.5 (2012-10-10)
 - added "cloned" as optional input parameter to the myhandler_moved() event handler
 
-4.7.4
+4.7.4 (2012-09-18)
 - added myhandler_final() event handler
 - the color gets ignored in case a row is moved - bug fixed thanks to Rüdiger Kaatz
 - added example24
 - redips-drag.js renamed to redips-drag-source.js
 - shift_after is converted to string parameter with options ("always", "delete" and "default")
 
-4.7.3
+4.7.3 (2012-09-14)
 - fixed myhandler_dropped_before() in case of "overwrite" drag mode (bottom DIV element was deleted before calling myhandler_dropped_before event handler)  
 
-4.7.2
+4.7.2 (2012-08-21)
 - added optional parameters target_row, source_table and source_row_index to the myhandler_row_dropped event handler
 
-4.7.1
+4.7.1 (2012-08-19)
 - fixed bug with undefined target_cell in myhandler_switched() - thanks to Doc
 
-4.7.0
+4.7.0 (2012-08-17)
 - added support for rowspan/colspan cells in "shift" mode
 
-4.6.23
+4.6.23 (2012-08-06)
 - fixed bug in case of canceling drop in "switch" mode - thanks to Robin
 
-4.6.22
+4.6.22 (2012-07-25)
 - added line tables.length = 0; inside init_tables() to empty array "tables" (it's needed in case of multiple drag container with different number of tables)
 
-4.6.21
+4.6.21 (2012-07-12)
 - when last row is moved from table with move_object() method, it will be marked as "empty_row"
 - if row index for target table in move_object() method is greater then number of rows in target table then moved row will be appended to the table end
 - upgraded example 18 - Simple element animation (row)
 
-4.6.20
+4.6.20 (2012-07-06)
 - added public property REDIPS.drag.row_position (property defines position where row will be dropped regarding highlighted row if dropped to other tables - in case of one table, this property doesn't have any effect)
 - redips-drag-min.js is compressed by using Google Closure Compiler
 
-4.6.19
+4.6.19 (2012-06-20)
 - added private method "register events", registering event listener is now in one place
 - fixed bug for Safari Mobile in case of "switch", "switching" and "shift" mode
 
-4.6.18
+4.6.18 (2012-06-16)
 - fixing REDIPS.drag.clone_div() method
   * "climitX_Y" class name is removed from cloned DIV element
   * reduced iteration with DOM
 - fixed example23 (added regex instead of redips.code_length property)
 
-4.6.17
+4.6.17 (2012-05-19)
 - added "clone" and "overwrite" options to the move_object() method
 - improved get_position() method
 - added "clone" and "overwrite" checkboxes to example18
@@ -79,67 +79,67 @@ Changes for REDIPS.drag library
 - added private method reset_styles()
 - fixed find_cell() method for cases "lastInRow" and "last" (instead of using index of first row it's used index of current row and last row) - thanks to Bruno Jesus
 
-4.6.16
+4.6.16 (2012-05-16)
 - fixed relocate() method - discarded "REDIPS.drag.obj !== from.childNodes[i]" condition from element filter
 - fixed find_parent() method - prevented finding node itself (el = el.parentNode) - find_parent() from now starts from parent node
 - resetting DIV styles to '' instead of -1, 0 and 'static'
 
-4.6.15
+4.6.15 (2012-05-06)
 - added public property REDIPS.drag.table_sort with default value "true"
   Table sort is feature where tables inside drop container are sorted on each element click. Sometimes this feature should be turned off when one table overlays the other using "position" style relative, fixed or absolute.
 - added example23 - Shopping cart
 
-4.6.14
+4.6.14 (2012-05-03)
 - added public property REDIPS.drag.autoscroll with default value "true"
   If set to "false" then autoscroll option will be completely turned off for page and any DIV container with CSS style overflow set to anything but 'visible'
 - added third optional "skip" parameter to the find_parent() method
 
-4.6.13
+4.6.13 (2012-04-25)
 - myhandler_deleted call is moved to the end inside element_deleted method
 - it seemed that find_cell() method was not published as public - now it is
 
-4.6.12
+4.6.12 (2012-04-11)
 - added control inside REDIPS.drag.relocate() method - "from" and "to" input parameters should be element nodes
 
-4.6.11
+4.6.11 (2012-03-25)
 - added boolean parameter "cloned" to the myhandler_deleted event handler (reference of original DIV element is stored in REDIPS.drag.obj_old)
 
-4.6.10
+4.6.10 (2012-03-15)
 - fixed bug for dropped elements in iPad
   * it seems that Safari Mobile loses registrated events (traditional model) assigned to the DIV element
   * in element_drop() is added definition of event listener after appendChild/insertBefore (obj.onmousedown = handler_onmousedown; ...)
 
-4.6.9
+4.6.9 (2012-03-13)
 - fixed bug in save_content() - DIV elements without "drag" class name are skipped - thanks to CG Developer
 - added parameter REDIPS.drag.save_pname to define parameter name in save_content() method
 
-4.6.8
+4.6.8 (2012-02-08)
 - modified save_content() method
   * first parameter is id or table reference
   * second parameter is optional and defines output in JSON format
   * table index is not contained in output because save_content() scans content for asked table (table is already known)
 
-4.6.7
+4.6.7 (2012-02-05)
 - method shift_cells() is declared as public
 - fixed bug in case of enable_drag() for newly added DIV element to the table
 
-4.6.6
+4.6.6 (2012-01-10)
 - added option multiple_drop with options "top" and "bottom" (default value is "bottom") - thanks to Mark Jacobs
 - added event handler myhandler_row_dropped_before() - if false is return from this event handler then row drop will be canceled
 - added public method delete_object() 
 
-4.6.5
+4.6.5 (2012-01-03)
 - added threshold value (after threshold value is prevailed then events will be fired) - only for cell mode
 - known BUG - IE8 not playing nicely with example11 - TODO
 
-4.6.4
+4.6.4 (2012-01-02)
 - fixed bug for disabled tables inside DIV element
 - fixed "nolayout" option for nested tables
 
-4.6.3
+4.6.3 (2011-12-17)
 - in "switch" mode, reference of last switched element (because TD can contain more elements) will be saved in REDIPS.drag.obj_old property
 
-4.6.2
+4.6.2 (2011-12-08)
 - added shift_option public property
 - added 4 shift modes: horizontal1, horizontal2, vertical1 and vertical2
 - extended find_cell method with values "first", "firstInColumn", "firstInRow", "last", "lastInColumn", "lastInRow"
@@ -147,31 +147,31 @@ Changes for REDIPS.drag library
 - REDIPS.drag.hover_color is no longer used
 - working on examples (improving)
 
-4.6.1
+4.6.1 (2011-11-20)
 - fixed bug with moving table row between two tables (added get_table_index)
   * in line 3080 -> row_drop(get_table_index(p.target[0]), p.target[1], p.obj);
 
-4.6.0
+4.6.0 (2011-11-19)
 - added support for touch devices (touchstart, touchmove, touchend)
 - improved example07 (added EF example)
 
-4.5.4
+4.5.4 (2011-10-22)
 - added public method find_cell (method returns data for first or last table cell)
 - added public property "shift_after" - shift table content after element is deleted (default is true)
 - added private mehod element_deleted
 - improved example21
 
-4.5.3
+4.5.3 (2011-10-17)
 - fixed BUG with text nodes and shift animation
 - added private method has_childs()
 
-4.5.2
+4.5.2 (2011-10-15)
 - disable dragging DIV element while animation lasts
 - public method enable_table() now accepts table class name and table reference
 - text selection is cleared on element click
 - added "shift" and "switching" options to example14
 
-4.5.1
+4.5.1 (2011-09-25)
 - added empty_cell() public method
 - added shift_cells() private method
 - added delete_shifted public property
@@ -181,7 +181,7 @@ Changes for REDIPS.drag library
 - added optional "mode" parameter in relocate() public method
 - added public parameter "animation_shift" (default value is false)  
 
-4.5.0
+4.5.0 (2011-08-28)
 - added functionality for cloning and deleting table rows
 - added the following event handlers:
     myhandler_row_deleted()
@@ -194,14 +194,14 @@ Changes for REDIPS.drag library
 - replacing window.onload in all examples with advanced event registration model
 - added public method row_empty() - marks selected row as empty (tbl_id, row_idx, [color])
 
-4.4.3
+4.4.3 (2011-08-22)
 - if myhandler_dropped_before() returns false then element drop will be canceled
 
-4.4.2
+4.4.2 (2011-08-16)
 - modified enable_drag() - optional third parameter is changed from 'container' to 'subtree'
 - fixed moving last row from table
 
-4.4.1
+4.4.1 (2011-08-15)
 - added example19 "Groups and table rows" - thanks to Tomas Lampo
 - added public method enable_table()
 - added public method find_parent() - find parent element from start position
@@ -211,44 +211,44 @@ Changes for REDIPS.drag library
 - code optimization
 - code cleaning
 
-4.4.0
+4.4.0 (2011-08-10)
 - added support for dynamical creation of table layout (inner table inside DIV element can be moved and accept other DIV elements)
 - added myhandler_cloned_dropped() event handler
 - upgrading example11
 
-4.3.6
+4.3.6 (2011-08-09)
 - added support for rows with style display='none'
 
-4.3.5
+4.3.5 (2011-07-14)
 - added option to exclude tables with className "nolayout" (if want to put table in DIV element and drag as any other content)
 
-4.3.4
+4.3.4 (2011-07-12)
 - fixed bug: drop_option should not have impact in case of dragging table rows
 
-4.3.3
+4.3.3 (2011-07-11)
 - fixed bug: cloned row (mini_table) should be excluded from tables_nodeList - problem in move_object() when row was dropped outside table 
 
-4.3.2
+4.3.2 (2011-07-03)
 - added public method REDIPS.drag.add_events(HTMLElement) - method adds omousedown and ondblclick event listeners to the DIV element
 - handler_onmousedown and handler_ondblclick are set as private methods
 - autoscrollX and autoscrollY are set as private methods
 
-4.3.1
+4.3.1 (2011-06-28)
 - id name "obj_new" changed to "redips_clone"
 - added private method "form_elements"
   fixed reseting dropdown menu, checkboxes and so on in case of dragging table rows - thanks to Greg Palmer
 
-4.3.0
+4.3.0 (2011-06-25)
 - added private method get_table_index
 - fixed BUG with public properties animation_pause and animation_step
 - added example18
 
-4.2.1
+4.2.1 (2011-06-19)
 - fixed BUG when row was dropped to the last row position in table
 - added redips_dragrow_id property to the cloned row (needed for dropped row identification)
 - added opacity_disabled property - (integer) opacity level for disabled elements
 
-4.2.0
+4.2.0 (2011-06-16)
 - added animation functionality
 - move_object() is renamed to relocate()
 - move_object() has new meaning - move (animate) objects to specified table positions
@@ -258,28 +258,28 @@ Changes for REDIPS.drag library
 - added example17
 - modified example12
 
-4.1.1
+4.1.1 (2011-06-07)
 - fixed bug: in case of multiple dragging containers and enabling/disabling DIV element redips_container property was changed (and that was wrong)
   (added "if" case in enable_drag() method)
 
-4.1.0
+4.1.0 (2011-06-04)
 - added unlimit nest table support
 - modification in init_tables() and table_top()
 - modified example13
 
-4.0.5
+4.0.5 (2011-05-08)
 - fixed bug: in a moment of moving (big) DIV element at page bottom, element jumped to the top instead of staying at the page bottom
 
-4.0.4
+4.0.4 (2011-05-05)
 - getScrollPosition() and get_style() methods exposed as public methods
 
-4.0.3
+4.0.3 (2011-05-02)
 - added public myhandler_dropped_before() event handler
     * handler is similar to the myhandler_dropped()
     * myhandler_dropped_before() is called before element is dropped
     * myhandler_dropped() is called after element is dropped
     
-4.0.2
+4.0.2 (2011-04-30)
 - added public myhandler_dblclicked() event handler
     ondblclick event is attached to the DIV object
 - changing styles in example13
@@ -287,7 +287,7 @@ Changes for REDIPS.drag library
 - removed target_cell.appendChild(obj) line in case when DIV element was not moved
     click&release mouse button will not place element to the bottom (if table cell contains more than one element)
 
-4.0.0
+4.0.0 (2011-04-25)
 - added support for drag and drop table rows
 - added example15 to show drag rows functionality
 - private method set_color() renamed to set_position()
