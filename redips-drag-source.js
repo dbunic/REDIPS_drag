@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 5.0.2
-Dec 14, 2012.
+Version 5.0.3
+Dec 19, 2012.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -34,7 +34,7 @@ var REDIPS = REDIPS || {};
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">Drag and drop table rows</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">Drag and Drop table content</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-content-shift/">JavaScript drag and drop plus content shift</a>
- * @version 5.0.2
+ * @version 5.0.3
  */
 REDIPS.drag = (function () {
 		// methods
@@ -1356,8 +1356,8 @@ REDIPS.drag = (function () {
 				cloneLimit(objOld, -1);
 			}
 		}
-		// cloned element should be deleted
-		else if (cloned) {
+		// cloned element should be deleted (if not already deleted)
+		else if (cloned && obj.parentNode) {
 			obj.parentNode.removeChild(obj);
 		}
 	};
@@ -3199,30 +3199,60 @@ REDIPS.drag = (function () {
 
 
 	/**
-	 * Method removes elements from table cell.
-	 * @param {HTMLElement} td Table cell reference from which all the elements will be deleted.
+	 * Method tests TD if is empty or removes elements from table cell.
+	 * @param {HTMLElement} td Table cell to test or from which all the elements will be deleted.
+	 * @param {String} [mode] If mode is set to "test" then method will only test TD and return true or false.
 	 * @example
 	 * // set REDIPS.drag reference
 	 * var rd = REDIPS.drag;
 	 * // search for TABLE element (from cell reference)
 	 * tbl = rd.emptyCell(td);
-	 * @return {Boolean} Returns false if input element is not table cell.
+	 *  
+	 * // how to test TD if cell is occupied
+	 * var empty = rd.emptyCell(td, 'test');  
+	 * @return {Boolean|Array} Returns true/false depending on cell content or array with deleted child nodes.
 	 * @public
 	 * @function
 	 * @name REDIPS.drag#emptyCell
 	 */
-	emptyCell = function (tdElement) {
-		var i,	// local variable
-			cn;	// number of child nodes 
-		// if td is not table cell element then return false
+	emptyCell = function (tdElement, mode) {
+		var cn,				// number of child nodes
+			el = [],		// removed elements will be saved in array
+			flag = true,	// set initial flag to true (needed for cell testing)
+			i;				// loop variable
+		// td should be table cell element
 		if (tdElement.nodeName !== 'TD') {
-			return false;
-		} 
+			return;
+		}
 		// define childnodes length before loop (not in loop because NodeList objects in the DOM are live)
 		cn = tdElement.childNodes.length;
-		// delete all child nodes from td
-		for (i = 0; i < cn; i++) {
-			tdElement.removeChild(tdElement.childNodes[0]);
+		// if mode is set to "test" then check for cell content
+		if (mode === 'test') {
+			// open loop for each child node and jump out if 'drag' className found
+			for (i = cn - 1; i >= 0; i--) {
+				// skip source (cell from which it started)
+				if (td.source === tdElement) {
+					continue;
+				}
+				// if cell contains DIV class="drag" then set flag to false
+				if (tdElement.childNodes[i].className && tdElement.childNodes[i].className.indexOf('drag') > -1) {
+					flag = false;
+					break;
+				} 
+			}
+			// return empty flag state
+			return flag;
+		}
+		// otherwise delete all child nodes from td
+		else {
+			for (i = 0; i < cn; i++) {
+				// save node reference
+				el.push(tdElement.childNodes[0]);
+				// delete node
+				tdElement.removeChild(tdElement.childNodes[0]);
+			}
+			// return array with references od deleted nodes
+			return el;
 		}
 	};
 

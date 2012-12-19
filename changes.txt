@@ -1,5 +1,8 @@
 Changes for REDIPS.drag library
 
+5.0.3 (2012-12-19)
+- modified emptyCell - now method has option to test target cell and to delete cell content
+
 5.0.2 (2012-12-14)
 - internal cleaning
 - rowOption renamed to rowDropMode
