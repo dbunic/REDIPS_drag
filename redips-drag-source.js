@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 5.0.3
-Dec 19, 2012.
+Version 5.0.4
+Dec 20, 2012.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -34,7 +34,7 @@ var REDIPS = REDIPS || {};
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">Drag and drop table rows</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">Drag and Drop table content</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-content-shift/">JavaScript drag and drop plus content shift</a>
- * @version 5.0.3
+ * @version 5.0.4
  */
 REDIPS.drag = (function () {
 		// methods
@@ -2689,7 +2689,7 @@ REDIPS.drag = (function () {
 	 * It also can be used for element initialization after DIV element was manually added to the table.
 	 * If class attribute of DIV container contains "noautoscroll" class name then autoScroll option will be disabled.
 	 * @param {Boolean|String} enableFlag Enable / disable element (or element subtree like table, dragging container ...).
-	 * @param {HTMLElement|String} [el] DIV reference or CSS selector to enable / disable. Parameter defines element reference or CSS selector of DIV elements to enable / disable.
+	 * @param {HTMLElement|String} [el] HTML node or CSS selector to enable / disable. Parameter defines element reference or CSS selector of DIV elements to enable / disable.
 	 * @example
 	 * // enable element with id="id123"
 	 * rd.enableDrag(true, '#id123');
@@ -2705,6 +2705,9 @@ REDIPS.drag = (function () {
 	 *  
 	 * // init added element with reference myElement
 	 * REDIPS.drag.enableDrag(true, myElement);
+	 *  
+	 * // disable all DIV elements within TD (td is reference to TD node)
+	 * REDIPS.drag.enableDrag(false, td);
 	 * @public
 	 * @function
 	 * @name REDIPS.drag#enableDrag
@@ -2748,7 +2751,11 @@ REDIPS.drag = (function () {
 		else if (typeof(el) === 'string') {
 			div = document.querySelectorAll(el);
 		}
-		// prepare array with one div element if el is reference of DIV element
+		// "el" is node reference to element that is not DIV class="drag"
+		else if (typeof(el) === 'object' && (el.nodeName !== 'DIV' || el.className.indexOf('drag') === -1)) {
+			div = el.getElementsByTagName('div');
+		}
+		// none of above, el is DIV class="drag", so prepare array with one DIV element
 		else {
 			div[0] = el;
 		}
@@ -3186,8 +3193,10 @@ REDIPS.drag = (function () {
 					div = from.childNodes[j];
 					// append DIV element to the table cell
 					to.appendChild(div);
-					// register event listeners (FIX for Safari Mobile)
-					registerEvents(div);
+					// register event listeners (FIX for Safari Mobile) if DIV element is not disabled
+					if (!div.redips || div.redips.enabled !== false) {
+						registerEvents(div);
+					}
 				}
 				// skip text nodes, attribute nodes ...
 				else {
@@ -3846,8 +3855,10 @@ REDIPS.drag = (function () {
 					emptyCell(p.targetCell);
 				}
 				p.targetCell.appendChild(p.obj);
-				// register event listeners (FIX for Safari Mobile)
-				registerEvents(p.obj);
+				// register event listeners (FIX for Safari Mobile) if DIV element is not disabled
+				if (!p.obj.redips || p.obj.redips.enabled !== false) {
+					registerEvents(p.obj);
+				}
 			}
 			// else element is row
 			else {

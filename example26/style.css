@@ -1,0 +1,76 @@
+/*
+
+Darko Bunic
+http://www.redips.net/
+Feb, 2010.
+
+*/
+
+body {
+	font-family: arial;
+	margin: 0px; /* for IE6 / IE7 */
+}
+
+/* drag objects (DIV inside table cells) */
+.drag {
+	cursor: move;
+	margin: auto;
+	background-color: white;
+	text-align: center;
+	font-size: 20pt; /* needed for cloned object */
+	width: 87px;
+	height: 35px;
+	line-height: 35px;
+	/* round corners */
+	border-radius: 4px; /* Opera, Chrome */
+	-moz-border-radius: 4px; /* FF */
+}
+
+/* make drag container visible */
+#drag {
+	border: 2px dashed LightBlue;
+	display: table;
+	margin: auto;
+	padding: 3px;
+}
+
+/* tables */
+div#drag table {
+	background-color: #F2F5F7;
+	border-collapse: collapse;
+	margin: 10px;
+}
+
+/* table cells */
+div#drag td {
+	border: 1px #AED0EA solid;
+	height: 50px;
+	text-align: center;
+	font-size: 10pt;
+	padding: 2px;
+}
+
+/* blue objects */
+.blue {
+	border: 2px solid #396F98;
+}
+
+/* orange objects */
+.orange {
+	border: 2px solid #A65A3C;
+}
+
+/* trash cell */
+.trash {
+	color: white;
+	background-color: #2779AA;
+}
+
+/* instructions at the bottom */
+.instructions {
+	width: 420px;
+	margin: 15px auto 0px auto;
+	color: #555;
+	font-size: 11px;
+	text-align: justify;
+}

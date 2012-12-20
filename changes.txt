@@ -1,5 +1,10 @@
 Changes for REDIPS.drag library
 
+5.0.4 (2012-12-20)
+- modified enableDrag - method has option to accept node reference to enable / disable DIV elements inside that node
+- fix inside relocate method (events were registered after DIV element was relocated and that should not be the case)
+- added example26: jQuery dialog
+
 5.0.3 (2012-12-19)
 - modified emptyCell - now method has option to test target cell and to delete cell content
 
