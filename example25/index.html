@@ -15,33 +15,33 @@
 		<div id="main_container">
 			<!-- drag1 DIV container -->
 			<div id="drag">
-				<select id="dropDown" onchange="setTable(this)">
+				<select id="dropDown" onchange="redips.setTable(this)">
 					<option value="addition">Addition</option>
 					<option value="multiplication">Multiplication</option>
 				</select>
 				<!-- numbers -->
 				<table id="number">
 					<colgroup>
-						<col width="50"/>
-						<col width="50"/>
-						<col width="50"/>
-						<col width="50"/>
-						<col width="50"/>
+						<col width="70"/>
+						<col width="70"/>
+						<col width="70"/>
+						<col width="70"/>
+						<col width="70"/>
 					</colgroup>
 					<tbody>
 						<tr class="upper">
-							<td class="mark"><div class="drag clone">1</div></td>
-							<td class="mark"><div class="drag clone">2</div></td>
-							<td class="mark"><div class="drag clone">3</div></td>
-							<td class="mark"><div class="drag clone">4</div></td>
-							<td class="mark"><div class="drag clone">5</div></td>
+							<td class="mark"><div class="drag box clone">1</div></td>
+							<td class="mark"><div class="drag box clone">2</div></td>
+							<td class="mark"><div class="drag box clone">3</div></td>
+							<td class="mark"><div class="drag box clone">4</div></td>
+							<td class="mark"><div class="drag box clone">5</div></td>
 						</tr>
 						<tr class="upper">
-							<td class="mark"><div class="drag clone">6</div></td>
-							<td class="mark"><div class="drag clone">7</div></td>
-							<td class="mark"><div class="drag clone">8</div></td>
-							<td class="mark"><div class="drag clone">9</div></td>
-							<td class="mark"><div class="drag clone">10</div></td>
+							<td class="mark"><div class="drag box clone">6</div></td>
+							<td class="mark"><div class="drag box clone">7</div></td>
+							<td class="mark"><div class="drag box clone">8</div></td>
+							<td class="mark"><div class="drag box clone">9</div></td>
+							<td class="mark"><div class="drag box clone">10</div></td>
 						</tr>
 					</tbody>
 				</table>
@@ -49,11 +49,11 @@
 				<!-- addition table -->
 				<table id="addition">
 					<colgroup>
-						<col width="50"/>
-						<col width="50"/>
-						<col width="50"/>
-						<col width="50"/>
-						<col width="50"/>
+						<col width="70"/>
+						<col width="70"/>
+						<col width="70"/>
+						<col width="70"/>
+						<col width="70"/>
 					</colgroup>
 					<tbody>
 						<tr>
@@ -132,11 +132,11 @@
 				<!-- multiplication table -->
 				<table id="multiplication" style="display:none">
 					<colgroup>
-						<col width="50"/>
-						<col width="50"/>
-						<col width="50"/>
-						<col width="50"/>
-						<col width="50"/>
+						<col width="70"/>
+						<col width="70"/>
+						<col width="70"/>
+						<col width="70"/>
+						<col width="70"/>
 					</colgroup>
 					<tbody>
 						<tr>
@@ -215,7 +215,7 @@
 				<!-- trash -->
 				<table id="mini">
 					<colgroup>
-						<col width="100"/>
+						<col width="70"/>
 					</colgroup>
 					<tbody>
 						<tr>
@@ -226,10 +226,10 @@
 			</div>
 			<!-- instructions -->
 			<div class="instructions">
-				Try to drag numbers from top table to the first column.
-				After dropping DIV element to the table cell, result will be automatically displayed.
-				REDIPS.drag works in "overwrite" method so dropping number on top of existing content will overwrite bottom element.
-				Numbers placed in first column can be cloned with shift key. Just press shift key and try to drag DIV element.
+				Try to drag numbers from top table to the first column in table below.
+				After dropping DIV element to the table cell, orange box with "?" will be automatically displayed to the most right column.
+				User should click on "?" and result will be shown.
+				REDIPS.drag works in "shift" mode so dropping number on top of existing content will shift other elements.
 			</div>
 		</div>
 	</body>

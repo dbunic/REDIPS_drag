@@ -3,7 +3,7 @@ Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
 Version 5.0.4
-Dec 20, 2012.
+Dec 21, 2012.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -194,7 +194,10 @@ REDIPS.drag = (function () {
 				moved : function () {},
 				notCloned : function () {},
 				notMoved : function () {},
-				relocated : function () {},
+				shiftOverflow: function () {},
+				relocateBefore : function () {},
+				relocateAfter : function () {},
+				relocateEnd : function () {},
 				rowChanged : function () {},
 				rowClicked : function () {},
 				rowCloned : function () {},
@@ -1333,7 +1336,7 @@ REDIPS.drag = (function () {
 				}
 			}
 			// shift table content if dropMode is set to "shift" and target cell is not empty or shift.after option is set to always
-			// has_child() is a private method
+			// hasChild() is a private method
 			if (REDIPS.drag.dropMode === 'shift' && (hasChilds(td.target) || REDIPS.drag.shift.after === 'always')) {
 				shiftCells(td.source, td.target);
 			}
@@ -3128,6 +3131,8 @@ REDIPS.drag = (function () {
 			move;	// move object (private function)
 		// define private move function (after animation is finished table will be enabled)
 		move = function (el, to) {
+			// call relocateBefore event handler for this element
+			REDIPS.drag.event.relocateBefore(el, to);
 			// define target position
 			var target = REDIPS.drag.getPosition(to);
 			// move object
@@ -3135,16 +3140,17 @@ REDIPS.drag = (function () {
 				obj: el,
 				target: target,
 				callback: function (div) {
-					var tbl, idx;
 					// set reference to the table and table index
-					tbl = REDIPS.drag.findParent('TABLE', div);
-					idx = tbl.redips.idx;
+					var tbl = REDIPS.drag.findParent('TABLE', div),
+						idx = tbl.redips.idx;
+					// call relocateAfter event handler for this div element
+					REDIPS.drag.event.relocateAfter(div, to);
 					// decrease animation counter per table
 					animationCounter[idx]--;
 					// after last element is placed the table then table should be enabled
 					if (animationCounter[idx] === 0) {
 						// call event handler after relocation is finished
-						REDIPS.drag.event.relocated();
+						REDIPS.drag.event.relocateEnd();
 						// enable target table
 						REDIPS.drag.enableTable(true, tbl);
 					}
@@ -3191,12 +3197,16 @@ REDIPS.drag = (function () {
 				if (from.childNodes[j].nodeType === 1 && from.childNodes[j].nodeName === 'DIV') {
 					// set DIV element
 					div = from.childNodes[j];
+					// call relocateBefore event handler for this element
+					REDIPS.drag.event.relocateBefore(div, to);
 					// append DIV element to the table cell
 					to.appendChild(div);
 					// register event listeners (FIX for Safari Mobile) if DIV element is not disabled
-					if (!div.redips || div.redips.enabled !== false) {
+					if (div.redips && div.redips.enabled !== false) {
 						registerEvents(div);
 					}
+					// call relocated event handler
+					REDIPS.drag.event.relocateAfter(div);
 				}
 				// skip text nodes, attribute nodes ...
 				else {
@@ -3326,6 +3336,8 @@ REDIPS.drag = (function () {
 			}
 			// set overflow flag to false (overflow could happen only once)
 			overflow = false;
+			// call shiftOverflow event handler
+			REDIPS.drag.event.shiftOverflow(target);
 		};
 		// if DIV element is dropped to the source cell then there's nothing to do - just return from method
 		if (td1 === td2) {
@@ -3687,7 +3699,8 @@ REDIPS.drag = (function () {
 		// set high z-index
 		p.obj.style.zIndex = 999;
 		// if clicked element doesn't belong to the current container then context should be changed
-		if (dragContainer !== p.obj.redips.container) {
+		// redips property could not be set in case when static DIV is moved (like in example25)
+		if (p.obj.redips && dragContainer !== p.obj.redips.container) {
 			dragContainer = p.obj.redips.container;
 			initTables();
 		}
@@ -3708,6 +3721,10 @@ REDIPS.drag = (function () {
 		// if target parameted is undefined then use current position in table 
 		if (ip.target === undefined) {
 			ip.target = getPosition();
+		}
+		// if target is TD (object) then set position for this TD
+		else if (typeof(ip.target) === 'object' && ip.target.nodeName === 'TD') {
+			ip.target = getPosition(ip.target);
 		}
 		// set target table, row and cell indexes (needed for moving table row)
 		// table index is index from array not original table index
@@ -3784,7 +3801,10 @@ REDIPS.drag = (function () {
 			p.last = y2;
 		}
 		// set attribute "animated" of DIV object to true (to disable dragging od DIV while animation lasts)
-		p.obj.redips.animated = true;
+		// redips property could not be set in case when static DIV is moved (like in example25)
+		if (p.obj.redips) {
+			p.obj.redips.animated = true;
+		}
 		// start animation
 		animateObject(i, p);
 		// return reference of obj and objOld elements
@@ -3845,8 +3865,11 @@ REDIPS.drag = (function () {
 		else {
 			// reset object styles
 			resetStyles(p.obj);
-			// set animation flag to false (to enable DIV dragging)
-			p.obj.redips.animated = false;
+			// set animation flag to false to enable DIV dragging
+			// redips property could not be set in case when static DIV is moved (like in example25)
+			if (p.obj.redips) {
+				p.obj.redips.animated = false;
+			}
 			// if moved element is cell then append element to the target cell
 			if (p.mode === 'cell') {
 				// if overwrite parameter is set to true then empty targetCell
@@ -3856,7 +3879,7 @@ REDIPS.drag = (function () {
 				}
 				p.targetCell.appendChild(p.obj);
 				// register event listeners (FIX for Safari Mobile) if DIV element is not disabled
-				if (!p.obj.redips || p.obj.redips.enabled !== false) {
+				if (p.obj.redips && p.obj.redips.enabled !== false) {
 					registerEvents(p.obj);
 				}
 			}
@@ -4471,11 +4494,37 @@ REDIPS.drag = (function () {
 		 * Event handler invoked after all DIV elements are relocated and before table is enabled (DIV elements enabled for dragging).
 		 * This event can be triggered after single call of relocate() method or after all DIV elements are shifted in "shift" mode.
 		 * It is called only if animation is turned on.
-		 * @name REDIPS.drag#event:relocated
+		 * @name REDIPS.drag#event:relocateEnd
 		 * @see <a href="#relocate">relocate</a>
+		 * @see <a href="#event.relocateBefore">relocateBefore</a>
+		 * @see <a href="#event.relocateAfter">relocateAfter</a>
 		 * @function
 		 * @event
-		 */	
+		 */
+		/**
+		 * Event handler invoked before DIV element will be relocated.
+		 * For example, in shift drop mode, this event handler will be called for each DIV element.
+		 * @param {HTMLElement} div Reference of DIV element that will be relocated.
+		 * @param {HTMLElement} td Reference of TD where DIV element will be relocated.
+		 * @name REDIPS.drag#event:relocateBefore
+		 * @see <a href="#relocate">relocate</a>
+		 * @see <a href="#event.relocateAfter">relocateAfter</a>
+		 * @see <a href="#event.relocateEnd">relocateEnd</a>
+		 * @function
+		 * @event
+		 */
+		/**
+		 * Event handler invoked after DIV element is relocated.
+		 * For example, in shift drop mode, this event handler will be called for each DIV element.
+		 * @param {HTMLElement} div Reference of DIV element that is relocated.
+		 * @param {HTMLElement} td Reference of TD where DIV element will be relocated.
+		 * @name REDIPS.drag#event:relocateAfter
+		 * @see <a href="#relocate">relocate</a>
+		 * @see <a href="#event.relocateBefore">relocateBefore</a>
+		 * @see <a href="#event.relocateEnd">relocateEnd</a>
+		 * @function
+		 * @event
+		 */
 		/**
 		 * Event handler invoked on every change of current (highlighted) table cell.
 		 * @param {HTMLElement} [currentCell] Reference to the current (highlighted) table cell.
@@ -4563,6 +4612,13 @@ REDIPS.drag = (function () {
 		 * @function
 		 * @event
 		 */	
+		/**
+		 * Event handler invoked in a moment when overflow happen in shift mode.
+		 * @param {HTMLElement} td Reference of TD where overflow happen.
+		 * @name REDIPS.drag#event:shiftOverflow
+		 * @function
+		 * @event
+		 */
 
 		/* Row Event Handlers */
 		/**

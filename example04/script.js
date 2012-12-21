@@ -35,7 +35,7 @@ redipsInit = function () {
 			objOld = rd.objOld,	// previous element (this is clone element)
 			tac = rd.td.target;	// target cell
 		// disable dropped DIV element
-		rd.enableDrag(false, obj.id);
+		rd.enableDrag(false, obj);
 		// toggle X and O elements on the left
 		toggleXO();
 		// check board (objOld.id can be 'x' or 'o')
