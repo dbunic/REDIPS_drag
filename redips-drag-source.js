@@ -3205,7 +3205,7 @@ REDIPS.drag = (function () {
 					if (div.redips && div.redips.enabled !== false) {
 						registerEvents(div);
 					}
-					// call relocated event handler
+					// call relocateAfter event handler
 					REDIPS.drag.event.relocateAfter(div);
 				}
 				// skip text nodes, attribute nodes ...
