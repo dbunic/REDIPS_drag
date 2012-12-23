@@ -2,7 +2,7 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 5.0.4
+Version 5.0.5
 Dec 21, 2012.
 */
 
@@ -34,7 +34,7 @@ var REDIPS = REDIPS || {};
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">Drag and drop table rows</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">Drag and Drop table content</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-content-shift/">JavaScript drag and drop plus content shift</a>
- * @version 5.0.4
+ * @version 5.0.5
  */
 REDIPS.drag = (function () {
 		// methods
@@ -3219,6 +3219,8 @@ REDIPS.drag = (function () {
 
 	/**
 	 * Method tests TD if is empty or removes elements from table cell.
+	 * Cell is considered as empty if does not contain any child nodes or if cell has only one text node.
+	 * In other words, if cell contains only text then it will be treated as empty cell.
 	 * @param {HTMLElement} td Table cell to test or from which all the elements will be deleted.
 	 * @param {String} [mode] If mode is set to "test" then method will only test TD and return true or false.
 	 * @example
@@ -3235,10 +3237,10 @@ REDIPS.drag = (function () {
 	 * @name REDIPS.drag#emptyCell
 	 */
 	emptyCell = function (tdElement, mode) {
-		var cn,				// number of child nodes
-			el = [],		// removed elements will be saved in array
-			flag = true,	// set initial flag to true (needed for cell testing)
-			i;				// loop variable
+		var cn,			// number of child nodes
+			el = [],	// removed elements will be saved in array
+			flag,		// empty cell flag
+			i;			// loop variable
 		// td should be table cell element
 		if (tdElement.nodeName !== 'TD') {
 			return;
@@ -3247,17 +3249,17 @@ REDIPS.drag = (function () {
 		cn = tdElement.childNodes.length;
 		// if mode is set to "test" then check for cell content
 		if (mode === 'test') {
-			// open loop for each child node and jump out if 'drag' className found
-			for (i = cn - 1; i >= 0; i--) {
-				// skip source (cell from which it started)
-				if (td.source === tdElement) {
-					continue;
-				}
-				// if cell contains DIV class="drag" then set flag to false
-				if (tdElement.childNodes[i].className && tdElement.childNodes[i].className.indexOf('drag') > -1) {
-					flag = false;
-					break;
-				} 
+			// in case of source cell, return undefined
+			if (td.source === tdElement) {
+				flag = undefined;
+			}
+			// cell without child nodes or if cell has only one node and that is text node then cell is empty
+			else if (tdElement.childNodes.length === 0 || (tdElement.childNodes.length === 1 && tdElement.firstChild.nodeType === 3)) {
+				flag = true;
+			}
+			// otherwise, cell contain some elements
+			else {
+				flag = false;
 			}
 			// return empty flag state
 			return flag;
@@ -3571,6 +3573,7 @@ REDIPS.drag = (function () {
 
 	/**
 	 * Method will calculate parameters and start animation (DIV element to the target table cell).
+	 * "moveObject" will always move DIV element with animation while "relocate" has option to relocate all DIV elements from one TD to another TD with or without animation.
 	 * If "target" property is not defined then current location will be used. Here is properties definition of input parameter:
 	 * <ul>
 	 * <li>{String} id - id of element to animate - DIV element or row handler (div class="drag row")</li>
@@ -3634,7 +3637,7 @@ REDIPS.drag = (function () {
 	 *           target: [0, 6],         // target position
 	 *           callback: enable_button // function to call after animation is over
 	 *        });
-	 * @see <a href="#event:cloned">event.cloned</a>
+	 * @see <a href="#relocate">relocate</a>
 	 * @public
 	 * @function
 	 * @name REDIPS.drag#moveObject

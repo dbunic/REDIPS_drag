@@ -67,7 +67,15 @@ div#drag td {
 	border: 2px solid #A66C1D;
 	/* cursor */
 	cursor: pointer;
-	cursor: hand;
+	cursor: hand;select
+	/* disable text selection (answer is displayed with dblclick and that can cause showing text selection) */
+	/* http://stackoverflow.com/questions/3779534/how-to-disable-text-selection-with-css-or-js */
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
 }
 
 /* forbidden cells */
@@ -75,9 +83,19 @@ div#drag td {
 	background-color: #eee;
 }
 
-/* margins for drop down menu */
-#dropDown {
+/* first dropDown menu */
+#dropDown1 {
 	margin: 15px 0 0 15px;
+}
+
+/* second dropDown menu */
+#dropDown2 {
+	margin: 15px 0 0 5px;
+}
+
+/* clear button */
+#button1 {
+	margin: 15px 0 0 5px;
 }
 
 /* trash cell */

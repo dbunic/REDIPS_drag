@@ -17,8 +17,7 @@ redipsInit = function () {
 	rd.event.dropped = function () {
 		var div1,		// DIV elements inside DIV id="drag" (collection)
 			div2 = [],	// references of DIV elements prepared from collection
-			cb, i, j,	// checkbox and loop variables
-			id;			// element Id
+			cb, i, j;	// element Id
 		// collect DIV elements from drag region
 		div1 = divDrag.getElementsByTagName('div');
 		// loop through collected DIV elements
@@ -38,12 +37,10 @@ redipsInit = function () {
 		}
 		// loop through div2 array and move elements to the target table cell
 		for (i = 0; i < div2.length; i++) {
-			// define id of element to move
-			id = div2[i].id;
 			// element will be moved to the dropped table cell
-			rd.moveObject({id: id});
+			rd.moveObject({obj: div2[i]});
 			// try to comment upper line and uncomment this line (elements will be relocated without animation)
-			//rd.target_cell.appendChild(div2[i]);
+			//rd.td.target.appendChild(div2[i]);
 		}
 	};
 };

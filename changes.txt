@@ -1,13 +1,17 @@
 Changes for REDIPS.drag library
 
-5.0.4 (2012-12-20)
-- modified enableDrag - method has option to accept node reference to enable / disable DIV elements inside that node
-- fix inside relocate method (events were registered after DIV element was relocated and that should not be the case)
-- added example26: jQuery dialog
+5.0.5 (2012-12-22)
 - event.relocated renamed to event.relocateEnd
 - added event.relocateBefore(div, to) - it's called before each element is relocated
 - added event.relocateAfter(div, to) - it's called after each element is relocated
 - added event.shiftOverflow - called after overflow happen in "shift" drop mode
+- fixed emptyCell - if TD contains only text then it will be treated as empty cell
+- animation.shift property renamed to shift.animation TODO
+
+5.0.4 (2012-12-20)
+- modified enableDrag - method has option to accept node reference to enable / disable DIV elements inside that node
+- fix inside relocate method (events were registered after DIV element was relocated and that should not be the case)
+- added example26: jQuery dialog
 
 5.0.3 (2012-12-19)
 - modified emptyCell - now method has option to test target cell and to delete cell content

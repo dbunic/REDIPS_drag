@@ -13,28 +13,30 @@ var redips = {};
 redips.init = function () {
 	// reference to the REDIPS.drag class
 	var rd = REDIPS.drag;
-	// set initial math operation
+	// set initial math operation and firstNumberHidden property
 	redips.operation = 'addition';
+	redips.firstNumberHidden = false;
 	// REDIPS.drag initialization
 	rd.init();
-	// set shift mode and shift animation
+	// set shift mode and shift animation (shift animation must be turned on because moveObject uses animation)
 	rd.dropMode = 'shift';
 	rd.animation.shift = true;
 	// set vertical shift (each column is treated separately) and overflowed element will be deleted 
 	rd.shift.mode = 'vertical2';
 	rd.shift.overflow = 'delete';
-	// event handler called after DIV is dropped (create result box in the most right column)
-	rd.event.dropped = function () {
-		var tr,			// current row
-			num1, num2,	// numbers for addition or multiplication
-			result;		// result
-		// set current row
-		tr = REDIPS.drag.findParent('TR', rd.obj);
-		// set first and second number
-		num1 = rd.obj.innerHTML * 1;
-		num2 = tr.cells[2].innerHTML * 1;
-		// display result box
-		tr.cells[4].innerHTML = '<div class="result box r' + redips.math(num1, num2) + '" onclick="window.redips.showResult(this)">?</div>';
+	// event handler called a moment before DIV is dropped (create result box in the most right column)
+	rd.event.droppedBefore = function (targetTD) {
+		// TD in 4th column
+		var td4 = targetTD.parentNode.cells[4];
+		// if right column is empty then create orange DIV box in last column
+		if (rd.emptyCell(td4, 'test')) {
+			// reference is target TD (needed to find parent row) while DIV is rd.obj element
+			redips.createOrangeBox(targetTD, rd.obj);
+		}
+		// else set reference to the redips.obj (needed in event.relocateEnd and event.shiftOverflow)
+		else {
+			redips.obj = rd.obj;
+		}
 	};
 	// even handler called when DIV element is moved (delete result box if DIV is moved in the bottom table)
 	rd.event.moved = function () {
@@ -44,58 +46,96 @@ redips.init = function () {
 		if (tr.className.indexOf('upper') === -1) {
 			tr.cells[4].innerHTML = '';
 		}
+		// if numbers in upper tables are hidden, then hide number when left DIV element is moved
+		if (redips.firstNumberHidden) {
+			rd.obj.innerHTML = '?';
+		}
 	};
 	// called before each DIV element is shifted (needed move orange box pn the right side)
 	rd.event.relocateBefore = function (div, to) {
 		var tr = rd.findParent('TR', div),							// set current TR from DIV element that will be shifted by REDIPS.drag
 			resultDiv = tr.cells[4].getElementsByTagName('div')[0],	// define result DIV (right orange DIV element)
 			target = to.parentNode.cells[4],						// define target TD
-			num1 = div.innerHTML * 1;								// set first number (from DIV element that will be shifted by REDIPS.drag)
-		// move right (orange) box
+			num1 = redips.readNumber(div);							// set first number (from DIV element that will be shifted by REDIPS.drag)
+		// if numbers in upper tables are hidden, then hide number in left DIV when they are shifted
+		if (redips.firstNumberHidden) {
+			div.innerHTML = '?';
+		}
+		// move right (orange) box (moveObject moves DIV element with animation)
 		rd.moveObject({
 			obj: resultDiv,
 			target:	target,
 			// call after result DIV is moved (el is reference to the moved DIV element)
 			callback: function (el) {
 				var targetTR = rd.findParent('TR', el),			// set target TR
-					num2 = targetTR.cells[2].innerHTML * 1;		// set number2 from target TR
+					num2 = targetTR.cells[2].innerHTML * 1,		// set number2 from target TR
+					result = redips.math(num1, num2);
 				// save (hide) new result to the class r(n+) and display "?" 
-				el.className = el.className.replace(/r\d+/g, 'r' + redips.math(num1, num2));
-				el.innerHTML = '?';
+				el.className = el.className.replace(/n\d+/g, 'n' + result);
+				// if redips.firstNumberHidden is set to true then result in orange box should be displayed
+				if (redips.firstNumberHidden) {
+					el.innerHTML = result;
+				}
+				else {
+					el.innerHTML = '?';
+				}
 			}
 		});
 	};
-	// delete last orange box when overflow happen (target is TD where overflow occurred)
-	rd.event.shiftOverflow = function (target) {
-		var rightCell = target.parentNode.cells[4];
-		// empty right cell
-		rd.emptyCell(rightCell);
+	// call after all shifting is finished (create orange DIV element for the dropped DIV)
+	rd.event.relocateEnd = function () {
+		// reference and DIV element is the same
+		redips.createOrangeBox(redips.obj, redips.obj);
 	};
+	// delete last orange box when overflow happen (target is TD where overflow occurres) but not when DIV is dropped to the last row
+	rd.event.shiftOverflow = function (target) {
+		// if DIV is dropped to the last row from upper table and target cell is not empty then overflow will happen
+		// in this case relocateEnd will not be called because there isn't any element for shifting
+		// so it's needed to recreate orange box in the right column
+		// rd.td.target is target cell where DIV element is dropped (this is defined within REDIPS.drag library)
+		if (rd.td.target.parentElement.rowIndex === 9) {
+			redips.createOrangeBox(target, redips.obj);
+		}
+		// for overflow in all other cases delete right cell
+		else {
+			// set right cell
+			var rightCell = target.parentNode.cells[4];
+			// delete right cell
+			rd.emptyCell(rightCell);
+
+		}
+	};
+	// if left DIV element is dbl clicked then show number
+	rd.event.dblClicked = function () {
+		rd.obj.innerHTML = redips.readNumber(rd.obj);
+	}
 };
 
 
-// set operation - addition / multiplication
-redips.setTable = function (e) {
-	// set local variables
-	var tables = document.getElementById('drag').getElementsByTagName('table'),
-		i;
-	// set operation (global) - needed in event.dropped
-	redips.operation = e.options[e.selectedIndex].value;
-	// loop goes through all fetched tables within drag container
-	for (i = 0; i < tables.length; i++) {
-		// skip number or mini table
-		if (tables[i].id === 'number' || tables[i].id === 'mini') {
-			continue;
-		}
-		// show selected table
-		else if (tables[i].id === redips.operation) {
-			tables[i].style.display = '';
-		}
-		// hide all other tables
-		else {
-			tables[i].style.display = 'none';
-		}
+// create orange box
+// el is node from which will be found parent row
+// div is reference of DIV element from whom is needed to read first number
+redips.createOrangeBox = function (el, div) {
+	var tr,			// current row
+		num1, num2,	// numbers for addition or multiplication
+		result,		// result will be hidden or displayed depending on redips.firstNumberHidden property
+		td4;		// TD in 4th column		
+	// set current row
+	tr = REDIPS.drag.findParent('TR', el);
+	// set result cell
+	td4 = tr.cells[4];
+	// set first and second number and make implicit cast to numeric
+	num1 = redips.readNumber(div);
+	num2 = tr.cells[2].innerHTML * 1;
+	// set result
+	if (redips.firstNumberHidden) {
+		result = redips.math(num1, num2);
 	}
+	else {
+		result = '?';
+	}
+	// display result box
+	td4.innerHTML = '<div class="result box n' + redips.math(num1, num2) + '" ondblclick="window.redips.showResult(this)">' + result + '</div>';
 };
 
 
@@ -116,13 +156,98 @@ redips.math = function (num1, num2) {
 
 // display result below "?" (called after user clicks on result DIV)
 redips.showResult = function (div) {
-	// result is saved as a class name r(n+)
-	var	className = div.className,
-		matchArray = className.match(/r(\d+)/);
-	// show result
-	div.innerHTML = matchArray[1];
+	div.innerHTML = redips.readNumber(div);
 };
 
+
+// read number from class number in format n(n+)
+redips.readNumber = function (el) {
+	// result is saved as a class name n(n+)
+	var	className = el.className,
+		matchArray = className.match(/n(\d+)/);
+	// return number (implicit cast to numeric)
+	return matchArray[1] * 1;
+};
+
+
+// -------------------------------------------------
+// methods called from UI
+// -------------------------------------------------
+
+// called onchange of first dropDown menu
+// set operation - addition / multiplication
+redips.setOperation = function (el) {
+	// set local variables
+	var tables = document.getElementById('drag').getElementsByTagName('table'),
+		i;
+	// set operation (global) - needed in event.dropped
+	redips.operation = el.options[el.selectedIndex].value;
+	// loop goes through all fetched tables within drag container
+	for (i = 0; i < tables.length; i++) {
+		// skip number or mini table
+		if (tables[i].id === 'number' || tables[i].id === 'mini') {
+			continue;
+		}
+		// show selected table
+		else if (tables[i].id === redips.operation) {
+			tables[i].style.display = '';
+		}
+		// hide all other tables
+		else {
+			tables[i].style.display = 'none';
+		}
+	}
+};
+
+
+// called onchange of second dropDown menu
+// show hide numbers in upper table
+redips.setMode = function (el) {
+	var option = el.options[el.selectedIndex].value,
+		div = document.getElementById('number').getElementsByTagName('div'),
+		i;
+	// when application mode is changed then tables should be cleaned
+	redips.clearAll();
+	// set firstNumberHidden property based on second dropDown menu
+	if (option === 'show') {
+		redips.firstNumberHidden = false;
+	}
+	else {
+		redips.firstNumberHidden = true;
+	}
+	// loop through all DIV elements
+	for (i = 0; i < div.length; i++) {
+		if (redips.firstNumberHidden) {
+			div[i].innerHTML = '?';
+		}
+		else {
+			div[i].innerHTML = redips.readNumber(div[i]);
+		}
+	}
+};
+
+// called on click of clear button
+// method removes all DIV elements from addition and multiplication table
+redips.clearAll = function () {
+		// collect all DIV elements from drag container
+	var div = document.getElementById('drag').getElementsByTagName('div'),
+		el,
+		i;
+	// loop through all DIV elements (it should go backward because nodeList is alive)
+	for (i = div.length - 1; i >= 0; i--) {
+		// set current DIV element
+		el = div[i];
+		// if DIV element is "box" type but is not of "clone" type (DIV elements in upper table should not be deleted
+		if (el.className.indexOf('box') > -1 && el.className.indexOf('clone') === -1) {
+			el.parentNode.removeChild(el);
+		}
+	}
+};
+
+
+// -------------------------------------------------
+// attach event listener on body load
+// -------------------------------------------------
 
 // add onload event listener
 if (window.addEventListener) {

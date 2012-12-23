@@ -72,7 +72,7 @@ redipsInit = function () {
 	};
 	// element was dropped - move element in opposite table
 	rd.event.dropped = function () {
-		var	obj = rd.obj,			// reference to the current element
+		var	obj = rd.obj,		// reference to the current element
 			idNew = getId(obj);	// id of element from opposite table
 		// disable current element
 		rd.enableDrag(false, obj);
