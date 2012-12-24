@@ -6,7 +6,7 @@
 		<meta name="viewport" content="width=device-width, user-scalable=no"/><!-- "position: fixed" fix for Android 2.2+ -->
 		<link rel="stylesheet" href="style.css" type="text/css" media="screen"/>
 		<script type="text/javascript" src="../header.js"></script>
-		<script type="text/javascript" src="../redips-drag-source.js"></script>
+		<script type="text/javascript" src="../redips-drag-min.js"></script>
 		<script type="text/javascript" src="script.js"></script>
 		<title>Example 25: Math 4 Kids</title>
 	</head>
@@ -15,15 +15,15 @@
 		<div id="main_container">
 			<!-- drag1 DIV container -->
 			<div id="drag">
-				<!-- first dropDown menu -->
-				<select id="dropDown1" onchange="redips.setOperation(this)">
+				<!-- dropDown mode -->
+				<select id="menuMode" onchange="redips.setMode(this)">
+					<option value="mode1">Mode1</option>
+					<option value="mode2">Mode2</option>
+				</select>
+				<!-- dropDown math operation -->
+				<select id="menuOperation" onchange="redips.setOperation(this)">
 					<option value="addition">Addition</option>
 					<option value="multiplication">Multiplication</option>
-				</select>
-				<!-- second dropDown menu -->
-				<select id="dropDown2" onchange="redips.setMode(this)">
-					<option value="show">Show</option>
-					<option value="hide">Hide</option>
 				</select>
 				<!-- Clear all button -->
 				<input id="button1" type="button" value="Clear" onclick="redips.clearAll()"/>
@@ -234,9 +234,16 @@
 			</div>
 			<!-- instructions -->
 			<div class="instructions">
+				REDIPS.drag library
+				<br/>
+				<br/>
+				Drag and drop JavaScript library based on HTML table.
+				<br/>
+				<br/>
 				Try to drag numbers from top table to the first column in table below.
-				After dropping DIV element to the table cell, orange box with "?" will be automatically displayed to the most right column.
-				User should dblclick on "?" and result will be shown.
+				In mode1 after dropping DIV element to the table cell, orange box with "?" will be automatically displayed to the most right column.
+				Mode2 will display result but first number will have "?".
+				User should dblclick on "?" and number will be shown.
 				REDIPS.drag works in "shift" mode so dropping number on top of existing content will shift other elements.
 			</div>
 		</div>

@@ -3,7 +3,7 @@ Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
 Version 5.0.5
-Dec 21, 2012.
+Dec 24, 2012.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -3608,15 +3608,21 @@ REDIPS.drag = (function () {
 	 *     }
 	 * });
 	 *  
-	 * // move element with id="a2" to the first table, second row and third cell
+	 * // move DIV element with reference "mydiv" to the TD with reference td
 	 * rd.moveObject({
-	 *     id: 'a2',
-	 *     target: [0, 1, 2]
+	 *     obj: mydiv,
+	 *     target: td
 	 * });
 	 *  
 	 * // move DIV element with reference "mydiv" to the first table, second row and third cell
 	 * rd.moveObject({
 	 *     obj: mydiv,
+	 *     target: [0, 1, 2]
+	 * });
+	 *  
+	 * // move element with id="a2" to the first table, second row and third cell
+	 * rd.moveObject({
+	 *     id: 'a2',
 	 *     target: [0, 1, 2]
 	 * });
 	 *  

@@ -83,13 +83,14 @@ div#drag td {
 	background-color: #eee;
 }
 
-/* first dropDown menu */
-#dropDown1 {
+
+/* dropDown menu */
+#menuMode {
 	margin: 15px 0 0 15px;
 }
 
-/* second dropDown menu */
-#dropDown2 {
+/* first dropDown menu */
+#menuOperation {
 	margin: 15px 0 0 5px;
 }
 

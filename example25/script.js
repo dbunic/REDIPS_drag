@@ -4,6 +4,16 @@
 /* enable strict mode */
 "use strict";
 
+/*
+
+This code looks a bit complicated but it's a good example of how to use some built-in event handlers.
+The most complicated part is to shift orange boxes on the right side.
+This DIV elements are unmovable and should follow their counterparts on the left side.
+Result value and value of the left box are saved in class name in a format n(n+).
+For example, result box could have class n12 or left box could have class n4.
+Number from class is read and displayed when user dblclicks on DIV element.
+
+*/
 
 // create redips container
 var redips = {};
@@ -13,9 +23,9 @@ var redips = {};
 redips.init = function () {
 	// reference to the REDIPS.drag class
 	var rd = REDIPS.drag;
-	// set initial math operation and firstNumberHidden property
+	// set initial math operation and application mode
 	redips.operation = 'addition';
-	redips.firstNumberHidden = false;
+	redips.mode = 'mode1';
 	// REDIPS.drag initialization
 	rd.init();
 	// set shift mode and shift animation (shift animation must be turned on because moveObject uses animation)
@@ -24,7 +34,7 @@ redips.init = function () {
 	// set vertical shift (each column is treated separately) and overflowed element will be deleted 
 	rd.shift.mode = 'vertical2';
 	rd.shift.overflow = 'delete';
-	// event handler called a moment before DIV is dropped (create result box in the most right column)
+	// event handler called in a moment before DIV is dropped (create result box in the most right column)
 	rd.event.droppedBefore = function (targetTD) {
 		// TD in 4th column
 		var td4 = targetTD.parentNode.cells[4];
@@ -46,8 +56,8 @@ redips.init = function () {
 		if (tr.className.indexOf('upper') === -1) {
 			tr.cells[4].innerHTML = '';
 		}
-		// if numbers in upper tables are hidden, then hide number when left DIV element is moved
-		if (redips.firstNumberHidden) {
+		// if numbers in upper tables are hidden then hide number when left DIV element is moved
+		if (redips.mode === 'mode2') {
 			rd.obj.innerHTML = '?';
 		}
 	};
@@ -58,7 +68,7 @@ redips.init = function () {
 			target = to.parentNode.cells[4],						// define target TD
 			num1 = redips.readNumber(div);							// set first number (from DIV element that will be shifted by REDIPS.drag)
 		// if numbers in upper tables are hidden, then hide number in left DIV when they are shifted
-		if (redips.firstNumberHidden) {
+		if (redips.mode === 'mode2') {
 			div.innerHTML = '?';
 		}
 		// move right (orange) box (moveObject moves DIV element with animation)
@@ -72,8 +82,8 @@ redips.init = function () {
 					result = redips.math(num1, num2);
 				// save (hide) new result to the class r(n+) and display "?" 
 				el.className = el.className.replace(/n\d+/g, 'n' + result);
-				// if redips.firstNumberHidden is set to true then result in orange box should be displayed
-				if (redips.firstNumberHidden) {
+				// if redips.mode is set to "mode2" then result in orange box should be displayed
+				if (redips.mode === 'mode2') {
 					el.innerHTML = result;
 				}
 				else {
@@ -108,7 +118,7 @@ redips.init = function () {
 	// if left DIV element is dbl clicked then show number
 	rd.event.dblClicked = function () {
 		rd.obj.innerHTML = redips.readNumber(rd.obj);
-	}
+	};
 };
 
 
@@ -118,7 +128,7 @@ redips.init = function () {
 redips.createOrangeBox = function (el, div) {
 	var tr,			// current row
 		num1, num2,	// numbers for addition or multiplication
-		result,		// result will be hidden or displayed depending on redips.firstNumberHidden property
+		result,		// result will be hidden or displayed depending on redips.mode property
 		td4;		// TD in 4th column		
 	// set current row
 	tr = REDIPS.drag.findParent('TR', el);
@@ -127,12 +137,12 @@ redips.createOrangeBox = function (el, div) {
 	// set first and second number and make implicit cast to numeric
 	num1 = redips.readNumber(div);
 	num2 = tr.cells[2].innerHTML * 1;
-	// set result
-	if (redips.firstNumberHidden) {
-		result = redips.math(num1, num2);
+	// display result in orange box if application is set to mode1
+	if (redips.mode === "mode1") {
+		result = '?';
 	}
 	else {
-		result = '?';
+		result = redips.math(num1, num2);
 	}
 	// display result box
 	td4.innerHTML = '<div class="result box n' + redips.math(num1, num2) + '" ondblclick="window.redips.showResult(this)">' + result + '</div>';
@@ -165,7 +175,7 @@ redips.readNumber = function (el) {
 	// result is saved as a class name n(n+)
 	var	className = el.className,
 		matchArray = className.match(/n(\d+)/);
-	// return number (implicit cast to numeric)
+	// return number (and implicit cast to numeric type)
 	return matchArray[1] * 1;
 };
 
@@ -174,7 +184,27 @@ redips.readNumber = function (el) {
 // methods called from UI
 // -------------------------------------------------
 
-// called onchange of first dropDown menu
+// called on "mode" dropDown menu change
+// show hide numbers in upper table
+redips.setMode = function (el) {
+	var div = document.getElementById('number').getElementsByTagName('div'),
+		i;
+	// when application mode is changed then tables should be cleaned
+	redips.clearAll();
+	// set aplication mode based on mode dropDown menu
+	redips.mode = el.options[el.selectedIndex].value;
+	// loop through all DIV elements in upper table and set innerHTML
+	for (i = 0; i < div.length; i++) {
+		if (redips.mode === 'mode1') {
+			div[i].innerHTML = redips.readNumber(div[i]);
+		}
+		else {
+			div[i].innerHTML = '?';
+		}
+	}
+};
+
+// called on "operation" dropDown menu change 
 // set operation - addition / multiplication
 redips.setOperation = function (el) {
 	// set local variables
@@ -184,7 +214,7 @@ redips.setOperation = function (el) {
 	redips.operation = el.options[el.selectedIndex].value;
 	// loop goes through all fetched tables within drag container
 	for (i = 0; i < tables.length; i++) {
-		// skip number or mini table
+		// skip number table (upper table) or mini table (table with "trash" cell)
 		if (tables[i].id === 'number' || tables[i].id === 'mini') {
 			continue;
 		}
@@ -192,36 +222,9 @@ redips.setOperation = function (el) {
 		else if (tables[i].id === redips.operation) {
 			tables[i].style.display = '';
 		}
-		// hide all other tables
+		// hide other tables
 		else {
 			tables[i].style.display = 'none';
-		}
-	}
-};
-
-
-// called onchange of second dropDown menu
-// show hide numbers in upper table
-redips.setMode = function (el) {
-	var option = el.options[el.selectedIndex].value,
-		div = document.getElementById('number').getElementsByTagName('div'),
-		i;
-	// when application mode is changed then tables should be cleaned
-	redips.clearAll();
-	// set firstNumberHidden property based on second dropDown menu
-	if (option === 'show') {
-		redips.firstNumberHidden = false;
-	}
-	else {
-		redips.firstNumberHidden = true;
-	}
-	// loop through all DIV elements
-	for (i = 0; i < div.length; i++) {
-		if (redips.firstNumberHidden) {
-			div[i].innerHTML = '?';
-		}
-		else {
-			div[i].innerHTML = redips.readNumber(div[i]);
 		}
 	}
 };
