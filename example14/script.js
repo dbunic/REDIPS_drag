@@ -17,8 +17,8 @@ redipsInit = function () {
 	rd.init();
 	// set shift drop option
 	rd.dropMode = 'shift';
-	// enable animation for shifted elements
-	rd.animation.shift = true;
+	// enable shift animation
+	rd.shift.animation = true;
 };
 
 
@@ -30,7 +30,7 @@ setDropMode = function (radioButton) {
 
 // enable / disable animation
 toggleAnimation = function (chk) {
-	REDIPS.drag.animation.shift = chk.checked;
+	REDIPS.drag.shift.animation = chk.checked;
 };
 
 

@@ -28,12 +28,12 @@ redips.init = function () {
 	redips.mode = 'mode1';
 	// REDIPS.drag initialization
 	rd.init();
-	// set shift mode and shift animation (shift animation must be turned on because moveObject uses animation)
+	// set shift mode drop mode
 	rd.dropMode = 'shift';
-	rd.animation.shift = true;
-	// set vertical shift (each column is treated separately) and overflowed element will be deleted 
-	rd.shift.mode = 'vertical2';
-	rd.shift.overflow = 'delete';
+	// set shift properties
+	rd.shift.mode = 'vertical2';	// set vertical shift (each column is treated separately)
+	rd.shift.overflow = 'delete';	// overflowed element will be deleted
+	rd.shift.animation = true;		// shift animation (shift animation must be turned on because moveObject uses animation)
 	// event handler called in a moment before DIV is dropped (create result box in the most right column)
 	rd.event.droppedBefore = function (targetTD) {
 		// TD in 4th column

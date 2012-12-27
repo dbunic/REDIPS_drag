@@ -16,8 +16,8 @@ var redipsInit,			// define redipsInit variable
 redipsInit = function () {
 	// initialization
 	rd.init();
-	// enable animation on shifted elements
-	rd.animation.shift = true;
+	// enable shift animation
+	rd.shift.animation = true;
 	// save initial DIV positions to "pos" object (it should go after initialization)
 	startPositions();
 	// in a moment when DIV element is moved, set drop_option property (shift or single)
@@ -70,7 +70,7 @@ startPositions = function () {
 
 // enable / disable animation
 toggleAnimation = function (chk) {
-	REDIPS.drag.animation.shift = chk.checked;
+	REDIPS.drag.shift.animation = chk.checked;
 };
 
 

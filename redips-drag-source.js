@@ -3,7 +3,7 @@ Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
 Version 5.0.5
-Dec 24, 2012.
+Dec 27, 2012.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -24,7 +24,7 @@ var REDIPS = REDIPS || {};
 
 /**
  * @namespace
- * @description REDIPS.drag is a JavaScript drag and drop library focused on dragging table content and table rows.
+ * @description REDIPS.drag is a JavaScript drag and drop library focused on dragging table content (DIV elements) and table rows.
  * @name REDIPS.drag
  * @author darko.bunic@google.com (Darko Bunic)
  * @see
@@ -34,7 +34,7 @@ var REDIPS = REDIPS || {};
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">Drag and drop table rows</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">Drag and Drop table content</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-content-shift/">JavaScript drag and drop plus content shift</a>
- * @version 5.0.5
+ * @version 5.0.5 (2012-12-27)
  */
 REDIPS.drag = (function () {
 		// methods
@@ -3119,7 +3119,9 @@ REDIPS.drag = (function () {
 	 * @param {String} [mode] Relocation mode "instant" or "animation". Default is "instant".
 	 * @public
 	 * @function
-	 * @see <a href="#event:relocated">event.relocated</a>
+	 * @see <a href="#event:relocateBefore">event.relocateBefore</a>
+	 * @see <a href="#event:relocateAfter">event.relocateAfter</a>
+	 * @see <a href="#event:relocateEnd">event.relocateEnd</a>
 	 * @name REDIPS.drag#relocate
 	 */
 	relocate = function (from, to, mode) {
@@ -3288,7 +3290,7 @@ REDIPS.drag = (function () {
 	 * var firstCell = document.getElementById('firstCellOnTable'),
 	 *     lastCell = document.getElementById('lastCellOnTable');
 	 * // enable animation
-	 * REDIPS.drag.animation.shift = true;
+	 * REDIPS.drag.shift.animation = true;
 	 * // shift content
 	 * REDIPS.drag.shiftCells(lastCell, firstCell);
 	 * @public
@@ -3317,7 +3319,7 @@ REDIPS.drag = (function () {
 			handleOverflow;		// overflow method used locally (handler overflowed cells)
 		// define myShift local method (content will be shifted with or without animation)
 		myShift = function (source, target) {
-			if (REDIPS.drag.animation.shift) {
+			if (REDIPS.drag.shift.animation) {
 				relocate(source, target, 'animation');
 			}
 			else {
@@ -4342,22 +4344,22 @@ REDIPS.drag = (function () {
 		 */
 		clone : clone,
 		/**
-		 * Object contains animation pause, step and animation shift drop option.
+		 * Object contains animation properties: pause and step.
 		 * <ul>
 		 * <li>{Integer} animation.pause - Animation pause (lower values means the animation will go faster). Default value is 20 (milliseconds).</li>
 		 * <li>{Integer} animation.step - Value defines number of pixels in each step. Higher values means bigger step (faster animation) but with less smoothness. Default value is 2 (px).</li>
-		 * <li>{Boolean} animation.shift - Shift drop mode animation. If set to true, table content will be relocated with animation in case of "shift" drop mode. Default is false.</li>
 		 * </ul>
 		 * @type Object
 		 * @name REDIPS.drag#animation
 		 */
 		animation : animation,
 		/**
-		 * Object contains several properties: "shift.after", "shift.mode" and "shift.overflow".
+		 * Object contains several properties: shift.after, shift.mode, shift.overflow and shift.animation.
 		 * <ul>
 		 * <li>{String} shift.after - how to shift table content after DIV element is dropped</li>
 		 * <li>{String} shift.mode - shift modes (horizontal / vertical)</li>
 		 * <li>{String|HTMLElement} shift.overflow - defines how to behave when DIV element falls off the end</li>
+		 * <li>{Boolean} shift.animation - if set to true, table content will be relocated with animation - default is false</li>
 		 * </ul>
 		 *  
 		 * shift.after option has the following values: "default", "delete" and "always" (this property will have effect only if dropMode is set to "shift"). Default value is "default".
@@ -4505,32 +4507,32 @@ REDIPS.drag = (function () {
 		 * It is called only if animation is turned on.
 		 * @name REDIPS.drag#event:relocateEnd
 		 * @see <a href="#relocate">relocate</a>
-		 * @see <a href="#event.relocateBefore">relocateBefore</a>
-		 * @see <a href="#event.relocateAfter">relocateAfter</a>
+		 * @see <a href="#event:relocateBefore">event.relocateBefore</a>
+		 * @see <a href="#event:relocateAfter">event.relocateAfter</a>
 		 * @function
 		 * @event
 		 */
 		/**
 		 * Event handler invoked before DIV element will be relocated.
-		 * For example, in shift drop mode, this event handler will be called for each DIV element.
+		 * For example, in shift drop mode, this event handler will be called before each DIV element move.
 		 * @param {HTMLElement} div Reference of DIV element that will be relocated.
 		 * @param {HTMLElement} td Reference of TD where DIV element will be relocated.
 		 * @name REDIPS.drag#event:relocateBefore
 		 * @see <a href="#relocate">relocate</a>
-		 * @see <a href="#event.relocateAfter">relocateAfter</a>
-		 * @see <a href="#event.relocateEnd">relocateEnd</a>
+		 * @see <a href="#event:relocateAfter">event.relocateAfter</a>
+		 * @see <a href="#event:relocateEnd">event.relocateEnd</a>
 		 * @function
 		 * @event
 		 */
 		/**
 		 * Event handler invoked after DIV element is relocated.
-		 * For example, in shift drop mode, this event handler will be called for each DIV element.
+		 * For example, in shift drop mode, this event handler will be called after each DIV element has been moved.
 		 * @param {HTMLElement} div Reference of DIV element that is relocated.
-		 * @param {HTMLElement} td Reference of TD where DIV element will be relocated.
+		 * @param {HTMLElement} td Reference of TD where DIV element is relocated.
 		 * @name REDIPS.drag#event:relocateAfter
 		 * @see <a href="#relocate">relocate</a>
-		 * @see <a href="#event.relocateBefore">relocateBefore</a>
-		 * @see <a href="#event.relocateEnd">relocateEnd</a>
+		 * @see <a href="#event:relocateBefore">event.relocateBefore</a>
+		 * @see <a href="#event:relocateEnd">event.relocateEnd</a>
 		 * @function
 		 * @event
 		 */
@@ -4625,6 +4627,7 @@ REDIPS.drag = (function () {
 		 * Event handler invoked in a moment when overflow happen in shift mode.
 		 * @param {HTMLElement} td Reference of TD where overflow happen.
 		 * @name REDIPS.drag#event:shiftOverflow
+		 * @see <a href="#dropMode">dropMode</a>
 		 * @function
 		 * @event
 		 */

@@ -19,7 +19,7 @@ redips.init = function () {
 	// initialization
 	rd.init();
 	// shift DIV elements with animation
-	rd.animation.shift = true;
+	rd.shift.animation = true;
 	// disabled elements will have opacity effect
 	rd.style.opacityDisabled = 50;
 	// set hover color

@@ -22,10 +22,10 @@ redipsInit = function () {
 	rd.init();
 	// set mode option to "shift"
 	rd.dropMode = 'shift';
-	// enable animation on shifted elements
-	rd.animation.shift = true;
 	// set animation loop pause
 	rd.animation.pause = 20;
+	// enable shift.animation
+	rd.shift.animation = true;
 	// set TD for overflow elements (initially)
 	rd.shift.overflow = document.getElementById('overflow');
 	// add counter to cloned element name
@@ -81,7 +81,7 @@ overflow = function (radio) {
 
 // enable / disable animation
 shiftAnimation = function (chk) {
-	REDIPS.drag.animation.shift = chk.checked;
+	REDIPS.drag.shift.animation = chk.checked;
 };
 
 

@@ -6,7 +6,7 @@ Changes for REDIPS.drag library
 - added event.relocateAfter(div, to) - it's called after each element is relocated
 - added event.shiftOverflow - called after overflow happen in "shift" drop mode
 - fixed emptyCell - if TD contains only text then it will be treated as empty cell
-- animation.shift property renamed to shift.animation TODO
+- animation.shift property renamed to shift.animation
 
 5.0.4 (2012-12-20)
 - modified enableDrag - method has option to accept node reference to enable / disable DIV elements inside that node
