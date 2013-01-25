@@ -1,6 +1,6 @@
 Darko Bunic
 http://www.redips.net/javascript/drag-and-drop-example-3/
-Aug, 2011.
+Jan, 2013.
 
 This example shows how to arrange timetable and save table content to the MySQL database.
 Database communication is written inside config.php which is included in index.php and db_save.php
@@ -13,5 +13,9 @@ Before start using this demo you should:
 2) define database name, user name and password in config.php
 
 After these steps are finished, empty timetable should appear and you can start drag school subjects.
+
+If you replace script.js with docs/script.js then it will not be possible to have two same school subjects (lessons) in a column.
+See checkColumn() function and where is called.
+
 
 Happy dragging and dropping!
