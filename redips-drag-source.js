@@ -2694,7 +2694,7 @@ REDIPS.drag = (function () {
 	 * @param {Boolean|String} enableFlag Enable / disable element (or element subtree like table, dragging container ...).
 	 * @param {HTMLElement|String} [el] HTML node or CSS selector to enable / disable. Parameter defines element reference or CSS selector of DIV elements to enable / disable.
 	 * @example
-	 * // enable element with id="id123"
+	 * // enable element with id="id123" (element id should be a string according to DOM docs)
 	 * rd.enableDrag(true, '#id123');
 	 *  
 	 * // or init manually added element with known id
