@@ -218,7 +218,7 @@ REDIPS.drag = (function () {
 	 * Every page should have at least one drag container.
 	 * If REDIPS.drag.init() is called without input parameter, library will search for drag container with id="drag".
 	 * Only tables inside drag container will be scanned. It is possible to have several drag containers totaly separated (elements from one container will not be visible to other drag containers).
-	 * "init" method calls initTables and enableDrag.
+	 * "init" method calls initTables and enableDrag. If tables are generated dynamically then REDIPS.init() method should be called to set custom properties to tables (table initialization). 
 	 * @param {String} [dc] Drag container Id (default is "drag").
 	 * @example
 	 * // init drag container (with default id="drag")
@@ -2704,6 +2704,7 @@ REDIPS.drag = (function () {
 	 * rd.enableDrag(false, '#drag1 div')
 	 *  
 	 * // init DIV elements in dragging area (including newly added DIV element)
+	 * // DIV initialization will work if table node stays intact (table is not generated dynamically) 
 	 * REDIPS.drag.enableDrag('init');
 	 *  
 	 * // init added element with reference myElement
@@ -2714,6 +2715,7 @@ REDIPS.drag = (function () {
 	 * @public
 	 * @function
 	 * @name REDIPS.drag#enableDrag
+	 * @see <a href="#init">init</a>
 	 * @see <a href="#enableTable">enableTable</a>
 	 */
 	enableDrag = function (enable_flag, el) {
