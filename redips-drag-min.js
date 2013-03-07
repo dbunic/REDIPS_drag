@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 5.0.5
-Dec 27, 2012.
+Version 5.0.6
+Mar 07, 2013.
 */
 var REDIPS=REDIPS||{};
 REDIPS.drag=function(){var q,B,K,Aa,La,Ma,ca,da,ia,Ba,Ca,V,ja,Da,R,ka,Z,Ea,C,u,O,la,ma,na,Fa,oa,Ga,E,x,Ha,ea,fa,pa,Na,Oa,Ia,qa,ra,sa,ga,Ja,Pa,ta,Qa,n=null,G=0,H=0,ua=null,va=null,L=[],s=null,M=0,N=0,P=0,Q=0,S=0,T=0,$,f=[],aa,wa,p,I=[],m=[],y=null,D=null,W=0,X=0,Ra=0,Sa=0,ha=!1,Ka=!1,ba=!1,xa=[],h=null,t=null,z=null,j=null,v=null,J=null,k=null,A=null,U=null,i=!1,o=!1,r="cell",ya={div:[],cname:"only",other:"deny"},Ta={action:"deny",cname:"mark",exception:[]},l={},Ua={keyDiv:!1,keyRow:!1,sendBack:!1,

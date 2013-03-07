@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 5.0.5
-Dec 27, 2012.
+Version 5.0.6
+Mar 07, 2013.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -34,7 +34,7 @@ var REDIPS = REDIPS || {};
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">Drag and drop table rows</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">Drag and Drop table content</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-content-shift/">JavaScript drag and drop plus content shift</a>
- * @version 5.0.5 (2012-12-27)
+ * @version 5.0.6 (2013-03-07)
  */
 REDIPS.drag = (function () {
 		// methods
@@ -427,7 +427,6 @@ REDIPS.drag = (function () {
 			}
 		}
 	};
-
 
 
 	/**
@@ -2264,8 +2263,8 @@ REDIPS.drag = (function () {
 
 
 	/**
-	 * Method returns current page scroll position as array.
-	 * @return {Array} Returns array with two members [ scrollX, scrollY ].
+	 * Method returns current page scroll values as array (X and Y axis).
+	 * @return {Array} Returns array with two values [ scrollX, scrollY ].
 	 * @public
 	 * @function
 	 * @name REDIPS.drag#getScrollPosition
@@ -3245,9 +3244,9 @@ REDIPS.drag = (function () {
 			el = [],	// removed elements will be saved in array
 			flag,		// empty cell flag
 			i;			// loop variable
-		// td should be table cell element
+		// td should be table cell element otherwise return undefined
 		if (tdElement.nodeName !== 'TD') {
-			return;
+			return undefined;
 		}
 		// define childnodes length before loop (not in loop because NodeList objects in the DOM are live)
 		cn = tdElement.childNodes.length;
@@ -3707,7 +3706,7 @@ REDIPS.drag = (function () {
 		}
 		// p.obj should be existing object (null or non objects are not allowed)
 		if (typeof(p.obj) !== 'object' || p.obj === null) {
-			return;
+			return undefined;
 		}
 		// set high z-index
 		p.obj.style.zIndex = 999;

@@ -1,5 +1,8 @@
 Changes for REDIPS.drag library
 
+5.0.6 (2013-03-07)
+- small fixes
+
 5.0.5 (2012-12-22)
 - event.relocated renamed to event.relocateEnd
 - added event.relocateBefore(div, to) - it's called before each element is relocated
