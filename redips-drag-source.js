@@ -4556,8 +4556,8 @@ REDIPS.drag = (function () {
 		 * @event
 		 */	
 		/**
-		 * Event handler invoked after DIV element is cloned - interactively by moving DIV element or by calling move_object() in "cell" mode with "clone" option.
-		 * If event handler is called from move_object() then reference of cloned element is sent as input parameter.
+		 * Event handler invoked after DIV element is cloned - interactively by moving DIV element or by calling moveObject() in "cell" mode with "clone" option.
+		 * If event handler is called from moveObject() then reference of cloned element is sent as input parameter.
 		 * Otherwise, reference of cloned DIV element is set to REDIPS.drag.obj while reference of original element is set to REDIPS.drag.objOld public property.
 		 * @param {HTMLElement} [clonedElement] Cloned element reference.
 		 * @see <a href="#moveObject">moveObject</a>
