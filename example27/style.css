@@ -1,0 +1,100 @@
+/*
+
+Darko Bunic
+http://www.redips.net/
+Apr, 2013.
+
+*/
+
+body {
+	font-family: arial;
+	margin: 0px;
+}
+
+/* drag container*/
+#drag {
+	border: 2px dashed LightBlue;
+	width: 330px;
+	margin: auto;
+}
+		/* left container */
+		#drag #left {
+			float: left;
+			width: 110px;
+		}
+		/* right container */
+		#drag #right {
+		  	display: table;
+		    table-layout: auto;
+			/* align div to the right */
+			margin-left: auto;
+			
+		}
+
+
+/* DIV object */
+.drag {
+	margin: auto;
+	text-align: center;
+	width: 77px;
+	height: 25px;
+	line-height: 25px;
+	background-color: white;
+	font-size: 10pt; /* needed for cloned object */
+	/* round corners */
+	border-radius: 4px; /* Opera, Chrome */
+	-moz-border-radius: 4px; /* FF */
+	margin-bottom: 2px;
+}
+
+/* tables */
+div#drag table {
+	background-color: #eee;
+	border-collapse: collapse;
+	margin: 5px;
+}
+	/* table cells */
+	div#drag td {
+		border: 1px solid white;
+		text-align: center;
+		font-size: 10pt;
+		padding: 0px;
+	}
+	table#table1 td {
+		height: 60px;
+	}
+	table#table2 td {
+		height: 122px;
+	}
+
+
+/* green, orange and blue DIV elements */
+.green {
+	border: 1px solid #499B33;
+}
+.orange {
+	border: 1px solid #BF6A30;
+}
+.blue {
+	border: 1px solid SteelBlue;
+}
+
+/* message below tables */
+#message {
+	padding-left: 10px;
+	color: #6A93D4;
+	height: 100px;
+	padding-top: 20px;
+}
+
+/* single content cells (with clone objects on the left) */
+.single {
+	background-color: #e0e0e0;
+}
+
+/* trash cell */
+.trash {
+	color: white;
+	background-color: SteelBlue;
+	height: 26px;
+}

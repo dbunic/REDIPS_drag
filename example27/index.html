@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+	<head>
+		<meta name="author" content="Darko Bunic"/>
+		<meta name="description" content="Drag and drop table content with JavaScript"/>
+		<meta name="viewport" content="width=device-width, user-scalable=no"/><!-- "position: fixed" fix for Android 2.2+ -->
+		<link rel="stylesheet" href="style.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../header.js"></script>
+		<script type="text/javascript" src="../redips-drag-min.js"></script>
+		<script type="text/javascript" src="script.js"></script>
+		<title>Example 27: TD content</title>
+	</head>
+	<body>
+		<!-- tables inside this DIV could have draggable content -->
+		<div id="drag">
+			<!-- left container -->
+			<div id="left">
+				<table id="table1">
+					<colgroup>
+						<col width="100"/>
+					</colgroup>
+					<tr>
+						<td class="single">
+							<div id="a" class="drag clone orange">A</div>
+						</td>
+					</tr>
+					<tr>
+						<td class="single">
+							<div id="b" class="drag clone green">B</div>
+						</td>
+					</tr>
+					<tr>
+						<td class="single">
+							<div id="c" class="drag clone blue">C</div>
+						</td>
+					</tr>
+					<tr>
+						<td class="trash">Trash</td>
+					</tr>
+				</table>
+			</div>
+			
+			<!-- right container -->
+			<div id="right">
+				<table id="table2">
+					<colgroup>
+						<col width="100"/> <!--  first activity column -->
+						<col width="100"/> <!--  second activity column -->
+					</colgroup>
+					<tr>
+						<td id="td1"></td>
+						<td id="td2"></td>
+					</tr>
+					<tr>
+						<td id="td3"></td>
+						<td id="td4"></td>
+					</tr>
+				</table>
+			</div>
+
+			<!-- display block content -->
+			<div id="message"/>
+		</div>
+	</body>
+</html>
