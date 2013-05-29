@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 5.0.6
-Mar 07, 2013.
+Version 5.0.7
+May 29, 2013.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -34,7 +34,7 @@ var REDIPS = REDIPS || {};
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">Drag and drop table rows</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">Drag and Drop table content</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-content-shift/">JavaScript drag and drop plus content shift</a>
- * @version 5.0.6 (2013-03-07)
+ * @version 5.0.7 (2013-05-29)
  */
 REDIPS.drag = (function () {
 		// methods
@@ -107,7 +107,7 @@ REDIPS.drag = (function () {
 				div:  {x: 0, y: 0},	// closer to the edge, faster scrolling
 				flag: {x: 0, y: 0}},// flags are needed to prevent multiple calls of autoScrollX and autoScrollY from onmousemove event handler
 
-		bgStyleOld,				// (object) old td styles (background color and border styles)
+		bgStyleOld,					// (object) old td styles (background color and border styles)
 
 		tables = [],				// table offsets and row offsets (initialized in onload event)
 		sortIdx,					// sort index needed for sorting tables in tableTop()
@@ -123,8 +123,9 @@ REDIPS.drag = (function () {
 					value: 7,		// threshold distance value
 					flag: false},	// threshold flag
 		shiftKey = false,			// (boolean) true if shift key is pressed (set in handler_mousedown)
-		cloneClass = false,		// (boolean) true if clicked element contains clone in class name (set in handler_mousedown)
+		cloneClass = false,			// (boolean) true if clicked element contains clone in class name (set in handler_mousedown)
 		animationCounter = [],		// (array) counter of animated elements to be shifted before table should be enabled
+		windowScrollPosition,		// (array) top and left window offset (set in calculateCells and used in boxOffset)
 		
 		// selected, previous and source table, row and cell (private parameters too)
 		table = null,
@@ -244,6 +245,8 @@ REDIPS.drag = (function () {
 		}
 		// set reference to the drag container
 		dragContainer = document.getElementById(dc);
+		// set initial window scroll position
+		windowScrollPosition = getScrollPosition();
 		// append DIV id="redips_clone" if DIV doesn't exist (needed for cloning DIV elements)
 		// if automatic creation isn't precise enough, user can manually create and place element with id="redips_clone" to prevent window expanding
 		// (then this code will be skipped)
@@ -2179,15 +2182,15 @@ REDIPS.drag = (function () {
 	 * @memberOf REDIPS.drag#
 	 */
 	boxOffset = function (box, position, box_scroll) {
-		var scrollPosition,	// get scroll position
-			oLeft = 0,		// define offset left (take care of horizontal scroll position)
+		var oLeft = 0,		// define offset left (take care of horizontal scroll position)
 			oTop  = 0,		// define offset top (take care od vertical scroll position)
 			boxOld = box;	// remember box object
 		// if table_position is undefined, '' or 'page_scroll' then include page scroll offset
+		// windowScrollPosition is set in calculateCells()
+		// calculateCells() is called on window scroll event
 		if (position !== 'fixed') {
-			scrollPosition = getScrollPosition();	// get scroll position
-			oLeft = 0 - scrollPosition[0];			// define offset left (take care of horizontal scroll position)
-			oTop  = 0 - scrollPosition[1];			// define offset top (take care od vertical scroll position)
+			oLeft = 0 - windowScrollPosition[0];	// define offset left (take care of horizontal scroll position)
+			oTop  = 0 - windowScrollPosition[1];	// define offset top (take care od vertical scroll position)
 		}
 		// climb up through DOM hierarchy (getScrollPosition() takes care about page scroll positions)
 		if (box_scroll === undefined || box_scroll === true) {
@@ -2225,6 +2228,9 @@ REDIPS.drag = (function () {
 			row_offset,	// row box
 			position,	// if element (table or table container) has position:fixed then "page scroll" offset should not be added
 			cb;			// box offset for container box (cb)
+		// calculateCells() is called on window scroll event so here is perfect place to refresh window scroll position  
+		// set window scroll position (needed for boxOffset() method)
+		windowScrollPosition = getScrollPosition();
 		// open loop for each HTML table inside id=drag (table array is initialized in init() function)
 		for (i = 0; i < tables.length; i++) {
 			// initialize row_offset array
@@ -2920,7 +2926,6 @@ REDIPS.drag = (function () {
 			val = el.currentStyle[style_name];
 		}
 		else if (el && window.getComputedStyle) {
-//			val = document.defaultView.getComputedStyle(el, null).getPropertyValue(style_name);
 			val = document.defaultView.getComputedStyle(el, null)[style_name];  
 		}
 		return val;

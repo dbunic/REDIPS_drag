@@ -1,5 +1,8 @@
 Changes for REDIPS.drag library
 
+5.0.7
+- code optimization (reduced number call of getScrollPosition() in boxOffset() method)
+
 5.0.6 (2013-04-23)
 - added example27 - TD content
 
