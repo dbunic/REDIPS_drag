@@ -2,8 +2,8 @@
 Copyright (c) 2008-2011, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 5.0.7
-May 29, 2013.
+Version 5.0.8
+Jun 28, 2013.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -34,7 +34,7 @@ var REDIPS = REDIPS || {};
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">Drag and drop table rows</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">Drag and Drop table content</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-content-shift/">JavaScript drag and drop plus content shift</a>
- * @version 5.0.7 (2013-05-29)
+ * @version 5.0.8 (2013-06-28)
  */
 REDIPS.drag = (function () {
 		// methods
@@ -860,12 +860,16 @@ REDIPS.drag = (function () {
 		source.row = tableMini.redips.sourceRow;
 		source.rowIndex = source.row.rowIndex;
 		source.table = findParent('TABLE', source.row);
-		source.tableSection = source.table.rows[0].parentNode;
+		source.tableSection = source.row.parentNode;
 		// define target data: row, row index, table and table section
 		target.table = tables[tableIdx];
+		// if row index is out of bounds, then set max row index (row will be appended to the table bottom)
+		if (rowIdx > target.table.rows.length - 1) {
+			rowIdx = target.table.rows.length - 1;
+		}
 		target.row = target.table.rows[rowIdx];
 		target.rowIndex = rowIdx;
-		target.tableSection = target.table.rows[0].parentNode;
+		target.tableSection = target.row.parentNode;
 		// set reference to the TR in mini table (mini table has only one row - first row)
 		trMini = tableMini.getElementsByTagName('tr')[0];
 		// destroy mini table (node still exists in memory)
@@ -944,7 +948,7 @@ REDIPS.drag = (function () {
 				}
 				// if table contains only "empty" row then this row should be deleted after inserting or appending to such table
 				if (target.row && target.row.redips && target.row.redips.emptyRow) {
-					target.tableSection.deleteRow(target.row.rowIndex);
+					target.table.deleteRow(target.row.rowIndex);
 				}
 				// in case of "overwrite", delete target row
 				else if (REDIPS.drag.rowDropMode === 'overwrite') {
