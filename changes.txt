@@ -1,5 +1,8 @@
 Changes for REDIPS.drag library
 
+5.0.9 (2014-08-29)
+- fixed bug in findParent() method (problem with skip and search nodes)
+
 5.0.8
 - fixed bug (THEAD in table caused error when drag-n-drop table rows) - thanks to James Ostrowick
 

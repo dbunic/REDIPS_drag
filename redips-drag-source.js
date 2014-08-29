@@ -34,7 +34,7 @@ var REDIPS = REDIPS || {};
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">Drag and drop table rows</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">Drag and Drop table content</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-content-shift/">JavaScript drag and drop plus content shift</a>
- * @version 5.0.8 (2013-06-28)
+ * @version 5.0.9 (2014-08-29)
  */
 REDIPS.drag = (function () {
 		// methods
@@ -2953,21 +2953,28 @@ REDIPS.drag = (function () {
 	 * @name REDIPS.drag#findParent
 	 */
 	findParent = function (tag_name, el, skip) {
-		// move "el" one level up (to prevent finding node itself)
+		// set "el" to the next node (to prevent finding node itself)
 		el = el.parentNode;
-		// if skip is not defined then set it to 0
+		// if skip parameter is not defined then set it to 0
 		if (skip === undefined) {
 			skip = 0;
 		}
-		// loop up until parent element is found 
-		while (el && el.nodeName !== tag_name) {
-			el = el.parentNode;
-			// if node is found and needs to be skipped then decrease skip counter and move pointer to the parent node again
-			if (el && el.nodeName === tag_name && skip > 0) {
-				skip--;
-				el = el.parentNode;
+		// start loop 
+		while (el) {
+			// node is found
+			if (el.nodeName === tag_name) {
+				// if node should be skipped then decrease counter
+				if (skip > 0) {
+					skip--;
+				}
+				// node is found and loop can be ended
+				else {
+					break;
+				}
 			}
-	    }
+			// move on to the parent node
+			el = el.parentNode;
+		}
 	    // return found element
 	    return el;
 	};
