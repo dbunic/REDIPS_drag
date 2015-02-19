@@ -27,8 +27,7 @@ var REDIPS = REDIPS || {};
  * @description REDIPS.drag is a JavaScript drag and drop library focused on dragging table content (DIV elements) and table rows.
  * @name REDIPS.drag
  * @author darko.bunic@google.com (Darko Bunic)
- * @see
- * <a href="http://www.redips.net/javascript/redips-drag-documentation-appendix-a/" title="REDIPS.drag documentation - Appendix A">REDIPS.drag documentation - Appendix A</a>
+ * @see <a href="http://www.redips.net/javascript/redips-drag-documentation-appendix-a/" title="REDIPS.drag documentation - Appendix A">REDIPS.drag documentation - Appendix A</a>
  *  
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content-animation/">Drag and drop table content plus animation</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">Drag and drop table rows</a>
@@ -2112,9 +2111,9 @@ REDIPS.drag = (function () {
 
 	/**
 	 * Method s returns background and border styles as object for the input parameters table index, row index and cell index.
-	 * @param {Integer} t Table index.
-	 * @param {Integer} r Row index.
-	 * @param {Integer} c Cell index.
+	 * @param {Integer} ti Table index.
+	 * @param {Integer} ri Row index.
+	 * @param {Integer} ci Cell index.
 	 * @return {Object} Object containing background color and border styles (for the row or table cell).
 	 * @see <a href="#setTdStyle">setTdStyle</a>
 	 * @private
@@ -2700,7 +2699,7 @@ REDIPS.drag = (function () {
 	 * Method attaches / detaches onmousedown, ontouchstart and ondblclick events to DIV elements and attaches onscroll event to the scroll containers in initialization phase.
 	 * It also can be used for element initialization after DIV element was manually added to the table.
 	 * If class attribute of DIV container contains "noautoscroll" class name then autoScroll option will be disabled.
-	 * @param {Boolean|String} enableFlag Enable / disable element (or element subtree like table, dragging container ...).
+	 * @param {Boolean|String} enable_flag Enable / disable element (or element subtree like table, dragging container ...).
 	 * @param {HTMLElement|String} [el] HTML node or CSS selector to enable / disable. Parameter defines element reference or CSS selector of DIV elements to enable / disable.
 	 * @example
 	 * // enable element with id="id123" (element id should be a string according to DOM docs)
@@ -3240,7 +3239,7 @@ REDIPS.drag = (function () {
 	 * Method tests TD if is empty or removes elements from table cell.
 	 * Cell is considered as empty if does not contain any child nodes or if cell has only one text node.
 	 * In other words, if cell contains only text then it will be treated as empty cell.
-	 * @param {HTMLElement} td Table cell to test or from which all the elements will be deleted.
+	 * @param {HTMLElement} tdElement Table cell to test or from which all the elements will be deleted.
 	 * @param {String} [mode] If mode is set to "test" then method will only test TD and return true or false.
 	 * @example
 	 * // set REDIPS.drag reference
