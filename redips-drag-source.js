@@ -744,12 +744,7 @@ REDIPS.drag = (function () {
 			last_idx = tableMini.rows.length - 1;
 			// if row mode is "animated" then definition of last row in table is simple
 			if (row_mode === 'animated') {
-				if (last_idx === 0) {
-					emptyRow = true;
-				}
-				else {
-					emptyRow = false;
-				}
+				emptyRow = last_idx === 0;
 			}
 			// else set initially emptyRow to true (it can be set to false in lower loop) 
 			else {
@@ -1905,12 +1900,7 @@ REDIPS.drag = (function () {
 				cell_current = tables[table].rows[row].cells[cell];
 				// if current cell contain nested table(s) then set currentCell.containTable property
 				// needed in handlerOnMouseMove() - see around line 1070
-				if (cell_current.childNodes.length > 0 && cell_current.getElementsByTagName('table').length > 0) {
-					currentCell.containTable = true;
-				}
-				else {
-					currentCell.containTable = false;
-				}
+				currentCell.containTable = (cell_current.childNodes.length > 0 && cell_current.getElementsByTagName('table').length > 0);
 				// if current cell isn't trash cell, then search for marks in class name
 				if (cell_current.className.indexOf(REDIPS.drag.trash.className) === -1) {
 					// search for 'only' class name
@@ -2684,12 +2674,7 @@ REDIPS.drag = (function () {
 		// none of form elements
 		default:
 			// if element has "nodrag" class name then dragging will be skipped 
-			if (regexNodrag.test(classes)) {
-				flag = true;
-			}
-			else {
-				flag = false;
-			}
+			flag = regexNodrag.test(classes);
 		}
 		// return true/false flag
 		return flag;
@@ -2818,12 +2803,7 @@ REDIPS.drag = (function () {
 					// get DIV container offset with or without "page scroll" and excluded scroll position of the content
 					cb = boxOffset(div[i], position, false);
 					// search for noautoscroll option
-					if (regexNoAutoscroll.test(div[i].className)) {
-						autoscroll = false;
-					}
-					else {
-						autoscroll = true;
-					}
+					autoscroll = !regexNoAutoscroll.test(div[i].className);
 					// prepare scrollable container areas
 					scrollData.container[j] = {
 						div : div[i],					// reference to the scrollable container
@@ -3273,12 +3253,8 @@ REDIPS.drag = (function () {
 				flag = undefined;
 			}
 			// cell without child nodes or if cell has only one node and that is text node then cell is empty
-			else if (tdElement.childNodes.length === 0 || (tdElement.childNodes.length === 1 && tdElement.firstChild.nodeType === 3)) {
-				flag = true;
-			}
-			// otherwise, cell contain some elements
 			else {
-				flag = false;
+				flag = (tdElement.childNodes.length === 0 || (tdElement.childNodes.length === 1 && tdElement.firstChild.nodeType === 3));
 			}
 			// return empty flag state
 			return flag;
