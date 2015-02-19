@@ -506,7 +506,7 @@ REDIPS.drag = (function () {
 		// set reference to the clicked object
 		REDIPS.drag.obj = obj = this;
 		// set true or false if clicked element contains "clone" class name (needed for clone element and clone table row)
-		cloneClass = obj.className.indexOf('clone') > -1 ? true : false;
+		cloneClass = obj.className.indexOf('clone') > -1;
 		// if tableSort is set to true (this is default) then set current table group in "tables" array to the array top
 		// tableTop() should go before definition of "mode" property
 		if (REDIPS.drag.tableSort) {
@@ -1914,7 +1914,7 @@ REDIPS.drag = (function () {
 				// if current cell isn't trash cell, then search for marks in class name
 				if (cell_current.className.indexOf(REDIPS.drag.trash.className) === -1) {
 					// search for 'only' class name
-					only_found = cell_current.className.indexOf(REDIPS.drag.only.cname) > -1 ? true : false;
+					only_found = cell_current.className.indexOf(REDIPS.drag.only.cname) > -1;
 					// if current cell is marked with 'only' class name
 					if (only_found === true) {
 						// marked cell "only" found, test for defined pairs (DIV id -> class name)
@@ -1930,7 +1930,7 @@ REDIPS.drag = (function () {
 					}
 					else {
 						// search for 'mark' class name
-						mark_found = cell_current.className.indexOf(REDIPS.drag.mark.cname) > -1 ? true : false;
+						mark_found = cell_current.className.indexOf(REDIPS.drag.mark.cname) > -1;
 						// if current cell is marked and access type is 'deny' or current cell isn't marked and access type is 'allow'
 						// then return previous location
 						if ((mark_found === true && REDIPS.drag.mark.action === 'deny') || (mark_found === false && REDIPS.drag.mark.action === 'allow')) {
@@ -1943,7 +1943,7 @@ REDIPS.drag = (function () {
 					}
 				}
 				// test if current cell is defined as single
-				single_cell = cell_current.className.indexOf('single') > -1 ? true : false;
+				single_cell = cell_current.className.indexOf('single') > -1;
 				// if drag mode is "cell"
 				if (mode === 'cell') {
 					// if dropMode == single or current cell is single and current cell contains nodes then test if cell is occupied
