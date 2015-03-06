@@ -1031,6 +1031,8 @@ REDIPS.drag = (function () {
 						cld[i][j].options[k].selected = src[i][j].options[k].selected;
 					}
 					break;
+                default: //do nothing
+                    break;
 				} // end switch
 			} // end for j
 		} // end for i
