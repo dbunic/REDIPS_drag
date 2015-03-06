@@ -235,8 +235,7 @@ REDIPS.drag = (function () {
 	 */
 	init = function (dc) {
 		// define local variables
-		var self = this,		// assign reference to current object to "self"
-			i,					// used in local for loops
+		var i,					// used in local for loops
 			imgs,				// collect images inside div=drag
 			redipsClone;		// reference to the DIV element needed for cloned elements 
 		// if drag container is undefined or input parameter is not a string, then set reference to DIV element with default id="drag"
@@ -317,7 +316,6 @@ REDIPS.drag = (function () {
 	 */
 	initTables = function (selector) {
 		var	i, j, k,			// loop variables
-			tblSelector,		// table selectors
 			element,			// used in searhing parent nodes of found tables below div id="drag"
 			level,				// (integer) 0 - ground table, 1 - nested table, 2 - nested nested table, 3 - nested nested nested table ...
 			groupIdx,			// tables group index (ground table and its nested tables will have the same group)
@@ -644,7 +642,6 @@ REDIPS.drag = (function () {
 	tableTop = function (obj) {
 		var	e,		// element
 			i,		// loop variable
-			tmp,	// temporary storage (needed for exchanging array members)
 			group;	// tables group
 		// find table for clicked DIV element
 		e = findParent('TABLE', obj);
@@ -2864,7 +2861,7 @@ REDIPS.drag = (function () {
 	 * @name REDIPS.drag#deleteObject
 	 */
 	deleteObject = function (el) {
-		var div, i;
+		var div;
 		// if "el" is DIV reference then remove DIV element
 		if (typeof(el) === 'object' && el.nodeName === 'DIV') {
 			el.parentNode.removeChild(el);
@@ -3071,13 +3068,11 @@ REDIPS.drag = (function () {
 	 */
 	saveContent = function (tbl, type) {
 		var query = '',						// define query parameter
-			tbl_start,						// table loop starts from tbl_start parameter
-			tbl_end,						// table loop ends on tbl_end parameter
 			tbl_rows,						// number of table rows
 			cells,							// number of cells in the current row
 			tbl_cell,						// reference to the table cell
 			cn,								// reference to the child node
-			id, r, c, d,					// variables used in for loops
+			r, c, d,					    // variables used in for loops
 			JSONobj = [],					// prepare JSON object
 			pname = REDIPS.drag.saveParamName;	// set parameter name (default is 'p')
 		// if input parameter is string, then set reference to the table
@@ -3564,14 +3559,14 @@ REDIPS.drag = (function () {
 	 * @memberOf REDIPS.drag#
 	 */
 	maxCols = function (table) {
+        if (typeof(table) === 'string') {
+            table = document.getElementById(table);
+        }        
 		var	tr = table.rows,	// define number of rows in current table
 			span,				// sum of colSpan values
 			max = 0,			// maximum number of columns
 			i, j;				// loop variable
 		// if input parameter is string then overwrite it with table reference
-		if (typeof(table) === 'string') {
-			table = document.getElementById(table);
-		}
 		// open loop for each TR within table
 		for (i = 0; i < tr.length; i++) {
 			// reset span value
@@ -3673,8 +3668,7 @@ REDIPS.drag = (function () {
 			x2, y2,	w2, h2,			// coordinates and width/height of target cell
 			row, col,				// row and cell indexes
 			dx, dy,					// delta x and delta y
-			pos, i,					// local variables needed for calculation coordinates and settings the first point
-			target;
+			pos, i;					// local variables needed for calculation coordinates and settings the first point
 		// set callback function - it will be called after animation is finished
 		p.callback = ip.callback;
 		// set overwrite parameter
