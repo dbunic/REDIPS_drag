@@ -200,7 +200,7 @@ shuffle = function () {
 /**
  * Function returns "id" of element in opposite table.
  * e.g. d2_1 -> d2_2 or d4_2 -> d4_1
- * @param {HTMLElement} DIV element (in row dragging context "el" is rowhandler of source row) 
+ * @param {HTMLElement} DIV element (in row dragging context "el" is redips-rowhandler of source row) 
  * @return {String} Id of element in opposite table. 
  */
 getId = function (el) {

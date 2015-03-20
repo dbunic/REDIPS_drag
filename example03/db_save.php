@@ -1,6 +1,6 @@
 <?php
 // include config with database definition
-include('config.php');
+include('config_mysqli.php');
 
 // start transaction
 sqlQuery('start transaction');

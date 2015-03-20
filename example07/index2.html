@@ -11,9 +11,9 @@
 		<title>Example 7: E F</title>
 	</head>
 	<body>
-		<div id="main_container">
+		<div id="main-container">
 			<!-- tables inside this DIV could have draggable content -->
-			<div id="drag">
+			<div id="redips-drag">
 	
 				<!-- left container -->
 				<div id="left">
@@ -23,9 +23,9 @@
 						</colgroup>
 						<tbody>
 							<!-- clone 2 elements + last element -->
-							<tr><td class="dark"><div id="e" class="drag orange clone">E</div></td></tr>
-							<tr><td class="dark"><div id="f" class="drag green clone">F</div></td></tr>
-							<tr><td class="trash">Trash</td></tr>
+							<tr><td class="dark"><div id="e" class="redips-drag redips-clone orange">E</div></td></tr>
+							<tr><td class="dark"><div id="f" class="redips-drag redips-clone green">F</div></td></tr>
+							<tr><td class="redips-trash">Trash</td></tr>
 						</tbody>
 					</table>
 				</div><!-- left container -->
@@ -41,27 +41,27 @@
 						</colgroup>
 						<tbody>
 							<!--
-								table cells marked with class name "mark" as special
+								table cells marked with class name "redips-mark" as special
 								DIV element cannot be placed to this cells except if there is exception
 								see myhandler_cloned how to make exception for cloned "e" elements
 							-->
 							<tr>
-								<td class="mark"></td>
-								<td class="mark"></td>
-								<td class="mark"></td>
-								<td class="upper_right mark"></td>
+								<td class="redips-mark"></td>
+								<td class="redips-mark"></td>
+								<td class="redips-mark"></td>
+								<td class="upper-right redips-mark"></td>
 							</tr>
 							<tr>
-								<td class="mark"></td>
-								<td class="mark"></td>
-								<td class="mark"></td>
-								<th class="mark"></th>
+								<td class="redips-mark"></td>
+								<td class="redips-mark"></td>
+								<td class="redips-mark"></td>
+								<th class="redips-mark"></th>
 							</tr>
 							<tr>
-								<td class="mark"></td>
-								<td class="mark"></td>
-								<td class="mark"></td>
-								<th class="mark"></th>
+								<td class="redips-mark"></td>
+								<td class="redips-mark"></td>
+								<td class="redips-mark"></td>
+								<th class="redips-mark"></th>
 							</tr>
 							<tr>
 								<td class="last"></td>
@@ -70,7 +70,7 @@
 								<th class="last"></th>
 							</tr>
 							<tr>
-								<td class="lower_left last"></td>
+								<td class="lower-left last"></td>
 								<th class="last"></th>
 								<th class="last"></th>
 								<th class="last"></th>

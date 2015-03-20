@@ -30,7 +30,7 @@ redips.init = function () {
 	// create XMLHttp request object
 	redips.request = redips.initXMLHttpClient();
 	// set reference to the ul
-	redips.ol = document.getElementById('drop_list');
+	redips.ol = document.getElementById('drop-list');
 	// REDIPS.drag initialization
 	rd.init();
 	// after element is dropped to the trash cell (append it to the list below table)
@@ -205,7 +205,7 @@ redips.deleteItem = function (e) {
 // method displays or hides "Save" button 
 redips.button = function () {
 	// set reference to the "Save" button
-	var button = document.getElementById('save_button');
+	var button = document.getElementById('save-button');
 	// if OL element contains LI (one or more)
 	if (redips.ol.children.length > 0) {
 		button.style.display = 'block';

@@ -12,7 +12,7 @@ body{
 }
 
 /* drag container*/
-#drag{
+#redips-drag {
 	/* make drag div visible */
 	/* border: 2px solid lime; */
 	
@@ -25,7 +25,7 @@ body{
 }
 
 /* drag objects (DIV inside table cells) */
-.drag{
+.redips-drag {
 	cursor: move;
 	margin: auto;
 	z-index: 10;
@@ -45,14 +45,14 @@ body{
 }
 
 /* tables */
-div#drag table{
+div#redips-drag table {
 	background-color: #eee;
 	border-collapse: collapse;
 	margin: auto;
 }
 
 /* table cells */
-div#drag td{
+div#redips-drag td {
 	height: 32px;
 	border: 1px solid white;
 	text-align: center;
@@ -76,22 +76,22 @@ div#drag td{
 }
 
 /* green cell */
-.green_cell{
+.green_cell {
 	background-color: #AFD0A7;
 }
 
 /* orange cell */
-.orange_cell{
+.orange_cell {
 	background-color: #DDC5B5;
 }
 
 /* message line */
-#message{
+#message {
 	color: white;
 	background-color: #aaa
 }
 
 /* left column and corners in main table */
-.dark{
+.dark {
 	background-color: #e0e0e0;
 }

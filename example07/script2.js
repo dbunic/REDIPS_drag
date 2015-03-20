@@ -22,7 +22,7 @@ redips.init = function () {
 	rd.event.cloned = function () {
 		// set id of cloned element
 		var clonedId = rd.obj.id;
-		// if id of cloned element begins with "e" then make exception (allow DIV element to access cells with class name "mark")
+		// if id of cloned element begins with "e" then make exception (allow DIV element to access cells with class name "redips-mark")
 		if (clonedId.substr(0, 1) === 'e') {   
 			rd.mark.exception[clonedId] = 'mark';
 		}

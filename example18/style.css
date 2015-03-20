@@ -12,7 +12,7 @@ body {
 }
 
 /* make drag containers visible */
-#drag,
+#redips-drag,
 #buttons {
 	border: 2px dashed LightBlue;
 	width: 580px;
@@ -57,7 +57,7 @@ th {
 }
 
 /* drag object (DIV inside table cell) */
-.drag {
+.redips-drag {
 	margin: auto;
 	margin-bottom: 1px;
 	margin-top: 1px;

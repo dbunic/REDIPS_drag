@@ -1,5 +1,19 @@
 Changes for REDIPS.drag library
 
+5.1.0 (2015-03-06)
+- code cleaning - thanks to Naresh Jain
+- drag class name and container id renamed to redips-drag
+- mark class name renamed to redips-mark
+- clone class name renamed to redips-clone
+- only class name renamed to redips-only
+- single class name renamed to redips-single
+- trash class name renamed to redips-trash
+- rowhandler class name renamed to redips-rowhandler
+- row class name renamed to redips-row
+- nolayout class name renamed to redips-nolayout
+- noautoscroll class name renamed to redips-noautoscroll
+- nodrag class name renamed to redips-nodrag
+
 5.0.9 (2014-08-29)
 - fixed bug in findParent() method (problem with skip and search nodes)
 
@@ -486,7 +500,7 @@ Changes for REDIPS.drag library
 
 2.2.0
 - added property "only" to enable defined DIV elements for marked table cell with class name 'only'
-- properties "mark_cname", "marked_cell" and "marked_exception" replaced with object "mark" 
+- properties "mark_cname", "marked_cell" and "marked_exception" replaced with object "redips-mark" 
 
 2.1.1
 - enabled textarea to be editable inside a dragable div

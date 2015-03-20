@@ -1,6 +1,6 @@
 <?php
 // include config with database definition
-include('../config.php');
+include('../config_mysqli.php');
 
 // input parameter is element to delete (suppress errors by adding a @ sign) 
 $p = @$_REQUEST['p'];

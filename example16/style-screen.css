@@ -6,20 +6,20 @@ May, 2011.
 
 */
 
-body{
+body {
 	font-family: arial;
-	margin: 0px; /* for IE6 / IE7 */
+	margin: 0px; /* for IE */
 }
 
 /* page title */
-.title{
+.title {
 	margin: auto;
 	display: table;
 	text-align: center;
 }
 
 /* drag objects (DIV inside table cells) */
-.drag{
+.redips-drag {
 	cursor: move;
 	margin: auto;
 	z-index: 10;
@@ -39,7 +39,7 @@ body{
 
 
 /* drag container*/
-#drag{
+#redips-drag {
 	margin: auto;
 	width: 870px;
 	display: table;
@@ -56,7 +56,7 @@ body{
 				width: 260px;
 			}
 		/* container for the right table */
-		#right{
+		#right {
 			/* align div to the right */
 			float: right;
 			background-color: #eee;
@@ -64,12 +64,12 @@ body{
 
 
 /* tables general */
-div#drag table{
+div#redips-drag table {
 	background-color: #eee;
 	border-collapse: collapse;
 }
 	/* table cells */
-	div#drag td{
+	div#redips-drag td {
 		height: 22px;
 		border: 1px solid white;
 		/* needed for FF3/FF4 because highlighting left table cell was working strange */
@@ -88,7 +88,7 @@ div#drag table{
 	background-color: #808EA3;
 	width: 300px;
 }
-	#right table td{
+	#right table td {
 		background-color: #808EA3;
 		height: 50px;
 	}
@@ -99,7 +99,7 @@ div#drag table{
 
 
 /* hover div (initially this DIV is hidden on the page top) */
-#hover_div {
+#hover-div {
 	width: 240px;
 	z-index: 20;
 	border: 2px solid #cfcf3d;

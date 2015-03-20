@@ -12,18 +12,18 @@ body {
 }
 
 /* drag container*/
-#drag {
+#redips-drag {
 	border: 2px dashed LightBlue;
 	width: 330px;
 	margin: auto;
 }
 		/* left container */
-		#drag #left {
+		#redips-drag #left {
 			float: left;
 			width: 110px;
 		}
 		/* right container */
-		#drag #right {
+		#redips-drag #right {
 		  	display: table;
 		    table-layout: auto;
 			/* align div to the right */
@@ -33,7 +33,7 @@ body {
 
 
 /* DIV object */
-.drag {
+.redips-drag {
 	margin: auto;
 	text-align: center;
 	width: 77px;
@@ -48,13 +48,13 @@ body {
 }
 
 /* tables */
-div#drag table {
+div#redips-drag table {
 	background-color: #eee;
 	border-collapse: collapse;
 	margin: 5px;
 }
 	/* table cells */
-	div#drag td {
+	div#redips-drag td {
 		border: 1px solid white;
 		text-align: center;
 		font-size: 10pt;
@@ -88,12 +88,12 @@ div#drag table {
 }
 
 /* single content cells (with clone objects on the left) */
-.single {
+.redips-single {
 	background-color: #e0e0e0;
 }
 
 /* trash cell */
-.trash {
+.redips-trash {
 	color: white;
 	background-color: SteelBlue;
 	height: 26px;

@@ -16,19 +16,19 @@ body {
 }
 
 /* drag container */
-#drag {
+#redips-drag {
 	margin: auto;
 	width: 530px;
 }
 
 /* set border for images inside DRAG region - exclude image margin inheritance */
 /* my WordPress theme had some funny margin settings */
-#drag img {
+#redips-drag img {
 	margin: 1px;
 }
 
 /* drag objects (DIV inside table cells) */
-.drag {
+.redips-drag {
 	cursor: move;
 	margin: auto;
 	margin-bottom: 1px;
@@ -59,25 +59,25 @@ body {
 	border: 2px solid #FF8A58;
 }
 /* allow / deny access to cells marked with 'mark' class name */
-.mark {
+.redips-mark {
 	color: white;
 	background-color: #9B9EA2;
 }
 /* trash cell */
-.trash {
+.redips-trash {
 	color: white;
 	background-color: #2D4B7A;
 }
 
 /* tables */
-div#drag table {
+div#redips-drag table {
 	background-color: #e0e0e0;
 	border-collapse: collapse;
 }
 
 
 /* input elements in dragging container */
-div#drag input {
+div#redips-drag input {
 	cursor: auto;
 }
 	/* height for input text in DIV element */
@@ -90,7 +90,7 @@ div#drag input {
 	}
 
 /* table cells */
-div#drag td {
+div#redips-drag td {
 	height: 32px;
 	border: 1px solid white;
 	text-align: center;

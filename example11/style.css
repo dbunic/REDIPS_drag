@@ -36,8 +36,7 @@ body {
 
 
 /* drag objects (DIV inside table cells) */
-.drag {
-	border: 1px solid lime;
+.redips-drag {
 	cursor: move;
  	margin: auto;
 	z-index: 10;
@@ -50,8 +49,8 @@ body {
 	width: 195px;
 	height: 120px;
 }
-	/* div inside drag div */
-	.nodrag {
+	/* set each TD in mini-table as nodrag */
+	.redips-nodrag {
 		cursor: default;
 		font-size: 15pt;  /* needed for cloned object */
 		background-color: white;
@@ -72,12 +71,12 @@ table#mini {
 
 
 /* tables */
-div#drag table {
+div#redips-drag table {
 	background-color: #eee;
 	border-collapse: collapse;
 }
 		/* timetable */
-		div#drag #table2 {
+		div#redips-drag #table2 {
 			/* align table to the right */
 			margin-left: auto;
 		}
@@ -143,7 +142,7 @@ div#drag table {
 }
 
 /* trash cell */
-.trash {
+.redips-trash {
 	color: white;
 	background-color: CornflowerBlue;
 	text-align: center;

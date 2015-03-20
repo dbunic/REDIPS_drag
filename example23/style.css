@@ -12,7 +12,7 @@ body {
 }
 
 /* drag objects (DIV inside table cells) */
-.drag {
+.redips-drag {
 	cursor: move;
 	margin: auto;
 	background-color: white;
@@ -30,13 +30,13 @@ body {
 }
 
 /* drag container*/
-#drag {
+#redips-drag {
 	margin: auto;
 	width: 800px;
 	display: table;
 }
 		/* container for the left table */
-		#left_container {
+		#left-container {
 			width: 260px;
 			float: left;
 			margin-right: 20px;
@@ -54,12 +54,12 @@ body {
 		}
 
 /* tables general */
-div#drag table {
+div#redips-drag table {
 	background-color: #eee;
 	border-collapse: collapse;
 }
 	/* table cells */
-	div#drag td {
+	div#redips-drag td {
 		height: 40px;
 		border: 1px solid white;
 		/* needed for FF3/FF4 because highlighting left table cell was working strange */
@@ -84,7 +84,7 @@ div#drag table {
 	}
 
 /* OL element beneath right table */
-#drop_list {
+#drop-list {
 	padding-top: 13px;
 }
 

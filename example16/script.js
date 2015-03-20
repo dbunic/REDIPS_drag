@@ -25,7 +25,7 @@ redips.init = function () {
 	// set script configuration
 	redips.configuration();
 	// set reference to the hoverDiv
-	redips.hoverDiv = document.getElementById('hover_div');
+	redips.hoverDiv = document.getElementById('hover-div');
 	// initially hide all tables in right container except first table
 	redips.hideTables();
 	// set class="single" to the table cells question table (left table)
@@ -222,7 +222,7 @@ redips.setEvents = function () {
 	var regex_drag = /\bdrag\b/i,	// regular expression to search "drag" class name
 		div, i;
 	// collect all div elements inside DIV id="drag"
-	div = document.getElementById('drag').getElementsByTagName('div');
+	div = document.getElementById('redips-drag').getElementsByTagName('div');
 	for (i = 0; i < div.length; i++) {
 		// only DIV elements that contains "drag" in class name
 		if (regex_drag.test(div[i].className)) {
@@ -258,7 +258,7 @@ redips.singleContent = function () {
 	// set class='single' to all table cells
 	// to prevent 'switching' content from left and right tables
 	for (i = 0; i < cell.length; i++) {
-		cell[i].className = 'single';
+		cell[i].className = 'redips-single';
 	}
 };
 

@@ -6,26 +6,26 @@ Feb, 2010.
 
 */
 
-body{
+body {
 	font-family: arial;
 	margin: 0px; /* for IE6 / IE7 */
 }
 
 
 /* drag container */
-#main_container{
+#main_container {
 	margin: auto;
 	width: 470px;
 }
 		/* container for the left table */
-		#main_container #left{
+		#main_container #left {
 			width: 100px;
 			height: 110px;
 			float: left;
 			margin-right: 20px;
 		}
 		/* container for the right table */
-		#main_container #right{
+		#main_container #right {
 		  	display: table;
 		    table-layout: auto;
 			padding-left: auto;
@@ -36,7 +36,7 @@ body{
 
 
 /* drag objects (DIV inside table cells) */
-.drag{
+.redips-drag {
 	cursor: move;
 	margin: auto;
 	z-index: 10;
@@ -56,7 +56,7 @@ body{
 
 
 /* tables */
-div#drag table {
+div#redips-drag table {
 	background-color: #eee;
 	border-collapse: collapse;
 }
@@ -68,7 +68,7 @@ div#drag table {
 
 
 /* table cells */
-div#drag td,th{
+div#redips-drag td,th {
 	border-style: solid;
 	height: 50px;
 	text-align: center;
@@ -76,39 +76,39 @@ div#drag td,th{
 	padding: 2px;
 }
 		/* left table - td */
-		div#drag #table1 td{
+		div#redips-drag #table1 td {
 			border-width: 0px 0px 1px 0px;
 			border-color: white;
 		}
 		
 		/* right table - td */
-		div#drag #table2 td{
+		div#redips-drag #table2 td {
 			border-width: 0px 3px 3px 0px;
 			border-color: #DDC5B5;
 			font-weight: normal;
 		}
 
 		/* right table - th */
-		div#drag #table2 th{
+		div#redips-drag #table2 th {
 			border-width: 3px 0px 0px 3px;
 			border-color: #DDC5B5;
 			font-weight: normal;
 		}
 		
 		/* right table - upper right cell */
-		div#drag #table2 .upper_right{
+		div#redips-drag #table2 .upper_right {
 			border-width: 0px;
 		}
 
 		/* right table - lower left cell */
-		div#drag #table2 .lower_left{
+		div#redips-drag #table2 .lower_left {
 			border-width: 0px;
 		}
 
 
 
 /* last row and last column without border */
-.noborder{
+.noborder {
 	border-width: 0px;
 }
 
@@ -125,7 +125,7 @@ div#drag td,th{
 
 
 /* message line */
-#message{
+#message {
 	color: white;
 	background-color: #aaa;
 	text-align: center;
@@ -134,7 +134,7 @@ div#drag td,th{
 
 
 /* dark cells (first column and table header) */
-.dark{
+.dark {
 	color: #444;
 	background-color: #e0e0e0;
 }

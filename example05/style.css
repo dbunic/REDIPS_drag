@@ -6,19 +6,19 @@ May, 2010.
 
 */
 
-body{
+body {
 	font-family: arial;
 	margin: 0px;
 }
 
 
 /* main container */
-#main_container{
+#main_container {
 	margin: auto;
 	width: 700px;
 }
 	/* container for left and right div */
-	#drag{
+	#redips-drag {
 		/* make it visible */
 		border: 2px dashed navy;
 		width: 710px;
@@ -27,7 +27,7 @@ body{
 	}
 
 		/* container for the left table */
-		#main_container #left{
+		#main_container #left {
 			width: 328px;
 			height: 300px;
 			float: left;
@@ -37,7 +37,7 @@ body{
 			background-color: #eee;
 		}
 		/* container for the right table */
-		#main_container #right{
+		#main_container #right {
 			width: 328px;
 			height: 300px;
 			/* align div to the right */
@@ -50,7 +50,7 @@ body{
 		}
 
 		/* make left and right DIV container scrollable */
-		#main_container #left,#right{
+		#main_container #left,#right {
 			/*  http://www.howtocreate.co.uk/tutorials/javascript/browserspecific (Element position with scrolling offsets)
 			make sure that every element with an overflow of anything other than "visible" also has a position
 			style set to something other than the default "static". This way, they will all appear in the offsetParent
@@ -62,7 +62,7 @@ body{
 
 
 /* drag objects (DIV inside table cells) */
-.drag{
+.redips-drag {
 	cursor: move;
 	margin: auto;
 	z-index: 10;
@@ -83,14 +83,14 @@ body{
 
 
 /* tables */
-div#drag table {
+div#redips-drag table {
 	background-color: #eee;
 	border-collapse: collapse;
 	/* center tables */
 	margin: 0px auto;
 }
 		/* timetable */
-		div#drag #table2 {
+		div#redips-drag #table2 {
 			/* align table to the right */
 			margin-left: auto;
 			width: 520px;
@@ -98,7 +98,7 @@ div#drag table {
 
 
 /* table cells */
-div#drag table td,th{
+div#redips-drag table td,th {
 	border-style: double;
 	height: 50px;
 	text-align: center;
@@ -106,33 +106,33 @@ div#drag table td,th{
 }
 
 		/* td */
-		div#drag table td{
+		div#redips-drag table td {
 			border-width: 0px 3px 3px 0px;
 			border-color: #DDC5B5;
 			font-weight: normal;
 		}
 
 		/* th */
-		div#drag table th{
+		div#redips-drag table th {
 			border-width: 3px 0px 0px 3px;
 			border-color: #DDC5B5;
 			font-weight: normal;
 		}
 		
 		/* upper right cell */
-		div#drag table .upper_right{
+		div#redips-drag table .upper_right {
 			border-width: 0px;
 		}
 
 		/* lower left cell */
-		div#drag table .lower_left{
+		div#redips-drag table .lower_left {
 			border-width: 0px;
 		}
 
 
 
 /* last row and last column without border */
-.noborder{
+.noborder {
 	border-width: 0px;
 }
 
@@ -147,7 +147,7 @@ div#drag table td,th{
 }
 
 /* append here cloned object before placing to the target table cell */
-#redips_clone{
+#redips_clone {
 	/* make redips_clone div visible */
 	/* border: 1px solid red; */
 	height: 10px;
@@ -155,7 +155,7 @@ div#drag table td,th{
 }
 
 /* message line */
-#message{
+#message {
 	color: white;
 	background-color: #aaa;
 	text-align: center;
@@ -164,7 +164,7 @@ div#drag table td,th{
 }
 
 /* dark cells (first column and table header) */
-.dark{
+.dark {
 	color: #444;
 	background-color: #e0e0e0;
 }

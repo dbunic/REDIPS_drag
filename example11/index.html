@@ -6,14 +6,14 @@
 		<meta name="viewport" content="width=device-width, user-scalable=no"/><!-- "position: fixed" fix for Android 2.2+ -->
 		<link rel="stylesheet" href="style.css" type="text/css" media="screen"/>
 		<script type="text/javascript" src="../header.js"></script>
-		<script type="text/javascript" src="../redips-drag-min.js"></script>
+		<script type="text/javascript" src="../redips-drag-source.js"></script>
 		<script type="text/javascript" src="script.js"></script>
 		<title>Example 11: Drag handle on titlebar</title>
 	</head>
 	<body>
 		<div id="main_container">
-			<!-- tables inside this DIV could have draggable content -->
-			<div id="drag">
+			<!-- tables inside this DIV could have drag-able content -->
+			<div id="redips-drag">
 	
 				<!-- left container -->
 				<div id="left">
@@ -24,29 +24,45 @@
 						<tbody>
 							<tr>
 								<td class="dark">
-									<div class="drag clone">
-										<div class="nodrag">
-											<table id="mini" class="mini">
-												<colgroup>
-													<col width="39"/>
-													<col width="39"/>
-													<col width="39"/>
-													<col width="39"/>
-													<col width="39"/>
-												</colgroup>
-												<tr><td></td><td></td><td></td><td></td><td></td></tr>
-												<tr><td></td><td></td><td></td><td></td><td></td></tr>
-												<tr><td></td><td></td><td></td><td></td><td></td></tr>
-											</table>
-										</div>
+									<div class="redips-drag redips-clone">
+										<table id="mini" class="mini">
+											<colgroup>
+												<col width="39"/>
+												<col width="39"/>
+												<col width="39"/>
+												<col width="39"/>
+												<col width="39"/>
+											</colgroup>
+											<tr>
+												<td class="redips-nodrag"></td>
+												<td class="redips-nodrag"></td>
+												<td class="redips-nodrag"></td>
+												<td class="redips-nodrag"></td>
+												<td class="redips-nodrag"></td>
+											</tr>
+											<tr>
+												<td class="redips-nodrag"></td>
+												<td class="redips-nodrag"></td>
+												<td class="redips-nodrag"></td>
+												<td class="redips-nodrag"></td>
+												<td class="redips-nodrag"></td>
+											</tr>
+											<tr>
+												<td class="redips-nodrag"></td>
+												<td class="redips-nodrag"></td>
+												<td class="redips-nodrag"></td>
+												<td class="redips-nodrag"></td>
+												<td class="redips-nodrag"></td>
+											</tr>
+										</table>
 									</div>
 								</td>
 							</tr>
 							<tr>
-								<td class="dark"><div class="drag clone circle"></div></td>
+								<td class="redips-dark"><div class="redips-drag redips-clone circle"></div></td>
 							</tr>							
 							<tr>
-								<td class="trash">Trash</td>
+								<td class="redips-trash">Trash</td>
 							</tr>
 						</tbody>
 					</table>

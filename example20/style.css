@@ -12,7 +12,7 @@ body {
 }
 
 /* make drag container visible */
-#drag {
+#redips-drag {
 	border: 2px dashed LightBlue;
 	width: 580px;
 	padding: 10px;
@@ -28,12 +28,12 @@ body {
 }
 
 /* set table row height */
-div#drag table tr {
+div#redips-drag table tr {
 	height: 32px;
 }
 
 /* table cells */
-div#drag td {
+div#redips-drag td {
 	/* IE8 BUG - applying alpha filter on TD will overwrite TD border - thank you MicroSoft for tearing my hair :P */
 	/* I also tried with outline and that was fine, but Opera11 place high zIndex to outline grid and that looks wierd */
 	/* so, I paint TR to white with JavaScript and applying aplha filter to table content (DIV elements) */
@@ -41,12 +41,12 @@ div#drag td {
 }
 
 /* table titles */
-div#drag th {
+div#redips-drag th {
 	font-size: 14pt;
 }
 
 /* drag object (DIV inside table cell) */
-.drag {
+.redips-drag {
 	margin: auto;
 	margin-bottom: 1px;
 	margin-top: 1px;
@@ -74,7 +74,7 @@ div#drag th {
 }
 
 /* DIV row handlers (blue left column) */
-.row {
+.redips-row {
 	width: 20px;
 	margin: 2px;
 	border-color: SteelBlue;
@@ -85,12 +85,12 @@ div#drag th {
 }
 
 /* row handler TD background color */
-.rowhandler {
+.redips-rowhandler {
 	background-color: #76ACDA;
 }
 
 /* marked cells (forbidden access for header and message line) */
-.mark {
+.redips-mark {
 	color: white;
 	background-color: #aaa;
 	text-align: center;
@@ -112,7 +112,7 @@ div#drag th {
 }
 
 /* trash cell */
-.trash {
+.redips-trash {
 	color: white;
 	background-color: steelBlue;
 	text-align: center;

@@ -14,9 +14,9 @@
 	<body>
 		
 		<!-- tables inside this DIV could have draggable content -->
-		<div id="drag">
+		<div id="redips-drag">
 			<!-- left container -->
-			<div id="left_container">
+			<div id="left-container">
 				<!-- this block will become sticky (with a little JavaScript help)-->
 				<div id="left">
 					<table id="table1">

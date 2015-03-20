@@ -20,7 +20,7 @@ redips.configuration = function () {
 	redips.cDetails = 'cDetails';		// component detail class name (it should be the same as is in CSS file)
 	redips.markedColor = '#A9C2EA';		// marked cells background color
 	// layout (HTML code) for component placed to the table editor 
-	redips.component =	'<table class="nolayout cHeader"><tr><td class="hLeft" onclick="redips.details(this)">+</td><td class="hTitle">|</td><td class="hRight" onclick="redips.divDelete(this)">x</td></tr></table>' +
+	redips.component =	'<table class="redips-nolayout cHeader"><tr><td class="hLeft" onclick="redips.details(this)">+</td><td class="hTitle">|</td><td class="hRight" onclick="redips.divDelete(this)">x</td></tr></table>' +
 						'<div class="' + redips.cDetails + '">|</div>';
 };
 
@@ -202,7 +202,7 @@ redips.save = function () {
 		// set current DIV element
 		div = divs[i];
 		// filter only components
-		if (div.className.indexOf('drag') > -1) {
+		if (div.className.indexOf('redips-drag') > -1) {
 			// initialize component object
 			component = {};
 			// component id (only first three characters because cloned element will have addition in id)

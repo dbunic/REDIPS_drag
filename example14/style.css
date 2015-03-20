@@ -6,13 +6,13 @@ Mar, 2011.
 
 */
 
-body{
+body {
 	font-family: arial;
-	margin: 0px; /* for IE6 / IE7 */
+	margin: 0px; /* for IE */
 }
 
 /* drag area */
-#drag{
+#redips-drag {
 	display: table;
 	width: 220px;
 	margin: auto;
@@ -20,7 +20,7 @@ body{
 
 
 /* drag objects (DIV elements inside table cells) */
-.drag{
+.redips-drag {
 	cursor: move;
 	margin: auto;
 	z-index: 10;
@@ -40,7 +40,7 @@ body{
 
 
 /* styles for left table */
-#table1{
+#table1 {
 	background-color: #eee;
 	border-collapse: collapse;
 	margin-top: 7px;

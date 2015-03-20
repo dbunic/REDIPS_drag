@@ -12,20 +12,20 @@ body{
 }
 
 /* make drag container visible */
-#drag{
+#redips-drag{
 	border: 2px dashed LightBlue;
 	display: table;
 }
 
 /* table */
-div#drag table {
+div#redips-drag table {
 	background-color: #eee;
 	border-collapse: collapse;
 	margin: 7px;	
 }
 
 /* table cells */
-div#drag td{
+div#redips-drag td{
 	border: 1px solid navy;
 	height: 50px;
 	text-align: center;
@@ -34,7 +34,7 @@ div#drag td{
 }
 
 /* drag object (DIV inside table cell) */
-.drag{
+.redips-drag {
 	margin: auto;
 	text-align: center;
 	width: 87px;

@@ -13,19 +13,19 @@ body{
 
 
 /* drag container */
-#main_container{
+#main_container {
 	margin: auto;
 	width: 730px;
 }
 		/* container for the left table */
-		#main_container #left{
+		#main_container #left {
 			width: 130px;
 			height: 320px;
 			float: left;
 			margin-right: 20px;
 		}
 		/* container for the main table and message line below */
-		#main_container #right{
+		#main_container #right {
 			width: 675px;
 			padding-left: auto;
 			padding-right: 0px;
@@ -35,7 +35,7 @@ body{
 
 
 /* drag objects (DIV inside table cells) */
-.drag{
+.redips-drag {
 	cursor: move;
 	margin: auto;
 	z-index: 10;
@@ -58,7 +58,7 @@ body{
 
 
 /* tables */
-div#drag table {
+div#redips-drag table {
 	background-color: #eee;
 	border-collapse: collapse;
 }
@@ -70,7 +70,7 @@ div#drag table {
 
 
 /* table cells */
-div#drag td{
+div#redips-drag td {
 	border-style: solid;
 	border-width: 1px;
 	border-color: white;
@@ -81,16 +81,16 @@ div#drag td{
 }
 		/* overwrite border settings for left tables */
 		/* set all borders to 0px except border-bottom */
-		div#drag #table1 td{
+		div#redips-drag #table1 td {
 			border-width: 0px 0px 1px 0px;
 		}
 			/* styles for clone DIV elements in left table */
-			div#drag #table1 div {
+			div#redips-drag #table1 div {
 				margin-left: 5px;
 				float: left;
 			}
 			/* define styles for buttons */
-			div#drag #table1 input {
+			div#redips-drag #table1 input {
 				float: right;
 				width: 15px;
 				height: 23px;
@@ -147,14 +147,14 @@ div#drag td{
 
 
 /* trash cell */
-.trash {
+.redips-trash {
 	color: white;
 	background-color: #6386BD;
 }
 
 
 /* message line */
-#message{
+#message {
 	color: white;
 	background-color: #aaa;
 	text-align: center;

@@ -50,7 +50,7 @@ startPositions = function () {
 	// define local varialbles
 	var divs, id, i, position;
 	// collect DIV elements from dragging area
-	divs = document.getElementById('drag').getElementsByTagName('div');
+	divs = document.getElementById('redips-drag').getElementsByTagName('div');
 	// open loop for each DIV element
 	for (i = 0; i < divs.length; i++) {
 		// set DIV element id

@@ -13,7 +13,7 @@ body {
 
 
 /* make drag container visible */
-#drag {
+#redips-drag {
 	border: 2px dashed LightBlue;
 	display: table;
 	margin: auto;
@@ -23,7 +23,7 @@ body {
 
 
 /* drag objects (DIV inside table cells) */
-.drag {
+.redips-drag {
 	border: 2px solid #367D94;
 	cursor: move;
 	margin: auto;
@@ -42,22 +42,22 @@ body {
 
 
 /* tables */
-div#drag table {
+div#redips-drag table {
 	background-color: #eee;
 	border-collapse: collapse;
 }
 		/* table1 (bottom table) */
-		div#drag #table1 {
+		div#redips-drag #table1 {
 			margin-bottom: 20px;
 		}
 		/* table2 (bottom table) */
-		div#drag #table2 {
+		div#redips-drag #table2 {
 			margin: auto;
 		}
 
 
 /* table cells */
-div#drag td,th {
+div#redips-drag td,th {
 	border-style: solid;
 	height: 50px;
 	text-align: center;
@@ -65,32 +65,32 @@ div#drag td,th {
 	padding: 2px;
 }
 		/* left table - td */
-		div#drag #table1 td{
+		div#redips-drag #table1 td{
 			border-width: 0px 2px 0px 0px;
 			border-color: white;
 		}
 		
 		/* right table - td */
-		div#drag #table2 td{
+		div#redips-drag #table2 td{
 			border-width: 0px 3px 3px 0px;
 			border-color: #DDC5B5;
 			font-weight: normal;
 		}
 
 		/* right table - th */
-		div#drag #table2 th{
+		div#redips-drag #table2 th{
 			border-width: 3px 0px 0px 3px;
 			border-color: #DDC5B5;
 			font-weight: normal;
 		}
 		
 		/* right table - upper right cell */
-		div#drag #table2 .upper_right{
+		div#redips-drag #table2 .upper-right{
 			border-width: 0px;
 		}
 
 		/* right table - lower left cell */
-		div#drag #table2 .lower_left{
+		div#redips-drag #table2 .lower-left{
 			border-width: 0px;
 		}
 

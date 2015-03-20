@@ -10,7 +10,7 @@ var redipsInit;
 // redips initialization
 redipsInit = function () {
 	var rd = REDIPS.drag,	// reference to the REDIPS.drag class
-		divDrag = document.getElementById('drag'); // reference to the drag region
+		divDrag = document.getElementById('redips-drag'); // reference to the drag region
 	// DIV container initialization
 	rd.init();
 	// this function (event handler) is called after element is dropped

@@ -12,36 +12,36 @@ body {
 }
 
 /* make drag container visible */
-#drag {
+#redips-drag {
 	border: 2px dashed LightBlue;
 	display: table;
 }
 
 /* tables */
-div#drag table {
+div#redips-drag table {
 	background-color: #f8f8f8;
 	border-collapse: collapse;
 	margin: 10px;	
 }
 
 	/* nested tables level 1 */
-	div#drag .nested_table1 {
+	div#redips-drag .nested_table1 {
 		background-color: #e0e0e0;
 		margin: 7px auto;
 	}
 	/* nested tables level 2 */
-	div#drag .nested_table2 {
+	div#redips-drag .nested_table2 {
 		background-color: #bbb;
 		margin: 7px auto;
 	}
 	/* nested tables level 3 */
-	div#drag .nested_table3 {
+	div#redips-drag .nested_table3 {
 		background-color: #888;
 		margin: 7px auto;
 	}
 
 /* table cells */
-div#drag td {
+div#redips-drag td {
 	border: 1px solid navy;
 	height: 40px;
 	text-align: center;
@@ -50,7 +50,7 @@ div#drag td {
 }
 
 /* drag object (DIV inside table cell) */
-.drag {
+.redips-drag {
 	margin: auto;
 	margin-bottom: 1px;
 	margin-top: 1px;

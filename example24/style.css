@@ -12,7 +12,7 @@ body {
 }
 
 /* drag object (DIV elements) */
-.drag {
+.redips-drag {
 	margin: 2px auto;
 	/* needed when details container is displayed to be wrapped nicely */
 	display: table;
@@ -31,7 +31,7 @@ body {
 }
 
 /* drag container*/
-#drag {
+#redips-drag {
 	margin: 20px auto;
 	background-color: #f6f6f6;
 	border: 2px dashed LightBlue;
@@ -59,7 +59,7 @@ body {
 
 
 /* both tables inside drag container */
-div#drag table {
+div#redips-drag table {
 	border-collapse: collapse;
 	border-spacing: 1px;
 }

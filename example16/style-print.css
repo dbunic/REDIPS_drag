@@ -11,12 +11,12 @@ body {
 }
 
 /* drag container*/
-#drag {
+#redips-drag {
 	width:100%;
 }
 
 /* drag objects (DIV inside table cells) */
-.drag {
+.redips-drag {
 	margin: auto;
 	border: 0px;
 }

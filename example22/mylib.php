@@ -54,7 +54,7 @@ function display_rows() {
 	$counter = 0;
 	// open loop
 	foreach ($person as $id => $name) {
-		$td .= "<td><div id=\"$id\" class=\"drag\">$name</div></td>";
+		$td .= "<td><div id=\"$id\" class=\"redips-drag\">$name</div></td>";
 		$counter++;
 		// if 3 td cells are concatenated then display whole row
 		if (($counter % 3) == 0) {

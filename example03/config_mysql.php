@@ -1,5 +1,7 @@
 <?php 
 
+// old mysql extension (it has been deprecated as of PHP 5.5.0 and will be removed in the future)
+
 // define database host (99% chance you won't need to change this value)
 $db_host = 'localhost';
 
@@ -59,7 +61,7 @@ function subjects() {
 	foreach ($subjects as $subject) {
 		$id   = $subject[0][0];
 		$name = $subject[0][1];
-		print "<tr><td class=\"dark\"><div id=\"$id\" class=\"drag clone $id\">$name</div><input id=\"b_$id\" class=\"$id\"type=\"button\" value=\"\" onclick=\"report('$id')\" title=\"Show only $name\"/></td></tr>\n";
+		print "<tr><td class=\"dark\"><div id=\"$id\" class=\"redips-drag redips-clone $id\">$name</div><input id=\"b_$id\" class=\"$id\"type=\"button\" value=\"\" onclick=\"report('$id')\" title=\"Show only $name\"/></td></tr>\n";
 	}
 }
 

@@ -34,7 +34,7 @@ redipsInit = function () {
 			targetRow = targetCell.parentNode,	// target row
 			i, objNew;							// local variables
 		// if checkbox is checked and original element is of clone type then clone spread subjects to the week
-		if (document.getElementById('week').checked === true && objOld.className.indexOf('clone') > -1) {
+		if (document.getElementById('week').checked === true && objOld.className.indexOf('redips-clone') > -1) {
 			// loop through table cells
 			for (i = 0; i < targetRow.cells.length; i++) {
 				// skip cell if cell has some content (first column is not empty because it contains label)

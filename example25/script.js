@@ -97,7 +97,7 @@ redips.init = function () {
 		// reference and DIV element is the same
 		redips.createOrangeBox(redips.obj, redips.obj);
 	};
-	// delete last orange box when overflow happen (target is TD where overflow occurres) but not when DIV is dropped to the last row
+	// delete last orange box when overflow happen (target is TD where overflow occurs) but not when DIV is dropped to the last row
 	rd.event.shiftOverflow = function (target) {
 		// if DIV is dropped to the last row from upper table and target cell is not empty then overflow will happen
 		// in this case relocateEnd will not be called because there isn't any element for shifting
@@ -208,7 +208,7 @@ redips.setMode = function (el) {
 // set operation - addition / multiplication
 redips.setOperation = function (el) {
 	// set local variables
-	var tables = document.getElementById('drag').getElementsByTagName('table'),
+	var tables = document.getElementById('redips-drag').getElementsByTagName('table'),
 		i;
 	// set operation (global) - needed in event.dropped
 	redips.operation = el.options[el.selectedIndex].value;
@@ -233,7 +233,7 @@ redips.setOperation = function (el) {
 // method removes all DIV elements from addition and multiplication table
 redips.clearAll = function () {
 		// collect all DIV elements from drag container
-	var div = document.getElementById('drag').getElementsByTagName('div'),
+	var div = document.getElementById('redips-drag').getElementsByTagName('div'),
 		el,
 		i;
 	// loop through all DIV elements (it should go backward because nodeList is alive)

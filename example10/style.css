@@ -6,13 +6,13 @@ May, 2011.
 
 */
 
-body{
+body {
 	font-family: arial;
-	margin: 0px; /* for IE6 / IE7 */
+	margin: 0px;
 }
 
 /* make drag container visible */
-#drag{
+#redips-drag {
 	border: 2px dashed LightBlue;
 	padding: 2px;
 	display: table;
@@ -20,13 +20,13 @@ body{
 	margin: auto;
 }
 	/* table */
-	div#drag table {
+	div#redips-drag table {
 		border-collapse: collapse;
 		background-color: #eee;
 	}
 	
 	/* table cells */
-	div#drag td{
+	div#redips-drag td {
 		border: 1px solid navy;
 		height: 50px;
 	}
@@ -62,7 +62,7 @@ body{
 	}
 
 /* drag object (DIV inside table cell) */
-.drag{
+.redips-drag {
 	margin: auto;
 	text-align: center;
 	width: 87px;

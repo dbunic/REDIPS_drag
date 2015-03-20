@@ -4,6 +4,8 @@ Darko Bunic
 http://www.redips.net/
 Feb, 2010.
 
+SQL script to create tables and initially insert subjects
+
 */
 
 /* create timetable */

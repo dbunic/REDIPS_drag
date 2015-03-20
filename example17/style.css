@@ -53,7 +53,7 @@ th {
 }
 
 /* drag object (DIV inside table cell) */
-.drag {
+.redips-drag {
 	margin: auto;
 	margin-bottom: 1px;
 	margin-top: 1px;
@@ -81,7 +81,7 @@ th {
 }
 
 /* DIV row handlers (blue left column) */
-.row {
+.redips-row {
 	width: 20px;
 	margin: 2px;
 	border: 2px solid LightBlue;
@@ -92,12 +92,12 @@ th {
 }
 
 /* row handler TD background color */
-.rowhandler {
+.redips-rowhandler {
 	background-color: #76ACDA;
 }
 
 /* marked cells (forbidden access for header and message line) */
-.mark {
+.redips-mark {
 	color: white;
 	background-color: #aaa;
 	text-align: center;

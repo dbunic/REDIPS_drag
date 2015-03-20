@@ -12,7 +12,7 @@ body {
 }
 
 /* make drag container visible */
-#drag {
+#redips-drag {
 	border: 2px dashed LightBlue;
 	width: 580px;
 	padding: 10px;
@@ -20,7 +20,7 @@ body {
 }
 
 /* set border-collapse */
-div#drag table {
+div#redips-drag table {
 /* 	border-collapse: collapse; */
 	border-collapse: separate;
 	border-spacing: 0px;
@@ -32,7 +32,7 @@ div#drag table {
 	}
 
 /* set table row height */
-div#drag table tr {
+div#redips-drag table tr {
 	height: 40px;
 }
 
@@ -47,17 +47,17 @@ div#drag table tr {
 	
 	wider border wins over narrower ones / double wins over solid, then dashed, dotted, ridge, outset, groove, inset
 */
-div#drag td {
+div#redips-drag td {
 	border: 2px groove white;
 }
 
 /* table titles */
-div#drag th {
+div#redips-drag th {
 	font-size: 14pt;
 }
 
 /* drag object (DIV inside table cell) */
-.drag {
+.redips-drag {
 	margin: auto;
 	margin-bottom: 1px;
 	margin-top: 1px;
@@ -85,7 +85,7 @@ div#drag th {
 }
 
 /* DIV row handlers (blue left column) */
-.row {
+.redips-row {
 	width: 20px;
 	margin: 2px;
 	border-color: SteelBlue;
@@ -96,12 +96,12 @@ div#drag th {
 }
 
 /* row handler TD background color */
-.rowhandler {
+.redips-rowhandler {
 	background-color: #76ACDA;
 }
 
 /* marked cells (forbidden access for header and message line) */
-.mark {
+.redips-mark {
 	color: white;
 	background-color: #aaa;
 	text-align: center;

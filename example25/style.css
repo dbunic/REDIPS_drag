@@ -12,20 +12,20 @@ body {
 }
 
 /* main container */
-#main_container{
+#main-container {
 	margin: auto;
 	width: 670px;
 }
 
 /* make drag container visible */
-#drag {
+#redips-drag {
 	border: 2px dashed LightBlue;
 	display: table;
 	float: left;
 }
 
 /* tables */
-div#drag table {
+div#redips-drag table {
 	border-collapse: collapse;
 	margin: 15px;
 	font-size: 20pt;
@@ -33,7 +33,7 @@ div#drag table {
 }
 
 /* table cells */
-div#drag td {
+div#redips-drag td {
 	border: 1px solid navy;
 	height: 50px;
 	padding: 2px;
@@ -56,7 +56,7 @@ div#drag td {
 }
 
 /* DIV elements */
-.drag {
+.redips-drag {
 	background-color: #CDE1F2;
 	border: 2px solid SteelBlue;
 }
@@ -79,7 +79,7 @@ div#drag td {
 }
 
 /* forbidden cells */
-.mark {
+.redips-mark {
 	background-color: #eee;
 }
 
@@ -100,7 +100,7 @@ div#drag td {
 }
 
 /* trash cell */
-.trash {
+.redips-trash {
 	color: white;
 	background-color: SteelBlue;
 	font-size: 15pt;

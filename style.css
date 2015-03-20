@@ -14,13 +14,13 @@ body {
 }
 
 /* drag container (contains two tables) */
-#drag {
+#redips-drag {
 	margin: auto;
 	width: 730px;
 }
 
 /* drag objects (DIV inside table cells) */
-.drag {
+.redips-drag {
 	position: relative;
 	cursor: move;
 	margin: 2px auto;
@@ -48,13 +48,13 @@ body {
 }
 
 /* tables */
-div#drag table {
+div#redips-drag table {
 	background-color: #e0e0e0;
 	border-collapse: collapse;
 }
 
 /* table cells */
-div#drag td {
+div#redips-drag td {
 	height: 50px;
 	border: 1px solid white;
 	text-align: center;
@@ -63,7 +63,7 @@ div#drag td {
 }
 
 /* message cell (marked as forbidden) */
-.mark {
+.redips-mark {
 	color: white;
 	background-color: SteelBlue;
 }

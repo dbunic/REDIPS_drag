@@ -6,27 +6,27 @@ Oct, 2011.
 
 */
 
-body{
+body {
 	font-family: arial;
 	margin: 0px;
 }
 
 /* make drag container visible */
-div#drag {
+div#redips-drag {
 	border: 2px dashed LightBlue;
 	display: table;
 	margin: auto;
 }
 
 /* table */
-div#drag table {
+div#redips-drag table {
 	background-color: #eee;
 	border-collapse: collapse;
 	margin: 7px;
 }
 
 /* table cells */
-div#drag td {
+div#redips-drag td {
 	border: 1px solid navy;
 	height: 50px;
 	text-align: center;
@@ -34,7 +34,7 @@ div#drag td {
 }
 
 /* drag object */
-.drag {
+.redips-drag {
 	margin: auto;
 	text-align: center;
 	width: 87px;
@@ -54,12 +54,12 @@ div#drag td {
 }
 
 /* forbidden cells */
-.mark {
+.redips-mark {
 	background-color: #ccc;
 }
 
 /* trash cell */
-.trash {
+.redips-trash {
 	color: white;
 	background-color: SteelBlue;
 }
@@ -75,7 +75,7 @@ td#overflow {
 	}
 
 /* space between radio/checkbox and text */
-div#drag input {
+div#redips-drag input {
 	margin-right: 10px;
 }
 

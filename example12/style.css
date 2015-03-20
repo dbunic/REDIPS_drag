@@ -6,31 +6,31 @@ Jan, 2011.
 
 */
 
-body{
+body {
 	font-family: arial;
 	margin: 0px; /* for IE6 / IE7 */
 }
 
 /* make drag container visible */
-#drag{
+#redips-drag {
 	border: 2px dashed LightBlue;
 	display: table;
 }
 
 /* needed for IE because cursor "move" shown on radio button and checckbox ?! */
-div#drag input{
+div#redips-drag input{
 	cursor: auto;
 }
 
 /* table */
-div#drag table{
+div#redips-drag table {
 	background-color: #eee;
 	border-collapse: collapse;
 	margin: 7px;
 }
 
 /* table cells */
-div#drag td{
+div#redips-drag td {
 	border: 1px solid navy;
 	height: 100px;
 	text-align: center;
@@ -39,7 +39,7 @@ div#drag td{
 }
 
 /* drag object (DIV inside table cell) */
-.drag{
+.redips-drag {
 	margin: auto;
 	margin-bottom: 1px;
 	margin-top: 1px;
@@ -54,7 +54,7 @@ div#drag td{
 	-moz-border-radius: 4px; /* FF */
 }
 	/* checkbox inside DIV element */
-	.drag input{
+	.redips-drag input{
 		float: right;
 		margin: 0px 0px auto auto;
 	}

@@ -2,7 +2,6 @@
 
 Darko Bunic
 http://www.redips.net/
-Feb, 2010.
 
 */
 
@@ -12,7 +11,7 @@ body {
 }
 
 /* drag objects (DIV inside table cells) */
-.drag {
+.redips-drag {
 	cursor: move;
 	margin: auto;
 	background-color: white;
@@ -27,7 +26,7 @@ body {
 }
 
 /* make drag container visible */
-#drag {
+#redips-drag {
 	border: 2px dashed LightBlue;
 	display: table;
 	margin: auto;
@@ -35,14 +34,14 @@ body {
 }
 
 /* tables */
-div#drag table {
+div#redips-drag table {
 	background-color: #F2F5F7;
 	border-collapse: collapse;
 	margin: 10px;
 }
 
 /* table cells */
-div#drag td {
+div#redips-drag td {
 	border: 1px #AED0EA solid;
 	height: 50px;
 	text-align: center;
@@ -61,7 +60,7 @@ div#drag td {
 }
 
 /* trash cell */
-.trash {
+.redips-trash {
 	color: white;
 	background-color: #2779AA;
 }

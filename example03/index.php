@@ -1,6 +1,6 @@
 <?php 
 // include config with database definition
-include('config.php');
+include('config_mysqli.php');
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
@@ -20,7 +20,7 @@ include('config.php');
 	<body>
 		<div id="main_container">
 			<!-- tables inside this DIV could have draggable content -->
-			<div id="drag">
+			<div id="redips-drag">
 	
 				<!-- left container -->
 				<div id="left">
@@ -30,7 +30,7 @@ include('config.php');
 						</colgroup>
 						<tbody>
 							<?php subjects() ?>
-							<tr><td class="trash" title="Trash">Trash</td></tr>
+							<tr><td class="redips-trash" title="Trash">Trash</td></tr>
 						</tbody>
 					</table>
 				</div><!-- left container -->
@@ -49,15 +49,15 @@ include('config.php');
 						<tbody>
 							<tr>
 								<!-- if checkbox is checked, clone school subjects to the whole table row  -->
-								<td class="mark blank">
+								<td class="redips-mark blank">
 									<input id="week" type="checkbox" title="Apply school subjects to the week" checked/>
 									<input id="report" type="checkbox" title="Show subject report"/>
 								</td>
-								<td class="mark dark">Monday</td>
-								<td class="mark dark">Tuesday</td>
-								<td class="mark dark">Wednesday</td>
-								<td class="mark dark">Thursday</td>
-								<td class="mark dark">Friday</td>
+								<td class="redips-mark dark">Monday</td>
+								<td class="redips-mark dark">Tuesday</td>
+								<td class="redips-mark dark">Wednesday</td>
+								<td class="redips-mark dark">Thursday</td>
+								<td class="redips-mark dark">Friday</td>
 							</tr>
 
 							<?php timetable('08:00', 1) ?>
@@ -66,8 +66,8 @@ include('config.php');
 							<?php timetable('11:00', 4) ?>
 							<?php timetable('12:00', 5) ?>
 							<tr>
-								<td class="mark dark">13:00</td>
-								<td class="mark lunch" colspan="5">Lunch</td>
+								<td class="redips-mark dark">13:00</td>
+								<td class="redips-mark lunch" colspan="5">Lunch</td>
 							</tr>
 							<?php timetable('14:00', 7) ?>
 							<?php timetable('15:00', 8) ?>

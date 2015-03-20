@@ -16,7 +16,7 @@
 	<body>
 		<div id="main_container">
 			<!-- tables inside this DIV could have draggable content -->
-			<div id="drag">
+			<div id="redips-drag">
 	
 				<!-- left container (table with subjects) -->
 				<div id="left">
@@ -25,16 +25,16 @@
 							<col width="190"/>
 						</colgroup>
 						<tbody>
-							<tr><td class="dark"><div id="ar" class="drag clone ar">Arts</div><input id="b_ar" class="ar" type="button" value="" onclick="report('ar')" title="Show only Arts"/></td></tr>
-							<tr><td class="dark"><div id="bi" class="drag clone bi">Biology</div><input id="b_bi" class="bi" type="button" value="" onclick="report('bi')" title="Show only Biology"/></td></tr>
-							<tr><td class="dark"><div id="ch" class="drag clone ch">Chemistry</div><input id="b_ch" class="ch" type="button" value="" onclick="report('ch')" title="Show only Chemistry"/></td></tr>
-							<tr><td class="dark"><div id="en" class="drag clone en">English</div><input id="b_en" class="en" type="button" value="" onclick="report('en')" title="Show only English"/></td></tr>
-							<tr><td class="dark"><div id="et" class="drag clone et">Ethics</div><input id="b_et" class="et" type="button" value="" onclick="report('et')" title="Show only Ethics"/></td></tr>
-							<tr><td class="dark"><div id="hi" class="drag clone hi">History</div><input id="b_hi" class="hi" type="button" value="" onclick="report('hi')" title="Show only History"/></td></tr>
-							<tr><td class="dark"><div id="it" class="drag clone it">IT</div><input id="b_it" class="it" type="button" value="" onclick="report('it')" title="Show only IT"/></td></tr>
-							<tr><td class="dark"><div id="ma" class="drag clone ma">Mathematics</div><input id="b_ma" class="ma" type="button" value="" onclick="report('ma')" title="Show only Mathematics"/></td></tr>
-							<tr><td class="dark"><div id="ph" class="drag clone ph">Physics</div><input id="b_ph" class="ph" type="button" value="" onclick="report('ph')" title="Show only Physics"/></td></tr>
-							<tr><td class="trash" title="Trash">Trash</td></tr>
+							<tr><td class="dark"><div id="ar" class="redips-drag redips-clone ar">Arts</div><input id="b_ar" class="ar" type="button" value="" onclick="report('ar')" title="Show only Arts"/></td></tr>
+							<tr><td class="dark"><div id="bi" class="redips-drag redips-clone bi">Biology</div><input id="b_bi" class="bi" type="button" value="" onclick="report('bi')" title="Show only Biology"/></td></tr>
+							<tr><td class="dark"><div id="ch" class="redips-drag redips-clone ch">Chemistry</div><input id="b_ch" class="ch" type="button" value="" onclick="report('ch')" title="Show only Chemistry"/></td></tr>
+							<tr><td class="dark"><div id="en" class="redips-drag redips-clone en">English</div><input id="b_en" class="en" type="button" value="" onclick="report('en')" title="Show only English"/></td></tr>
+							<tr><td class="dark"><div id="et" class="redips-drag redips-clone et">Ethics</div><input id="b_et" class="et" type="button" value="" onclick="report('et')" title="Show only Ethics"/></td></tr>
+							<tr><td class="dark"><div id="hi" class="redips-drag redips-clone hi">History</div><input id="b_hi" class="hi" type="button" value="" onclick="report('hi')" title="Show only History"/></td></tr>
+							<tr><td class="dark"><div id="it" class="redips-drag redips-clone it">IT</div><input id="b_it" class="it" type="button" value="" onclick="report('it')" title="Show only IT"/></td></tr>
+							<tr><td class="dark"><div id="ma" class="redips-drag redips-clone ma">Mathematics</div><input id="b_ma" class="ma" type="button" value="" onclick="report('ma')" title="Show only Mathematics"/></td></tr>
+							<tr><td class="dark"><div id="ph" class="redips-drag redips-clone ph">Physics</div><input id="b_ph" class="ph" type="button" value="" onclick="report('ph')" title="Show only Physics"/></td></tr>
+							<tr><td class="redips-trash" title="Trash">Trash</td></tr>
 						</tbody>
 					</table>
 				</div><!-- left container -->
@@ -53,19 +53,19 @@
 						<tbody>
 							<tr>
 								<!-- if checkbox is checked, clone school subjects to the whole table row  -->
-								<td class="mark blank">
+								<td class="redips-mark blank">
 									<input id="week" type="checkbox" title="Apply school subjects to the week" checked/>
 									<input id="report" type="checkbox" title="Show subject report"/>
 								</td>
-								<td class="mark dark">Monday</td>
-								<td class="mark dark">Tuesday</td>
-								<td class="mark dark">Wednesday</td>
-								<td class="mark dark">Thursday</td>
-								<td class="mark dark">Friday</td>
+								<td class="redips-mark dark">Monday</td>
+								<td class="redips-mark dark">Tuesday</td>
+								<td class="redips-mark dark">Wednesday</td>
+								<td class="redips-mark dark">Thursday</td>
+								<td class="redips-mark dark">Friday</td>
 
 							</tr>
 							<tr>
-								<td class="mark dark">8:00</td>
+								<td class="redips-mark dark">8:00</td>
 								<td></td>
 								<td></td>
 								<td></td>
@@ -73,7 +73,7 @@
 								<td></td>
 							</tr>
 							<tr>
-								<td class="mark dark">9:00</td>
+								<td class="redips-mark dark">9:00</td>
 								<td></td>
 								<td></td>
 								<td></td>
@@ -81,7 +81,7 @@
 								<td></td>
 							</tr>
 							<tr>
-								<td class="mark dark">10:00</td>
+								<td class="redips-mark dark">10:00</td>
 								<td></td>
 								<td></td>
 								<td></td>
@@ -89,7 +89,7 @@
 								<td></td>
 							</tr>
 							<tr>
-								<td class="mark dark">11:00</td>
+								<td class="redips-mark dark">11:00</td>
 								<td></td>
 								<td></td>
 								<td></td>
@@ -97,7 +97,7 @@
 								<td></td>
 							</tr>
 							<tr>
-								<td class="mark dark">12:00</td>
+								<td class="redips-mark dark">12:00</td>
 								<td></td>
 								<td></td>
 								<td></td>
@@ -105,19 +105,11 @@
 								<td></td>
 							</tr>
 							<tr>
-								<td class="mark dark">13:00</td>
-								<td class="mark lunch" colspan="5">Lunch</td>
+								<td class="redips-mark dark">13:00</td>
+								<td class="redips-mark lunch" colspan="5">Lunch</td>
 							</tr>
 							<tr>
-								<td class="mark dark">14:00</td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-							</tr>
-							<tr>
-								<td class="mark dark">15:00</td>
+								<td class="redips-mark dark">14:00</td>
 								<td></td>
 								<td></td>
 								<td></td>
@@ -125,7 +117,15 @@
 								<td></td>
 							</tr>
 							<tr>
-								<td class="mark dark">16:00</td>
+								<td class="redips-mark dark">15:00</td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+							</tr>
+							<tr>
+								<td class="redips-mark dark">16:00</td>
 								<td></td>
 								<td></td>
 								<td></td>

@@ -6,22 +6,22 @@ Feb, 2010.
 
 */
 
-body{
+body {
 	font-family: arial;
 	margin: 0px; /* for IE6 / IE7 */
 }
 
 /* main container */
-#main_container{
+#main_container {
 	margin: auto;
 	width: 420px;
 }
 		/* container for the left table */
-		#main_container #left{
+		#main_container #left {
 			float: left;
 		}
 		/* container for the right table */
-		#main_container #right{
+		#main_container #right {
 			width: 100px;
 			height: 200px;
 			/* align container to the right */
@@ -29,7 +29,7 @@ body{
 		}
 
 /* drag objects (DIV elements inside table cells) */
-.drag{
+.redips-drag {
 	cursor: move;
 	margin: auto;
 	z-index: 10;
@@ -49,13 +49,13 @@ body{
 }
 
 /* drag area */
-#drag{
+#redips-drag {
 	display: table;
 	width: 420px;
 }
 
 /* table cells */
-div#drag td {
+div#redips-drag td {
 	height: 50px;
 	text-align: center;
 	font-size: 10pt;
@@ -83,7 +83,7 @@ div#drag td {
 }
 
 /* message line */
-#message{
+#message {
 	color: white;
 	background-color: #aaa;
 	text-align: center;
@@ -92,7 +92,7 @@ div#drag td {
 
 
 /* cells from the right table (forbidden cells) */
-.mark{
+.redips-mark {
 	color: #444;
 	background-color: #e0e0e0;
 }
