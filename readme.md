@@ -7,8 +7,8 @@ REDIPS.drag is a JavaScript drag and drop library focused on dragging table cont
 
 * put **&lt;script type="text/javascript" src="redips-drag-min.js">&lt;/script>** to the head section
 * initialize REDIPS.drag library: **&lt;body onload="REDIPS.drag.init()">**
-* place table(s) inside **&lt;div id="drag">** to enable content dragging
-* place **&lt;div class="drag">Hello World&lt;/div>** to the table cell
+* place table(s) inside **&lt;div id="redips-drag">** to enable content dragging
+* place **&lt;div class="redips-drag">Hello World&lt;/div>** to the table cell
 
 ## Features
 
