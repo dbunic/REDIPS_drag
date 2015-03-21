@@ -19,20 +19,21 @@ redips.init = function () {
 	rd.hover.colorTd = '#FFE885';
 	// DIV elements can be dropped to the empty cells only
 	rd.dropMode = 'single';
-	// DIV element was clicked - enable / disable tables
+	// DIV element was clicked - disable 'mini' tables
 	rd.event.clicked = function () {
 		// search for table inside DIV element
 		var tbl = rd.obj.getElementsByTagName('TABLE');
-		// if DIV element contains table then disable all mini tables
-		// it is not allowed to drop table within another table
+		// if dragged DIV element contains table then disable all mini tables
+		// it is not allowed to drop mini table within another mini table
 		if (tbl.length > 0) {
 			rd.enableTable(false, 'mini');
 		}
-		// clicked element doesn't contain any table - enable all "mini" tables
-		else {
-			rd.enableTable(true, 'mini');
-		}
 	};
+	// after dragged DIV element is dropped, enable all mini tables
+	// this way, mini tables will be ready for accepting ordinary DIV element (circle DIV)
+	rd.event.finish = function () {
+		rd.enableTable(true, 'mini');
+	}
 };
 
 // add onload event listener
