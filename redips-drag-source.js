@@ -194,7 +194,7 @@ REDIPS.drag = (function () {
 				moved : function () {},
 				notCloned : function () {},
 				notMoved : function () {},
-				shiftOverflow: function () {},
+				shiftOverflow : function () {},
 				relocateBefore : function () {},
 				relocateAfter : function () {},
 				relocateEnd : function () {},
