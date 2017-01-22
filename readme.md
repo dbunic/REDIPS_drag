@@ -1,7 +1,7 @@
 REDIPS.drag 5.1.0
 ============
 
-## What's REDIPS.drag?
+## What is REDIPS.drag?
 
 REDIPS.drag is a JavaScript drag and drop library focused on dragging table content and table rows. Here are minimal steps to enable content dragging or row dragging in HTML table:
 
