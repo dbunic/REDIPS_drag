@@ -1,5 +1,8 @@
 Changes for REDIPS.drag library
 
+5.1.0 (2017-01-22)
+- added jsFiddle examples to documentation
+
 5.1.0 (2015-03-06)
 - code cleaning - thanks to Naresh Jain
 - drag class name and container id renamed to redips-drag

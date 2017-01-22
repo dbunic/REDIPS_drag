@@ -66,6 +66,7 @@ Live demo shows REDIPS.drag library in action:
 * [JavaScript drag and drop plus content shift](http://www.redips.net/javascript/drag-and-drop-content-shift/)
 * [Drag and Drop table rows](http://www.redips.net/javascript/drag-and-drop-table-row/)
 * [Drag and drop table content](http://www.redips.net/javascript/drag-and-drop-table-content/)
+* [jsFiddle examples](https://jsfiddle.net/user/dbunic/fiddles/)
 
 ## YouTube
 
@@ -74,3 +75,4 @@ Screencast of several examples contained in REDIPS.drag package:
 * [Drag and drop table content with JavaScript](http://www.youtube.com/watch?v=8LtMk4DwLzA)
 * [Drag and drop table rows with JavaScript](http://www.youtube.com/watch?v=5YuS6S0bFTU)
 * [Drag and drop table content with JavaScript - School timetable](http://www.youtube.com/watch?v=ToJk1End4C4)
+
