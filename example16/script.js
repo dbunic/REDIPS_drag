@@ -1,5 +1,5 @@
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
-/*global window: false,  ActiveXObject: false, REDIPS: true */
+/*global window: false, REDIPS: true */
 
 /* enable strict mode */
 "use strict";
@@ -32,18 +32,32 @@ redips.init = function () {
 	redips.singleContent();
 	// set onmouseover & onmouseout to all div elements inside DIV id="drag"
 	redips.setEvents();
-	// create XMLHttp request object
-	redips.request = redips.initXMLHttpClient();
 	// set fixed position for the left container
 	document.getElementById(redips.left).style.position = 'fixed';
 	// initialization
 	rd.init();
-	// drop option is switch - content can be exchanged
-	rd.dropMode = 'switch';
-	// in a moment when dragging starts, remove mouseover event and hide hover tooltip
-	rd.event.moved = function () {
+	// in a moment when dragging starts, remove mouseover event, hide hover tooltip and set drop mode (depending on container source - left or right)
+	// input parameter "cloned" (boolean) is set to true if DIV element is cloned (possible only for elements in right tables with pressed shift key) 
+	rd.event.moved = function (cloned) {
+		// local varible (source container id)
+		var scid;
+		// remove mouseover event
 		REDIPS.event.remove(rd.obj, 'mouseover', redips.showTooltip);
+		// hide hover tooltip
 		redips.hideTooltip();
+		// if DIV element is not cloned then find source container
+		if (cloned === false) {
+			scid = redips.findContainer(rd.obj);
+		}
+		// set to single if element is dragged from left container or DIV element in right table is cloned
+		// this way DIV elements dragged from left table or cloned in right table can be placed only to the empty TD
+		if (scid === redips.left || cloned === true) {
+			rd.dropMode = 'single';
+		}
+		// otherwise set drop mode to "switch" (element is dragged from right container)
+		else {
+			rd.dropMode = 'switch';
+		}
 	};
 	// enable cloning option only for DIV elements in right table 
 	rd.event.clicked = function () {
@@ -76,8 +90,10 @@ redips.init = function () {
 		// if element is dropped from question table to the one of right tables
 		// (right tables doesn't have id)
 		if (scid === redips.left && tcid === redips.right) {
-			// send request (input parameter is object reference)
-			redips.sendRequest(rd.obj, id);
+			// make AJAX call - input parameter is question id (DIV element)
+			// div property is reference to the object where AJAX output will be displayed (inside dropped DIV element) 
+			rd.ajaxCall(redips.content_url + '?id=' + id, redips.handler, {div: rd.obj});
+			// set width and height
 			rd.obj.style.width = redips.width; // width parameter
 			rd.obj.style.height = '';
 		}
@@ -117,53 +133,18 @@ redips.init = function () {
 };
 
 
-// XMLHttp request object
-redips.initXMLHttpClient = function () {
-	var XMLHTTP_IDS,
-		xmlhttp,
-		success = false,
-		i;
-	// Mozilla/Chrome/Safari/IE7/IE8 (normal browsers)
-	try {
-		xmlhttp = new XMLHttpRequest(); 
+// AJAX handler - display response in div.innerHTML
+// callback method is called with XHR and obj object
+// obj is just passed from ajaxCall to this callback function
+redips.handler = function (xhr, obj) {
+	// if status is OK
+	if (xhr.status === 200) {
+		obj.div.innerHTML = xhr.responseText;
 	}
-	// IE (?!)
-	catch (e1) {
-		XMLHTTP_IDS = [ 'MSXML2.XMLHTTP.5.0', 'MSXML2.XMLHTTP.4.0',
-						'MSXML2.XMLHTTP.3.0', 'MSXML2.XMLHTTP', 'Microsoft.XMLHTTP' ];
-		for (i = 0; i < XMLHTTP_IDS.length && !success; i++) {
-			try {
-				success = true;
-				xmlhttp = new ActiveXObject(XMLHTTP_IDS[i]);
-			}
-			catch (e2) {}
-		}
-		if (!success) {
-			throw new Error('Unable to create XMLHttpRequest!');
-		}
+	// else display error
+	else {
+		obj.div.innerHTML = 'Error: [' + xhr.status + '] ' + xhr.statusText;
 	}
-	return xmlhttp;
-};
-
-
-// send request to the server and display response in obj.innerHTML
-redips.sendRequest = function (obj, id) {
-	// open asynchronus request
-	redips.request.open('GET', redips.content_url + '?id=' + id, true);
-	// the onreadystatechange event is triggered every time the readyState changes
-	redips.request.onreadystatechange = function () {
-		//  request finished and response is ready
-		if (redips.request.readyState === 4) {
-			if (redips.request.status === 200) {
-				obj.innerHTML = redips.request.responseText;
-			}
-			// if request status isn't OK
-			else {
-				obj.innerHTML = 'Error: [' + redips.request.status + '] ' + redips.request.statusText;
-			}
-	    }
-	};
-	redips.request.send(null); // send request
 };
 
 
@@ -189,8 +170,9 @@ redips.showTooltip = function (e) {
 	// set popup near to the element
 	redips.hoverDiv.style.top  = (oTop + 22) + 'px';
 	redips.hoverDiv.style.left = oLeft + 'px';
-	// send request (input parameter is object reference)
-	redips.sendRequest(redips.hoverDiv, id);
+	// make AJAX call - input parameter is question id (DIV element)
+	// obj property is reference to the object where AJAX output will be displayed (see redips.handler) 
+	REDIPS.drag.ajaxCall(redips.content_url + '?id=' + id, redips.handler, {div: redips.hoverDiv});
 	// set visibility
 	redips.hoverDiv.style.visibility = 'visible';
 };

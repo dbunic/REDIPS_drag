@@ -61,7 +61,7 @@ function subjects() {
 	foreach ($subjects as $subject) {
 		$id   = $subject[0][0];
 		$name = $subject[0][1];
-		print "<tr><td class=\"dark\"><div id=\"$id\" class=\"redips-drag redips-clone $id\">$name</div><input id=\"b_$id\" class=\"$id\"type=\"button\" value=\"\" onclick=\"report('$id')\" title=\"Show only $name\"/></td></tr>\n";
+		print "<tr><td class=\"dark\"><div id=\"$id\" class=\"redips-drag redips-clone $id\">$name</div><input id=\"b_$id\" class=\"$id\"type=\"button\" value=\"\" onclick=\"redips.report('$id')\" title=\"Show only $name\"/></td></tr>\n";
 	}
 }
 

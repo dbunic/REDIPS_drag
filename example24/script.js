@@ -1,5 +1,5 @@
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
-/*global window: false, ActiveXObject: false, REDIPS: true */
+/*global window: false, REDIPS: true */
 /* Version 1.0.0 */
 
 
@@ -38,8 +38,6 @@ redips.init = function () {
 	rt.color.cell = redips.markedColor;
 	// disable marking not empty table cells
 	rt.mark_nonempty = false;
-	// create XMLHttp request object
-	redips.request = redips.initXMLHttpClient();
 	// initialize REDIPS.drag library
 	rd.init();
 	// set drop mode as "single" - DIV element can be dropped only to the empty cells
@@ -79,63 +77,32 @@ redips.init = function () {
 			// define id of dropped DIV element (only first three characters because cloned element will have addition in id)
 			id = rd.obj.id.substring(0, 3);
 //			rd.obj.style.borderColor = 'white';
-			// send request (input parameter is object reference)
-			redips.getComponent(rd.obj, id);
+			// send AJAX request (input parameter is field id)
+			// div property is reference to the object where AJAX output will be displayed (inside dropped DIV element) 
+			rd.ajaxCall(redips.ajaxField + '?id=' + id, redips.handler1, {div: rd.obj});
 		}
 	};
 };
 
 
-// XMLHttp request object
-redips.initXMLHttpClient = function () {
-	var XMLHTTP_IDS,
-		xmlhttp,
-		success = false,
-		i;
-	// Mozilla/Chrome/Safari/IE7/IE8 (normal browsers)
-	try {
-		xmlhttp = new XMLHttpRequest(); 
-	}
-	// IE (?!)
-	catch (e1) {
-		XMLHTTP_IDS = [ 'MSXML2.XMLHTTP.5.0', 'MSXML2.XMLHTTP.4.0',
-						'MSXML2.XMLHTTP.3.0', 'MSXML2.XMLHTTP', 'Microsoft.XMLHTTP' ];
-		for (i = 0; i < XMLHTTP_IDS.length && !success; i++) {
-			try {
-				success = true;
-				xmlhttp = new ActiveXObject(XMLHTTP_IDS[i]);
-			}
-			catch (e2) {}
-		}
-		if (!success) {
-			throw new Error('Unable to create XMLHttpRequest!');
-		}
-	}
-	return xmlhttp;
-};
-
-
-// executed when DIV element is dropped to the right table
-redips.getComponent = function (obj, id) {
-	// open asynchronus request
-	redips.request.open('GET', redips.ajaxField + '?id=' + id, true);
-	// the onreadystatechange event is triggered every time the readyState changes
-	redips.request.onreadystatechange = function () {
+// AJAX handler - display response from redips.ajaxField in div.innerHTML
+// callback method is called with XHR and obj object (obj is just passed from ajaxCall to this callback function)
+redips.handler1 = function (xhr, obj) {
+	// prepare title and layout local variables
+	var title,
+		layout;
+	// if status is OK
+	if (xhr.status === 200) {
 		// prepare title and layout
-		var title = obj.innerHTML,
-			layout = redips.component.split('|');
-		//  request finished and response is ready (set innerHTML of dropped DIV element
-		if (redips.request.readyState === 4) {
-			if (redips.request.status === 200) {
-				obj.innerHTML = layout[0] + title + layout[1] + redips.request.responseText + layout[2];
-			}
-			// if request status isn't OK
-			else {
-				obj.innerHTML = 'Error: [' + redips.request.status + '] ' + redips.request.statusText;
-			}
-	    }
-	};
-	redips.request.send(null); // send request
+		title = obj.div.innerHTML;
+		layout = redips.component.split('|');
+		// set layout and title inside dropped DIV element
+		obj.div.innerHTML = layout[0] + title + layout[1] + xhr.responseText + layout[2];
+	}
+	// otherwise display error inside DIV element
+	else {
+		obj.div.innerHTML = 'Error: [' + xhr.status + '] ' + xhr.statusText;
+	}
 };
 
 
@@ -189,7 +156,6 @@ redips.save = function () {
 	// declare local variables
 	var tblEditor = document.getElementById(redips.tableEditor),
 		divs = tblEditor.getElementsByTagName('DIV'),
-		message = document.getElementById('message'),
 		frm,			// form reference inside component (it should be only one form)
 		JSONobj = [],	// prepare JSON object
 		json,			// json converted to the string
@@ -223,24 +189,23 @@ redips.save = function () {
 	if (JSONobj.length > 0) {
 		json = JSON.stringify(JSONobj);
 	}
-	// open asynchronus request (POST method)
-	redips.request.open('POST', redips.ajaxSave, true);
-	// set content type for POST method
-	redips.request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-	// the onreadystatechange event is triggered every time the readyState changes
-	redips.request.onreadystatechange = function () {
-		//  request finished and response is ready (set innerHTML of dropped DIV element
-		if (redips.request.readyState === 4) {
-			if (redips.request.status === 200) {
-				message.innerHTML = redips.request.responseText;
-			}
-			// if request status isn't OK
-			else {
-				message.innerHTML = 'Error: [' + redips.request.status + '] ' + redips.request.statusText;
-			}
-	    }
-	};
-	redips.request.send('json=' + json); // send POST request
+	// make ajax call and set redips.handler2 as callback function
+	REDIPS.drag.ajaxCall(redips.ajaxSave, redips.handler2, {method: 'POST', data: 'json=' + json});
+};
+
+
+// AJAX handler - called after save button is clicked
+redips.handler2 = function (xhr) {
+	// set reference to message element
+	var message = document.getElementById('message');
+	// if status is OK
+	if (xhr.status === 200) {
+		message.innerHTML = xhr.responseText;
+	}
+	// if request status isn't OK
+	else {
+		message.innerHTML = 'Error: [' + xhr.status + '] ' + xhr.statusText;
+	}
 };
 
 

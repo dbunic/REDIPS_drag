@@ -79,7 +79,7 @@ include('config_mysqli.php');
 			<br/>
 			<div id="message">Drag school subjects to the timetable (clone subjects with SHIFT key)</div>
 			<div class="button_container">
-				<input type="button" value="Save" class="button" onclick="save()" title="Save timetable"/>
+				<input type="button" value="Save" class="button" onclick="redips.save()" title="Save timetable"/>
 			</div>
 		</div><!-- main container -->
 	</body>

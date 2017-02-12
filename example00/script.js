@@ -24,7 +24,7 @@ redips.load_table = function (button) {
 	button.disabled = true;
 	// AJAX request
 	$.ajax({
-		type: 'get',
+		type: 'GET',
 		url: 'ajax.php',
 		data: 'id=' + id,
 		cache: false,

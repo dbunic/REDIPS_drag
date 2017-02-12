@@ -1,5 +1,5 @@
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: false, strict: true, newcap: true, immed: true, maxerr: 14 */
-/*global window: false,  ActiveXObject: false, REDIPS: true */
+/*global window: false, REDIPS: true */
 
 /* enable strict mode */
 "use strict";
@@ -27,8 +27,6 @@ redips.init = function () {
 	redips.configuration();
 	// elements can be dropped only to the empty table cells
 	rd.dropMode = 'single';
-	// create XMLHttp request object
-	redips.request = redips.initXMLHttpClient();
 	// set reference to the ul
 	redips.ol = document.getElementById('drop-list');
 	// REDIPS.drag initialization
@@ -40,42 +38,13 @@ redips.init = function () {
 };
 
 
-// XMLHttp request object
-redips.initXMLHttpClient = function () {
-	var XMLHTTP_IDS,
-		xmlhttp,
-		success = false,
-		i;
-	// Mozilla/Chrome/Safari/IE7/IE8 (normal browsers)
-	try {
-		xmlhttp = new XMLHttpRequest(); 
-	}
-	// IE (?!)
-	catch (e1) {
-		XMLHTTP_IDS = [ 'MSXML2.XMLHTTP.5.0', 'MSXML2.XMLHTTP.4.0',
-						'MSXML2.XMLHTTP.3.0', 'MSXML2.XMLHTTP', 'Microsoft.XMLHTTP' ];
-		for (i = 0; i < XMLHTTP_IDS.length && !success; i++) {
-			try {
-				success = true;
-				xmlhttp = new ActiveXObject(XMLHTTP_IDS[i]);
-			}
-			catch (e2) {}
-		}
-		if (!success) {
-			throw new Error('Unable to create XMLHttpRequest!');
-		}
-	}
-	return xmlhttp;
-};
-
-
 // method parses form elements and submits to the server
 redips.save = function () {
 	var frm = document.getElementById(redips.form),
 		el,
 		params = '',
 		i;
-	// prepare all form elements like name1=value1&name2=value2&name3=value3...
+	// prepare all form elements in name-value form like name1=value1&name2=value2&name3=value3...
 	for (i = 0; i < frm.elements.length; i++) {
 		// set element reference
 		el = frm.elements[i];
@@ -86,55 +55,45 @@ redips.save = function () {
 	}
 	// cut last '&' from params string
 	params = params.substring(0, params.length - 1);
-	// open asynchronus request (POST method)
-	redips.request.open('POST', redips.ajaxSave, true);
-	// set content type for POST method
-	redips.request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-	// the onreadystatechange event is triggered every time the readyState changes
-	redips.request.onreadystatechange = function () {
-		var status,		// status from the AJAX service (it should return string "OK")
-			message,	// displayed message to the user
-			delay;		// delay (in milliseconds) after displayed message will be deleted
-		//  request finished and response is ready
-		if (redips.request.readyState === 4) {
-			// response is OK
-			if (redips.request.status === 200) {
-				/*
-				 * original code 
-				 * 
-				// status from the AJAX service
-				status = redips.request.responseText;
-				// test if returned status is OK
-				if (status === 'OK') {
-					// set message and delay
-					message = 'Saved!';
-					delay = 2000;
-				}
-				else {
-					message = 'Error [' + status + ']';
-					delay = 3000;
-				}
-				*/
-				// demo code
-				message = redips.request.responseText;
-				delay = 2000;
-			}
-			// if request status isn't OK
-			else {
-				message = 'Error: [' + redips.request.status + '] ' + redips.request.statusText;
-				delay = 2000;
-			}
-			// display message and set timeout to delete message
-			redips.display_message(message, delay);
+	// make AJAX call and set redips.handler as callback function 
+	REDIPS.drag.ajaxCall(redips.ajaxSave, redips.handler, {method: 'POST', data: params});
+};
+
+
+// AJAX handler - called after click on "Save" button
+redips.handler = function (xhr) {
+	// displayed message to the user
+	var message;
+	// response is OK
+	if (xhr.status === 200) {
+		/*
+		 * original code 
+		 * 
+		// status from the AJAX service
+		status = xhr.responseText;
+		// test if returned status is OK
+		if (status === 'OK') {
+			// set message and delay
+			message = 'Saved!';
 		}
-	};
-	// send request
-	redips.request.send(params);
+		else {
+			message = 'Error [' + status + ']';
+		}
+		*/
+		// demo code
+		message = xhr.responseText;
+	}
+	// if request status isn't OK
+	else {
+		message = 'Error: [' + xhr.status + '] ' + xhr.statusText;
+	}
+	// display message and set timeout to delete message
+	redips.displayMessage(message, 2000);
 };
 
 
 // method displays message (and clears after timeout)
-redips.display_message = function (message, delay) {
+redips.displayMessage = function (message, delay) {
 	// set reference to the message element
 	var msg = document.getElementById('message');
 	// display message
@@ -196,7 +155,7 @@ redips.deleteItem = function (e) {
 	// delete item from the list
 	li.parentNode.removeChild(li);
 	// display message
-	redips.display_message(text + ' deleted!', 500);
+	redips.displayMessage(text + ' deleted!', 500);
 	// hide "Save" button if needed
 	redips.button();
 };

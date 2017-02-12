@@ -9,9 +9,9 @@ $db_host = 'localhost';
 $db_name = 'enter_database_name';
 $db_user = 'enter_user_name';
 $db_pwd  = 'enter_user_password';
-$db_name = 'test';
+$db_name = 'redips';
 $db_user = 'root';
-$db_pwd  = '3b0la';
+$db_pwd  = '';
 
 // reset record set to null ($rs is used in timetable function)
 $rs = null;
@@ -76,7 +76,7 @@ function subjects() {
 	foreach ($subjects as $subject) {
 		$id   = $subject[0];
 		$name = $subject[1];
-		print "<tr><td class=\"dark\"><div id=\"$id\" class=\"redips-drag redips-clone $id\">$name</div><input id=\"b_$id\" class=\"$id\"type=\"button\" value=\"\" onclick=\"report('$id')\" title=\"Show only $name\"/></td></tr>\n";
+		print "<tr><td class=\"dark\"><div id=\"$id\" class=\"redips-drag redips-clone $id\">$name</div><input id=\"b_$id\" class=\"$id\"type=\"button\" value=\"\" onclick=\"redips.report('$id')\" title=\"Show only $name\"/></td></tr>\n";
 	}
 }
 

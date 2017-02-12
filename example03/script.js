@@ -5,18 +5,14 @@
 "use strict";
 
 
-var redipsInit,		// define redipsInit variable
-	save,			// save elements and their positions
-	report,			// function shows subject occurring in timetable
-	reportButton,	// show/hide report buttons
-	showAll,		// function show all subjects in timetable
-	printMessage,	// print message
-	divNodeList;	// node list of DIV elements in table2 (global variable needed in report() and visibility() function)
+// create redips container
+var redips = {};
 
 
 // redips initialization
-redipsInit = function () {
-	var	rd = REDIPS.drag;			// reference to the REDIPS.drag object
+redips.init = function () {
+	// reference to the REDIPS.drag object
+	var	rd = REDIPS.drag;
 	// initialization
 	rd.init();
 	// REDIPS.drag settings
@@ -24,9 +20,9 @@ redipsInit = function () {
 	rd.hover.colorTd = '#9BB3DA';	// set hover color
 	rd.clone.keyDiv = true;			// enable cloning DIV elements with pressed SHIFT key
 	// prepare node list of DIV elements in table2
-	divNodeList = document.getElementById('table2').getElementsByTagName('div');
+	redips.divNodeList = document.getElementById('table2').getElementsByTagName('div');
 	// show / hide report buttons (needed for dynamic version - with index.php)
-	reportButton();
+	redips.reportButton();
 	// element is dropped
 	rd.event.dropped = function () {
 		var	objOld = rd.objOld,					// original object
@@ -49,28 +45,28 @@ redipsInit = function () {
 		}
 		// print message only if target and source table cell differ
 		if (rd.td.target !== rd.td.source) { 
-			printMessage('Content has been changed!');
+			redips.printMessage('Content has been changed!');
 		}
 		// show / hide report buttons
-		reportButton();
+		redips.reportButton();
 	};
 
 	// after element is deleted from the timetable, print message
 	rd.event.deleted = function () {
-		printMessage('Content has been deleted!');
+		redips.printMessage('Content has been deleted!');
 		// show / hide report buttons
-		reportButton();
+		redips.reportButton();
 	};
 	
 	// if any element is clicked, then make all subjects in timetable visible
 	rd.event.clicked = function () {
-		showAll();
+		redips.showAll();
 	};
 };
 
 
 // save elements and their positions
-save = function () {
+redips.save = function () {
 	// scan timetable content
 	var content = REDIPS.drag.saveContent('table2');
 	// and save content
@@ -78,8 +74,8 @@ save = function () {
 };
 
 
-// function shows subject occurring in timetable
-report = function (subject) {
+// method shows subject occurring in timetable
+redips.report = function (subject) {
 		// define day and time labels
 	var day = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
 		time = ['08:00', '09:00', '10:00', '11:00', '12:00',
@@ -92,10 +88,10 @@ report = function (subject) {
 		num = 0,	// number of found subject
 		str = '';	// result string
 	// show all elements
-	showAll();
+	redips.showAll();
 	// create array from node list (node list is global variable)
-	for (i = 0; i < divNodeList.length; i++) {
-		div[i] = divNodeList[i];
+	for (i = 0; i < redips.divNodeList.length; i++) {
+		div[i] = redips.divNodeList[i];
 	}
 	// sort div elements by the cellIndex (days in week) and rowIndex (hours)
 	div.sort(function (a, b) {
@@ -128,13 +124,16 @@ report = function (subject) {
 	}
 	// if "Show report" is checked then show message
 	if (document.getElementById('report').checked === true) {
-		alert('Number of found subjects: ' + num + '\n' + str);
+		// alert is placed inside setTimeout because alert() is synchronous functions causing a pause in the code and this pause should be bypassed
+		setTimeout(function () {
+			alert('Number of found subjects: ' + num + '\n' + str);
+		}, 200);
 	}
 };
 
 
 // show/hide report buttons
-reportButton = function () {
+redips.reportButton = function () {
 	var	id,			// element id
 		i,			// loop variable
 		count,		// number of subjects in timetable
@@ -142,10 +141,10 @@ reportButton = function () {
 		// prepare subjects
 		subject = {'en': 0, 'ph': 0, 'ma': 0, 'bi': 0, 'ch': 0, 'it': 0, 'ar': 0, 'hi': 0, 'et': 0};
 	// loop goes through all collected elements
-	for (i = 0; i < divNodeList.length; i++) {
+	for (i = 0; i < redips.divNodeList.length; i++) {
 		// define only first two letters of ID
 		// (cloned elements have appended c1, c2, c3 ...)
-		id = divNodeList[i].id.substr(0, 2);
+		id = redips.divNodeList[i].id.substr(0, 2);
 		// increase subject occurring
 		subject[id]++;
 	}
@@ -171,24 +170,24 @@ reportButton = function () {
 
 
 // print message
-printMessage = function (message) {
+redips.printMessage = function (message) {
 	document.getElementById('message').innerHTML = message;
 };
 
 
 // function show all subjects in timetable
-showAll = function () {
+redips.showAll = function () {
 	var	i; // loop variable
-	for (i = 0; i < divNodeList.length; i++) {
-		divNodeList[i].style.visibility = 'visible';
+	for (i = 0; i < redips.divNodeList.length; i++) {
+		redips.divNodeList[i].style.visibility = 'visible';
 	}
 };
 
 
 // add onload event listener
 if (window.addEventListener) {
-	window.addEventListener('load', redipsInit, false);
+	window.addEventListener('load', redips.init, false);
 }
 else if (window.attachEvent) {
-	window.attachEvent('onload', redipsInit);
+	window.attachEvent('onload', redips.init);
 }

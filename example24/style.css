@@ -174,4 +174,5 @@ div#redips-drag table {
 	width: 500px;
 	color: #333;
 	font-size: 11px;
+	white-space: pre;
 }

@@ -1,9 +1,9 @@
 /*
-Copyright (c) 2008-2011, www.redips.net All rights reserved.
+Copyright (c) 2008-2017, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 5.1.0
-Mar 06, 2015.
+Version 5.2.0
+Feb 06, 2017.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -34,7 +34,7 @@ var REDIPS = REDIPS || {};
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">Drag and drop table rows</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">Drag and Drop table content</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-content-shift/">JavaScript drag and drop plus content shift</a>
- * @version 5.1.0 (2015-03-06)
+ * @version 5.2.0 (2017-02-06)
  */
 REDIPS.drag = (function () {
 		// methods
@@ -71,6 +71,7 @@ REDIPS.drag = (function () {
 		findParent,					// method returns a reference of the required parent element
 		findCell,					// method returns first or last cell: rowIndex, cellIndex and cell reference (input is "first" or "last" parameter and table or object within table)
 		saveContent,				// scan tables, prepare query string and sent to the multiple-parameters.php
+		ajaxCall,					// method calls AJAX service and runs callback function
 		relocate,					// relocate objects from source cell to the target cell (source and target cells are input parameters)
 		emptyCell,					// method removes elements from table cell
 		shiftCells,					// method shifts table content to the left or right (useful for content where the order should be preserved)
@@ -126,6 +127,7 @@ REDIPS.drag = (function () {
 		cloneClass = false,			// (boolean) true if clicked element contains clone in class name (set in handler_mousedown)
 		animationCounter = [],		// (array) counter of animated elements to be shifted before table should be enabled
 		windowScrollPosition,		// (array) top and left window offset (set in calculateCells and used in boxOffset)
+		xhr,						// XML Http Request
 		
 		// selected, previous and source table, row and cell (private parameters too)
 		table = null,
@@ -3024,7 +3026,6 @@ REDIPS.drag = (function () {
 	};
 
 
-
 	/**
 	 * Method scans table content and prepares query string or JSON format for submitting to the server.
 	 * Input parameters are id / table reference and optional output format.
@@ -3105,6 +3106,95 @@ REDIPS.drag = (function () {
 		}
 		// return prepared parameters (if tables are empty, returned value could be empty too) 
 		return query;
+	};
+
+
+	/**
+	 * Method calls AJAX service (using GET or POST method) and runs callback function with xhr (XML HTTP Request) object as input parameter (xhr object is implicitly created only first time).
+	 * Input parameter "obj" is just passed to the callback method and is optional in both ways (as input parameter in ajaxCall or for using in callback).
+	 * obj is not only needed for optional AJAX settings but it can be useful for sending additional parameters to the callback function. 
+	 * 
+	 * @example
+	 * Example - how to initiate AJAX call:
+	 * 
+	 * // simple AJAX call (GET method) 
+	 * REDIPS.drag.ajaxCall('ajax_menu.php?month=2&year=2017', redips.handler);
+	 * 
+	 * // AJAX call with passing dragged element as div property
+	 * REDIPS.drag.ajaxCall('ajax_menu.php?month=2&year=2017', redips.handler, {div: rd.obj});
+	 * 
+	 * // AJAX call with POST method and data in name-value format (header 'application/x-www-form-urlencoded' is automatically applied)
+	 * REDIPS.drag.ajaxCall('ajax_menu.php', redips.handler, {method: 'POST', data: 'name1=value1&name2=value2&name3=value3'});
+	 * 
+	 * Callback function example:
+	 * 
+	 * // xhr is XML HTTP Request object and obj is passed from ajaxCall() to this handler
+	 * // obj is optionally defined and if is not needed then it can be omitted
+	 * redips.handler(xhr, obj) {
+	 *     // if status is OK
+	 *     if (xhr.status === 200) {
+	 *         ...
+	 *     }
+	 *     // otherwise display error message
+	 *     else {
+	 *         console.log = 'Oops, an error occurred: [' + xhr.status + '] ' + xhr.statusText;
+	 *     }
+	 * };
+	 * 
+	 * @param {String} url URL address of AJAX service. In case of GET method it should contain all parameters in name-value format.
+	 * @param {Object} callBack Callback function called after request is ended (successfully or not). Function is called with xhr (XML HTTP request) object and obj object as input parameters.
+	 * @param {Object} [obj] Object with optional AJAX parameters (like POST method and data) or used for sending additional parameters to the callback function. 
+	 * 
+	 * @public
+	 * @function
+	 * @name REDIPS.drag#ajaxCall
+	 */
+	ajaxCall = function (url, callBack, obj) {
+		// local variables
+		var method = 'GET',	// set GET as default AJAX method
+			data = '';		// set "data" parameter needed for POST method
+		// if xhr object is undefined then create it (only first time)
+		// XMLHttpRequest object should be supported by all modern browsers
+		if (xhr === undefined) {
+			xhr = new XMLHttpRequest();
+		}
+		// if optional "obj" objects exists
+		if (typeof(obj) === 'object') {
+			// set POST method (otherwise it will stay as default GET)
+			if (typeof(obj.method) === 'string' && obj.method === 'POST') {
+				method = 'POST';
+			}
+			// set data needed for POST method
+			if (typeof(obj.data) === 'string') {
+				data = obj.data;
+			}
+		}
+		// open asynchronus request with GET or POST method
+		xhr.open(method, url, true);
+		// set callback handler
+		xhr.onreadystatechange = function () {
+			// if operation is completed (readyState === 4)
+			if (xhr.readyState === XMLHttpRequest.DONE) {
+				// if the HTTP status is not OK
+				if (xhr.status !== 200) {
+					// display error to the browser console
+					console.log('REDIPS.drag.ajaxCall error: [' + xhr.status + '] ' + xhr.statusText);
+				}
+				// call callback function with xhr object and data as input parameters
+				callBack.call(this, xhr, obj);
+			}
+		};
+		// in a good manners, set 'X-Requested-With' HTTP header
+		xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+		// if method is GET then AJAX request can be send
+		if (method === 'GET') {
+			xhr.send(null);
+		}
+		// for POST method set 'application/x-www-form-urlencoded' header and send data parameters
+		else {
+			xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+			xhr.send(data);
+		}
 	};
 
 
@@ -4421,6 +4511,7 @@ REDIPS.drag = (function () {
 		enableTable : enableTable,
 		cloneObject : cloneObject,
 		saveContent : saveContent,
+		ajaxCall : ajaxCall,
 		relocate : relocate,
 		emptyCell : emptyCell,
 		moveObject : moveObject,
