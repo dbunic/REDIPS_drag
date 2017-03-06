@@ -22,8 +22,10 @@
 			$id = $p[0];
 			$row = $p[1];
 			$cell = $p[2];
+			$class = $p[3];
+			$text = $p[4];
 			// instead of print, you can store accepted parameteres to the database
-			print "Id=$id Row=$row Cell=$cell<br>";
+			print "Id=$id Row=$row Cell=$cell Class=$class Text=$text<br>";
 		}
 	?>
 </body>

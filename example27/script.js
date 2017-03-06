@@ -4,13 +4,12 @@
 /* enable strict mode */
 "use strict";
 
-// define init and show methods
-var redipsInit,
-	showContent,
-	getContent;
+// create redips container
+var redips = {};
+
 
 // redips initialization
-redipsInit = function () {
+redips.init = function () {
 	var num = 0,			// number of successfully placed elements
 		rd = REDIPS.drag;	// reference to the REDIPS.drag lib
 	// initialization
@@ -18,25 +17,25 @@ redipsInit = function () {
 	// set hover color
 	rd.hover.colorTd = '#9BB3DA';
 	// call initially showContent
-	showContent();
+	redips.showContent();
 	// on each drop refresh content
 	rd.event.dropped = function () {
-		showContent();
+		redips.showContent();
 	};
 	// call showContent() after DIV element is deleted
 	rd.event.deleted = function () {
-		showContent();
+		redips.showContent();
 	};
 };
 
 
 // show TD content
-showContent = function () {
+redips.showContent = function () {
 	// get content of TD cells in right table
-	var td1 = getContent('td1'),
-		td2 = getContent('td2'),
-		td3 = getContent('td3'),
-		td4 = getContent('td4'),
+	var td1 = redips.getContent('td1'),
+		td2 = redips.getContent('td2'),
+		td3 = redips.getContent('td3'),
+		td4 = redips.getContent('td4'),
 		// set reference to the message DIV (below tables)
 		message = document.getElementById('message');
 	// show block content
@@ -48,7 +47,7 @@ showContent = function () {
 
 
 // get content (DIV elements in TD)
-getContent = function (id) {
+redips.getContent = function (id) {
 	var td = document.getElementById(id),
 		content = '',
 		cn, i;
@@ -71,8 +70,8 @@ getContent = function (id) {
 
 // add onload event listener
 if (window.addEventListener) {
-	window.addEventListener('load', redipsInit, false);
+	window.addEventListener('load', redips.init, false);
 }
 else if (window.attachEvent) {
-	window.attachEvent('onload', redipsInit);
+	window.attachEvent('onload', redips.init);
 }

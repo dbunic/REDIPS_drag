@@ -17,9 +17,9 @@
 		// open loop through each array element
 		foreach ($arr as $p){
 			// detach values from each parameter
-			list($id, $row, $cell) = explode('_', $p);
+			list($id, $row, $cell, $class, $text) = explode('_', $p);
 			// instead of print, you can store accepted parameteres to the database
-			print "Id=$id Row=$row Cell=$cell<br>";
+			print "Id=$id Row=$row Cell=$cell Class=$class Text=$text<br>";
 		}
 	?>
 </body>

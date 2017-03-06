@@ -9,9 +9,6 @@ $db_host = 'localhost';
 $db_name = 'enter_database_name';
 $db_user = 'enter_user_name';
 $db_pwd  = 'enter_user_password';
-$db_name = 'redips';
-$db_user = 'root';
-$db_pwd  = '';
 
 // reset record set to null ($rs is used in timetable function)
 $rs = null;
@@ -94,7 +91,7 @@ function timetable($hour, $row) {
 	print '<tr>';
 	print '<td class="mark dark">' . $hour . '</td>';
 	// column loop starts from 1 because column 0 is for hours
-	for ($col=1; $col <= 5; $col++) {
+	for ($col = 1; $col <= 5; $col++) {
 		// create table cell
 		print '<td>';
 		// prepare position key in the same way as the array key looks

@@ -1,5 +1,10 @@
 Changes for REDIPS.drag library
 
+5.2.1 (2017-03-01)
+- modified saveContent() - method now sends class names and innerText of DIV elements
+- added loadContent() - method loads table content from server side JSON output
+- added event.loadError(obj) - it's called in case if placing DIV element to the table is not possible (nonexistent table coordinates)
+
 5.2.0 (2017-02-06)
 - added ajaxCall() method for making easier AJAX requests
 - example03 changed to use ajaxCall() method

@@ -1,0 +1,120 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+	<head>
+		<meta name="author" content="Darko Bunic"/>
+		<meta name="description" content="Drag and drop table content with JavaScript"/>
+		<meta name="viewport" content="width=device-width, user-scalable=no"/><!-- "position: fixed" fix for Android 2.2+ -->
+		<link rel="stylesheet" href="style.css" type="text/css" media="screen"/>
+		<script type="text/javascript" src="../header.js"></script>
+		<script type="text/javascript" src="../redips-drag-min.js"></script>
+		<script type="text/javascript" src="script.js"></script>
+		<title>Example 28: Load table content with AJAX</title>
+	</head>
+	<body>
+		<!-- main container -->
+		<div id="main-container">
+			<!-- drag1 DIV container -->
+			<div id="redips-drag">
+				<!-- load buttons -->
+				<input id="button1" type="button" value="Load1" onclick="redips.button1()"/>
+				<input id="button2" type="button" value="Load2" onclick="redips.button2()"/>
+				<input id="button3" type="button" value="Load3" onclick="redips.button3()"/>
+
+				<!-- content table -->
+				<table id="myTable">
+					<colgroup>
+						<col width="70"/>
+						<col width="70"/>
+						<col width="70"/>
+						<col width="70"/>
+						<col width="70"/>
+					</colgroup>
+					<tbody>
+						<tr>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+						<tr>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+						<tr>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+						<tr>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+						<tr>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+						<tr>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+						<tr>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+						<tr>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+					</tbody>
+				</table>
+
+				<!-- trash -->
+				<table id="mini">
+					<colgroup>
+						<col width="70"/>
+					</colgroup>
+					<tbody>
+						<tr>
+							<td class="redips-trash">Trash</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<!-- instructions -->
+			<div class="instructions">
+				REDIPS.drag library
+				<br/>
+				<br/>
+				Drag and drop JavaScript library based on HTML table.
+				<br/>
+				<br/>
+				Try to drag numbers from top table to the first column in table below.
+				In mode1 after dropping DIV element to the table cell, orange box with "?" will be automatically displayed to the most right column.
+				Mode2 will display result but first number will have "?".
+				User should dblclick on "?" and number will be shown.
+				REDIPS.drag works in "shift" mode so dropping number on top of existing content will shift other elements.
+			</div>
+		</div>
+	</body>
+</html>

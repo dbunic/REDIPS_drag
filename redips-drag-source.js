@@ -2,8 +2,8 @@
 Copyright (c) 2008-2017, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 5.2.0
-Feb 06, 2017.
+Version 5.2.1
+Mar 01, 2017.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -70,7 +70,8 @@ REDIPS.drag = (function () {
 		getStyle,					// method returns style value of requested object and style name
 		findParent,					// method returns a reference of the required parent element
 		findCell,					// method returns first or last cell: rowIndex, cellIndex and cell reference (input is "first" or "last" parameter and table or object within table)
-		saveContent,				// scan tables, prepare query string and sent to the multiple-parameters.php
+		saveContent,				// scan tables and return query string or JSON text 
+		loadContent,				// load JSON text from the URL, generate DIV elements and place it to defined position with text, id and class attributes
 		ajaxCall,					// method calls AJAX service and runs callback function
 		relocate,					// relocate objects from source cell to the target cell (source and target cells are input parameters)
 		emptyCell,					// method removes elements from table cell
@@ -194,6 +195,7 @@ REDIPS.drag = (function () {
 				dropped : function () {},
 				droppedBefore : function () {},
 				finish : function () {},
+				loadError: function () {},
 				moved : function () {},
 				notCloned : function () {},
 				notMoved : function () {},
@@ -1277,17 +1279,6 @@ REDIPS.drag = (function () {
 				// drop element to the table cell (or delete cloned element if drop="false")
 				elementDrop(drop);
 			}
-			// force naughty browsers (IE6, IE7 ...) to redraw source and destination row (element.className = element.className does the trick)
-			// but careful (table_source || row_source could be null if clone element was clicked in denied table cell)
-			//
-			// today we are in era of FF5, IE9 ... so maybe this lines were not needed any more (first I will comment them out and if nobody will complain
-			// then they will be deleted completely)
-			/*
-			if (table_source !== null && row_source !== null && tables[table_source].rows[row_source] !== undefined) {
-				tables[table_source].rows[row_source].className = tables[table_source].rows[row_source].className;
-			}
-			targetCell.parentNode.className = targetCell.parentNode.className;
-			*/
 			// if dropped object contains TABLE(S) then recall initTables() to properly initialize tables array (only in cell mode)
 			// if row is dragged and contains tables, then this will be handler in rowDrop() private method
 			if (mode === 'cell' && obj.getElementsByTagName('table').length > 0) {
@@ -3027,40 +3018,44 @@ REDIPS.drag = (function () {
 
 
 	/**
-	 * Method scans table content and prepares query string or JSON format for submitting to the server.
+	 * Method scans table content and prepares query string or JSON format for submitting to the server script.
 	 * Input parameters are id / table reference and optional output format.
 	 * @param {String|HTMLElement} tbl Id or reference of table that will be scanned.
 	 * @param {String} [type] Type defines output format. If set to "json" then output will be JSON format otherwise output will be query string.
 	 * @return {String} Returns table content as query string or in JSON format.
 	 * @example
 	 * Query string:
-	 * 'p[]='+id+'_'+r+'_'+c+'&p[]='+id+'_'+r+'_'+c + ...
+	 * 'p[]='+id+'_'+r+'_'+c+'_'+n+'_'+t+'&p[]='+id+'_'+r+'_'+c+'_'+n+'_'+t ...
 	 *  
 	 * JSON:
-	 * [["id",r,c],["id",r,c],...]
+	 * [["id",r,c,n,t],["id",r,c,n,t], ...]
 	 *  
 	 * id - element id
 	 * r  - row index
 	 * c  - cell index
+	 * n  - class names
+	 * t  - DIV innerText
 	 *  
 	 * Query string example:
-	 * p[]=d1_1_0&p[]=d2_1_1&p[]=d3_5_2&p[]=d4_5_3
+	 * p[]=d1_1_0_blue_Name1&p[]=d2_1_1_green_Name2&p[]=d3_5_2_green_Name3&p[]=d4_5_3_red_Name4
 	 *  
-	 * JSON example:
-	 * [["d1",1,0],["d2",1,1],["d3",5,2],["d4",5,3]]
+	 * JSON output example:
+	 * [["d1",1,0,"blue","Name1"],["d2",1,1,"green","Name2"],["d3",5,2,"green","Name3"],["d4",5,3,"red","Name4"]]
 	 * @see <a href="#saveParamName">saveParamName</a>
 	 * @public
 	 * @function
 	 * @name REDIPS.drag#saveContent
 	 */
 	saveContent = function (tbl, type) {
-		var query = '',						// define query parameter
-			tbl_rows,						// number of table rows
-			cells,							// number of cells in the current row
-			tbl_cell,						// reference to the table cell
-			cn,								// reference to the child node
-			r, c, d,					    // variables used in for loops
-			JSONobj = [],					// prepare JSON object
+		var query = '',		// define query parameter
+			tbl_rows,		// number of table rows
+			cells,			// number of cells in the current row
+			classes,		// class names of DIV elements ("redips-drag" is excluded)
+			divText,		// text inside DIV element
+			tbl_cell,		// reference to the table cell
+			cn,				// reference to the child node
+			r, c, d,		// variables used in for loops
+			JSONobj = [],	// prepare JSON object
 			pname = REDIPS.drag.saveParamName;	// set parameter name (default is 'p')
 		// if input parameter is string, then set reference to the table
 		if (typeof(tbl) === 'string') {
@@ -3084,12 +3079,19 @@ REDIPS.drag = (function () {
 						for (d = 0; d < tbl_cell.childNodes.length; d++) {
 							// set reference to the child node
 							cn = tbl_cell.childNodes[d];
-							// childNode should be DIV with containing "redips-drag" class name
+							// childNode should be DIV with containing "redips-*" class name
 							if (cn.nodeName === 'DIV' && cn.className.indexOf('redips-drag') > -1) { // and yes, it should be uppercase
+								// set classes from DIV element and exclude all "redips-*" class names
+								// "\w" is equivalent to [A-Za-z0-9_] and "+" matches one or more characters
+								classes = cn.className.replace(/redips-\w+/g, '');
+								// normalize spaces
+								classes = normalize(classes);
+								// set text of DIV element
+								divText = cn.innerText || cn.textContent;
 								// prepare query string
-								query += pname + '[]=' + cn.id + '_' + r + '_' + c + '&';
+								query += pname + '[]=' + cn.id + '_' + r + '_' + c + '_' + classes + '_' + divText + '&';
 								// push values for DIV element as Array to the Array
-								JSONobj.push([cn.id, r, c]);
+								JSONobj.push([cn.id, r, c, classes, divText]);
 							}
 						}
 					}
@@ -3106,6 +3108,85 @@ REDIPS.drag = (function () {
 		}
 		// return prepared parameters (if tables are empty, returned value could be empty too) 
 		return query;
+	};
+
+
+	/**
+	 * bla bla
+	 * bla bla
+	 * bla bla
+	 * @param {HTMLElement|String} targetTable Reference or id of target table
+	 * @param {String} jsonText JSON text
+	 * @public
+	 * @function
+	 * @see <a href="#event:loadError">event.loadError</a>
+	 * @name REDIPS.drag#loadContent
+	 */
+	loadContent = function (targetTable, jsonText) {
+		var json,		// json object
+			div,		// DIV element (dynamically created and set properties)
+			id,			// DIV element id
+			r, c,		// row and cell position
+			cell,		// cell position
+			className,	// class names added to DIV element
+			text,		// text (value) set to DIV element
+			flag,		// return flag from event.loadError()
+			i;			// for loop variable
+		if (typeof(targetTable) === 'string') {
+			targetTable = document.getElementById(table);
+		}
+		// if target table doesn't exist or target element isn't table then return false
+		if (targetTable === undefined || targetTable === null || targetTable.nodeName !== 'TABLE') {
+			REDIPS.drag.event.loadError({id: 0, message: 'Target table does not exist', text: null, rowIndex: null, cellIndex: null});
+			return;
+		}
+
+		// parse JSON text to object
+		json = JSON.parse(jsonText);
+
+		// loop goes through all JSON elements
+		for (i = 0; i < json.length; i++) {
+			// set properties from JSON object
+			id = json[i][0];	// DIV id
+			r = json[i][1];		// row position
+			c = json[i][2];		// cell position
+			className = json[i][3];	// class names
+			text = json[i][4];	// DIV text
+			// create DIV element
+			div = document.createElement('div');
+			// set DIV id
+			div.id = id;
+			// set class names with normalized spaces to the cloned DIV element
+			div.className = normalize('redips-drag ' + className);
+			div.textContent = text;
+			// if target row doesn't exist then set flag to false 
+			if (targetTable.rows[r] === undefined) {
+				// call event.loadError() with object as input parameter
+				// object properties are: message, text, rowIndex and cellIndex 
+				flag = REDIPS.drag.event.loadError({id: 1, message: 'Target TR does not exist', text: text, rowIndex: r, cellIndex: c});
+				// if return value from event handler is "false" then stop further processing
+				if (flag === false) {
+					return;
+				}
+			}
+			// if target cell doesn't exist then set flag to false
+			else if (targetTable.rows[r].cells[c] === undefined) {
+				// call event.loadError() with object as input parameter
+				// object properties are: message, text, rowIndex and cellIndex 
+				flag = REDIPS.drag.event.loadError({id: 2, message: 'Target TD does not exist', text: text, rowIndex: r, cellIndex: c});
+				// if return value from event handler is "false" then stop further processing
+				if (flag === false) {
+					return;
+				}
+			}
+			// target row and target cell exists -> append and enable DIV element to the TD
+			else {
+				// append DIV element to the table
+				targetTable.rows[r].cells[c].appendChild(div);
+				// enable DIV element (DIV element will become drag-able)
+				enableDrag(true, div);				
+			}
+		}
 	};
 
 
@@ -3631,9 +3712,9 @@ REDIPS.drag = (function () {
 	 * @memberOf REDIPS.drag#
 	 */
 	maxCols = function (table) {
-        if (typeof(table) === 'string') {
-            table = document.getElementById(table);
-        }        
+		if (typeof(table) === 'string') {
+			table = document.getElementById(table);
+		}
 		var	tr = table.rows,	// define number of rows in current table
 			span,				// sum of colSpan values
 			max = 0,			// maximum number of columns
@@ -4511,6 +4592,7 @@ REDIPS.drag = (function () {
 		enableTable : enableTable,
 		cloneObject : cloneObject,
 		saveContent : saveContent,
+		loadContent : loadContent,
 		ajaxCall : ajaxCall,
 		relocate : relocate,
 		emptyCell : emptyCell,
@@ -4544,6 +4626,22 @@ REDIPS.drag = (function () {
 		/**
 		 * Event handler invoked if a mouse button is clicked twice while the mouse pointer is over DIV element.
 		 * @name REDIPS.drag#event:dblClicked
+		 * @function
+		 * @event
+		 */
+		/**
+		 * Event handler invoked if is not possible to place DIV element to the target table during content loading - the reason could be nonexistent coordinates of TR or TD.
+		 * Method is called with optional object as input parameter containing properties that describes context of error.
+		 * Object properites {id, message, text, rowIndex, cellIndex} contains the following information:
+		 * <ul>
+		 * <li>If target table does not exist - {0, 'Target table does not exist', null, null, null}</li>
+		 * <li>In case of nonexisting TR - {1, 'Target TR does not exist', 'DIV_text', row_index, cell_index}</li>
+		 * <li>In case of nonexisting TD - {2, 'Target TD does not exist', 'DIV_text', row_index, cell_index}</li>
+		 * </ul>
+		 * If boolen "false" is returned from this event handler then further processing will be stopped.
+		 * @param {Object} [obj] Object properties are: id (message id), message (error description), text (DIV text), rowIndex and cellIndex 
+		 * @name REDIPS.drag#event:loadError
+		 * @see <a href="#loadContent">loadContent</a>
 		 * @function
 		 * @event
 		 */
