@@ -71,7 +71,9 @@ REDIPS.drag = (function () {
 		findParent,					// method returns a reference of the required parent element
 		findCell,					// method returns first or last cell: rowIndex, cellIndex and cell reference (input is "first" or "last" parameter and table or object within table)
 		saveContent,				// scan tables and return query string or JSON text 
-		loadContent,				// load JSON text from the URL, generate DIV elements and place it to defined position with text, id and class attributes
+		loadContent,				// method loads content to the target table; input parameters are target table and JSON, JSON text or URL of JSON service
+		loadContentHandler,			// handler needed for loadContent method in case if input parameter is URL of JSON service
+		insertContent,				// insert DIV content to the target table, input parameters are target table and JSON text
 		ajaxCall,					// method calls AJAX service and runs callback function
 		relocate,					// relocate objects from source cell to the target cell (source and target cells are input parameters)
 		emptyCell,					// method removes elements from table cell
@@ -195,7 +197,6 @@ REDIPS.drag = (function () {
 				dropped : function () {},
 				droppedBefore : function () {},
 				finish : function () {},
-				loadError: function () {},
 				moved : function () {},
 				notCloned : function () {},
 				notMoved : function () {},
@@ -215,7 +216,10 @@ REDIPS.drag = (function () {
 				rowNotMoved : function () {},
 				rowUndeleted : function () {},
 				switched : function () {},
-				undeleted : function () {}};
+				undeleted : function () {}},
+	// (object) error handlers
+	error = {ajax : function () {},
+			loadContent: function () {}};
 
 
 	/**
@@ -3116,13 +3120,71 @@ REDIPS.drag = (function () {
 	 * bla bla
 	 * bla bla
 	 * @param {HTMLElement|String} targetTable Reference or id of target table
-	 * @param {String} jsonText JSON text
+	 * @param {Array|String} param Array (JSON formatted array) or URL of service to retrieve JSON data via AJAX
 	 * @public
 	 * @function
-	 * @see <a href="#event:loadError">event.loadError</a>
+	 * @see <a href="#event:loadError">error.loadContent</a>
 	 * @name REDIPS.drag#loadContent
 	 */
-	loadContent = function (targetTable, jsonText) {
+	loadContent = function (targetTable, param) {
+		// needed for trying to parse input parameter as JSON text 
+		var json;
+		// if input parameter is array then assume it's a JSON formated array like [["d2",2,2,"orange","A2"],["d1",1,5,"green","A1"], ...]
+		if (Array.isArray(param)) {
+			insertContent(targetTable, param);
+		}
+		// if input parameter is string - it should be URL or JSON text
+		else if (typeof(param) === 'string') {
+			// try to parse JSON text to object
+			try {
+				// parse JSON text
+				json = JSON.parse(param);
+				// this line will be executed if there wasn't error in upper JSON.parse() line
+				insertContent(targetTable, param);
+			}
+			// in case of error, code assumes that input parameter is URL
+			catch (e) {
+				// make AJAX call and set loadContentHandler() as callback method
+				ajaxCall(param, loadContentHandler, {targetTable: targetTable});
+			}
+		}
+		// input parameter is neither string and neither array
+		// call error event handler
+		else {
+			REDIPS.drag.error.loadContent({type: 0, message: 'Invalid input parameter (URL or JSON is expected)', text: null, rowIndex: null, cellIndex: null});
+		}
+	};
+	
+	
+	// AJAX handler - display response in div.innerHTML
+	// callback method is called with XHR and obj object
+	// obj is just passed from ajaxCall to this callback function
+	loadContentHandler = function (xhr, obj) {
+		// if status is OK
+		if (xhr.status === 200) {
+			// call placeContent method with targetTable and JSON text from AJAX service
+			insertContent(obj.targetTable, xhr.responseText);
+		}
+		// else call loadError event handler
+		// error type 0 is non-recoverable error
+		else {
+			REDIPS.drag.error.loadContent({type: 0, message: 'AJAX error: [' + xhr.status + '] ' + xhr.statusText, text: null, rowIndex: null, cellIndex: null});
+		}
+	};
+
+
+	/**
+	 * bla bla
+	 * bla bla
+	 * bla bla
+	 * @param {HTMLElement|String} targetTable Reference or id of target table
+	 * @param {Array|String} param Array (JSON formatted array) or URL of service to retrieve JSON text via AJAX
+	 * @public
+	 * @function
+	 * @see <a href="#event:loadError">error.loadContent</a>
+	 * @name REDIPS.drag#loadContent
+	 */
+	insertContent = function (targetTable, param) {
 		var json,		// json object
 			div,		// DIV element (dynamically created and set properties)
 			id,			// DIV element id
@@ -3130,20 +3192,34 @@ REDIPS.drag = (function () {
 			cell,		// cell position
 			className,	// class names added to DIV element
 			text,		// text (value) set to DIV element
-			flag,		// return flag from event.loadError()
+			flag,		// return flag from error.loadContent()
 			i;			// for loop variable
+
+		// if parameter targetTable is string then set reference to the object
 		if (typeof(targetTable) === 'string') {
-			targetTable = document.getElementById(table);
+			targetTable = document.getElementById(targetTable);
 		}
-		// if target table doesn't exist or target element isn't table then return false
+		// if target table doesn't exist or target element isn't table then call error handler and return
 		if (targetTable === undefined || targetTable === null || targetTable.nodeName !== 'TABLE') {
-			REDIPS.drag.event.loadError({id: 0, message: 'Target table does not exist', text: null, rowIndex: null, cellIndex: null});
+			REDIPS.drag.error.loadContent({type: 0, message: 'Target table does not exist', text: null, rowIndex: null, cellIndex: null});
 			return;
 		}
-
-		// parse JSON text to object
-		json = JSON.parse(jsonText);
-
+		// if input parameter is array then assume it's a JSON formated array like [["d2",2,2,"orange","A2"],["d1",1,5,"green","A1"], ...]
+		if (Array.isArray(param)) {
+			json = param;
+		}
+		// else parse text 
+		else {
+			// try to parse JSON string to object
+			try {
+				json = JSON.parse(param);
+			}
+			// catch error if JSON string is not well formatted
+			catch (e) {
+				REDIPS.drag.error.loadContent({type: 0, message: e.message, text: null, rowIndex: null, cellIndex: null});
+				return;
+		    }
+		}
 		// loop goes through all JSON elements
 		for (i = 0; i < json.length; i++) {
 			// set properties from JSON object
@@ -3161,9 +3237,9 @@ REDIPS.drag = (function () {
 			div.textContent = text;
 			// if target row doesn't exist then set flag to false 
 			if (targetTable.rows[r] === undefined) {
-				// call event.loadError() with object as input parameter
+				// call error.loadContent() with object as input parameter
 				// object properties are: message, text, rowIndex and cellIndex 
-				flag = REDIPS.drag.event.loadError({id: 1, message: 'Target TR does not exist', text: text, rowIndex: r, cellIndex: c});
+				flag = REDIPS.drag.error.loadContent({type: 1, message: 'Target TR does not exist', text: text, rowIndex: r, cellIndex: c});
 				// if return value from event handler is "false" then stop further processing
 				if (flag === false) {
 					return;
@@ -3171,15 +3247,15 @@ REDIPS.drag = (function () {
 			}
 			// if target cell doesn't exist then set flag to false
 			else if (targetTable.rows[r].cells[c] === undefined) {
-				// call event.loadError() with object as input parameter
+				// call error.loadContent() with object as input parameter
 				// object properties are: message, text, rowIndex and cellIndex 
-				flag = REDIPS.drag.event.loadError({id: 2, message: 'Target TD does not exist', text: text, rowIndex: r, cellIndex: c});
+				flag = REDIPS.drag.error.loadContent({type: 2, message: 'Target TD does not exist', text: text, rowIndex: r, cellIndex: c});
 				// if return value from event handler is "false" then stop further processing
 				if (flag === false) {
 					return;
 				}
 			}
-			// target row and target cell exists -> append and enable DIV element to the TD
+			// target row and target cell exist -> append and enable DIV element in TD
 			else {
 				// append DIV element to the table
 				targetTable.rows[r].cells[c].appendChild(div);
@@ -3189,51 +3265,54 @@ REDIPS.drag = (function () {
 		}
 	};
 
-
+	
 	/**
 	 * Method calls AJAX service (using GET or POST method) and runs callback function with xhr (XML HTTP Request) object as input parameter (xhr object is implicitly created only first time).
 	 * Input parameter "obj" is just passed to the callback method and is optional in both ways (as input parameter in ajaxCall or for using in callback).
-	 * obj is not only needed for optional AJAX settings but it can be useful for sending additional parameters to the callback function. 
+	 * obj is not only needed for optional AJAX settings but it can be useful for sending additional parameters to the callback function.
+	 * In case of AJAX error (xhr.status !== 200), error.ajax() handler will be called with xhr object as input parameter.
+	 * Here are examples how to initiate AJAX call, set AJAX handler and error handler:
 	 * 
 	 * @example
-	 * Example - how to initiate AJAX call:
-	 * 
 	 * // simple AJAX call (GET method) 
-	 * REDIPS.drag.ajaxCall('ajax_menu.php?month=2&year=2017', redips.handler);
+	 * REDIPS.drag.ajaxCall('ajax_menu.php?month=2&year=2017', myHandler);
 	 * 
 	 * // AJAX call with passing dragged element as div property
-	 * REDIPS.drag.ajaxCall('ajax_menu.php?month=2&year=2017', redips.handler, {div: rd.obj});
+	 * REDIPS.drag.ajaxCall('ajax_menu.php?month=2&year=2017', myHandler, {div: rd.obj});
 	 * 
 	 * // AJAX call with POST method and data in name-value format (header 'application/x-www-form-urlencoded' is automatically applied)
-	 * REDIPS.drag.ajaxCall('ajax_menu.php', redips.handler, {method: 'POST', data: 'name1=value1&name2=value2&name3=value3'});
-	 * 
-	 * Callback function example:
+	 * REDIPS.drag.ajaxCall('ajax_menu.php', myHandler, {method: 'POST', data: 'name1=value1&name2=value2&name3=value3'});
 	 * 
 	 * // xhr is XML HTTP Request object and obj is passed from ajaxCall() to this handler
-	 * // obj is optionally defined and if is not needed then it can be omitted
-	 * redips.handler(xhr, obj) {
-	 *     // if status is OK
-	 *     if (xhr.status === 200) {
-	 *         ...
-	 *     }
-	 *     // otherwise display error message
-	 *     else {
-	 *         console.log = 'Oops, an error occurred: [' + xhr.status + '] ' + xhr.statusText;
-	 *     }
+	 * // obj is optionally defined and if is not needed then it can be omitted as input parameter
+	 * myHandler = function (xhr, obj) {
+	 *     ...
+	 *     ...
+	 * };
+	 * 
+	 * // error handler called in case of AJAX error (if xhr.status !== 200)
+	 * REDIPS.drag.error.ajax = function (xhr) {
+	 *     // non blocking alert (alert called with setTimeout())
+	 *     setTimeout(function () {
+	 *         alert('AJAX error: [' + xhr.status + '] ' + xhr.statusText);
+	 *     }, 10);
+	 *     // return false to stop execution of callback function 
+	 *     return false;
 	 * };
 	 * 
 	 * @param {String} url URL address of AJAX service. In case of GET method it should contain all parameters in name-value format.
 	 * @param {Object} callBack Callback function called after request is ended (successfully or not). Function is called with xhr (XML HTTP request) object and obj object as input parameters.
 	 * @param {Object} [obj] Object with optional AJAX parameters (like POST method and data) or used for sending additional parameters to the callback function. 
-	 * 
 	 * @public
 	 * @function
+	 * @see <a href="#error:ajax">error.ajax</a>
 	 * @name REDIPS.drag#ajaxCall
 	 */
 	ajaxCall = function (url, callBack, obj) {
 		// local variables
 		var method = 'GET',	// set GET as default AJAX method
-			data = '';		// set "data" parameter needed for POST method
+			data = '',		// set "data" parameter needed for POST method
+			flag;			// return flag from event.ajaxError()
 		// if xhr object is undefined then create it (only first time)
 		// XMLHttpRequest object should be supported by all modern browsers
 		if (xhr === undefined) {
@@ -3257,9 +3336,13 @@ REDIPS.drag = (function () {
 			// if operation is completed (readyState === 4)
 			if (xhr.readyState === XMLHttpRequest.DONE) {
 				// if the HTTP status is not OK
-				if (xhr.status !== 200) {
-					// display error to the browser console
-					console.log('REDIPS.drag.ajaxCall error: [' + xhr.status + '] ' + xhr.statusText);
+				if (xhr.status !== 200) {				
+					// call error.ajax() handler with xhr object as input parameter
+					flag = REDIPS.drag.error.ajax(xhr);
+					// if return value from error.ajax() is "false" then stop here and don't call callback function
+					if (flag === false) {
+						return;
+					}
 				}
 				// call callback function with xhr object and data as input parameters
 				callBack.call(this, xhr, obj);
@@ -4613,7 +4696,7 @@ REDIPS.drag = (function () {
 		 * @type Object
 		 * @ignore
 		 */
-		event : event
+		event : event,
 
 		/* Element Event Handlers */
 		/**
@@ -4626,22 +4709,6 @@ REDIPS.drag = (function () {
 		/**
 		 * Event handler invoked if a mouse button is clicked twice while the mouse pointer is over DIV element.
 		 * @name REDIPS.drag#event:dblClicked
-		 * @function
-		 * @event
-		 */
-		/**
-		 * Event handler invoked if is not possible to place DIV element to the target table during content loading - the reason could be nonexistent coordinates of TR or TD.
-		 * Method is called with optional object as input parameter containing properties that describes context of error.
-		 * Object properites {id, message, text, rowIndex, cellIndex} contains the following information:
-		 * <ul>
-		 * <li>If target table does not exist - {0, 'Target table does not exist', null, null, null}</li>
-		 * <li>In case of nonexisting TR - {1, 'Target TR does not exist', 'DIV_text', row_index, cell_index}</li>
-		 * <li>In case of nonexisting TD - {2, 'Target TD does not exist', 'DIV_text', row_index, cell_index}</li>
-		 * </ul>
-		 * If boolen "false" is returned from this event handler then further processing will be stopped.
-		 * @param {Object} [obj] Object properties are: id (message id), message (error description), text (DIV text), rowIndex and cellIndex 
-		 * @name REDIPS.drag#event:loadError
-		 * @see <a href="#loadContent">loadContent</a>
 		 * @function
 		 * @event
 		 */
@@ -4892,7 +4959,44 @@ REDIPS.drag = (function () {
 		 * @name REDIPS.drag#event:rowUndeleted 
 		 * @function
 		 * @event
-		 */	
+		 */
+
+		/* Error Handlers */
+		/**
+		 * All error handlers are part of REDIPS.drag.error namespace.
+		 * @type Object
+		 * @ignore
+		 */
+		error : error
+
+		/* Element Error Handlers */
+		/**
+		 * Error handler invoked in case of AJAX error with xhr as input parameter.
+		 * @param {Object} [xhr] Input parameter is XMLHttpRequest object (xhr)
+		 * @name REDIPS.drag#error:ajax
+		 * @see <a href="#ajaxCall">ajaxCall</a>
+		 * @function
+		 * @error
+		 */
+		/**
+		 * Error handler invoked if is not possible to place DIV element to the target table during content loading - the reason could be non-existent coordinates of TR, TD or TABLE.
+		 * Method is called with optional object as input parameter containing properties that describes context of error.
+		 * Object properites {type, message, text, rowIndex, cellIndex} contain the following information:
+		 * <ul>
+		 * <li>In case of AJAX error - {0, 'AJAX error description', null, null, null}</li>
+		 * <li>If input JSON string is not parsable - {0, 'JSON parse error', null, null, null}</li>
+		 * <li>If target table does not exist - {0, 'Target table does not exist', null, null, null}</li>
+		 * <li>In case of nonexisting TR - {1, 'Target TR does not exist', 'DIV_text', row_index, cell_index}</li>
+		 * <li>In case of nonexisting TD - {2, 'Target TD does not exist', 'DIV_text', row_index, cell_index}</li>
+		 * </ul>
+		 * Error type 0 (AJAX error, JSON parse error or table doesn't exist) is non-recoverable error (after calling loadError() event handler, loadContent() method will stop).
+		 * If boolen "false" is returned from this event handler, further processing will be stopped. It refers to error type 1 and type 2.
+		 * @param {Object} [obj] Object properties are: type (message type), message text (error description), text (DIV text), rowIndex and cellIndex 
+		 * @name REDIPS.drag#error:loadContent
+		 * @see <a href="#loadContent">loadContent</a>
+		 * @function
+		 * @event
+		 */
 
 	}; // end of public (return statement)		
 }());

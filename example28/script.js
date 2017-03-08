@@ -14,13 +14,22 @@ redips.init = function () {
 	var	rd = REDIPS.drag;
 	// initialization
 	rd.init();
-	// event handler called if error occured during loading table content
-	rd.event.loadError = function (obj) {
+	// error handler called if error occured during loading table content
+	rd.error.loadContent = function (obj) {
 		// display error message
-		console.log(obj.message);
+		console.log(obj.message + ' [error type ' + obj.type + ']');
 		// return false to stop further processing
 		//return false;
-	}
+	};
+	// error handler called in case of AJAX error
+	rd.error.ajax = function (xhr) {
+		// non blocking alert (alert called with setTimeout())
+		setTimeout(function () {
+			alert('Oops, an error occurred: [' + xhr.status + '] ' + xhr.statusText);
+		}, 10);
+		// return false to stop before execution of callback function 
+		return false;
+	};
 	// set reference to the target table
 	redips.targetTable = document.getElementById('myTable');
 };
@@ -28,19 +37,17 @@ redips.init = function () {
 
 // function called on button1 click
 redips.button1 = function () {
-	REDIPS.drag.ajaxCall('db_ajax1.php', redips.handler1);
+	REDIPS.drag.loadContent(redips.targetTable, 'db_ajax.php');
 };
 
-// AJAX handler1
-redips.handler1 = function (xhr) {
-	// if status is OK then display DIV content
-	if (xhr.status === 200) {
-		REDIPS.drag.loadContent(redips.targetTable, xhr.responseText);
-	}
-	// otherwise display nice error message
-	else {
-		console.log('Oops, an error occurred: [' + xhr.status + '] ' + xhr.statusText);
-	}
+// function called on button2 click
+redips.button2 = function () {
+	REDIPS.drag.loadContent('myTable', [["d6", 6, 2, "green", "A2"], ["d7", 7, 4, "green", "A1"]]);
+};
+
+// function called on button2 click
+redips.button3 = function () {
+	REDIPS.drag.loadContent(redips.targetTable, '[["d16", 6, 2, "orange", "B2"], ["d17", 7, 4, "orange", "B1"]]');
 };
 
 // -------------------------------------------------
