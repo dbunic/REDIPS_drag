@@ -45,6 +45,7 @@ REDIPS.drag is a JavaScript drag and drop library focused on dragging table cont
 * REDIPS.drag.getPosition() - returns DIV element position as array (tableIndex, rowIndex and cellIndex)
 * REDIPS.drag.getScrollPosition() - returns scroll positions as array [ scrollX, scrollY ]
 * REDIPS.drag.getStyle() - returns style value of requested object and style name
+* REDIPS.drag.loadContent() - method loads content and inserts to the HTML table
 * REDIPS.drag.moveObject() - method will calculate parameters and start animation (DIV element to the destination table cell)
 * REDIPS.drag.relocate() - relocates all child nodes from source table cell to the target table cell
 * REDIPS.drag.rowEmpty() - marks selected row as empty (tbl_id, row_idx, [color])

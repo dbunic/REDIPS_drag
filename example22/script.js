@@ -73,19 +73,20 @@ redips.init = function () {
 			rd.obj.style.height = redips.size.h;
 		}
 	};
+	// set error handler for AJAX calls
+	rd.error.ajax = function (xhr) {
+		// display error message
+		redips.rd.obj.innerHTML = 'Oops, an error occurred: [' + xhr.status + '] ' + xhr.statusText;
+		// return false to stop calling callback function
+		return false;
+	};
 };
 
 
 // AJAX handler - called after DIV element is dropped to the right table (dropzone)
 redips.handler1 = function (xhr) {
-	// if status is OK then display DIV content
-	if (xhr.status === 200) {
-		redips.rd.obj.innerHTML = xhr.responseText;
-	}
-	// otherwise display nice error message
-	else {
-		redips.rd.obj.innerHTML = 'Oops, an error occurred: [' + xhr.status + '] ' + xhr.statusText;
-	}
+	// display DIV content
+	redips.rd.obj.innerHTML = xhr.responseText;
 };
 
 
@@ -116,25 +117,18 @@ redips.handler2 = function (xhr) {
 	var status, // status from the AJAX service (it should return string "OK")
 		message, // displayed message to the user
 		msg = document.getElementById('message');
-	// if status is OK process AJAX respond
-	if (xhr.status === 200) {
-		// status from the AJAX service
-		status = xhr.responseText;
-		// test if returned status is OK
-		if (status === 'OK') {
-			// set new person name to the redips.pname variable (this will be used when object will be back to the left table)
-			redips.pname = document.getElementById('fname').value + ' ' + document.getElementById('lname').value;
-			// set message
-			message = 'Saved!';
-		}
-		// else prepare error message
-		else {
-			message = 'Error1 [' + status + ']';
-		}
+	// status from the AJAX service
+	status = xhr.responseText;
+	// test if returned status is OK
+	if (status === 'OK') {
+		// set new person name to the redips.pname variable (this will be used when object will be back to the left table)
+		redips.pname = document.getElementById('fname').value + ' ' + document.getElementById('lname').value;
+		// set message
+		message = 'Saved!';
 	}
-	// otherwise set AJAX error (like service not found etc)
+	// else prepare error message
 	else {
-		message = 'Error2 [' + xhr.status + '] ' + xhr.statusText;
+		message = 'Error1 [' + status + ']';
 	}
 	// display message
 	msg.innerHTML = message;

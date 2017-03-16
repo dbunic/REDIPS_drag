@@ -130,7 +130,7 @@ REDIPS.drag = (function () {
 		cloneClass = false,			// (boolean) true if clicked element contains clone in class name (set in handler_mousedown)
 		animationCounter = [],		// (array) counter of animated elements to be shifted before table should be enabled
 		windowScrollPosition,		// (array) top and left window offset (set in calculateCells and used in boxOffset)
-		xhr,						// XML Http Request
+		xhr,						// XMLHttpRequest object
 		
 		// selected, previous and source table, row and cell (private parameters too)
 		table = null,
@@ -447,8 +447,7 @@ REDIPS.drag = (function () {
 	 * This event handler is attached to every DIV element in drag container (please see "enableDrag").
 	 * @param {Event} e Event information.
 	 * @see <a href="#enableDrag">enableDrag</a>
-	 * @see <a href="#add">handlerOnDblClick</a>
-	 * @see <a href="#add_events">add_events</a>
+	 * @see <a href="#handlerOnDblClick">handlerOnDblClick</a>
 	 * @private
 	 * @memberOf REDIPS.drag#
 	 */
@@ -631,7 +630,6 @@ REDIPS.drag = (function () {
 	 * @param {Event} e Event information.
 	 * @see <a href="#enableDrag">enableDrag</a>
 	 * @see <a href="#handlerOnMouseDown">handlerOnMouseDown</a>
-	 * @see <a href="#add_events">add_events</a>
 	 * @private
 	 * @memberOf REDIPS.drag#
 	 */
@@ -3032,7 +3030,7 @@ REDIPS.drag = (function () {
 	 * 'p[]='+id+'_'+r+'_'+c+'_'+n+'_'+t+'&p[]='+id+'_'+r+'_'+c+'_'+n+'_'+t ...
 	 *  
 	 * JSON:
-	 * [["id",r,c,n,t],["id",r,c,n,t], ...]
+	 * [["id",r,c,"n","t"],["id",r,c,"n","t"], ...]
 	 *  
 	 * id - element id
 	 * r  - row index
@@ -3046,6 +3044,7 @@ REDIPS.drag = (function () {
 	 * JSON output example:
 	 * [["d1",1,0,"blue","Name1"],["d2",1,1,"green","Name2"],["d3",5,2,"green","Name3"],["d4",5,3,"red","Name4"]]
 	 * @see <a href="#saveParamName">saveParamName</a>
+	 * @see <a href="#loadContent">loadContent</a>
 	 * @public
 	 * @function
 	 * @name REDIPS.drag#saveContent
@@ -3116,14 +3115,41 @@ REDIPS.drag = (function () {
 
 
 	/**
-	 * bla bla
-	 * bla bla
-	 * bla bla
-	 * @param {HTMLElement|String} targetTable Reference or id of target table
-	 * @param {Array|String} param Array (JSON formatted array) or URL of service to retrieve JSON data via AJAX
+	 * Method inserts DIV elements to the target table.
+	 * Target table can be defined as string (id) or reference.
+	 * In case of wrong table reference, error.loadContent() event handler will be called with error type 0 (non-recoverable error).
+	 * Second parameter could be formed in the following ways:
+	 * <ul>
+	 * <li>Absolute or relative URL of AJAX service that returns JSON data (e.g. '/service/db_data.php')</li>
+	 * <li>JSON text containing information how to insert DIV elements</li>
+	 * <li>Array containing information how to insert DIV elements</li>
+	 * </ul>
+	 * Form of JSON text or array is the same as produced from saveContent() method:
+	 * 
+	 * [["id",r,c,"n","t"],["id",r,c,"n","t"], ...]
+	 *  
+	 * id - element id
+	 * r  - row index
+	 * c  - cell index
+	 * n  - class names
+	 * t  - DIV innerText
+	 * 
+	 * @example
+	 * // load content from AJAX service to table with reference targetTable
+	 * REDIPS.drag.loadContent(targetTable, 'db_ajax1.php');
+	 *
+	 * // load content from JSON text to table with reference targetTable
+	 * REDIPS.drag.loadContent(targetTable, '[["d16", 6, 2, "orange", "B2"], ["d17", 7, 4, "orange", "B1"]]');
+	 * 
+	 * // load content from array to table with id "myTable"
+	 * REDIPS.drag.loadContent('myTable', [["d6", 6, 2, "green", "A2"], ["d7", 7, 4, "green", "A1"]]);
+	 *  
+	 * @param {HTMLElement|String} targetTable Reference or id of target table where DIV elements will be inserted
+	 * @param {String|Array} param JSON text or array (JSON formatted array) or AJAX URL to retrieve JSON data
 	 * @public
 	 * @function
-	 * @see <a href="#event:loadError">error.loadContent</a>
+	 * @see <a href="#saveContent">saveContent</a>
+	 * @see <a href="#event:error::loadError">error.loadContent</a>
 	 * @name REDIPS.drag#loadContent
 	 */
 	loadContent = function (targetTable, param) {
@@ -3154,11 +3180,19 @@ REDIPS.drag = (function () {
 			REDIPS.drag.error.loadContent({type: 0, message: 'Invalid input parameter (URL or JSON is expected)', text: null, rowIndex: null, cellIndex: null});
 		}
 	};
-	
-	
-	// AJAX handler - display response in div.innerHTML
-	// callback method is called with XHR and obj object
-	// obj is just passed from ajaxCall to this callback function
+
+
+	/**
+	 * AJAX handler (callback function) called from loadContent() method if input parameter is URL.
+	 * If status from HTTP AJAX service is not OK, error.loadContent() event handler is called.
+	 * 
+	 * @param {Object} xhr XMLHttpRequest object
+	 * @param {Object} obj Object sent from AJAX initiation and it contains reference to target table where DIV elements will be inserted.
+	 * @see <a href="#loadContent">loadContent</a>
+	 * @see <a href="#insertContent">insertContent</a>
+	 * @private
+	 * @memberOf REDIPS.drag#
+	 */
 	loadContentHandler = function (xhr, obj) {
 		// if status is OK
 		if (xhr.status === 200) {
@@ -3174,15 +3208,15 @@ REDIPS.drag = (function () {
 
 
 	/**
-	 * bla bla
-	 * bla bla
-	 * bla bla
+	 * Method inserts DIV elements to target table defined with id or reference.
+	 * Second parameter should be JSON text or array in form as is explained in loadContent() method.
+	 * 
 	 * @param {HTMLElement|String} targetTable Reference or id of target table
 	 * @param {Array|String} param Array (JSON formatted array) or URL of service to retrieve JSON text via AJAX
-	 * @public
-	 * @function
-	 * @see <a href="#event:loadError">error.loadContent</a>
-	 * @name REDIPS.drag#loadContent
+	 * @see <a href="#loadContent">loadContent</a>
+	 * @see <a href="#event:error::loadContent">error.loadContent</a>
+	 * @private
+	 * @memberOf REDIPS.drag#
 	 */
 	insertContent = function (targetTable, param) {
 		var json,		// json object
@@ -3267,31 +3301,53 @@ REDIPS.drag = (function () {
 
 	
 	/**
-	 * Method calls AJAX service (using GET or POST method) and runs callback function with xhr (XML HTTP Request) object as input parameter (xhr object is implicitly created only first time).
-	 * Input parameter "obj" is just passed to the callback method and is optional in both ways (as input parameter in ajaxCall or for using in callback).
+	 * Method calls AJAX service (using GET or POST method) and runs callback function with xhr (XMLHttpRequest) object as input parameter (xhr object is implicitly created only first time).
+	 * Callback function as input parameter is optional but error handling can be defined for such AJAX call anyway.
+	 * Input parameter "obj" is just passed to the callback method and is also optional in both ways (as input parameter in ajaxCall or for using in callback).
 	 * obj is not only needed for optional AJAX settings but it can be useful for sending additional parameters to the callback function.
-	 * In case of AJAX error (xhr.status !== 200), error.ajax() handler will be called with xhr object as input parameter.
+	 * In case of AJAX error (xhr.status !== 200), error.ajax() handler will be called with xhr and obj objects as input parameters.
 	 * Here are examples how to initiate AJAX call, set AJAX handler and error handler:
 	 * 
 	 * @example
+	 * // simple AJAX call without callback function
+	 * REDIPS.drag.ajaxCall('ajax_save.php?a=1&b=2');
+	 * 
 	 * // simple AJAX call (GET method) 
 	 * REDIPS.drag.ajaxCall('ajax_menu.php?month=2&year=2017', myHandler);
 	 * 
 	 * // AJAX call with passing dragged element as div property
 	 * REDIPS.drag.ajaxCall('ajax_menu.php?month=2&year=2017', myHandler, {div: rd.obj});
 	 * 
-	 * // AJAX call with POST method and data in name-value format (header 'application/x-www-form-urlencoded' is automatically applied)
-	 * REDIPS.drag.ajaxCall('ajax_menu.php', myHandler, {method: 'POST', data: 'name1=value1&name2=value2&name3=value3'});
+	 * // AJAX call with POST method and data in name-value format
+	 * // header 'application/x-www-form-urlencoded' is automatically applied
+	 * REDIPS.drag.ajaxCall('ajax_menu.php', myHandler, {method: 'POST', data: 'name1=value1&name2=value2'});
 	 * 
-	 * // xhr is XML HTTP Request object and obj is passed from ajaxCall() to this handler
+	 * // xhr is XMLHttpRequest object and obj is passed from ajaxCall() to this callback function
 	 * // obj is optionally defined and if is not needed then it can be omitted as input parameter
 	 * myHandler = function (xhr, obj) {
 	 *     ...
 	 *     ...
 	 * };
 	 * 
-	 * // error handler called in case of AJAX error (if xhr.status !== 200)
-	 * REDIPS.drag.error.ajax = function (xhr) {
+	 * // it is also possible to wrap error handling inside callback function
+	 * // this can be useful in case of many different AJAX calls with specific error processing to each call 
+	 * myHandler = function (xhr, obj) {
+	 *     // if status is OK
+	 *     if (xhr.status === 200) {
+	 *         ...
+	 *     }
+	 *     // otherwise display error
+	 *     else {
+	 *         setTimeout(function () {
+	 *             alert('AJAX error: [' + xhr.status + '] ' + xhr.statusText);
+	 *         }, 10);
+	 *     }
+	 * };
+	 * 
+	 * 
+	 * // general error handler called in case of AJAX error (if xhr.status !== 200)
+	 * // obj is optional parameter
+	 * REDIPS.drag.error.ajax = function (xhr, obj) {
 	 *     // non blocking alert (alert called with setTimeout())
 	 *     setTimeout(function () {
 	 *         alert('AJAX error: [' + xhr.status + '] ' + xhr.statusText);
@@ -3301,8 +3357,8 @@ REDIPS.drag = (function () {
 	 * };
 	 * 
 	 * @param {String} url URL address of AJAX service. In case of GET method it should contain all parameters in name-value format.
-	 * @param {Object} callBack Callback function called after request is ended (successfully or not). Function is called with xhr (XML HTTP request) object and obj object as input parameters.
-	 * @param {Object} [obj] Object with optional AJAX parameters (like POST method and data) or used for sending additional parameters to the callback function. 
+	 * @param {Object} [callBack] Callback function called after request is ended (successfully or not). Function is called with xhr (XMLHttpRequest) object and obj object as input parameters.
+	 * @param {Object} [obj] Object with optional AJAX parameters (like POST method and data) or used for sending additional parameters to the callback function.
 	 * @public
 	 * @function
 	 * @see <a href="#error:ajax">error.ajax</a>
@@ -3337,15 +3393,18 @@ REDIPS.drag = (function () {
 			if (xhr.readyState === XMLHttpRequest.DONE) {
 				// if the HTTP status is not OK
 				if (xhr.status !== 200) {				
-					// call error.ajax() handler with xhr object as input parameter
-					flag = REDIPS.drag.error.ajax(xhr);
+					// call error.ajax() handler with xhr and obj objects as input parameters
+					// obj is just passed from ajaxCall() to error.ajax() event handler
+					flag = REDIPS.drag.error.ajax(xhr, obj);
 					// if return value from error.ajax() is "false" then stop here and don't call callback function
 					if (flag === false) {
 						return;
 					}
 				}
-				// call callback function with xhr object and data as input parameters
-				callBack.call(this, xhr, obj);
+				// if callback function is defined then make call (input parameters are xhr object and data)
+				if (typeof(callBack) === 'function') {
+					callBack.call(this, xhr, obj);
+				}
 			}
 		};
 		// in a good manners, set 'X-Requested-With' HTTP header
@@ -4971,12 +5030,15 @@ REDIPS.drag = (function () {
 
 		/* Element Error Handlers */
 		/**
-		 * Error handler invoked in case of AJAX error with xhr as input parameter.
+		 * This method enables handling HTTP AJAX errors.
+		 * Error handler will be called when status of AJAX request is not 200 (OK) and the reason might be 404 Not Found, 403 Forbidden, 503 Service Unavailable, 500 Internal Server Error etc.
+		 * Input parameter is XMLHttpRequest object (xhr) where are all details about AJAX request (status, statusText, ...) and optional obj object passed from ajaxCall() method.
 		 * @param {Object} [xhr] Input parameter is XMLHttpRequest object (xhr)
-		 * @name REDIPS.drag#error:ajax
+		 * @param {Object} [obj] Object with optional AJAX parameters (like POST method and data) or used for sending additional parameters to the callback function.
+		 * @name REDIPS.drag#event:error::ajax
 		 * @see <a href="#ajaxCall">ajaxCall</a>
 		 * @function
-		 * @error
+		 * @event
 		 */
 		/**
 		 * Error handler invoked if is not possible to place DIV element to the target table during content loading - the reason could be non-existent coordinates of TR, TD or TABLE.
@@ -4992,7 +5054,7 @@ REDIPS.drag = (function () {
 		 * Error type 0 (AJAX error, JSON parse error or table doesn't exist) is non-recoverable error (after calling loadError() event handler, loadContent() method will stop).
 		 * If boolen "false" is returned from this event handler, further processing will be stopped. It refers to error type 1 and type 2.
 		 * @param {Object} [obj] Object properties are: type (message type), message text (error description), text (DIV text), rowIndex and cellIndex 
-		 * @name REDIPS.drag#error:loadContent
+		 * @name REDIPS.drag#event:error::loadContent
 		 * @see <a href="#loadContent">loadContent</a>
 		 * @function
 		 * @event

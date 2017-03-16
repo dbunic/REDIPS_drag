@@ -16,19 +16,12 @@ redips.init = function () {
 	rd.init();
 	// error handler called if error occured during loading table content
 	rd.error.loadContent = function (obj) {
-		// display error message
-		console.log(obj.message + ' [error type ' + obj.type + ']');
-		// return false to stop further processing
-		//return false;
-	};
-	// error handler called in case of AJAX error
-	rd.error.ajax = function (xhr) {
-		// non blocking alert (alert called with setTimeout())
+		// display error message (non blocking alert)
 		setTimeout(function () {
-			alert('Oops, an error occurred: [' + xhr.status + '] ' + xhr.statusText);
+			alert(obj.message + ' [error type ' + obj.type + ']');
 		}, 10);
-		// return false to stop before execution of callback function 
-		return false;
+		// on first error, return false to stop further processing
+		//return false;
 	};
 	// set reference to the target table
 	redips.targetTable = document.getElementById('myTable');
@@ -37,7 +30,7 @@ redips.init = function () {
 
 // function called on button1 click
 redips.button1 = function () {
-	REDIPS.drag.loadContent(redips.targetTable, 'db_ajax.php');
+	REDIPS.drag.loadContent(redips.targetTable, 'db_ajax1.php');
 };
 
 // function called on button2 click

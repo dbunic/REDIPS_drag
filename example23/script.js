@@ -35,6 +35,13 @@ redips.init = function () {
 	rd.event.deleted = function (targetCell) {
 		redips.addItem(rd.obj);
 	};
+	// set error handler for AJAX call
+	rd.error.ajax = function (xhr) {
+		// display error message
+		redips.displayMessage('AJAX error: [' + xhr.status + '] ' + xhr.statusText, 2000);
+		// return false to stop calling callback function
+		return false;
+	};
 };
 
 
@@ -60,35 +67,29 @@ redips.save = function () {
 };
 
 
-// AJAX handler - called after click on "Save" button
+// AJAX callback function
 redips.handler = function (xhr) {
-	// displayed message to the user
-	var message;
-	// response is OK
-	if (xhr.status === 200) {
-		/*
-		 * original code 
-		 * 
-		// status from the AJAX service
-		status = xhr.responseText;
-		// test if returned status is OK
-		if (status === 'OK') {
-			// set message and delay
-			message = 'Saved!';
-		}
-		else {
-			message = 'Error [' + status + ']';
-		}
-		*/
-		// demo code
-		message = xhr.responseText;
+	/*
+	//
+	// test status returned from AJAX service
+	//
+	var status = xhr.responseText;
+	// test if status is OK
+	if (status === 'OK') {
+		message = 'Saved!';
 	}
-	// if request status isn't OK
 	else {
-		message = 'Error: [' + xhr.status + '] ' + xhr.statusText;
+		message = 'Error [' + status + ']';
 	}
-	// display message and set timeout to delete message
+	// display message
 	redips.displayMessage(message, 2000);
+	*/
+
+	//
+	// demo code
+	//
+	// display message
+	redips.displayMessage(xhr.responseText, 2000);
 };
 
 

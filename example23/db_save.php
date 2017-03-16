@@ -4,7 +4,7 @@
 $param = $_POST['p'];
 
 // demo: print AJAX string
-print 'AJAX: ';
+print 'AJAX saved: ';
 
 // demo: loop to display all p[] values
 foreach ($param as $key => $val) {
@@ -18,6 +18,6 @@ foreach ($param as $key => $val) {
 // ..
 // ..
 
-// if everything went OK, then return string 'OK'
+// return string 'OK' if everything was OK ('OK' string can be tested in AJAX callback function)
 //print 'OK';
 ?>
