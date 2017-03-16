@@ -87,6 +87,7 @@ redips.init = function () {
 
 // AJAX handler - display response from redips.ajaxField in div.innerHTML
 // callback method is called with XHR and obj object (obj is just passed from ajaxCall to this callback function)
+// error handling is wrapped inside callback function
 redips.handler1 = function (xhr, obj) {
 	// prepare title and layout local variables
 	var title,
@@ -195,6 +196,7 @@ redips.save = function () {
 
 
 // AJAX handler - called after save button is clicked
+// error handling is wrapped inside callback function
 redips.handler2 = function (xhr) {
 	// set reference to message element
 	var message = document.getElementById('message');

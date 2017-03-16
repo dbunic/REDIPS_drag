@@ -2,7 +2,7 @@
 
 Darko Bunic
 http://www.redips.net/
-Dec, 2012.
+Apr, 2017.
 
 */
 
@@ -57,6 +57,26 @@ div#redips-drag td {
 	border: 2px solid SteelBlue;
 }
 
+/* button class */
+.button {
+	margin: 15px 0px 0px 15px;
+	background-color: #6A93D4;
+	color: white;
+	width: 60px;
+	order-width: 1px;
+	border-radius: 5px;
+}
+
+/* set background color for clear button */
+.clear {
+	background-color: #ef2929;
+}
+
+/* text fied */
+.text {
+	margin: 15px 0px 0px 15px;
+	width: 347px;
+}
 
 /* green objects */
 .green {
@@ -66,6 +86,11 @@ div#redips-drag td {
 /* orange objects */
 .orange {
 	border: 2px solid #BF6A30;
+}
+
+/* blue objects */
+.blue {
+	border: 2px solid SteelBlue;
 }
 
 /* trash cell */

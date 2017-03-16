@@ -130,6 +130,13 @@ redips.init = function () {
 		// set hover color for cloned elements
 		rd.hover.colorTd = redips.hover2;
 	};
+	// set error handler for AJAX calls
+	rd.error.ajax = function (xhr, obj) {
+		// set DIV innerHTML to display error message
+		obj.div.innerHTML = 'Error: [' + xhr.status + '] ' + xhr.statusText;
+		// return false to stop calling callback function
+		return false;
+	};
 };
 
 
@@ -137,14 +144,7 @@ redips.init = function () {
 // callback method is called with XHR and obj object
 // obj is just passed from ajaxCall to this callback function
 redips.handler = function (xhr, obj) {
-	// if status is OK
-	if (xhr.status === 200) {
-		obj.div.innerHTML = xhr.responseText;
-	}
-	// else display error
-	else {
-		obj.div.innerHTML = 'Error: [' + xhr.status + '] ' + xhr.statusText;
-	}
+	obj.div.innerHTML = xhr.responseText;
 };
 
 

@@ -6,9 +6,9 @@
 		<meta name="viewport" content="width=device-width, user-scalable=no"/><!-- "position: fixed" fix for Android 2.2+ -->
 		<link rel="stylesheet" href="style.css" type="text/css" media="screen"/>
 		<script type="text/javascript" src="../header.js"></script>
-		<script type="text/javascript" src="../redips-drag-source.js"></script>
+		<script type="text/javascript" src="../redips-drag-min.js"></script>
 		<script type="text/javascript" src="script.js"></script>
-		<title>Example 28: Load table content with AJAX</title>
+		<title>Example 28: Load table content (with AJAX)</title>
 	</head>
 	<body>
 		<!-- main container -->
@@ -16,9 +16,14 @@
 			<!-- drag1 DIV container -->
 			<div id="redips-drag">
 				<!-- load buttons -->
-				<input id="button1" type="button" value="Load1" onclick="redips.button1()"/>
-				<input id="button2" type="button" value="Load2" onclick="redips.button2()"/>
-				<input id="button3" type="button" value="Load3" onclick="redips.button3()"/>
+				<input class="button" type="button" value="Load1" title="Load content from server via AJAX" onclick="redips.button1()"/>
+				<input class="button" type="button" value="Load2" title="Load content from JSON array as parameter in loadContent method" onclick="redips.button2()"/>
+				<br/>
+				<input class="button" type="button" value="Load3" title="Load content from string in text field below" onclick="redips.button3()"/>
+				<br/>
+				<input class="text" type="text" id="textField" value="[[&quot;d16&quot;, 2, 1, &quot;orange&quot;, &quot;C1&quot;], [&quot;d17&quot;, 3, 3, &quot;orange&quot;, &quot;C2&quot;]]"/>
+				<br/>
+				<input class="button clear" type="button" value="Clear" title="Clear table content" onclick="redips.clearTable()"/>
 
 				<!-- content table -->
 				<table id="myTable">
@@ -96,7 +101,7 @@
 					</colgroup>
 					<tbody>
 						<tr>
-							<td class="redips-trash">Trash</td>
+							<td class="redips-trash" title="Trash cell - drag DIV element here to delete">Trash</td>
 						</tr>
 					</tbody>
 				</table>
@@ -109,11 +114,23 @@
 				Drag and drop JavaScript library based on HTML table.
 				<br/>
 				<br/>
-				Try to drag numbers from top table to the first column in table below.
-				In mode1 after dropping DIV element to the table cell, orange box with "?" will be automatically displayed to the most right column.
-				Mode2 will display result but first number will have "?".
-				User should dblclick on "?" and number will be shown.
-				REDIPS.drag works in "shift" mode so dropping number on top of existing content will shift other elements.
+				<strong>Load1</strong>
+				<br/>
+				With click on this button, JS will load content from server script (db_ajax2.html) and set to the HTML table.
+				In this scenario, server sends non-existing location of DIV element A2 and REDIPS.drag will call error.loadContent() handler.
+				In script.js alert message will be shown but data processing will not be stopped.
+				<br/>
+				<br/>
+				<strong>Load2</strong>
+				<br/>
+				This will set content to the HTML table from JSON array as second parameter.
+				Target table is defined with string ID in first parameter of loadContent() method.
+				Please see <a href="script.js" target="_blank">script.js</a> for more info.
+				<br/>
+				<br/>
+				<strong>Load3</strong>
+				<br/>
+				JSON data is read from input text field and set to the HTML table.
 			</div>
 		</div>
 	</body>

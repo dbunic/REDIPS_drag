@@ -16,38 +16,42 @@ redips.init = function () {
 	rd.init();
 	// error handler called if error occured during loading table content
 	rd.error.loadContent = function (obj) {
-		// display error message
-		console.log(obj.message + ' [error type ' + obj.type + ']');
-		// return false to stop further processing
-		//return false;
-	};
-	// error handler called in case of AJAX error
-	rd.error.ajax = function (xhr) {
-		// non blocking alert (alert called with setTimeout())
+		// display error message (non blocking alert)
 		setTimeout(function () {
-			alert('Oops, an error occurred: [' + xhr.status + '] ' + xhr.statusText);
-		}, 10);
-		// return false to stop before execution of callback function 
-		return false;
+			alert(obj.message + ' (error type ' + obj.type + ')');
+		}, 100);
+		// return false on first error and stop further processing
+		//return false;
 	};
 	// set reference to the target table
 	redips.targetTable = document.getElementById('myTable');
 };
 
 
-// function called on button1 click
+// method called on button1 click
+// JSON data is retrieved from server script db_ajax2.html
 redips.button1 = function () {
-	REDIPS.drag.loadContent(redips.targetTable, 'db_ajax.php');
+	REDIPS.drag.loadContent(redips.targetTable, 'db_ajax2.html');
 };
 
-// function called on button2 click
+// method called on button2 click
+// JSON data is put as second parameter
 redips.button2 = function () {
-	REDIPS.drag.loadContent('myTable', [["d6", 6, 2, "green", "A2"], ["d7", 7, 4, "green", "A1"]]);
+	REDIPS.drag.loadContent('myTable', [["d6", 0, 1, "green", "B1"], ["d6", 6, 2, "green", "B2"], ["d7", 7, 4, "green", "B3"]]);
 };
 
-// function called on button2 click
+// method called on button3 click
+// string is read from text input field with id=textField
 redips.button3 = function () {
-	REDIPS.drag.loadContent(redips.targetTable, '[["d16", 6, 2, "orange", "B2"], ["d17", 7, 4, "orange", "B1"]]');
+	// prepare JSON data to place to the HTML table
+	var data = document.getElementById('textField').value;
+	// place content to the table
+	REDIPS.drag.loadContent(redips.targetTable, data);
+};
+
+// method deletes all DIV elements with redips-drag class name from table with id=myTable
+redips.clearTable = function () {
+	REDIPS.drag.clearTable('myTable');
 };
 
 // -------------------------------------------------

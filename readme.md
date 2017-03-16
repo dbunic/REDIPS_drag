@@ -1,4 +1,4 @@
-REDIPS.drag 5.2.1
+REDIPS.drag 5.2.2
 ============
 
 ## What is REDIPS.drag?
@@ -35,6 +35,7 @@ REDIPS.drag is a JavaScript drag and drop library focused on dragging table cont
 * REDIPS.drag.init() - drag container initialization
 * REDIPS.drag.initTables() - tables layout initialization
 * REDIPS.drag.ajaxCall() - create AJAX call and handle response in callback function
+* REDIPS.drag.clearTable() - deletes all DIV elements with redips-drag class name from table
 * REDIPS.drag.cloneObject() - clones DIV element and returns reference of the cloned element
 * REDIPS.drag.deleteObject() - method deletes DIV element (input parameter is DIV reference or element id)
 * REDIPS.drag.emptyCell() - test if table cell contains DIV elements or remove elements from TD
@@ -45,6 +46,7 @@ REDIPS.drag is a JavaScript drag and drop library focused on dragging table cont
 * REDIPS.drag.getPosition() - returns DIV element position as array (tableIndex, rowIndex and cellIndex)
 * REDIPS.drag.getScrollPosition() - returns scroll positions as array [ scrollX, scrollY ]
 * REDIPS.drag.getStyle() - returns style value of requested object and style name
+* REDIPS.drag.loadContent() - method loads content and inserts to the HTML table
 * REDIPS.drag.moveObject() - method will calculate parameters and start animation (DIV element to the destination table cell)
 * REDIPS.drag.relocate() - relocates all child nodes from source table cell to the target table cell
 * REDIPS.drag.rowEmpty() - marks selected row as empty (tbl_id, row_idx, [color])

@@ -21,8 +21,8 @@ redips.init = function () {
 	rd.event.dropped = function () {
 		// get element position (method returns array with current and source positions - tableIndex, rowIndex and cellIndex)
 		var pos = rd.getPosition();
-		// save DIV element
-		rd.ajaxCall('ajax/db_save.php?p=' + rd.obj.id + '_' + pos.join('_'), redips.handler);
+		// save DIV element (AJAX handler is not needed)
+		rd.ajaxCall('ajax/db_save.php?p=' + rd.obj.id + '_' + pos.join('_'));
 	};
 	// delete - after element is deleted
 	rd.event.deleted = function () {
@@ -30,21 +30,16 @@ redips.init = function () {
 		var pos = rd.getPosition(),
 			row = pos[4],
 			col = pos[5];
-		// delete element
-		rd.ajaxCall('ajax/db_delete.php?p=' + rd.obj.id + '_' + row + '_' + col, redips.handler);
+		// delete element (AJAX handler is not needed)
+		rd.ajaxCall('ajax/db_delete.php?p=' + rd.obj.id + '_' + row + '_' + col);
+	};
+	// set error handler for AJAX call
+	rd.error.ajax = function (xhr) {
+		// display error message
+		document.getElementById('message').innerHTML = 'Error: [' + xhr.status + '] ' + xhr.statusText;
 	};
 	// print message to the message line
 	redips.printMessage('AJAX version');
-};
-
-
-// AJAX handler after save or delete 
-redips.handler = function (xhr) {
-	// display error message if something was wrong
-	if (xhr.status !== 200) {
-		// display error message
-		document.getElementById('message').innerHTML = 'Error: [' + xhr.status + '] ' + xhr.statusText;
-	}
 };
 
 
