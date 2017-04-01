@@ -1,7 +1,7 @@
 Changes for REDIPS.drag library
 
 5.2.2 (2017-04-01)
-- added clearTable() - method deletes all DIV elements with redips-drag class name from table
+- added clearTable() - method deletes all DIV elements with "redips-drag" class name from table
 - added example28 - Load table content (with AJAX)
 
 5.2.1 (2017-03-08)
