@@ -3175,12 +3175,14 @@ REDIPS.drag = (function () {
 	 * Form of JSON text or array is the same as produced from saveContent() method:
 	 * 
 	 * [["id",r,c,"n","t"],["id",r,c,"n","t"], ...]
-	 *  
-	 * id - element id
-	 * r  - row index
-	 * c  - cell index
-	 * n  - class names
-	 * t  - DIV innerText
+	 * 
+	 * <ul>
+	 * <li>id - element id</li>
+	 * <li>r  - row index</li>
+	 * <li>c  - cell index</li>
+	 * <li>n  - class names</li>
+	 * <li>t  - DIV innerText</li>
+	 * </ul>
 	 * 
 	 * @example
 	 * // load content from AJAX service to table with reference targetTable
@@ -3197,7 +3199,7 @@ REDIPS.drag = (function () {
 	 * @public
 	 * @function
 	 * @see <a href="#saveContent">saveContent</a>
-	 * @see <a href="#event:error::loadError">error.loadContent</a>
+	 * @see <a href="#event:error::loadContent">error.loadContent</a>
 	 * @name REDIPS.drag#loadContent
 	 */
 	loadContent = function (targetTable, param) {
@@ -3262,7 +3264,7 @@ REDIPS.drag = (function () {
 	 * @param {HTMLElement|String} targetTable Reference or id of target table
 	 * @param {Array|String} param Array (JSON formatted array) or URL of service to retrieve JSON text via AJAX
 	 * @see <a href="#loadContent">loadContent</a>
-	 * @see <a href="#event:error::loadContent">error.loadContent</a>
+	 * @see <a href="#error::loadContent">error.loadContent</a>
 	 * @private
 	 * @memberOf REDIPS.drag#
 	 */
@@ -3409,7 +3411,7 @@ REDIPS.drag = (function () {
 	 * @param {Object} [obj] Object with optional AJAX parameters (like POST method and data) or used for sending additional parameters to the callback function.
 	 * @public
 	 * @function
-	 * @see <a href="#error:ajax">error.ajax</a>
+	 * @see <a href="#event:error::ajax">error.ajax</a>
 	 * @name REDIPS.drag#ajaxCall
 	 */
 	ajaxCall = function (url, callBack, obj) {
@@ -3478,9 +3480,9 @@ REDIPS.drag = (function () {
 	 * @param {String} [mode] Relocation mode "instant" or "animation". Default is "instant".
 	 * @public
 	 * @function
-	 * @see <a href="#event:relocateBefore">event.relocateBefore</a>
-	 * @see <a href="#event:relocateAfter">event.relocateAfter</a>
-	 * @see <a href="#event:relocateEnd">event.relocateEnd</a>
+	 * @see <a href="#event::relocateBefore">event.relocateBefore</a>
+	 * @see <a href="#event::relocateAfter">event.relocateAfter</a>
+	 * @see <a href="#event::relocateEnd">event.relocateEnd</a>
 	 * @name REDIPS.drag#relocate
 	 */
 	relocate = function (from, to, mode) {
@@ -4810,34 +4812,34 @@ REDIPS.drag = (function () {
 		/**
 		 * Event handler invoked if a mouse button is pressed down while the mouse pointer is over DIV element.
 		 * @param {HTMLElement} [currentCell] Reference to the table cell of clicked element.
-		 * @name REDIPS.drag#event:clicked
+		 * @name REDIPS.drag#event:event::clicked
 		 * @function
 		 * @event
 		 */
 		/**
 		 * Event handler invoked if a mouse button is clicked twice while the mouse pointer is over DIV element.
-		 * @name REDIPS.drag#event:dblClicked
+		 * @name REDIPS.drag#event:event::dblClicked
 		 * @function
 		 * @event
 		 */
 		/**
 		 * Event handler invoked if element is moved from home position.
 		 * @param {Boolean} [cloned] True if moved element is actually a cloned DIV. Needed for cases when obj or objOld should be used.
-		 * @name REDIPS.drag#event:moved
+		 * @name REDIPS.drag#event:event::moved
 		 * @function
 		 * @event
 		 */
 		/**
 		 * Event handler invoked if mouse button is pressed down and released while the mouse pointer is over DIV element (element was not actually moved).
 		 * Default threshold value is 7px, so if DIV element is moved within threshold value (background color of cell will not change) the same event handler will be called.
-		 * @name REDIPS.drag#event:notMoved
+		 * @name REDIPS.drag#event:event::notMoved
 		 * @function
 		 * @event
 		 */
 		/**
 		 * Event handler invoked if element is dropped to the table cell.
 		 * @param {HTMLElement} [targetCell] Target cell reference.
-		 * @name REDIPS.drag#event:dropped
+		 * @name REDIPS.drag#event:event::dropped
 		 * @function
 		 * @event
 		 */		
@@ -4846,14 +4848,14 @@ REDIPS.drag = (function () {
 		 * If boolen "false" is returned from event handler then element drop will be canceled.
 		 * Dragged element will be returned to the start position while cloned element will be deleted.
 		 * @param {HTMLElement} [targetCell] Target cell reference.
-		 * @name REDIPS.drag#event:droppedBefore
+		 * @name REDIPS.drag#event:event::droppedBefore
 		 * @function
 		 * @event
 		 */	
 		/**
 		 * Event handler invoked if DIV elements are switched (dropMode is set to "switch").
 		 * @param {HTMLElement} [targetCell] Reference to the target table cell.
-		 * @name REDIPS.drag#event:switched
+		 * @name REDIPS.drag#event:event::switched
 		 * @see <a href="#dropMode">dropMode</a>
 		 * @function
 		 * @event
@@ -4862,10 +4864,10 @@ REDIPS.drag = (function () {
 		 * Event handler invoked after all DIV elements are relocated and before table is enabled (DIV elements enabled for dragging).
 		 * This event can be triggered after single call of relocate() method or after all DIV elements are shifted in "shift" mode.
 		 * It is called only if animation is turned on.
-		 * @name REDIPS.drag#event:relocateEnd
+		 * @name REDIPS.drag#event:event::relocateEnd
 		 * @see <a href="#relocate">relocate</a>
-		 * @see <a href="#event:relocateBefore">event.relocateBefore</a>
-		 * @see <a href="#event:relocateAfter">event.relocateAfter</a>
+		 * @see <a href="#event::relocateBefore">event.relocateBefore</a>
+		 * @see <a href="#event::relocateAfter">event.relocateAfter</a>
 		 * @function
 		 * @event
 		 */
@@ -4874,10 +4876,10 @@ REDIPS.drag = (function () {
 		 * For example, in shift drop mode, this event handler will be called before each DIV element move.
 		 * @param {HTMLElement} div Reference of DIV element that will be relocated.
 		 * @param {HTMLElement} td Reference of TD where DIV element will be relocated.
-		 * @name REDIPS.drag#event:relocateBefore
+		 * @name REDIPS.drag#event:event::relocateBefore
 		 * @see <a href="#relocate">relocate</a>
-		 * @see <a href="#event:relocateAfter">event.relocateAfter</a>
-		 * @see <a href="#event:relocateEnd">event.relocateEnd</a>
+		 * @see <a href="#event::relocateAfter">event.relocateAfter</a>
+		 * @see <a href="#event::relocateEnd">event.relocateEnd</a>
 		 * @function
 		 * @event
 		 */
@@ -4886,17 +4888,17 @@ REDIPS.drag = (function () {
 		 * For example, in shift drop mode, this event handler will be called after each DIV element has been moved.
 		 * @param {HTMLElement} div Reference of DIV element that is relocated.
 		 * @param {HTMLElement} td Reference of TD where DIV element is relocated.
-		 * @name REDIPS.drag#event:relocateAfter
+		 * @name REDIPS.drag#event:event::relocateAfter
 		 * @see <a href="#relocate">relocate</a>
-		 * @see <a href="#event:relocateBefore">event.relocateBefore</a>
-		 * @see <a href="#event:relocateEnd">event.relocateEnd</a>
+		 * @see <a href="#event::relocateBefore">event.relocateBefore</a>
+		 * @see <a href="#event::relocateEnd">event.relocateEnd</a>
 		 * @function
 		 * @event
 		 */
 		/**
 		 * Event handler invoked on every change of current (highlighted) table cell.
 		 * @param {HTMLElement} [currentCell] Reference to the current (highlighted) table cell.
-		 * @name REDIPS.drag#event:changed
+		 * @name REDIPS.drag#event:event::changed
 		 * @see <a href="#getPosition">getPosition</a>
 		 * @example
 		 * // set REDIPS.drag reference
@@ -4917,28 +4919,28 @@ REDIPS.drag = (function () {
 		 * Otherwise, reference of cloned DIV element is set to REDIPS.drag.obj while reference of original element is set to REDIPS.drag.objOld public property.
 		 * @param {HTMLElement} [clonedElement] Cloned element reference.
 		 * @see <a href="#moveObject">moveObject</a>
-		 * @name REDIPS.drag#event:cloned
+		 * @name REDIPS.drag#event:event::cloned
 		 * @function
 		 * @event
 		 */	
 		/**
 		 * Event handler invoked after cloned DIV element is dropped.
 		 * @param {HTMLElement} [targetCell] Reference to the target table cell.
-		 * @name REDIPS.drag#event:clonedDropped
+		 * @name REDIPS.drag#event:event::clonedDropped
 		 * @function
 		 * @event
 		 */	
 		/**
 		 * Event handler invoked if last element is cloned (type 1).
 		 * Element has defined "climit1_X" class name where X defines number of elements to clone. Last element can be dragged.
-		 * @name REDIPS.drag#event:clonedEnd1
+		 * @name REDIPS.drag#event:event::clonedEnd1
 		 * @function
 		 * @event
 		 */	
 		/**
 		 * Event handler invoked if last element is cloned (type 2).
 		 * Element has defined "climit2_X" class name where X defines number of elements to clone. Last element can't be dragged and stays static.
-		 * @name REDIPS.drag#event:clonedEnd2
+		 * @name REDIPS.drag#event:event::clonedEnd2
 		 * @function
 		 * @event
 		 */	
@@ -4946,14 +4948,14 @@ REDIPS.drag = (function () {
 		 * Event handler invoked if cloned element is dropped on start position or cloned element is dropped outside current table with "clone.drop" property set to false.
 		 * This event handler could be also invoked if "clone" type element is placed inside forbidden table cell.
 		 * @see <a href="#clone">clone.drop</a>
-		 * @name REDIPS.drag#event:notCloned
+		 * @name REDIPS.drag#event:event::notCloned
 		 * @function
 		 * @event
 		 */	
 		/**
 		 * Event handler invoked if element is deleted (dropped to the "trash" table cell).
 		 * @param {Boolean} [cloned] True if cloned element is directly moved to the trash (in one move). If cloned element is dropped to the table and then moved to the trash then "cloned" parameter will be set to false.
-		 * @name REDIPS.drag#event:deleted
+		 * @name REDIPS.drag#event:event::deleted
 		 * @function
 		 * @event
 		 */	
@@ -4962,7 +4964,7 @@ REDIPS.drag = (function () {
 		 * After element is dropped to the "trash" table cell and trash.question property is not null then popup with set question will appear.
 		 * Clicking on "Cancel" will undelete element and call this event handler.
 		 * @see <a href="#trash">trash</a>
-		 * @name REDIPS.drag#event:undeleted 
+		 * @name REDIPS.drag#event:event::undeleted 
 		 * @function
 		 * @event
 		 */	
@@ -4976,14 +4978,14 @@ REDIPS.drag = (function () {
 		 * <ol>
 		 * So, event.finish will be called after deleting DIV element, cloning, switching and so on.
 		 * Its main purpose is to execute some common code (like "cleaning") after any DIV element action.
-		 * @name REDIPS.drag#event:finish
+		 * @name REDIPS.drag#event:event::finish
 		 * @function
 		 * @event
 		 */	
 		/**
 		 * Event handler invoked in a moment when overflow happen in shift mode.
 		 * @param {HTMLElement} td Reference of TD where overflow happen.
-		 * @name REDIPS.drag#event:shiftOverflow
+		 * @name REDIPS.drag#event:event::shiftOverflow
 		 * @see <a href="#dropMode">dropMode</a>
 		 * @function
 		 * @event
@@ -4993,19 +4995,19 @@ REDIPS.drag = (function () {
 		/**
 		 * Event handler invoked if a mouse button is pressed down while the mouse pointer is over row handler (div class="redips-drag redips-row").
 		 * @param {HTMLElement} [currentCell] Reference to the table cell of clicked element.
-		 * @name REDIPS.drag#event:rowClicked
+		 * @name REDIPS.drag#event:event::rowClicked
 		 * @function
 		 * @event
 		 */
 		/**
 		 * Event handler invoked if row is moved from home position.
-		 * @name REDIPS.drag#event:rowMoved
+		 * @name REDIPS.drag#event:event::rowMoved
 		 * @function
 		 * @event
 		 */
 		/**
 		 * Event handler invoked if a mouse button is pressed down and released while the mouse pointer is over row handler (row was not actually moved).
-		 * @name REDIPS.drag#event:rowNotMoved
+		 * @name REDIPS.drag#event:event::rowNotMoved
 		 * @function
 		 * @event
 		 */
@@ -5014,7 +5016,7 @@ REDIPS.drag = (function () {
 		 * @param {HTMLElement} [targetRow] Reference to the target row (dropped row).
 		 * @param {HTMLElement} [sourceTable] Source table reference. If row is dropped to the same table then this reference and targetRow will be in correlation (actually "source table" contains targetRow).
 		 * @param {Integer} [sourceRowIndex] Source row index.
-		 * @name REDIPS.drag#event:rowDropped
+		 * @name REDIPS.drag#event:event::rowDropped
 		 * @function
 		 * @event
 		 */
@@ -5023,39 +5025,39 @@ REDIPS.drag = (function () {
 		 * @param {HTMLElement} [sourceTable] Source table reference.
 		 * @param {Integer} [sourceRowIndex] Source row index.
 		 * If boolen "false" is returned from event handler then row drop will be canceled. 
-		 * @name REDIPS.drag#event:rowDroppedBefore
+		 * @name REDIPS.drag#event:event::rowDroppedBefore
 		 * @function
 		 * @event
 		 */	
 		/**
 		 * Event handler invoked if row is moved around and dropped to the home position.
 		 * @param {HTMLElement} [targetCell] Reference to the target table cell.
-		 * @name REDIPS.drag#event:rowDroppedSource
+		 * @name REDIPS.drag#event:event::rowDroppedSource
 		 * @function
 		 * @event
 		 */
 		/**
 		 * Event handler invoked on every change of current (highlighted) table row.
 		 * @param {HTMLElement} [currentCell] Reference to the current (highlighted) table cell.
-		 * @name REDIPS.drag#event:rowChanged
+		 * @name REDIPS.drag#event:event::rowChanged
 		 * @function
 		 * @event
 		 */
 		/**
 		 * Event handler invoked if table row is cloned.
-		 * @name REDIPS.drag#event:rowCloned
+		 * @name REDIPS.drag#event:event::rowCloned
 		 * @function
 		 * @event
 		 */	
 		/**
 		 * Event handler invoked if cloned row is dropped to the source row.
-		 * @name REDIPS.drag#event:rowNotCloned
+		 * @name REDIPS.drag#event:event::rowNotCloned
 		 * @function
 		 * @event
 		 */	
 		/**
 		 * Event handler invoked if row is deleted (dropped to the "trash" table cell).
-		 * @name REDIPS.drag#event:rowDeleted
+		 * @name REDIPS.drag#event:event::rowDeleted
 		 * @function
 		 * @event
 		 */
@@ -5064,7 +5066,7 @@ REDIPS.drag = (function () {
 		 * After row is dropped to the "trash" table cell and trash.questionRow property is not null then popup with set question will appear.
 		 * Clicking on "Cancel" will undelete row and call this event handler.
 		 * @see <a href="#trash">trash</a>
-		 * @name REDIPS.drag#event:rowUndeleted 
+		 * @name REDIPS.drag#event:event::rowUndeleted 
 		 * @function
 		 * @event
 		 */
