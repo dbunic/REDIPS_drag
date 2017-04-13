@@ -2,8 +2,8 @@
 Copyright (c) 2008-2017, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 5.2.2
-Apr 01, 2017.
+Version 5.2.3
+Apr 13, 2017.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -34,7 +34,7 @@ var REDIPS = REDIPS || {};
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">Drag and drop table rows</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">Drag and Drop table content</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-content-shift/">JavaScript drag and drop plus content shift</a>
- * @version 5.2.2 (2017-04-01)
+ * @version 5.2.3 (2017-04-13)
  */
 REDIPS.drag = (function () {
 		//
@@ -1790,6 +1790,7 @@ REDIPS.drag = (function () {
 		var previous,	// set previous position (current cell will not be highlighted) 
 			cell_current,	// define current cell (needed for some test at the function bottom)
 			row_offset,		// row offsets for the selected table (row box bounds)
+			tdOffsetTop,	// TD offset (needed for folded TD that can occure in case when sum of TD width is greater than TR width)
 			row_found,		// remember found row
 			cells,			// number of cells in the selected row
 			empty,			// (boolean) flag indicates if table cell is empty or not
@@ -1879,8 +1880,16 @@ REDIPS.drag = (function () {
 						currentCell[3] = row_offset[row][3] + tables[table].rows[row].cells[cell].offsetLeft;
 						// cell right offset is left offset + cell width  
 						currentCell[1] = currentCell[3] + tables[table].rows[row].cells[cell].offsetWidth;
+						// calculate X position of TD and take care about folded cells (TD that are moved in the next row of the same row - doh?!)
+						// TD and TR should have the same offsetTop while this is not the case of folded TD
+						tdOffsetTop = currentCell[0] + (tables[table].rows[row].cells[cell].offsetTop - tables[table].rows[row].offsetTop);
 						// is mouse pointer is between left and right offset, then cell is found
-						if (currentCell[3] <= X && X <= currentCell[1]) {
+						if (currentCell[3] <= X && X <= currentCell[1] &&
+							tdOffsetTop <= Y && Y <= tdOffsetTop + tables[table].rows[row].cells[cell].offsetHeight) {
+							// set new X bounds for current cell (this takes care about folded TD)
+							// folded TD can occure in case when sum of TD width is greater than TR width
+							currentCell[0] = tdOffsetTop;
+							currentCell[2] = tdOffsetTop + tables[table].rows[row].cells[cell].offsetHeight;
 							break;
 						}
 					}
