@@ -3,7 +3,7 @@ Copyright (c) 2008-2017, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
 Version 5.2.3
-Apr 13, 2017.
+Apr 14, 2017.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -452,8 +452,9 @@ REDIPS.drag = (function () {
 
 
 	/**
-	 * onmousedown event handler.
-	 * This event handler is attached to every DIV element in drag container (please see "enableDrag").
+	 * onmousedown event handler
+	 * This event handler is attached to every DIV element in drag container - called after click on DIV element in HTML table
+	 * See "enableDrag" for more detals.
 	 * @param {Event} e Event information.
 	 * @see <a href="#enableDrag">enableDrag</a>
 	 * @see <a href="#handlerOnDblClick">handlerOnDblClick</a>
@@ -535,18 +536,6 @@ REDIPS.drag = (function () {
 			dragContainer = obj.redips.container;
 			initTables();
 		}
-		// define drag mode ("cell" or "row")
-		// mode definition should be after:
-		// tableTop() - because "obj" is rewritten with table row reference
-		// initTables() - because "obj" is rewritten with table row reference and row doesn't have defined redips.container property
-		if (obj.className.indexOf('row') === -1) {
-			REDIPS.drag.mode = mode = 'cell';
-		}
-		else {
-			REDIPS.drag.mode = mode = 'row';
-			// just return reference of the current row (do not clone)
-			REDIPS.drag.obj = obj = rowClone(obj);
-		}
 		// if user has used a mouse event to increase the dimensions of the table - call calculateCells() 
 		calculateCells();
 		// set high z-index if object isn't "redips-clone" type (clone object is motionless) for "cell" mode only
@@ -554,38 +543,46 @@ REDIPS.drag = (function () {
 			// http://foohack.com/2007/10/top-5-css-mistakes/ (how z-index works)
 			obj.style.zIndex = 999;
 		}
-		// reset table row and cell indexes (needed in case of enable / disable tables)
-		table = row = cell = null;
-		// set current table, row and cell and remember source position (old position is initially the same as source position) 
-		setTableRowColumn();
-		table_source = table_old = table;
-		row_source = row_old = row;
-		cell_source = cell_old = cell;
 		// define source cell, current cell and previous cell (needed for event handlers)
-		REDIPS.drag.td.source = td.source = findParent('TD', obj);
+		// source cell can be TD or TH and that is why findParen() method is called with "or"
+		REDIPS.drag.td.source = td.source = findParent('TD', obj) || findParent('TH', obj);
 		REDIPS.drag.td.current = td.current = td.source;
 		REDIPS.drag.td.previous = td.previous = td.source;
-		// call event.clicked for table content
-		if (mode === 'cell') {
+		// set current table index, row index and cell index
+		// at the beginning, DIV element should nicely be sitting in TD
+		// remember source position (old position is initially the same as source position)
+		table = table_source = table_old = tables.indexOf(findParent('TABLE', td.source));
+		row = row_source = row_old = findParent('TR', td.source).rowIndex;
+		cell = cell_source = cell_old = td.source.cellIndex;
+		// set table CSS position (needed for exclusion "scroll offset" if table box has position fixed)
+		position = getStyle(tables[table_source], 'position');
+		// if table doesn't have style position:fixed then table container should be tested 
+		if (position !== 'fixed') {
+			position = getStyle(tables[table_source].parentNode, 'position');
+		}
+		// define offset of current TD
+		currentCell = boxOffset(td.current, position);
+		// define drag mode "cell" or "row"
+		// mode definition should be after:
+		// tableTop() - because "obj" is rewritten with table row reference
+		// initTables() - because "obj" is rewritten with table row reference and row doesn't have defined redips.container property
+		if (obj.className.indexOf('row') === -1) {
+			// set "cell" drag mode
+			REDIPS.drag.mode = mode = 'cell';
+			// call event.clicked for table content
 			REDIPS.drag.event.clicked(td.current);
 		}
-		// or for table row
 		else {
+			// set "row" drag mode
+			REDIPS.drag.mode = mode = 'row';
+			// return reference of the current row (do not clone)
+			REDIPS.drag.obj = obj = rowClone(obj);
+			// call event.rowClicked()
 			REDIPS.drag.event.rowClicked(td.current);
 		}
-		// if start position cannot be defined then user probably clicked on element that belongs to the disabled table
-		// (or something else happened that was not supposed to happen - every element should belong to the table)
-		// this code must go after execution of event handlers
-		if (table === null || row === null || cell === null) {
-			// rerun setTableRowColumn() again because some of tables might be enabled in handler events above
-			setTableRowColumn();
-			table_source = table_old = table;
-			row_source = row_old = row;
-			cell_source = cell_old = cell;
-			// no, clicked element is on the disabled table - sorry
-			if (table === null || row === null || cell === null) { 
-				return true;
-			}
+		// if table is disabled, then return from this event handler
+		if (tables[table].redips.enabled === false) {
+			return true;
 		}
 		// reset "moved" flag (needed for clone object in handlerOnMouseMove) and "cloned" flag
 		moved = cloned = false;
@@ -604,12 +601,7 @@ REDIPS.drag = (function () {
 		if (table !== null && row !== null && cell !== null) {
 			bgStyleOld = getTdStyle(table, row, cell);
 		}
-		// set table CSS position (needed for exclusion "scroll offset" if table box has position fixed)
-		position = getStyle(tables[table_source], 'position');
-		// if table doesn't have style position:fixed then table container should be tested 
-		if (position !== 'fixed') {
-			position = getStyle(tables[table_source].parentNode, 'position');
-		}
+
 		// define object offset
 		offset = boxOffset(obj, position);
 		// calculate offset from the clicked point inside element to the
@@ -1779,7 +1771,7 @@ REDIPS.drag = (function () {
 
 
 	/**
-	 * Method sets current table, row and cell.
+	 * Method sets index of current table, row, cell and TD offset.
 	 * Current cell position is based on position of mouse pointer and calculated grid of tables inside drag container.
 	 * Method contains logic for dropping rules like marked/forbidden table cells.
 	 * Rows with display='none' are not contained in row_offset array so row bounds calculation should take care about sparse arrays (since version 4.3.6).
@@ -1788,7 +1780,7 @@ REDIPS.drag = (function () {
 	 */
 	setTableRowColumn = function () {
 		var previous,	// set previous position (current cell will not be highlighted) 
-			cell_current,	// define current cell (needed for some test at the function bottom)
+			cell_current,	// define current cell (needed for some test at the bottom of this method)
 			row_offset,		// row offsets for the selected table (row box bounds)
 			tdOffsetTop,	// TD offset (needed for folded TD that can occure in case when sum of TD width is greater than TR width)
 			row_found,		// remember found row
@@ -1876,26 +1868,28 @@ REDIPS.drag = (function () {
 					cells = tables[table].rows[row].cells.length - 1;
 					// find current cell (X mouse position between cell offset left and right)
 					for (cell = cells; cell >= 0; cell--) {
+						// set reference to the current td needed inside this loop
+						cell_current = tables[table].rows[row].cells[cell];
 						// row left offset + cell left offset
-						currentCell[3] = row_offset[row][3] + tables[table].rows[row].cells[cell].offsetLeft;
+						currentCell[3] = row_offset[row][3] + cell_current.offsetLeft;
 						// cell right offset is left offset + cell width  
-						currentCell[1] = currentCell[3] + tables[table].rows[row].cells[cell].offsetWidth;
-						// calculate X position of TD and take care about folded cells (TD that are moved in the next row of the same row - doh?!)
+						currentCell[1] = currentCell[3] + cell_current.offsetWidth;
+						// calculate X position of TD and take care about folded cells (TD that are moved in the next row of the same table row - doh?!)
 						// TD and TR should have the same offsetTop while this is not the case of folded TD
-						tdOffsetTop = currentCell[0] + (tables[table].rows[row].cells[cell].offsetTop - tables[table].rows[row].offsetTop);
-						// is mouse pointer is between left and right offset, then cell is found
+						tdOffsetTop = currentCell[0] + (cell_current.offsetTop - tables[table].rows[row].offsetTop);
+						// if mouse pointer is between left-right and top-bottom offset, then cell is found
 						if (currentCell[3] <= X && X <= currentCell[1] &&
-							tdOffsetTop <= Y && Y <= tdOffsetTop + tables[table].rows[row].cells[cell].offsetHeight) {
-							// set new X bounds for current cell (this takes care about folded TD)
+							tdOffsetTop <= Y && Y <= tdOffsetTop + cell_current.offsetHeight) {
+							// set new Y bounds for current cell (this will take care for folded TD)
 							// folded TD can occure in case when sum of TD width is greater than TR width
 							currentCell[0] = tdOffsetTop;
-							currentCell[2] = tdOffsetTop + tables[table].rows[row].cells[cell].offsetHeight;
+							currentCell[2] = tdOffsetTop + cell_current.offsetHeight;
 							break;
 						}
 					}
 				} // if table contains rowspaned cells and mouse pointer is inside table but cell was not found (hmm, rowspaned cell - try in upper row)
 				while (tables[table].redips.rowspan && cell === -1 && row-- > 0);
-				// if cell < 0 or row < 0 then use last possible location
+				// if cell < 0 or row < 0 then use last possible TD location
 				if (row < 0 || cell < 0) {
 					previous();
 				}
@@ -1912,7 +1906,7 @@ REDIPS.drag = (function () {
 						previous();
 					}
 				}
-				// set current cell (for easier access in test below)
+				// set current cell again in case if is set previous TD
 				cell_current = tables[table].rows[row].cells[cell];
 				// if current cell contain nested table(s) then set currentCell.containTable property
 				// needed in handlerOnMouseMove() - see around line 1070

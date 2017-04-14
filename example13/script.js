@@ -35,7 +35,7 @@ setHoverColor = function (cell) {
 	switch (tbl.redips.nestedLevel) {
 	// "ground" level table
 	case 0:
-		color = '#9BB3DA';
+		color = '#C7D5ED';
 		break;
 	// first level of nested table
 	case 1:

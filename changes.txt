@@ -1,5 +1,11 @@
 Changes for REDIPS.drag library
 
+5.2.3 (2017.04.14)
+- fixed dragging in case of folded TD
+- folded TD can occure in case when row width is not big enough
+- in that case row will be wrapped with cells in more than one line
+- optimisations in handlerOnMouseDown() to determine index of clicked table, row and cell
+
 5.2.2 (2017-04-01)
 - added clearTable() - method deletes all DIV elements with "redips-drag" class name from table
 - added example28 - Load table content (with AJAX)

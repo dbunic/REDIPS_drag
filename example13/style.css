@@ -2,7 +2,7 @@
 
 Darko Bunic
 http://www.redips.net/
-Oct, 2010.
+Apr, 2017.
 
 */
 
@@ -31,12 +31,12 @@ div#redips-drag table {
 	}
 	/* nested tables level 2 */
 	div#redips-drag .nested_table2 {
-		background-color: #bbb;
+		background-color: #ccc;
 		margin: 7px auto;
 	}
 	/* nested tables level 3 */
 	div#redips-drag .nested_table3 {
-		background-color: #888;
+		background-color: #aaa;
 		margin: 7px auto;
 	}
 
@@ -57,13 +57,12 @@ div#redips-drag td {
 	text-align: center;
 	width: 27px;
 	height: 27px;
-	line-height: 27px;
 	border: 2px solid SteelBlue;
-	background-color: white;
+	background-color: SteelBlue;
 
 }
 
-/* */
+/* message */
 .message {
 	color: grey;
 	font-size: 14px;
@@ -78,4 +77,15 @@ div#redips-drag td {
 
 /* square */
 .square {
+}
+
+/* triangle */
+.triangle {
+    width: 0px;
+    height: 0px;
+    border-top: 0px;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-bottom: 30px solid SteelBlue;
+    background-color: transparent;
 }

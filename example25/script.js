@@ -204,6 +204,7 @@ redips.setMode = function (el) {
 	}
 };
 
+
 // called on "operation" dropDown menu change 
 // set operation - addition / multiplication
 redips.setOperation = function (el) {
@@ -228,6 +229,7 @@ redips.setOperation = function (el) {
 		}
 	}
 };
+
 
 // called on click of clear button
 // method removes all DIV elements from addition and multiplication table
