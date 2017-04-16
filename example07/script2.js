@@ -20,9 +20,9 @@ redips.init = function () {
 	rd.dropMode = 'single';
 	// event handler invoked after element is cloned
 	rd.event.cloned = function () {
-		// set id of cloned element
+		// set id of cloned DIV element
 		var clonedId = rd.obj.id;
-		// if id of cloned element begins with "e" then make exception (allow DIV element to access cells with class name "redips-mark")
+		// if DIV id begins with "e" then make exception (allow dragged DIV to enter TD with class name "redips-mark")
 		if (clonedId.substr(0, 1) === 'e') {   
 			rd.mark.exception[clonedId] = 'mark';
 		}

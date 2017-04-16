@@ -2,8 +2,8 @@
 Copyright (c) 2008-2017, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 5.2.3
-Apr 14, 2017.
+Version 5.2.4
+Apr 16, 2017.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -34,7 +34,7 @@ var REDIPS = REDIPS || {};
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">Drag and drop table rows</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">Drag and Drop table content</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-content-shift/">JavaScript drag and drop plus content shift</a>
- * @version 5.2.3 (2017-04-13)
+ * @version 5.2.4 (2017-04-16)
  */
 REDIPS.drag = (function () {
 		//
@@ -164,12 +164,14 @@ REDIPS.drag = (function () {
 		scroll = {enable : true,	// (boolean) enable/disable autoscroll function (default is true) 
 				bound : 25,			// (integer) bound width for autoscroll
 				speed : 20},		// (integer) scroll speed in milliseconds
-		only = {div: [],			// (array) DIVid -> classname, defined DIV elements can be placed only to the marked table cell with class name 'redips-only'
-				cname: 'redips-only',		// (string) class name for marked cells (default is 'redips-only') - only defined objects can be placed there
-				other: 'deny'},		// (string) allow / deny dropping marked objects with "redips-only" to other cells
-		mark = {action: 'deny',
-				cname: 'redips-mark',
-				exception: []},
+		only = {div: {},				// (object) DIVid -> classname; defined DIV elements can be placed only to the 'redips-only' TD cells (TD should be marked with special className)
+				divClass:  {},			// (object) DIVClass -> classname; DIV elements with defined className can be placed to 'redips-only' TD (TD should be marked with special className)
+				cname: 'redips-only',	// (string) class name for marked cells (default is 'redips-only') - only defined objects can be placed there
+				other: 'deny'},			// (string) allow / deny dropping marked objects with "redips-only" to other cells
+		mark = {action: 'deny',			// (string) default action form marked TD is deny
+				cname: 'redips-mark',	// (string) class name for marked cells
+				exception: {},			// (object) DIV id exception for marked cell
+				exceptionClass: {}},	// (object) DIV class name exception for marked cell
 		style = {borderEnabled : 'solid',	// (string) border style for enabled elements
 				borderDisabled : 'dotted',	// (string) border style for disabled elements
 				opacityDisabled : '',		// (integer) set opacity for disabled elements
@@ -1779,7 +1781,8 @@ REDIPS.drag = (function () {
 	 * @memberOf REDIPS.drag#
 	 */
 	setTableRowColumn = function () {
-		var previous,	// set previous position (current cell will not be highlighted) 
+		var previous,		// internal method to set previous position (current cell will not be highlighted)
+			findClass,		// internal method to find class names for mark.exceptionClass or only.divClass
 			cell_current,	// define current cell (needed for some test at the bottom of this method)
 			row_offset,		// row offsets for the selected table (row box bounds)
 			tdOffsetTop,	// TD offset (needed for folded TD that can occure in case when sum of TD width is greater than TR width)
@@ -1787,12 +1790,15 @@ REDIPS.drag = (function () {
 			cells,			// number of cells in the selected row
 			empty,			// (boolean) flag indicates if table cell is empty or not
 			mark_found,		// (boolean) found "redips-mark" class name
-			only_found,		// (boolean) found "redips-only" class name
+			class_flag,		// (boolean) needed for testing rules fin mark.exceptionClass or only.divClass
 			single_cell,	// table cell can be defined as single
 			tos = [],		// table offset
 			X, Y,			// X and Y position of mouse pointer
 			i;				// used in local loop
-		// set previous position (current cell will not be highlighted)
+		/**
+		 * Internal method - sets previous TD position
+		 * Current cell will not be highlighted
+		 */
 		previous = function () {
 			if (table_old !== null && row_old !== null && cell_old !== null) {
 				table = table_old;
@@ -1800,6 +1806,43 @@ REDIPS.drag = (function () {
 				cell = cell_old;
 			}
 		};
+		/**
+		 * Internal metod - looks for class names written in mark.exceptionClass or only.divClass and for class names in TD
+		 * Class rule examples:
+		 * 
+		 * rd.only.divClass.class1 = 'tdClass2';
+		 * or
+		 * rd.mark.exceptionClass.class1 = 'tdClass2';
+		 * 
+		 * @param {String} divClass Class names of dragged DIV element
+		 * @param {String} tdClass Class names of current TD
+		 * @param (Object) oList mark.exceptionClass or only.divClass object containing class names for search in tdClass2
+		 * @return {Boolean} Returned value are:
+		 * null  - dragged DIV doesn't contain class1 (from only.divClass or mark.exceptionClass)
+		 * false - dragged DIV contains class1 (from only.divClass or mark.exceptionClass)
+		 * true  - dragged DIV contains class1 (from only.divClass or mark.exceptionClass) and TD contains tdClass2
+		 */
+		findClass = function (divClass, tdClass, oList) {
+			// initially set flag to null
+			var flag = null,
+				className;
+			// loop through all class names defined in oList (mark.exceptionClass or only.divClass object)
+			for (className in oList) {
+				// dragged DIV element contains className defined with rule like rd.only.divClass.orange = 'last' or rd.mark.exceptionClass.orange = 'last'
+				if (divClass.indexOf(className) > -1) {
+					// set flag to boolean false means class name found in dragged DIV element
+					flag = false;
+					// if TD cell contains defined class divClass[i] set flag to true
+					if (tdClass.indexOf(oList[className]) > -1) {
+						flag = true;
+						break;
+					}
+				}
+			}
+			// return flag
+			return flag;
+		};
+		
 		// prepare X and Y position of mouse pointer
 		X = pointer.x;
 		Y = pointer.y;
@@ -1913,29 +1956,33 @@ REDIPS.drag = (function () {
 				currentCell.containTable = (cell_current.childNodes.length > 0 && cell_current.getElementsByTagName('table').length > 0);
 				// if current cell isn't trash cell, then search for marks in class name
 				if (cell_current.className.indexOf(REDIPS.drag.trash.className) === -1) {
-					// search for 'redips-only' class name
-					only_found = cell_current.className.indexOf(REDIPS.drag.only.cname) > -1;
-					// if current cell is marked with 'redips-only' class name
-					if (only_found === true) {
-						// marked cell "redips-only" found, test for defined pairs (DIV id -> class name)
-						if (cell_current.className.indexOf(only.div[obj.id]) === -1) {
+					// test rules for REDIPS.drag.only.divClass
+					class_flag = findClass(obj.className, cell_current.className, only.divClass);
+					// if current TD contains redips-only class name
+					if (cell_current.className.indexOf(REDIPS.drag.only.cname) > -1) {
+						// rule for the current DIV id and DIV class doesn't exist - return to previous TD
+						// here are rule examples that are not satisfied 
+						// rule for DIV id    -> REDIPS.drag.only.div.a1 = 'last; // for dragged DIV with id "a1", current TD doesn't contain "last" class and therefore should not be allowed  
+						// rule for DIV class -> REDIPS.drag.only.divClass.green = 'last; // for dragged DIV with class name "green", current TD doesn't contain "last" class and therefore should not be allowed
+						if (cell_current.className.indexOf(only.div[obj.id]) === -1 && class_flag !== true) {							
 							previous();
 							break;
 						}
 					}
-					// DIV objects marked with "redips-only" can't be placed to other cells (if property "other" is "deny")
-					else if (only.div[obj.id] !== undefined && only.other === 'deny') {
+					// DIV objects defined with REDIPS.drag.only.div or REDIPS.drag.only.divClass can't be placed to other cells (if property "only.other" is set to "deny")
+					else if ((only.div[obj.id] !== undefined || class_flag !== null) && only.other === 'deny') {
 						previous();
 						break;
 					}
 					else {
-						// search for 'mark' class name
+						// search for redips-mark TD class name
 						mark_found = cell_current.className.indexOf(REDIPS.drag.mark.cname) > -1;
-						// if current cell is marked and access type is 'deny' or current cell isn't marked and access type is 'allow'
-						// then return previous location
+						// if current TD is marked and access type is 'deny' or current TD isn't marked and access type is 'allow'
 						if ((mark_found === true && REDIPS.drag.mark.action === 'deny') || (mark_found === false && REDIPS.drag.mark.action === 'allow')) {
-							// marked cell found, but make exception if defined pairs "DIV id -> class name" exists (return previous location)
-							if (cell_current.className.indexOf(mark.exception[obj.id]) === -1) {
+							// test rules for REDIPS.drag.mark.exceptionClass
+							class_flag = findClass(obj.className, cell_current.className, mark.exceptionClass);
+							// marked cell found but exception for DIV id nor DIV class doesn't exist, therefore return to previous TD
+							if (cell_current.className.indexOf(mark.exception[obj.id]) === -1 && class_flag !== true) {
 								previous();
 								break;
 							}
@@ -2929,7 +2976,7 @@ REDIPS.drag = (function () {
 			return;
 		}
 		// get all DIV elements from TABLE
-		div = dragContainer.getElementsByTagName('DIV');
+		div = el.getElementsByTagName('DIV');
 		// set content length before loop (NodeList starts from 0 so the last in sequence has index "length - 1")
 		cl = div.length - 1;
 		// main loop that goes through all DIV elements (backwards because NodeList is alive)

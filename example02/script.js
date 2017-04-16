@@ -4,51 +4,52 @@
 /* enable strict mode */
 "use strict";
 
-// define redipsInit variable
-var redipsInit;
+//create redips container
+var redips = {};
 
 // redips initialization
-redipsInit = function () {
+redips.init = function () {
 	var num = 0,			// number of successfully placed elements
 		rd = REDIPS.drag;	// reference to the REDIPS.drag lib
+	// set reference to message HTML elements
+	redips.msg = document.getElementById('message');
 	// initialization
 	rd.init();
 	// set hover color
 	rd.hover.colorTd = '#9BB3DA';
-	// define green elements for green cells
-	rd.mark.exception.green = 'green_cell';
-	rd.mark.exception.greenc0 = 'green_cell';
-	rd.mark.exception.greenc1 = 'green_cell';
-	// define orange elements for orange cells
-	rd.mark.exception.orange = 'orange_cell';
-	rd.mark.exception.orangec0 = 'orange_cell';
-	rd.mark.exception.orangec1 = 'orange_cell';
-	// this function (event handler) is called after element is dropped
-	rd.event.dropped = function () {
-		// message text
-		var msg;
-		// if the DIV element was placed on allowed cell then 
-		if (rd.td.target.className.indexOf(rd.mark.exception[rd.obj.id]) !== -1) {
-			// make it a unmovable
+	// define "green" class name as exception for green cells
+	rd.mark.exceptionClass.green = 'green_cell';
+	// define "orange" class name as exception for orange cells
+	rd.mark.exceptionClass.orange = 'orange_cell';
+	// event handler called after DIV element is dropped to TD
+	rd.event.dropped = function (targetCell) {
+		var	divClass = rd.mark.exceptionClass, // shorter notation for DIV exception class
+			text; 
+		// if the DIV element was dropped to allowed cell 
+		if (targetCell.className.indexOf(divClass.green) > -1 ||
+			targetCell.className.indexOf(divClass.orange) > -1) {
+			// make DIV unmovable
 			rd.enableDrag(false, rd.obj);
 			// increase counter
 			num++;
-			// prepare and display message
+			// prepare message
 			if (num < 6) {
-				msg = 'Number of successfully placed elements: ' + num;
+				text = 'Number of successfully placed elements: ' + num;
 			}
 			else {
-				msg = 'Well done!';
+				text = 'Well done!';
 			}
-			document.getElementById('message').innerHTML = msg;
+			// display message
+			redips.msg.innerHTML = text;
 		}
 	};
 };
 
+
 // add onload event listener
 if (window.addEventListener) {
-	window.addEventListener('load', redipsInit, false);
+	window.addEventListener('load', redips.init, false);
 }
 else if (window.attachEvent) {
-	window.attachEvent('onload', redipsInit);
+	window.attachEvent('onload', redips.init);
 }

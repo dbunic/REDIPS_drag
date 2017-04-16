@@ -145,7 +145,9 @@ redips.createOrangeBox = function (el, div) {
 		result = redips.math(num1, num2);
 	}
 	// display result box
-	td4.innerHTML = '<div class="result box n' + redips.math(num1, num2) + '" ondblclick="window.redips.showResult(this)">' + result + '</div>';
+	// redips-drag class is added for simpler clear DIV elements in clearAll method
+	// REDIPS.drag.clearTable will delete only DIV elements that contains redips-drag class name
+	td4.innerHTML = '<div class="redips-drag result box n' + redips.math(num1, num2) + '" ondblclick="window.redips.showResult(this)">' + result + '</div>';
 };
 
 
@@ -232,21 +234,10 @@ redips.setOperation = function (el) {
 
 
 // called on click of clear button
-// method removes all DIV elements from addition and multiplication table
+// method removes all DIV elements (containing redips-drag class name) from addition and multiplication table
 redips.clearAll = function () {
-		// collect all DIV elements from drag container
-	var div = document.getElementById('redips-drag').getElementsByTagName('div'),
-		el,
-		i;
-	// loop through all DIV elements (it should go backward because nodeList is alive)
-	for (i = div.length - 1; i >= 0; i--) {
-		// set current DIV element
-		el = div[i];
-		// if DIV element is "box" type but is not of "clone" type (DIV elements in upper table should not be deleted
-		if (el.className.indexOf('box') > -1 && el.className.indexOf('clone') === -1) {
-			el.parentNode.removeChild(el);
-		}
-	}
+	REDIPS.drag.clearTable('addition');
+	REDIPS.drag.clearTable('multiplication');
 };
 
 
