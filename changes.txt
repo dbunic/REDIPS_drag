@@ -1,11 +1,14 @@
 Changes for REDIPS.drag library
 
-5.2.4 (2017.04.16)
+5.2.5 (2018-12-12)
+- enabled loading HTML content to the DIV element in loadContent() method - thanks to Mark Landmann
+
+5.2.4 (2017-04-16)
 - added REDIPS.drag.only.divClass and REDIPS.drag.mark.exceptionClass rules
 - now it's possible to allow defined DIV class name to "redips-only" or "redips-mark" TD
 - fixed bug in clearTable() method
 
-5.2.3 (2017.04.14)
+5.2.3 (2017-04-14)
 - fixed dragging in case of folded TD
 - folded TD can occure in case when row width is not big enough
 - in that case row will be wrapped with cells in more than one line

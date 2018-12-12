@@ -1,9 +1,9 @@
 /*
-Copyright (c) 2008-2017, www.redips.net All rights reserved.
+Copyright (c) 2008-2018, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 5.2.4
-Apr 16, 2017.
+Version 5.2.5
+Dec 12, 2018.
 */
 
 /*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
@@ -34,11 +34,11 @@ var REDIPS = REDIPS || {};
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">Drag and drop table rows</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">Drag and Drop table content</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-content-shift/">JavaScript drag and drop plus content shift</a>
- * @version 5.2.4 (2017-04-16)
+ * @version 5.2.5 (2018-12-12)
  */
 REDIPS.drag = (function () {
 		//
-		// public methods
+		// methods
 		//
 	var	init,						// initialization
 		initTables,					// table initialization
@@ -3231,7 +3231,7 @@ REDIPS.drag = (function () {
 	 * <li>r  - row index</li>
 	 * <li>c  - cell index</li>
 	 * <li>n  - class names</li>
-	 * <li>t  - DIV innerText</li>
+	 * <li>t  - DIV innerHTML</li>
 	 * </ul>
 	 * 
 	 * @example
@@ -3277,7 +3277,7 @@ REDIPS.drag = (function () {
 		// input parameter is neither string and neither array
 		// call error event handler
 		else {
-			REDIPS.drag.error.loadContent({type: 0, message: 'Invalid input parameter (URL or JSON is expected)', text: null, rowIndex: null, cellIndex: null});
+			REDIPS.drag.error.loadContent({type: 0, message: 'Invalid input parameter (URL or JSON is expected)', content: null, rowIndex: null, cellIndex: null});
 		}
 	};
 
@@ -3302,7 +3302,7 @@ REDIPS.drag = (function () {
 		// else call loadError event handler
 		// error type 0 is non-recoverable error
 		else {
-			REDIPS.drag.error.loadContent({type: 0, message: 'AJAX error: [' + xhr.status + '] ' + xhr.statusText, text: null, rowIndex: null, cellIndex: null});
+			REDIPS.drag.error.loadContent({type: 0, message: 'AJAX error: [' + xhr.status + '] ' + xhr.statusText, content: null, rowIndex: null, cellIndex: null});
 		}
 	};
 
@@ -3325,7 +3325,7 @@ REDIPS.drag = (function () {
 			r, c,		// row and cell position
 			cell,		// cell position
 			className,	// class names added to DIV element
-			text,		// text (value) set to DIV element
+			divContent,	// DIV content
 			flag,		// return flag from error.loadContent()
 			i;			// for loop variable
 
@@ -3335,7 +3335,7 @@ REDIPS.drag = (function () {
 		}
 		// if target table doesn't exist or target element isn't table then call error handler and return
 		if (targetTable === undefined || targetTable === null || targetTable.nodeName !== 'TABLE') {
-			REDIPS.drag.error.loadContent({type: 0, message: 'Target table does not exist', text: null, rowIndex: null, cellIndex: null});
+			REDIPS.drag.error.loadContent({type: 0, message: 'Target table does not exist', content: null, rowIndex: null, cellIndex: null});
 			return;
 		}
 		// if input parameter is array then assume it's a JSON formated array like [["d2",2,2,"orange","A2"],["d1",1,5,"green","A1"], ...]
@@ -3350,30 +3350,30 @@ REDIPS.drag = (function () {
 			}
 			// catch error if JSON string is not well formatted
 			catch (e) {
-				REDIPS.drag.error.loadContent({type: 0, message: e.message, text: null, rowIndex: null, cellIndex: null});
+				REDIPS.drag.error.loadContent({type: 0, message: e.message, content: null, rowIndex: null, cellIndex: null});
 				return;
 		    }
 		}
 		// loop goes through all JSON elements
 		for (i = 0; i < json.length; i++) {
 			// set properties from JSON object
-			id = json[i][0];	// DIV id
-			r = json[i][1];		// row position
-			c = json[i][2];		// cell position
-			className = json[i][3];	// class names
-			text = json[i][4];	// DIV text
+			id = json[i][0];			// DIV id
+			r = json[i][1];				// row position
+			c = json[i][2];				// cell position
+			className = json[i][3];		// class names
+			divContent = json[i][4];	// DIV content
 			// create DIV element
 			div = document.createElement('div');
 			// set DIV id
 			div.id = id;
 			// set class names with normalized spaces to the cloned DIV element
 			div.className = normalize('redips-drag ' + className);
-			div.textContent = text;
+			div.innerHTML = divContent;
 			// if target row doesn't exist then set flag to false 
 			if (targetTable.rows[r] === undefined) {
 				// call error.loadContent() with object as input parameter
 				// object properties are: message, text, rowIndex and cellIndex 
-				flag = REDIPS.drag.error.loadContent({type: 1, message: 'Target TR [' + r + '] does not exist', text: text, rowIndex: r, cellIndex: c});
+				flag = REDIPS.drag.error.loadContent({type: 1, message: 'Target TR [' + r + '] does not exist', content: divContent, rowIndex: r, cellIndex: c});
 				// if return value from event handler is "false" then stop further processing
 				if (flag === false) {
 					return;
@@ -3383,7 +3383,7 @@ REDIPS.drag = (function () {
 			else if (targetTable.rows[r].cells[c] === undefined) {
 				// call error.loadContent() with object as input parameter
 				// object properties are: message, text, rowIndex and cellIndex 
-				flag = REDIPS.drag.error.loadContent({type: 2, message: 'Target TD [' + r + ',' + c + '] does not exist', text: text, rowIndex: r, cellIndex: c});
+				flag = REDIPS.drag.error.loadContent({type: 2, message: 'Target TD [' + r + ',' + c + '] does not exist', content: divContent, rowIndex: r, cellIndex: c});
 				// if return value from event handler is "false" then stop further processing
 				if (flag === false) {
 					return;
@@ -5142,19 +5142,19 @@ REDIPS.drag = (function () {
 		 * @event
 		 */
 		/**
-		 * Error handler invoked if is not possible to place DIV element to the target table during content loading - the reason could be non-existent coordinates of TR, TD or TABLE.
-		 * Method is called with optional object as input parameter containing properties that describes context of error.
-		 * Object properites {type, message, text, rowIndex, cellIndex} contain the following information:
+		 * Error handler invoked if is not possible to place DIV element to the target table during content loading. The reason could be non-existent coordinates of TR, TD or non-existent TABLE.
+		 * Method is called with optional object as input parameter containing properties that describes error context.
+		 * Object properites {type, message, content, rowIndex, cellIndex} contain the following information:
 		 * <ul>
 		 * <li>In case of AJAX error - {0, 'AJAX error description', null, null, null}</li>
 		 * <li>If input JSON string is not parsable - {0, 'JSON parse error', null, null, null}</li>
 		 * <li>If target table does not exist - {0, 'Target table does not exist', null, null, null}</li>
-		 * <li>In case of nonexisting TR - {1, 'Target TR does not exist', 'DIV_text', row_index, cell_index}</li>
-		 * <li>In case of nonexisting TD - {2, 'Target TD does not exist', 'DIV_text', row_index, cell_index}</li>
+		 * <li>In case of nonexisting TR - {1, 'Target TR does not exist', 'DIV_content', row_index, cell_index}</li>
+		 * <li>In case of nonexisting TD - {2, 'Target TD does not exist', 'DIV_content', row_index, cell_index}</li>
 		 * </ul>
 		 * Error type 0 (AJAX error, JSON parse error or table doesn't exist) is non-recoverable error (after calling loadError() event handler, loadContent() method will stop).
 		 * If boolen "false" is returned from this event handler, further processing will be stopped. It refers to error type 1 and type 2.
-		 * @param {Object} [obj] Object properties are: type (message type), message text (error description), text (DIV text), rowIndex and cellIndex 
+		 * @param {Object} [obj] Object properties are: type (message type), message text (error description), content (DIV content), rowIndex and cellIndex 
 		 * @name REDIPS.drag#event:error::loadContent
 		 * @see <a href="#loadContent">loadContent</a>
 		 * @function
@@ -5167,7 +5167,9 @@ REDIPS.drag = (function () {
 
 
 
-// if REDIPS.event isn't already defined (from other REDIPS file) 
+/**
+ * if REDIPS.event isn't already defined (from other REDIPS file)
+ */
 if (!REDIPS.event) {
 	REDIPS.event = (function () {
 		var add,	// add event listener
