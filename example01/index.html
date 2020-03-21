@@ -128,16 +128,16 @@
 					<td class="redips-trash" title="Trash">Trash</td>
 				</tr>
 			</table>
-			<div><input type="button" value="Save1" class="button" onclick="save('plain')" title="Send content to the server (it will only show accepted parameters)"/><span class="message_line">Save content of the first table (plain query string)</span></div>
-			<div><input type="button" value="Save2" class="button" onclick="save('json')" title="Send content to the server (it will only show accepted parameters)"/><span class="message_line">Save content of the first table (JSON format)</span></div>
-			<div><input type="radio" name="drop_option" class="checkbox" onclick="setMode(this)" value="multiple" title="Enabled dropping to already taken table cells" checked="true"/><span class="message_line">Enable dropping to already taken table cells</span></div>
-			<div><input type="radio" name="drop_option" class="checkbox" onclick="setMode(this)" value="single" title="Disabled dropping to already taken table cells"/><span class="message_line">Disable dropping to already taken table cells</span></div>
-			<div><input type="radio" name="drop_option" class="checkbox" onclick="setMode(this)" value="switch" title="Switch content"/><span class="message_line">Switch content</span></div>
-			<div><input type="radio" name="drop_option" class="checkbox" onclick="setMode(this)" value="switching" title="Switching content continuously"/><span class="message_line">Switching content continuously</span></div>
-			<div><input type="radio" name="drop_option" class="checkbox" onclick="setMode(this)" value="overwrite" title="Overwrite content"/><span class="message_line">Overwrite content</span></div>
-			<div><input type="checkbox" class="checkbox" onclick="toggleDeleteCloned(this)" title="Remove cloned object if dragged outside of any table" checked="true"/><span class="message_line">Remove cloned element if dragged outside of any table</span></div>
-			<div><input type="checkbox" class="checkbox" onclick="toggleConfirm(this)" title="Confirm delete"/><span class="message_line">Confirm delete</span></div>
-			<div><input type="checkbox" class="checkbox" onclick="toggleDragging(this)" title="Enable dragging" checked="true"/><span class="message_line">Enable dragging</span></div>			
+			<div><input type="button" value="Save1" class="button" onclick="redips.save('plain')" title="Send content to the server (it will only show accepted parameters)"/><span class="message_line">Save content of the first table (plain query string)</span></div>
+			<div><input type="button" value="Save2" class="button" onclick="redips.save('json')" title="Send content to the server (it will only show accepted parameters)"/><span class="message_line">Save content of the first table (JSON format)</span></div>
+			<div><input type="radio" name="drop_option" class="checkbox" onclick="redips.setMode(this)" value="multiple" title="Enabled dropping to already taken table cells" checked="true"/><span class="message_line">Enable dropping to already taken table cells</span></div>
+			<div><input type="radio" name="drop_option" class="checkbox" onclick="redips.setMode(this)" value="single" title="Disabled dropping to already taken table cells"/><span class="message_line">Disable dropping to already taken table cells</span></div>
+			<div><input type="radio" name="drop_option" class="checkbox" onclick="redips.setMode(this)" value="switch" title="Switch content"/><span class="message_line">Switch content</span></div>
+			<div><input type="radio" name="drop_option" class="checkbox" onclick="redips.setMode(this)" value="switching" title="Switching content continuously"/><span class="message_line">Switching content continuously</span></div>
+			<div><input type="radio" name="drop_option" class="checkbox" onclick="redips.setMode(this)" value="overwrite" title="Overwrite content"/><span class="message_line">Overwrite content</span></div>
+			<div><input type="checkbox" class="checkbox" onclick="redips.toggleDeleteCloned(this)" title="Remove cloned object if dragged outside of any table" checked="true"/><span class="message_line">Remove cloned element if dragged outside of any table</span></div>
+			<div><input type="checkbox" class="checkbox" onclick="redips.toggleConfirm(this)" title="Confirm delete"/><span class="message_line">Confirm delete</span></div>
+			<div><input type="checkbox" class="checkbox" onclick="redips.toggleDragging(this)" title="Enable dragging" checked="true"/><span class="message_line">Enable dragging</span></div>
 		</div>
 	</body>
 </html>

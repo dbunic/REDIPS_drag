@@ -1,11 +1,17 @@
-/*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
-/*global window: false, REDIPS: true */
+/* eslint-env browser */
+/* eslint
+   semi: ["error", "always"],
+   indent: [2, "tab"],
+   no-tabs: 0,
+   no-multiple-empty-lines: ["error", {"max": 2, "maxEOF": 1}],
+   one-var: ["error", "always"] */
+/* global REDIPS */
 
 /* enable strict mode */
-"use strict";
+'use strict';
 
 // create redips container
-var redips = {};
+let redips = {};
 
 
 // redips initialization
@@ -21,12 +27,12 @@ redips.init = function () {
 	// only DIV elements with class name "orange" can be dropped to TD with class name "last" (this is last row)
 	rd.only.divClass.orange = 'last';
 	// or elements can be defined one by one
-	//rd.only.div.a = 'last';		// original
-	//rd.only.div.ac0 = 'last';		// first clone
-	//rd.only.div.b = 'last';		// original
-	//rd.only.div.bc0 = 'last';		// first clone
-	// uncomment this and "orange" elements could be placed to any TD
-	//rd.only.other = 'allow';
+	// rd.only.div.a = 'last';		// original
+	// rd.only.div.ac0 = 'last';		// first clone
+	// rd.only.div.b = 'last';		// original
+	// rd.only.div.bc0 = 'last';		// first clone
+	//  uncomment this and "orange" elements could be placed to any TD
+	// rd.only.other = 'allow';
 };
 
 

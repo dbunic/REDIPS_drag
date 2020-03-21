@@ -1,8 +1,15 @@
-/*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
-/*global window: false, REDIPS: true */
+/* eslint-env browser */
+/* eslint
+   semi: ["error", "always"],
+   indent: [2, "tab"],
+   no-tabs: 0,
+   no-multiple-empty-lines: ["error", {"max": 2, "maxEOF": 1}],
+   one-var: ["error", "always"] */
+/* global REDIPS */
 
 /* enable strict mode */
-"use strict";
+'use strict';
+
 
 var board = [[0, 0, 0], [0, 0, 0], [0, 0, 0]], // board array
 	xo = {x: 1, o: -1},	// define values for X and O elements
@@ -59,9 +66,9 @@ toggleXO = function () {
 
 
 // method checks board (KISS - keep it simple and stupid;)
-checkBoard = function (id, row_idx, cell_idx) {
+checkBoard = function (id, rowIdx, cellIdx) {
 	// set value for current cell (1 or -1)
-	board[row_idx][cell_idx] = xo[id];
+	board[rowIdx][cellIdx] = xo[id];
 	// test rows
 	checkLine(board[0][0] + board[0][1] + board[0][2]);
 	checkLine(board[1][0] + board[1][1] + board[1][2]);

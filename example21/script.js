@@ -1,21 +1,22 @@
-/*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
-/*global window: false, REDIPS: true */
+/* eslint-env browser */
+/* eslint
+   semi: ["error", "always"],
+   indent: [2, "tab"],
+   no-tabs: 0,
+   no-multiple-empty-lines: ["error", {"max": 2, "maxEOF": 1}],
+   one-var: ["error", "always"] */
+/* global REDIPS */
 
 /* enable strict mode */
-"use strict";
+'use strict';
 
-var redipsInit,
-	setTable,
-	shiftMode,
-	overflow,
-	shiftAnimation,
-	shiftAfter,
-	toggleConfirm,
+
+// create redips container
+let redips = {},
 	counter = 0;
 
-
 // redips initialization
-redipsInit = function () {
+redips.init = function () {
 	// reference to the REDIPS.drag library
 	var	rd = REDIPS.drag;
 	// initialization
@@ -40,9 +41,9 @@ redipsInit = function () {
 
 
 // set current table
-setTable = function (e) {
+redips.setTable = function (e) {
 	var value = e.options[e.selectedIndex].value,
-		tables = document.getElementById('drag').getElementsByTagName('table'),
+		tables = document.getElementById('redips-drag').getElementsByTagName('table'),
 		i;
 	// loop goes through all fetched tables within drag container
 	for (i = 0; i < tables.length; i++) {
@@ -63,13 +64,13 @@ setTable = function (e) {
 
 
 // set shift mode
-shiftMode = function (radio) {
+redips.shiftMode = function (radio) {
 	REDIPS.drag.shift.mode = radio.value;
 };
 
 
 // set overflow
-overflow = function (radio) {
+redips.overflow = function (radio) {
 	if (radio.value === 'user') {
 		REDIPS.drag.shift.overflow = document.getElementById('overflow');
 	}
@@ -80,19 +81,19 @@ overflow = function (radio) {
 
 
 // enable / disable animation
-shiftAnimation = function (chk) {
+redips.shiftAnimation = function (chk) {
 	REDIPS.drag.shift.animation = chk.checked;
 };
 
 
 // enable / disable shift after element is deleted
-shiftAfter = function (chk) {
+redips.shiftAfter = function (chk) {
 	REDIPS.drag.shift.after = chk.value;
 };
 
 
 // toggles trash_ask parameter defined at the top
-toggleConfirm = function (chk) {
+redips.toggleConfirm = function (chk) {
 	if (chk.checked === true) {
 		REDIPS.drag.trash.question = 'Are you sure you want to delete DIV element?';
 	}
@@ -104,8 +105,8 @@ toggleConfirm = function (chk) {
 
 // add onload event listener
 if (window.addEventListener) {
-	window.addEventListener('load', redipsInit, false);
+	window.addEventListener('load', redips.init, false);
 }
 else if (window.attachEvent) {
-	window.attachEvent('onload', redipsInit);
+	window.attachEvent('onload', redips.init);
 }

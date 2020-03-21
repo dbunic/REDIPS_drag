@@ -1,17 +1,23 @@
-/*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
-/*global window: false, REDIPS: true */
+/* eslint-env browser */
+/* eslint
+   semi: ["error", "always"],
+   indent: [2, "tab"],
+   no-tabs: 0,
+   no-multiple-empty-lines: ["error", {"max": 2, "maxEOF": 1}],
+   one-var: ["error", "always"] */
+/* global REDIPS */
 
 /* enable strict mode */
-"use strict";
+'use strict';
 
 // create redips container
-var redips = {};
+let redips = {};
 
 
 // redips initialization
 redips.init = function () {
 	// set reference to the REDIPS.drag lib and table row
-	var rd = REDIPS.drag,
+	let rd = REDIPS.drag,
 		tr = document.getElementById('myRow');
 	// initialization
 	rd.init();
@@ -22,7 +28,7 @@ redips.init = function () {
 		// get target and source position of dropped DIV element
 		// pos[0] - target table index
 		// pos[3] - source table index
-		var pos = rd.getPosition(),
+		let pos = rd.getPosition(),
 			td1, td2,	// source and target cell
 			ec,			// empty cell
 			i;			// local variables
@@ -34,7 +40,7 @@ redips.init = function () {
 				td1 = tr.cells[i];
 				// if cell contains DIV element then shift DIV to the left
 				if (td1.childNodes.length > 0) {
-					// define target cell and move DIV element 
+					// define target cell and move DIV element
 					td2 = tr.cells[i - ec];
 					rd.relocate(td1, td2, 'animation');
 				}
@@ -46,7 +52,6 @@ redips.init = function () {
 		}
 	};
 };
-
 
 
 // add onload event listener

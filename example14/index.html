@@ -14,11 +14,11 @@
 		<!-- tables inside this DIV could have draggable content -->
 		<div id="redips-drag">
 			<!-- "shift" drop option with animation checkbox -->
-			<input type="radio" name="drop_option" class="checkbox" onclick="setDropMode(this)" value="shift" title="Shift table content" checked="true"/> Shift
-			(<input type="checkbox" class="checkbox" onclick="toggleAnimation(this)" title="Enable / disable animation" checked=""/>with animation)
+			<input type="radio" name="drop_option" class="checkbox" onclick="redips.setDropMode(this)" value="shift" title="Shift table content" checked="true"/> Shift
+			(<input type="checkbox" class="checkbox" onclick="redips.toggleAnimation(this)" title="Enable / disable animation" checked="true"/>with animation)
 			<br/>
 			<!-- "switching" drop option -->
-			<input type="radio" name="drop_option" class="checkbox" onclick="setDropMode(this)" value="switching" title="Switching content continuously"/> Switching
+			<input type="radio" name="drop_option" class="checkbox" onclick="redips.setDropMode(this)" value="switching" title="Switching content continuously"/> Switching
 			<!-- table -->
 			<table id="table1">
 				<colgroup>

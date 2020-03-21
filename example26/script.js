@@ -1,11 +1,18 @@
-/*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
-/*global window: false, REDIPS: true, $: true */
+/* eslint-env browser, jquery */
+/* eslint
+   semi: ["error", "always"],
+   indent: [2, "tab"],
+   no-tabs: 0,
+   no-multiple-empty-lines: ["error", {"max": 2, "maxEOF": 1}],
+   one-var: ["error", "always"] */
+/* global REDIPS */
 
 /* enable strict mode */
-"use strict";
+'use strict';
 
-// global variables  
-var redips = {},		// redips container
+
+// global variables
+let redips = {},		// redips container
 	rd = REDIPS.drag,	// reference to the REDIPS.drag library
 	counter = 0,		// counter for cloned DIV elements
 	clonedDIV = false,	// cloned flag set in event.moved
@@ -27,7 +34,7 @@ redips.init = function () {
 	// event handler invoked before DIV element is dropped to the cell
 	rd.event.droppedBefore = function (targetCell) {
 		// test if target cell is occupied and set reference to the dragged DIV element
-		var empty = rd.emptyCell(targetCell, 'test');
+		let empty = rd.emptyCell(targetCell, 'test');
 		// if target cell is not empty
 		if (!empty) {
 			// open dialog should be wrapped in setTimeout because of
@@ -84,7 +91,7 @@ redips.init = function () {
 			'Switch': function () {
 				// enable elements in target cell (return solid border) in both cases
 				rd.enableDrag(true, rd.td.target);
-				// switch elements only if current DIV element is not cloned 
+				// switch elements only if current DIV element is not cloned
 				if (!clonedDIV) {
 					// relocate target and source cells
 					rd.relocate(rd.td.target, rd.td.source);
@@ -102,7 +109,6 @@ redips.init = function () {
 				// close dialog
 				$(this).dialog('close');
 			}
-		
 		},
 		// action when dialog is closed
 		close: function (event, ui) {
@@ -118,9 +124,8 @@ redips.init = function () {
 				}
 			}
 		}
-	});	
+	});
 };
-
 
 
 // add onload event listener

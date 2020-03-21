@@ -1,17 +1,22 @@
-/*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
-/*global window: false, REDIPS: true */
+/* eslint-env browser */
+/* eslint
+   semi: ["error", "always"],
+   indent: [2, "tab"],
+   no-tabs: 0,
+   no-multiple-empty-lines: ["error", {"max": 2, "maxEOF": 1}],
+   one-var: ["error", "always"] */
+/* global REDIPS */
 
 /* enable strict mode */
-"use strict";
+'use strict';
 
-// define redips_init and random color generator
-var redipsInit,
-	rndColor;
+// create redips container
+let redips = {};
 
 // redips initialization
-redipsInit = function () {
+redips.init = function () {
 	// reference to the REDIPS.drag lib
-	var rd = REDIPS.drag;
+	let rd = REDIPS.drag;
 	// initialization
 	rd.init();
 	// dragged elements can be placed to the empty cells only
@@ -20,24 +25,26 @@ redipsInit = function () {
 	rd.clone.keyDiv = true;
 	// every change of current TD will have different background color
 	rd.event.changed = function () {
-		rd.hover.colorTd = rndColor();
+		rd.hover.colorTd = redips.rndColor();
 	};
 };
 
+
 // random color generator - http://www.redips.net/javascript/random-color-generator/
-function rndColor() {
-	var hex = '0123456789ABCDEF'.split(''),
+redips.rndColor = function () {
+	let hex = '0123456789ABCDEF'.split(''),
 		color = '#', i;
-	for (i = 0; i < 6 ; i++) {
+	for (i = 0; i < 6; i++) {
 		color = color + hex[Math.floor(Math.random() * 16)];
 	}
 	return color;
-}
+};
+
 
 // add onload event listener
 if (window.addEventListener) {
-	window.addEventListener('load', redipsInit, false);
+	window.addEventListener('load', redips.init, false);
 }
 else if (window.attachEvent) {
-	window.attachEvent('onload', redipsInit);
+	window.attachEvent('onload', redips.init);
 }

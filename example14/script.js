@@ -1,16 +1,21 @@
-/*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
-/*global window: false, REDIPS: true */
+/* eslint-env browser */
+/* eslint
+   semi: ["error", "always"],
+   indent: [2, "tab"],
+   no-tabs: 0,
+   no-multiple-empty-lines: ["error", {"max": 2, "maxEOF": 1}],
+   one-var: ["error", "always"] */
+/* global REDIPS */
 
 /* enable strict mode */
-"use strict";
+'use strict';
 
+// create redips container
+let redips = {};
 
-var redipsInit,		// define redipsInit variable
-	toggleAnimation,// animation for shift option
-	setDropMode;	// function sets dropMode parameter
 
 // redips initialization
-redipsInit = function () {
+redips.init = function () {
 	// reference to the REDIPS.drag lib
 	var rd = REDIPS.drag;
 	// initialization
@@ -23,21 +28,21 @@ redipsInit = function () {
 
 
 // function sets drop_option parameter
-setDropMode = function (radioButton) {
+redips.setDropMode = function (radioButton) {
 	REDIPS.drag.dropMode = radioButton.value;
 };
 
 
 // enable / disable animation
-toggleAnimation = function (chk) {
+redips.toggleAnimation = function (chk) {
 	REDIPS.drag.shift.animation = chk.checked;
 };
 
 
 // add onload event listener
 if (window.addEventListener) {
-	window.addEventListener('load', redipsInit, false);
+	window.addEventListener('load', redips.init, false);
 }
 else if (window.attachEvent) {
-	window.attachEvent('onload', redipsInit);
+	window.attachEvent('onload', redips.init);
 }

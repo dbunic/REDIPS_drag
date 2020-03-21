@@ -1,15 +1,21 @@
-/*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
-/*global window: false, REDIPS: true */
+/* eslint-env browser */
+/* eslint
+   semi: ["error", "always"],
+   indent: [2, "tab"],
+   no-tabs: 0,
+   no-multiple-empty-lines: ["error", {"max": 2, "maxEOF": 1}],
+   one-var: ["error", "always"] */
+/* global REDIPS */
 
 /* enable strict mode */
-"use strict";
+'use strict';
 
-// define redips_init variable
-var redipsInit;
+// create redips container
+let redips = {};
 
 
 // redips initialization
-redipsInit = function () {
+redips.init = function () {
 	// reference to the REDIPS.drag library and message line
 	var	rd = REDIPS.drag,
 		msg = document.getElementById('message');
@@ -27,7 +33,7 @@ redipsInit = function () {
 	rd.event.dblClicked = function () {
 		msg.innerHTML = 'Dblclicked';
 	};
-	rd.event.moved  = function () {
+	rd.event.moved = function () {
 		msg.innerHTML = 'Moved';
 	};
 	rd.event.notMoved = function () {
@@ -78,60 +84,60 @@ redipsInit = function () {
 
 
 // toggles trash_ask parameter defined at the top
-function toggleConfirm(chk) {
+redips.toggleConfirm = function (chk) {
 	if (chk.checked === true) {
 		REDIPS.drag.trash.question = 'Are you sure you want to delete DIV element?';
 	}
 	else {
 		REDIPS.drag.trash.question = null;
 	}
-}
+};
 
 
 // toggles delete_cloned parameter defined at the top
-function toggleDeleteCloned(chk) {
+redips.toggleDeleteCloned = function (chk) {
 	REDIPS.drag.clone.drop = !chk.checked;
-}
+};
 
 
 // enables / disables dragging
-function toggleDragging(chk) {
+redips.toggleDragging = function (chk) {
 	REDIPS.drag.enableDrag(chk.checked);
-}
+};
 
 
 // function sets drop_option parameter defined at the top
-function setMode(radioButton) {
+redips.setMode = function (radioButton) {
 	REDIPS.drag.dropMode = radioButton.value;
-}
+};
 
 
 // show prepared content for saving
-function save(type) {
-	// define table_content variable
-	var table_content;
+redips.save = function (type) {
+	// define tableContent variable
+	var tableContent;
 	// prepare table content of first table in JSON format or as plain query string (depends on value of "type" variable)
-	table_content = REDIPS.drag.saveContent('table1', type);
+	tableContent = REDIPS.drag.saveContent('table1', type);
 	// if content doesn't exist
-	if (!table_content) {
+	if (!tableContent) {
 		alert('Table is empty!');
 	}
 	// display query string
 	else if (type === 'json') {
-		//window.open('/my/multiple-parameters-json.php?p=' + table_content, 'Mypop', 'width=350,height=260,scrollbars=yes');
-		window.open('multiple-parameters-json.php?p=' + table_content, 'Mypop', 'width=360,height=260,scrollbars=yes');
+		// window.open('/my/multiple-parameters-json.php?p=' + tableContent, 'Mypop', 'width=350,height=260,scrollbars=yes');
+		window.open('multiple-parameters-json.php?p=' + tableContent, 'Mypop', 'width=360,height=260,scrollbars=yes');
 	}
 	else {
-		//window.open('/my/multiple-parameters.php?' + table_content, 'Mypop', 'width=350,height=160,scrollbars=yes');
-		window.open('multiple-parameters.php?' + table_content, 'Mypop', 'width=360,height=260,scrollbars=yes');
+		// window.open('/my/multiple-parameters.php?' + tableContent, 'Mypop', 'width=350,height=160,scrollbars=yes');
+		window.open('multiple-parameters.php?' + tableContent, 'Mypop', 'width=360,height=260,scrollbars=yes');
 	}
-}
+};
 
 
 // add onload event listener
 if (window.addEventListener) {
-	window.addEventListener('load', redipsInit, false);
+	window.addEventListener('load', redips.init, false);
 }
 else if (window.attachEvent) {
-	window.attachEvent('onload', redipsInit);
+	window.attachEvent('onload', redips.init);
 }

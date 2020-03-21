@@ -1,35 +1,42 @@
-/*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
-/*global window: false, REDIPS: true */
+/* eslint-env browser */
+/* eslint
+   semi: ["error", "always"],
+   indent: [2, "tab"],
+   no-tabs: 0,
+   no-multiple-empty-lines: ["error", {"max": 2, "maxEOF": 1}],
+   one-var: ["error", "always"] */
+/* global REDIPS */
 
 /* enable strict mode */
-"use strict";
+'use strict';
 
-var redipsInit,		// define redipsInit variable
-	setHoverColor,	// set hover color method
-	rd;				// reference to the REDIPS.drag library
+// create redips container
+let redips = {};
+
 
 // redips initialization
-redipsInit = function () {
+redips.init = function () {
 	// set reference to the REDIPS.drag library
-	rd = REDIPS.drag;
+	let rd = REDIPS.drag;
 	// initialization
 	rd.init();
 	// enable cloning DIV elements with pressed SHIFT key
 	rd.clone.keyDiv = true;
 	// handler clicked - set hover color
 	rd.event.clicked = function (currentCell) {
-		setHoverColor(currentCell);
+		redips.setHoverColor(currentCell);
 	};
 	// handler changed - set hover color
 	rd.event.changed = function (currentCell) {
-		setHoverColor(currentCell);
+		redips.setHoverColor(currentCell);
 	};
 };
 
 
 // set hover color
-setHoverColor = function (cell) {
-	var color,
+redips.setHoverColor = function (cell) {
+	let rd = REDIPS.drag,
+		color,
 		tbl = rd.findParent('TABLE', cell);
 	// set hover color depending in nested level
 	switch (tbl.redips.nestedLevel) {
@@ -51,14 +58,14 @@ setHoverColor = function (cell) {
 		break;
 	}
 	// set hover color
-	rd.hover.colorTd = color; 
+	rd.hover.colorTd = color;
 };
 
 
 // add onload event listener
 if (window.addEventListener) {
-	window.addEventListener('load', redipsInit, false);
+	window.addEventListener('load', redips.init, false);
 }
 else if (window.attachEvent) {
-	window.attachEvent('onload', redipsInit);
+	window.attachEvent('onload', redips.init);
 }

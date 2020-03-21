@@ -84,6 +84,7 @@ div#redips-drag td {
 
 /* message line */
 #message {
+	padding: 5px;
 	color: white;
 	background-color: #aaa;
 	text-align: center;

@@ -1,8 +1,15 @@
-/*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
-/*global window: false, REDIPS: true */
+/* eslint-env browser */
+/* eslint
+   semi: ["error", "always"],
+   indent: [2, "tab"],
+   no-tabs: 0,
+   no-multiple-empty-lines: ["error", {"max": 2, "maxEOF": 1}],
+   one-var: ["error", "always"] */
+/* global REDIPS */
 
 /* enable strict mode */
-"use strict";
+'use strict';
+
 
 /*
 
@@ -22,7 +29,7 @@ var redips = {};
 // redips initialization
 redips.init = function () {
 	// reference to the REDIPS.drag class
-	var rd = REDIPS.drag;
+	let rd = REDIPS.drag;
 	// set initial math operation and application mode
 	redips.operation = 'addition';
 	redips.mode = 'mode1';
@@ -37,7 +44,7 @@ redips.init = function () {
 	// event handler called in a moment before DIV is dropped (create result box in the most right column)
 	rd.event.droppedBefore = function (targetTD) {
 		// TD in 4th column
-		var td4 = targetTD.parentNode.cells[4];
+		let td4 = targetTD.parentNode.cells[4];
 		// if right column is empty then create orange DIV box in last column
 		if (rd.emptyCell(td4, 'test')) {
 			// reference is target TD (needed to find parent row) while DIV is rd.obj element
@@ -51,7 +58,7 @@ redips.init = function () {
 	// even handler called when DIV element is moved (delete result box if DIV is moved in the bottom table)
 	rd.event.moved = function () {
 		// set source row
-		var tr = rd.findParent('TR', rd.td.source);
+		let tr = rd.findParent('TR', rd.td.source);
 		// if number is moved from bottom table then delete result box
 		if (tr.className.indexOf('upper') === -1) {
 			tr.cells[4].innerHTML = '';
@@ -63,7 +70,7 @@ redips.init = function () {
 	};
 	// called before each DIV element is shifted (needed move orange box pn the right side)
 	rd.event.relocateBefore = function (div, to) {
-		var tr = rd.findParent('TR', div),							// set current TR from DIV element that will be shifted by REDIPS.drag
+		let tr = rd.findParent('TR', div),							// set current TR from DIV element that will be shifted by REDIPS.drag
 			resultDiv = tr.cells[4].getElementsByTagName('div')[0],	// define result DIV (right orange DIV element)
 			target = to.parentNode.cells[4],						// define target TD
 			num1 = redips.readNumber(div);							// set first number (from DIV element that will be shifted by REDIPS.drag)
@@ -77,10 +84,10 @@ redips.init = function () {
 			target:	target,
 			// call after result DIV is moved (el is reference to the moved DIV element)
 			callback: function (el) {
-				var targetTR = rd.findParent('TR', el),			// set target TR
+				let targetTR = rd.findParent('TR', el),			// set target TR
 					num2 = targetTR.cells[2].innerHTML * 1,		// set number2 from target TR
 					result = redips.math(num1, num2);
-				// save (hide) new result to the class r(n+) and display "?" 
+				// save (hide) new result to the class r(n+) and display "?"
 				el.className = el.className.replace(/n\d+/g, 'n' + result);
 				// if redips.mode is set to "mode2" then result in orange box should be displayed
 				if (redips.mode === 'mode2') {
@@ -109,10 +116,9 @@ redips.init = function () {
 		// for overflow in all other cases delete right cell
 		else {
 			// set right cell
-			var rightCell = target.parentNode.cells[4];
+			let rightCell = target.parentNode.cells[4];
 			// delete right cell
 			rd.emptyCell(rightCell);
-
 		}
 	};
 	// if left DIV element is dbl clicked then show number
@@ -126,10 +132,10 @@ redips.init = function () {
 // el is node from which will be found parent row
 // div is reference of DIV element from whom is needed to read first number
 redips.createOrangeBox = function (el, div) {
-	var tr,			// current row
+	let tr,			// current row
 		num1, num2,	// numbers for addition or multiplication
 		result,		// result will be hidden or displayed depending on redips.mode property
-		td4;		// TD in 4th column		
+		td4;		// TD in 4th column
 	// set current row
 	tr = REDIPS.drag.findParent('TR', el);
 	// set result cell
@@ -138,7 +144,7 @@ redips.createOrangeBox = function (el, div) {
 	num1 = redips.readNumber(div);
 	num2 = tr.cells[2].innerHTML * 1;
 	// display result in orange box if application is set to mode1
-	if (redips.mode === "mode1") {
+	if (redips.mode === 'mode1') {
 		result = '?';
 	}
 	else {
@@ -153,7 +159,7 @@ redips.createOrangeBox = function (el, div) {
 
 // do math with num1 and num2
 redips.math = function (num1, num2) {
-	var result;
+	let result;
 	// add or multiply num1 and num2
 	if (redips.operation === 'addition') {
 		result = num1 + num2;
@@ -175,7 +181,7 @@ redips.showResult = function (div) {
 // read number from class number in format n(n+)
 redips.readNumber = function (el) {
 	// result is saved as a class name n(n+)
-	var	className = el.className,
+	let className = el.className,
 		matchArray = className.match(/n(\d+)/);
 	// return number (and implicit cast to numeric type)
 	return matchArray[1] * 1;
@@ -189,7 +195,7 @@ redips.readNumber = function (el) {
 // called on "mode" dropDown menu change
 // show hide numbers in upper table
 redips.setMode = function (el) {
-	var div = document.getElementById('number').getElementsByTagName('div'),
+	let div = document.getElementById('number').getElementsByTagName('div'),
 		i;
 	// when application mode is changed then tables should be cleaned
 	redips.clearAll();
@@ -207,11 +213,11 @@ redips.setMode = function (el) {
 };
 
 
-// called on "operation" dropDown menu change 
+// called on "operation" dropDown menu change
 // set operation - addition / multiplication
 redips.setOperation = function (el) {
 	// set local variables
-	var tables = document.getElementById('redips-drag').getElementsByTagName('table'),
+	let tables = document.getElementById('redips-drag').getElementsByTagName('table'),
 		i;
 	// set operation (global) - needed in event.dropped
 	redips.operation = el.options[el.selectedIndex].value;

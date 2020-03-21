@@ -1,17 +1,22 @@
-/*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
-/*global window: false, REDIPS: true */
+/* eslint-env browser */
+/* eslint
+   semi: ["error", "always"],
+   indent: [2, "tab"],
+   no-tabs: 0,
+   no-multiple-empty-lines: ["error", {"max": 2, "maxEOF": 1}],
+   one-var: ["error", "always"] */
+/* global REDIPS */
 
 /* enable strict mode */
-"use strict";
+'use strict';
 
 // create redips container
-var redips = {};
+let redips = {};
 
 
 // redips initialization
 redips.init = function () {
-	var num = 0,			// number of successfully placed elements
-		rd = REDIPS.drag;	// reference to the REDIPS.drag lib
+	let rd = REDIPS.drag;	// reference to the REDIPS.drag lib
 	// initialization
 	rd.init();
 	// set hover color
@@ -32,7 +37,7 @@ redips.init = function () {
 // show TD content
 redips.showContent = function () {
 	// get content of TD cells in right table
-	var td1 = redips.getContent('td1'),
+	let td1 = redips.getContent('td1'),
 		td2 = redips.getContent('td2'),
 		td3 = redips.getContent('td3'),
 		td4 = redips.getContent('td4'),
@@ -48,7 +53,7 @@ redips.showContent = function () {
 
 // get content (DIV elements in TD)
 redips.getContent = function (id) {
-	var td = document.getElementById(id),
+	let td = document.getElementById(id),
 		content = '',
 		cn, i;
 	// TD can contain many DIV elements
@@ -75,3 +80,4 @@ if (window.addEventListener) {
 else if (window.attachEvent) {
 	window.attachEvent('onload', redips.init);
 }
+

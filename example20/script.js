@@ -1,16 +1,23 @@
-/*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
-/*global window: false, REDIPS: true */
+/* eslint-env browser */
+/* eslint
+   semi: ["error", "always"],
+   indent: [2, "tab"],
+   no-tabs: 0,
+   no-multiple-empty-lines: ["error", {"max": 2, "maxEOF": 1}],
+   one-var: ["error", "always"] */
+/* global REDIPS */
 
 /* enable strict mode */
-"use strict";
+'use strict';
 
-// define redips object container
-var redips = {};
+// create redips container
+let redips = {};
+
 
 // redips initialization
 redips.init = function () {
 	// reference to the REDIPS.drag library and message line
-	var	rd = REDIPS.drag,
+	let	rd = REDIPS.drag,
 		msg = document.getElementById('msg');
 	// initialization
 	rd.init();

@@ -1,16 +1,23 @@
-/*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
-/*global window: false, REDIPS: true */
+/* eslint-env browser */
+/* eslint
+   semi: ["error", "always"],
+   indent: [2, "tab"],
+   no-tabs: 0,
+   no-multiple-empty-lines: ["error", {"max": 2, "maxEOF": 1}],
+   one-var: ["error", "always"] */
+/* global REDIPS */
 
 /* enable strict mode */
-"use strict";
+'use strict';
 
-// define redipsInit variable
-var redipsInit;
+// create redips container
+let redips = {};
+
 
 // redips initialization
-redipsInit = function () {
+redips.init = function () {
 	// reference to the REDIPS.drag library and message line
-	var	rd = REDIPS.drag,
+	let rd = REDIPS.drag,
 		msg;
 	// initialization
 	rd.init();
@@ -25,7 +32,7 @@ redipsInit = function () {
 	// row was clicked - event handler
 	rd.event.rowClicked = function () {
 		// set current element (this is clicked TR)
-		var el = rd.obj;
+		let el = rd.obj;
 		// find parent table
 		el = rd.findParent('TABLE', el);
 		// every table has only one SPAN element to display messages
@@ -85,8 +92,8 @@ redipsInit = function () {
 
 // add onload event listener
 if (window.addEventListener) {
-	window.addEventListener('load', redipsInit, false);
+	window.addEventListener('load', redips.init, false);
 }
 else if (window.attachEvent) {
-	window.attachEvent('onload', redipsInit);
+	window.attachEvent('onload', redips.init);
 }

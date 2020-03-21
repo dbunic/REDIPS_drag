@@ -1,11 +1,18 @@
-/*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
-/*global window: false, REDIPS: true */
+/* eslint-env browser */
+/* eslint
+   semi: ["error", "always"],
+   indent: [2, "tab"],
+   no-tabs: 0,
+   no-multiple-empty-lines: ["error", {"max": 2, "maxEOF": 1}],
+   one-var: ["error", "always"] */
+/* global REDIPS */
 
 /* enable strict mode */
-"use strict";
+'use strict';
 
 // create redips container
-var redips = {};
+let redips = {};
+
 
 // configuration
 redips.configuration = function () {
@@ -21,7 +28,7 @@ redips.configuration = function () {
 // redips initialization
 redips.init = function () {
 	// reference to the REDIPS.drag class
-	var rd = REDIPS.drag;
+	let rd = REDIPS.drag;
 	// set script configuration
 	redips.configuration();
 	// set reference to the hoverDiv
@@ -37,10 +44,10 @@ redips.init = function () {
 	// initialization
 	rd.init();
 	// in a moment when dragging starts, remove mouseover event, hide hover tooltip and set drop mode (depending on container source - left or right)
-	// input parameter "cloned" (boolean) is set to true if DIV element is cloned (possible only for elements in right tables with pressed shift key) 
+	// input parameter "cloned" (boolean) is set to true if DIV element is cloned (possible only for elements in right tables with pressed shift key)
 	rd.event.moved = function (cloned) {
 		// local varible (source container id)
-		var scid;
+		let scid;
 		// remove mouseover event
 		REDIPS.event.remove(rd.obj, 'mouseover', redips.showTooltip);
 		// hide hover tooltip
@@ -59,10 +66,10 @@ redips.init = function () {
 			rd.dropMode = 'switch';
 		}
 	};
-	// enable cloning option only for DIV elements in right table 
+	// enable cloning option only for DIV elements in right table
 	rd.event.clicked = function () {
 		// find container id
-		var cid = redips.findContainer(rd.obj);
+		let cid = redips.findContainer(rd.obj);
 		// set cloning option with shiftKey only for right DIV container
 		if (cid === redips.right) {
 			rd.clone.keyDiv = true;
@@ -79,9 +86,9 @@ redips.init = function () {
 		}
 	};
 	// event handler called before DIV element is dropped to the table
-	// in case when DIV element changes location from left to right DIV container or vice versa 
+	// in case when DIV element changes location from left to right DIV container or vice versa
 	rd.event.droppedBefore = function (targetCell) {
-		var id = rd.obj.id,	// define id of DIV element
+		let id = rd.obj.id,	// define id of DIV element
 			tcid,			// target container id
 			scid;			// source container id
 		// find target container id and source container id
@@ -91,7 +98,7 @@ redips.init = function () {
 		// (right tables doesn't have id)
 		if (scid === redips.left && tcid === redips.right) {
 			// make AJAX call - input parameter is question id (DIV element)
-			// div property is reference to the object where AJAX output will be displayed (inside dropped DIV element) 
+			// div property is reference to the object where AJAX output will be displayed (inside dropped DIV element)
 			rd.ajaxCall(redips.content_url + '?id=' + id, redips.handler, {div: rd.obj});
 			// set width and height
 			rd.obj.style.width = redips.width; // width parameter
@@ -104,10 +111,10 @@ redips.init = function () {
 			rd.obj.style.height = redips.size.h;
 		}
 	};
-	// after DIV element is dropped, 
+	// after DIV element is dropped,
 	rd.event.dropped = function (targetCell) {
 		// target container id
-		var tcid = redips.findContainer(targetCell);
+		let tcid = redips.findContainer(targetCell);
 		// target container is defined in event.droppedBefore()
 		if (tcid === redips.left) {
 			// if cloned element is dropped to the left table then delete it
@@ -148,9 +155,9 @@ redips.handler = function (xhr, obj) {
 };
 
 
-// show tooltip (when mouse is over element of question table) 
+// show tooltip (when mouse is over element of question table)
 redips.showTooltip = function (e) {
-	var element = e.target || e.srcElement,	// define element from the fired event
+	let element = e.target || e.srcElement,	// define element from the fired event
 		id = element.id,					// id of the DIV element is question ID (written as inner HTML)
 		box = element,						// remember box object (needed for offset calculation)
 		scrollPosition,						// scroll position
@@ -168,10 +175,10 @@ redips.showTooltip = function (e) {
 	}
 	while (box && box.nodeName !== 'BODY');
 	// set popup near to the element
-	redips.hoverDiv.style.top  = (oTop + 22) + 'px';
+	redips.hoverDiv.style.top = (oTop + 22) + 'px';
 	redips.hoverDiv.style.left = oLeft + 'px';
 	// make AJAX call - input parameter is question id (DIV element)
-	// obj property is reference to the object where AJAX output will be displayed (see redips.handler) 
+	// obj property is reference to the object where AJAX output will be displayed (see redips.handler)
 	REDIPS.drag.ajaxCall(redips.content_url + '?id=' + id, redips.handler, {div: redips.hoverDiv});
 	// set visibility
 	redips.hoverDiv.style.visibility = 'visible';
@@ -180,14 +187,14 @@ redips.showTooltip = function (e) {
 
 // hide tooltip
 redips.hideTooltip = function () {
-	redips.hoverDiv.style.visibility = 'hidden';	
+	redips.hoverDiv.style.visibility = 'hidden';
 };
 
 
 // function shows/hides tables in page containers
 // input parameters are button reference (to change button label) and id of page container
-redips.toggle = function (btn, page_id) {
-	var page = document.getElementById(page_id);
+redips.toggle = function (btn, pageId) {
+	let page = document.getElementById(pageId);
 	if (page.style.display === '') {
 		btn.value = 'Table';
 		page.style.display = 'none';
@@ -201,13 +208,13 @@ redips.toggle = function (btn, page_id) {
 
 // set onmouseover & onmouseout to all div elements inside DIV id="drag"
 redips.setEvents = function () {
-	var regex_drag = /\bdrag\b/i,	// regular expression to search "drag" class name
+	let regexDrag = /\bdrag\b/i,	// regular expression to search "drag" class name
 		div, i;
 	// collect all div elements inside DIV id="drag"
 	div = document.getElementById('redips-drag').getElementsByTagName('div');
 	for (i = 0; i < div.length; i++) {
 		// only DIV elements that contains "drag" in class name
-		if (regex_drag.test(div[i].className)) {
+		if (regexDrag.test(div[i].className)) {
 			REDIPS.event.add(div[i], 'mouseover', redips.showTooltip);
 			REDIPS.event.add(div[i], 'mouseout', redips.hideTooltip);
 		}
@@ -222,7 +229,7 @@ redips.setEvents = function () {
 // initially hide all page containers but first page container
 // tables are closed in P block - page container
 redips.hideTables = function () {
-	var div, i;
+	let div, i;
 	// collect page containers in right DIV container
 	div = document.getElementById(redips.right).getElementsByTagName('div');
 	// hide all page containers but first
@@ -234,7 +241,7 @@ redips.hideTables = function () {
 
 // set class="single" to all cells in question table (left table)
 redips.singleContent = function () {
-	var cell, i;
+	let cell, i;
 	// collect table cells from left table
 	cell = document.getElementById('table1').getElementsByTagName('td');
 	// set class='single' to all table cells
@@ -247,12 +254,12 @@ redips.singleContent = function () {
 
 // find container and return container id
 redips.findContainer = function (c) {
-	// loop up until found target DIV container 
+	// loop up until found target DIV container
 	while (c && c.id !== redips.left && c.id !== redips.right) {
 		c = c.parentNode;
 	}
-    // return container id
-    return c.id;
+	// return container id
+	return c.id;
 };
 
 

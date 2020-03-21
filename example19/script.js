@@ -1,16 +1,23 @@
-/*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
-/*global window: false, REDIPS: true */
+/* eslint-env browser */
+/* eslint
+   semi: ["error", "always"],
+   indent: [2, "tab"],
+   no-tabs: 0,
+   no-multiple-empty-lines: ["error", {"max": 2, "maxEOF": 1}],
+   one-var: ["error", "always"] */
+/* global REDIPS */
 
 /* enable strict mode */
-"use strict";
+'use strict';
 
-// define redipsInit variable
-var redipsInit;
+// create redips container
+let redips = {};
+
 
 // redips initialization
-redipsInit = function () {
+redips.init = function () {
 	// set REDIPS.drag reference
-	var	rd = REDIPS.drag;
+	let	rd = REDIPS.drag;
 	// lib initialization
 	rd.init();
 	// set hover color for TR
@@ -20,7 +27,7 @@ redipsInit = function () {
 	// row was clicked - enable / disable tables
 	rd.event.rowClicked = function () {
 		// find table
-		var tbl = rd.findParent('TABLE', rd.obj);
+		let tbl = rd.findParent('TABLE', rd.obj);
 		// if row belongs to the "main" table
 		if (tbl.className.indexOf('main') > -1) {
 			rd.enableTable(false, 'view');
@@ -37,8 +44,8 @@ redipsInit = function () {
 
 // add onload event listener
 if (window.addEventListener) {
-	window.addEventListener('load', redipsInit, false);
+	window.addEventListener('load', redips.init, false);
 }
 else if (window.attachEvent) {
-	window.attachEvent('onload', redipsInit);
+	window.attachEvent('onload', redips.init);
 }

@@ -1,27 +1,24 @@
-/*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
-/*global window: false, REDIPS: true */
+/* eslint-env browser */
+/* eslint
+   semi: ["error", "always"],
+   indent: [2, "tab"],
+   no-tabs: 0,
+   no-multiple-empty-lines: ["error", {"max": 2, "maxEOF": 1}],
+   one-var: ["error", "always"] */
+/* global REDIPS */
 
 /* enable strict mode */
-"use strict";
+'use strict';
 
 
-	// properties
-var	rd = REDIPS.drag,	// reference to the REDIPS.drag library
+let redips = {},		// create redips container
+	rd = REDIPS.drag,	// reference to the REDIPS.drag library
 	loc = {},			// initial locations of DIV elements
-	lock = 0,			// needed for enable/disable element synchronization (used in enableRows)
-	// methods
-	redipsInit,			// redips initialization
-	startPositions,		// remember a start positions of DIV elements
-	reset,				// returns elements to their initial positions
-	shuffle,			// shuffles (randomizes the order of the elements on tables)
-	enableElements,		// enables/disables elements on page
-	enableRows,			// enables/disables rows (row handler - blue circles) on page
-	enableButtons,		// enables/disables buttons (called from enable elements and enableRows)
-	getId;				// returns id of element in opposite table
+	lock = 0;			// needed for enable/disable element synchronization (used in enableRows)
 
 
 // redips initialization
-redipsInit = function () {
+redips.init = function () {
 	rd.style.borderDisabled = 'solid';	// border style for disabled element will not be changed
 	rd.style.opacityDisabled = 70;		// disabled elements will have opacity effect
 	rd.animation.pause = 40;			// set animation loop pause
@@ -34,7 +31,7 @@ redipsInit = function () {
 	rd.hover.colorTd = '#FFCFAE';
 	rd.hover.colorTr = '#9BB3DA';
 	// save locations of all DIV elements to the "loc" object (it should go after initialization)
-	startPositions();
+	redips.startPositions();
 	// row was moved - event handler
 	rd.event.rowMoved = function () {
 		// set opacity for moved row (rd.obj is reference of cloned row - mini table)
@@ -45,17 +42,17 @@ redipsInit = function () {
 	// row was dropped - move row in opposite table
 	rd.event.rowDropped = function () {
 		// id of element from opposite table (rd.objOld is source row, redips.div is reference to the <div class="drag row">)
-		var	idNew = getId(rd.objOld.redips.div),
+		let	idNew = redips.getId(rd.objOld.redips.div),
 			// returned value from moveObject method
 			row = [];
 		// disable elements in both containers ("enableElements" is local function)
-		enableElements(false);
+		redips.enableElements(false);
 		// move row in other table (method returns reference to the mini table and source row)
 		// after animation is finished, callback function "enableElements" will enable elements in both containers
 		row = rd.moveObject({
 			id: idNew,
 			callback: function () {
-				enableElements(true);
+				redips.enableElements(true);
 			}
 		});
 		// set opacity for moved row (row[0] is reference of cloned row - mini table)
@@ -68,16 +65,16 @@ redipsInit = function () {
 		// make source row completely visible (no opacity)
 		rd.rowOpacity(rd.objOld, 100);
 		// enable both containers
-		enableElements(true);
+		redips.enableElements(true);
 	};
 	// element was dropped - move element in opposite table
 	rd.event.dropped = function () {
-		var	obj = rd.obj,		// reference to the current element
-			idNew = getId(obj);	// id of element from opposite table
+		let	obj = rd.obj,		// reference to the current element
+			idNew = redips.getId(obj);	// id of element from opposite table
 		// disable current element
 		rd.enableDrag(false, obj);
 		// disable row handlers - blue circles ("enableRows" is a local function)
-		enableRows(false);
+		redips.enableRows(false);
 		// element from opposite table with idNew will be moved to the dropped table cell
 		// tableIndex for both tables is 0 because each table is closed in separate dragging container
 		// after animation is finished, callback function will enable previously disabled element and row handlers (blue circles)
@@ -85,7 +82,7 @@ redipsInit = function () {
 			id: idNew,
 			callback: function () {
 				rd.enableDrag(true, obj);
-				enableRows(true);
+				redips.enableRows(true);
 			}
 		});
 	};
@@ -95,8 +92,8 @@ redipsInit = function () {
 /**
  * Function scans all DIV elements and save their positions to the pos object.
  */
-startPositions = function () {
-	var divs = [], id, i, j, position;
+redips.startPositions = function () {
+	let divs = [], id, i, j, position;
 	// collect DIV elements from both dragging area
 	divs[0] = document.getElementById('drag1').getElementsByTagName('div');
 	divs[1] = document.getElementById('drag2').getElementsByTagName('div');
@@ -106,11 +103,11 @@ startPositions = function () {
 		for (j = 0; j < divs[i].length; j++) {
 			// set element id
 			id = divs[i][j].id;
-			// if element id is defined, then save element position 
+			// if element id is defined, then save element position
 			if (id) {
 				// set element position
 				position = rd.getPosition(divs[i][j]);
-				// if div has position (filter obj_new) 
+				// if div has position (filter obj_new)
 				if (position.length > 0) {
 					loc[id] = position;
 				}
@@ -123,8 +120,8 @@ startPositions = function () {
 /**
  * Method returns element to initial positions.
  */
-reset = function () {
-	var id,
+redips.reset = function () {
+	let id,
 		pos1;
 	// loop goes through every "id" in loc object
 	for (id in loc) {
@@ -136,12 +133,12 @@ reset = function () {
 			// if current position is different then initial position the return element to the initial position
 			if (loc[id].toString() !== pos1.toString()) {
 				// disable row handlers - blue circles
-				enableRows(false);
+				redips.enableRows(false);
 				// move object to the initial position
 				rd.moveObject({
-					id: id,					// id of object to move
-					target: loc[id],		// target position
-					callback: enableRows	// callback function after moving is finished
+					id: id,				// id of object to move
+					target: loc[id],	// target position
+					callback: redips.enableRows // callback function after moving is finished
 				});
 			}
 		}
@@ -150,10 +147,10 @@ reset = function () {
 
 
 /**
- * Function shuffles elements on both tables. Random positions are unique and different then current element positions.
+ * Method shuffles elements on both tables. Random positions are unique and different then current element positions.
  */
-shuffle = function () {
-	var id,			// element id
+redips.shuffle = function () {
+	let id,			// element id
 		rowIndex,	// row index (random number from 1 to 7)
 		cellIndex,	// cell index (random number from 1 to 5)
 		rnd,		// random position
@@ -164,7 +161,7 @@ shuffle = function () {
 	for (id in loc) {
 		// test the property (filter properties of the prototype) and
 		// if element id begins with "d" (other DIV elements are row handlers) and
-		// if id of element ends with "1" (only elements from first table) 
+		// if id of element ends with "1" (only elements from first table)
 		if (loc.hasOwnProperty(id) && id.substring(0, 1) === 'd' && id.charAt(id.length - 1) === '1') {
 			pos = rd.getPosition(id);		// set current position for DIV element with defined id
 			pos1 = pos[1] + '_' + pos[2];	// prepare current position in format rowIndex + '_' + cellIndex
@@ -177,20 +174,20 @@ shuffle = function () {
 			// push generated value to the array (to avoid duplicate positions)
 			arr.push(rnd);
 			// disable row handlers - blue circles in first column
-			enableRows(false);
+			redips.enableRows(false);
 			// move object to the random position in table1
 			rd.moveObject({
 				id: id,								// id of object to move
 				target: [0, rowIndex, cellIndex],	// target position (table index is 0 because of separate drag container)
-				callback: enableRows				// callback function after moving is finished
+				callback: redips.enableRows			// callback function after moving is finished
 			});
 			// disable row handlers - blue circles in first column
-			enableRows(false);
+			redips.enableRows(false);
 			// move object to the random position in table2
 			rd.moveObject({
 				id: id.slice(0, -1) + '2',			// id of object from table2
 				target: [0, rowIndex, cellIndex],	// target position (table index is 0 because of separate drag container)
-				callback: enableRows				// callback function after moving is finished
+				callback: redips.enableRows			// callback function after moving is finished
 			});
 		}
 	}
@@ -198,43 +195,43 @@ shuffle = function () {
 
 
 /**
- * Function returns "id" of element in opposite table.
+ * Method returns "id" of element in opposite table.
  * e.g. d2_1 -> d2_2 or d4_2 -> d4_1
- * @param {HTMLElement} DIV element (in row dragging context "el" is redips-rowhandler of source row) 
- * @return {String} Id of element in opposite table. 
+ * @param {HTMLElement} DIV element (in row dragging context "el" is redips-rowhandler of source row)
+ * @return {String} Id of element in opposite table.
  */
-getId = function (el) {
-	var	ri = {1: 2, 2: 1},						// needed for reverse 1 -> 2 or 2 -> 1
-		id = el.id,								// define DIV id or mini table
-		lc = id.charAt(id.length - 1),			// last character of id that should be reversed (1 -> 2 or 2 -> 1)
-		idNew = id.slice(0, -1) + ri[lc];		// id of element from opposite table
+redips.getId = function (el) {
+	let	ri = {1: 2, 2: 1},					// needed for reverse 1 -> 2 or 2 -> 1
+		id = el.id,							// define DIV id or mini table
+		lc = id.charAt(id.length - 1),		// last character of id that should be reversed (1 -> 2 or 2 -> 1)
+		idNew = id.slice(0, -1) + ri[lc];	// id of element from opposite table
 	// return new id
 	return idNew;
 };
 
 
 /**
- * Function enables/disables buttons and all elements on page. In case when user drops row, elements (and rows) are disabled until animation finishes.
+ * Method enables/disables buttons and all elements on page. In case when user drops row, elements (and rows) are disabled until animation finishes.
  * @param {Boolean} Flag enable or disable elements in both dragging containers.
  */
-enableElements = function (flag) {
+redips.enableElements = function (flag) {
 	rd.enableDrag(flag, '#drag1 div');
 	rd.enableDrag(flag, '#drag2 div');
 	// enable/disable buttons "Reset" and "Shuffle"
-	enableButtons(flag);
+	redips.enableButtons(flag);
 };
 
 
 /**
- * Function enables/disables rows and buttons on page. In case when user drops element, row handlers are disabled until all animations are finished.
+ * Method enables/disables rows and buttons on page. In case when user drops element, row handlers are disabled until all animations are finished.
  * "lock" variable is used for animation synchronization.
  * @param {Boolean} Flag enable or disable rows in both dragging containers.
  */
-enableRows = function (flag) {
-	var id;
+redips.enableRows = function (flag) {
+	let id;
 	// if input parameter is not boolean type, then enableRows is called from callback function
 	// callback function sends reference of moved element
-	if (typeof(flag) !== 'boolean') {
+	if (typeof (flag) !== 'boolean') {
 		flag = true;
 	}
 	// enable element - decrease lock variable
@@ -246,7 +243,7 @@ enableRows = function (flag) {
 		// set lock variable to 0 (just to be sure - it should be 0 anyway)
 		lock = 0;
 		// enable / disable buttons "Reset" and "Shuffle"
-		enableButtons(flag);
+		redips.enableButtons(flag);
 		// loop goes through every "id" in loc object
 		for (id in loc) {
 			// test the property (filter properties of the prototype) and if element id begins with "r"
@@ -264,11 +261,11 @@ enableRows = function (flag) {
 
 
 /**
- * Function enables/disables buttons (it's called from enableElements() and enableRows() functions)
+ * Method enables/disables buttons (it's called from enableElements() and enableRows() functions)
  * @param {Boolean} Flag enable or disable buttons.
  */
-enableButtons = function (flag) {
-	var buttons, i;
+redips.enableButtons = function (flag) {
+	let buttons, i;
 	// collect buttons from buttons area
 	buttons = document.getElementById('buttons').getElementsByTagName('input');
 	// open loop
@@ -280,7 +277,7 @@ enableButtons = function (flag) {
 
 // indexOf method - needed for IE browsers ?!
 if (!Array.prototype.indexOf) {
-	Array.prototype.indexOf = function (el) {
+	Array.prototype.indexOf = function (el) { // eslint-disable-line no-extend-native
 		var i; // local variable
 		for (i = 0; i < this.length; i++) {
 			if (this[i] === el) {
@@ -294,8 +291,8 @@ if (!Array.prototype.indexOf) {
 
 // add onload event listener
 if (window.addEventListener) {
-	window.addEventListener('load', redipsInit, false);
+	window.addEventListener('load', redips.init, false);
 }
 else if (window.attachEvent) {
-	window.attachEvent('onload', redipsInit);
+	window.attachEvent('onload', redips.init);
 }

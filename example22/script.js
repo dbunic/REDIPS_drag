@@ -1,11 +1,18 @@
-/*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
-/*global window: false, REDIPS: true */
+/* eslint-env browser */
+/* eslint
+   semi: ["error", "always"],
+   indent: [2, "tab"],
+   no-tabs: 0,
+   no-multiple-empty-lines: ["error", {"max": 2, "maxEOF": 1}],
+   one-var: ["error", "always"] */
+/* global REDIPS */
 
 /* enable strict mode */
-"use strict";
+'use strict';
 
 // create redips container
-var redips = {};
+let redips = {};
+
 
 // configuration
 redips.configuration = function () {
@@ -19,12 +26,12 @@ redips.configuration = function () {
 	redips.pname = '';						// person name
 	redips.request = null;					// AJAX request
 };
-	
+
 
 // redips initialization
 redips.init = function () {
 	// reference to the REDIPS.drag class (set globally)
-	var rd = REDIPS.drag;
+	let rd = REDIPS.drag;
 	// set script configuration
 	redips.configuration();
 	// set rd reference to local redips object (needed in AJAX handler)
@@ -42,12 +49,11 @@ redips.init = function () {
 			redips.size.w = rd.obj.style.width;
 			redips.size.h = rd.obj.style.height;
 		}
-
 	};
 	// event handler called before DIV element is dropped to the table
-	// in case when DIV element changes location from left to right DIV container or vice versa 
+	// in case when DIV element changes location from left to right DIV container or vice versa
 	rd.event.droppedBefore = function (targetCell) {
-		var id = rd.obj.id,	// define id of DIV element
+		let id = rd.obj.id,	// define id of DIV element
 			sc,				// source container
 			tc;				// target container
 		// define target container (it is DIV element)
@@ -59,7 +65,7 @@ redips.init = function () {
 		if (sc.id === redips.left && tc.id === redips.right) {
 			// save person name
 			redips.pname = rd.obj.innerHTML;
-			// make ajax call and set redips.handler1() as callback function 
+			// make ajax call and set redips.handler1() as callback function
 			rd.ajaxCall(redips.ajaxDetail + '?id=' + id, redips.handler1);
 			// width & height parameter is set as global variable
 			rd.obj.style.width = redips.width;
@@ -92,7 +98,7 @@ redips.handler1 = function (xhr) {
 
 // method parses form elements and submits to the server
 redips.save = function (button) {
-	var frm = document.getElementById('myform'),
+	let frm = document.getElementById('myform'),
 		el,
 		params = '',
 		i;
@@ -107,14 +113,14 @@ redips.save = function (button) {
 	}
 	// cut last '&' from params string
 	params = params.substring(0, params.length - 1);
-	// make ajax call and set redips.handler2() as callback function 
+	// make ajax call and set redips.handler2() as callback function
 	redips.rd.ajaxCall(redips.ajaxSave, redips.handler2, {method: 'POST', data: params});
 };
 
 
 // AJAX handler - called after save button is clicked
 redips.handler2 = function (xhr) {
-	var status, // status from the AJAX service (it should return string "OK")
+	let status, // status from the AJAX service (it should return string "OK")
 		message, // displayed message to the user
 		msg = document.getElementById('message');
 	// status from the AJAX service
@@ -133,7 +139,7 @@ redips.handler2 = function (xhr) {
 	// display message
 	msg.innerHTML = message;
 	// clear message after 2 seconds
-    setTimeout(redips.clearMessage, 2000);
+	setTimeout(redips.clearMessage, 2000);
 };
 
 

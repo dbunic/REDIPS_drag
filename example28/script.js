@@ -1,11 +1,17 @@
-/*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
-/*global window: false, REDIPS: true */
+/* eslint-env browser */
+/* eslint
+   semi: ["error", "always"],
+   indent: [2, "tab"],
+   no-tabs: 0,
+   no-multiple-empty-lines: ["error", {"max": 2, "maxEOF": 1}],
+   one-var: ["error", "always"] */
+/* global REDIPS */
 
 /* enable strict mode */
-"use strict";
+'use strict';
 
 // create redips container
-var redips = {};
+let redips = {};
 
 
 // redips initialization
@@ -21,7 +27,7 @@ redips.init = function () {
 			alert(obj.message + ' (error type ' + obj.type + ')');
 		}, 100);
 		// return false on first error and stop further processing
-		//return false;
+		// return false;
 	};
 	// set reference to the target table
 	redips.targetTable = document.getElementById('myTable');
@@ -37,7 +43,7 @@ redips.button1 = function () {
 // method called on button2 click
 // JSON data is put as second parameter
 redips.button2 = function () {
-	REDIPS.drag.loadContent('myTable', [["d6", 0, 1, "green", "B1"], ["d6", 6, 2, "green", "B2"], ["d7", 7, 4, "green", "B3"]]);
+	REDIPS.drag.loadContent('myTable', [['d6', 0, 1, 'green', 'B1'], ['d6', 6, 2, 'green', 'B2'], ['d7', 7, 4, 'green', 'B3']]);
 };
 
 // method called on button3 click

@@ -1,19 +1,23 @@
-/*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
-/*global window: false, REDIPS: true */
+/* eslint-env browser */
+/* eslint
+   semi: ["error", "always"],
+   indent: [2, "tab"],
+   no-tabs: 0,
+   no-multiple-empty-lines: ["error", {"max": 2, "maxEOF": 1}],
+   one-var: ["error", "always"] */
+/* global REDIPS */
 
 /* enable strict mode */
-"use strict";
-
-/* Simple row animation */
+'use strict';
 
 // create redips container
-var redips = {};
+let redips = {};
 
 
 // redips initialization
 redips.init = function () {
 	// reference to the REDIPS.drag library
-	var	rd = REDIPS.drag;
+	let	rd = REDIPS.drag;
 	// set button reference (needed in redips.buttonEnable() method)
 	redips.button1 = document.getElementById('btn_move1');
 	redips.button2 = document.getElementById('btn_move2');
@@ -33,18 +37,18 @@ redips.init = function () {
  * @param {Integer} tbl Table index.
  */
 redips.move = function (tbl) {
-	var	rd = REDIPS.drag,	// reference to the REDIPS.drag library
+	let	rd = REDIPS.drag,	// reference to the REDIPS.drag library
 		row,				// returned value from move_object method (array with source row and mini table reference or false in case of moving "empty row")
 		idx;				// index of the last row in table
 	// last row index
 	idx = redips.lastRow('table' + tbl);
 	// move row to the table bottom
 	row = rd.moveObject({
-			mode: 'row',					// animation mode - row
-			source: [1 - tbl, 0],			// source position (table index and row index)
-			target: [tbl, idx],				// target position
-			callback: redips.buttonEnable	// function to call after animation is finished
-		});
+		mode: 'row',					// animation mode - row
+		source: [1 - tbl, 0],			// source position (table index and row index)
+		target: [tbl, idx],				// target position
+		callback: redips.buttonEnable	// function to call after animation is finished
+	});
 	// in case of moving "empty row", method will return false and no row will be moved
 	if (row) {
 		// disable "Move" buttons
@@ -59,12 +63,12 @@ redips.move = function (tbl) {
 
 /**
  * Function returns index of the last row in table.
- * @param {String} table_id Table id.
+ * @param {String} tableId Table id.
  */
-redips.lastRow = function (table_id) {
+redips.lastRow = function (tableId) {
 	// define table reference and index of the last row
 	// row index is greater then last row in table so, row will be appended to the table end
-	var tbl = document.getElementById(table_id),
+	let tbl = document.getElementById(tableId),
 		idx = tbl.rows.length;
 	// return index
 	return idx;
@@ -78,7 +82,7 @@ redips.lastRow = function (table_id) {
 redips.buttonEnable = function (flag) {
 	// if input parameter is not boolean type, then enable_rows is called from callback function
 	// callback function sends reference of moved element
-	if (typeof(flag) !== 'boolean') {
+	if (typeof (flag) !== 'boolean') {
 		flag = true;
 	}
 	// enable/disable button (reference is set in redips.init)

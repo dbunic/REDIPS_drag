@@ -1,21 +1,28 @@
-/*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
-/*global window: false, REDIPS: true */
+/* eslint-env browser */
+/* eslint
+   semi: ["error", "always"],
+   indent: [2, "tab"],
+   no-tabs: 0,
+   no-multiple-empty-lines: ["error", {"max": 2, "maxEOF": 1}],
+   one-var: ["error", "always"] */
+/* global REDIPS */
 
 /* enable strict mode */
-"use strict";
+'use strict';
 
-// define redipsInit variable
-var redipsInit;
+// create redips container
+let redips = {};
+
 
 // redips initialization
-redipsInit = function () {
-	var rd = REDIPS.drag,	// reference to the REDIPS.drag class
+redips.init = function () {
+	let rd = REDIPS.drag,	// reference to the REDIPS.drag class
 		divDrag = document.getElementById('redips-drag'); // reference to the drag region
 	// DIV container initialization
 	rd.init();
 	// this function (event handler) is called after element is dropped
 	rd.event.dropped = function () {
-		var div1,		// DIV elements inside DIV id="drag" (collection)
+		let div1,		// DIV elements inside DIV id="drag" (collection)
 			div2 = [],	// references of DIV elements prepared from collection
 			cb, i, j;	// element Id
 		// collect DIV elements from drag region
@@ -33,14 +40,13 @@ redipsInit = function () {
 				// increment counter j
 				j++;
 			}
-			
 		}
 		// loop through div2 array and move elements to the target table cell
 		for (i = 0; i < div2.length; i++) {
 			// element will be moved to the dropped table cell
 			rd.moveObject({obj: div2[i]});
 			// try to comment upper line and uncomment this line (elements will be relocated without animation)
-			//rd.td.target.appendChild(div2[i]);
+			// rd.td.target.appendChild(div2[i]);
 		}
 	};
 };
@@ -48,8 +54,8 @@ redipsInit = function () {
 
 // add onload event listener
 if (window.addEventListener) {
-	window.addEventListener('load', redipsInit, false);
+	window.addEventListener('load', redips.init, false);
 }
 else if (window.attachEvent) {
-	window.attachEvent('onload', redipsInit);
+	window.attachEvent('onload', redips.init);
 }

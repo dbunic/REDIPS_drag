@@ -1,28 +1,35 @@
-/*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: false, strict: true, newcap: true, immed: true, maxerr: 14 */
-/*global window: false, REDIPS: true */
+/* eslint-env browser */
+/* eslint
+   semi: ["error", "always"],
+   indent: [2, "tab"],
+   no-tabs: 0,
+   no-multiple-empty-lines: ["error", {"max": 2, "maxEOF": 1}],
+   one-var: ["error", "always"] */
+/* global REDIPS */
 
 /* enable strict mode */
-"use strict";
+'use strict';
 
 // create redips container
-var redips = {};
+let redips = {};
+
 
 // configuration
 redips.configuration = function () {
-	redips.left = 'left';					// id of left DIV container
-	redips.right = 'right';					// id of right DIV container
-	redips.form = 'myform';					// id of form beneath right table
-	redips.ajaxSave = 'db_save.php';		// submit form to the server
+	redips.left = 'left';				// id of left DIV container
+	redips.right = 'right';				// id of right DIV container
+	redips.form = 'myform';				// id of form beneath right table
+	redips.ajaxSave = 'db_save.php';	// submit form to the server
 	redips.deleteText = '[delete]';		// delete text before item
-	redips.request = null;					// AJAX request
-	redips.ol = null;						// OL (Ordered List) reference (reference is set in redips.init)
+	redips.request = null;				// AJAX request
+	redips.ol = null;					// OL (Ordered List) reference (reference is set in redips.init)
 };
-	
+
 
 // redips initialization
 redips.init = function () {
 	// reference to the REDIPS.drag class (set globally)
-	var rd = REDIPS.drag;
+	let rd = REDIPS.drag;
 	// set script configuration
 	redips.configuration();
 	// elements can be dropped only to the empty table cells
@@ -47,7 +54,7 @@ redips.init = function () {
 
 // method parses form elements and submits to the server
 redips.save = function () {
-	var frm = document.getElementById(redips.form),
+	let frm = document.getElementById(redips.form),
 		el,
 		params = '',
 		i;
@@ -62,7 +69,7 @@ redips.save = function () {
 	}
 	// cut last '&' from params string
 	params = params.substring(0, params.length - 1);
-	// make AJAX call and set redips.handler as callback function 
+	// make AJAX call and set redips.handler as callback function
 	REDIPS.drag.ajaxCall(redips.ajaxSave, redips.handler, {method: 'POST', data: params});
 };
 
@@ -96,7 +103,7 @@ redips.handler = function (xhr) {
 // method displays message (and clears after timeout)
 redips.displayMessage = function (message, delay) {
 	// set reference to the message element
-	var msg = document.getElementById('message');
+	let msg = document.getElementById('message');
 	// display message
 	msg.innerHTML = message;
 	// clear message after timeout (1.5sec)
@@ -109,7 +116,7 @@ redips.displayMessage = function (message, delay) {
 // add list item element to OL
 redips.addItem = function (obj) {
 	// create LI and INPUT elements (as well as text node)
-	var li  = document.createElement('li'),
+	let li = document.createElement('li'),
 		input = document.createElement('input'),
 		span = document.createElement('span'),
 		text = obj.innerText || obj.textContent,
@@ -138,7 +145,7 @@ redips.addItem = function (obj) {
 
 // delete list item from OL
 redips.deleteItem = function (e) {
-	var evt = e || window.event,	// define event (cross browser)
+	let evt = e || window.event,	// define event (cross browser)
 		span, li, text;				// declare local variables
 	// set source tag reference
 	if (evt.srcElement) {
@@ -162,10 +169,10 @@ redips.deleteItem = function (e) {
 };
 
 
-// method displays or hides "Save" button 
+// method displays or hides "Save" button
 redips.button = function () {
 	// set reference to the "Save" button
-	var button = document.getElementById('save-button');
+	let button = document.getElementById('save-button');
 	// if OL element contains LI (one or more)
 	if (redips.ol.children.length > 0) {
 		button.style.display = 'block';

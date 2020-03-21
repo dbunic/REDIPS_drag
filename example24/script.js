@@ -1,13 +1,17 @@
-/*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
-/*global window: false, REDIPS: true */
-/* Version 1.0.0 */
-
+/* eslint-env browser */
+/* eslint
+   semi: ["error", "always"],
+   indent: [2, "tab"],
+   no-tabs: 0,
+   no-multiple-empty-lines: ["error", {"max": 2, "maxEOF": 1}],
+   one-var: ["error", "always"] */
+/* global REDIPS */
 
 /* enable strict mode */
-"use strict";
+'use strict';
 
-// define redips object container
-var redips = {};
+// create redips container
+let redips = {};
 
 
 // configuration
@@ -19,7 +23,7 @@ redips.configuration = function () {
 	redips.ajaxSave = 'db_save.php';	// save page (via AJAX)
 	redips.cDetails = 'cDetails';		// component detail class name (it should be the same as is in CSS file)
 	redips.markedColor = '#A9C2EA';		// marked cells background color
-	// layout (HTML code) for component placed to the table editor 
+	// layout (HTML code) for component placed to the table editor
 	redips.component =	'<table class="redips-nolayout cHeader"><tr><td class="hLeft" onclick="redips.details(this)">+</td><td class="hTitle">|</td><td class="hRight" onclick="redips.divDelete(this)">x</td></tr></table>' +
 						'<div class="' + redips.cDetails + '">|</div>';
 };
@@ -28,10 +32,10 @@ redips.configuration = function () {
 // initialization
 redips.init = function () {
 	// define reference to the REDIPS.drag and REDIPS.table object
-	var rt = REDIPS.table,
+	let rt = REDIPS.table,
 		rd = REDIPS.drag;
 	// configuration
-	redips.configuration();	
+	redips.configuration();
 	// attach onmousedown event handler to tblEditor
 	rt.onmousedown(redips.tableEditor, true);
 	// selected cell background color
@@ -44,7 +48,7 @@ redips.init = function () {
 	rd.dropMode = 'single';
 	// event handler invoked on click on DIV element
 	rd.event.clicked = function () {
-		var div,	// DIV element reference
+		let div,	// DIV element reference
 			i;		// loop variable
 		// loop goes through all DIV elements inside table editor
 		for (i = 0; i < redips.tableEditorDivs.length; i++) {
@@ -59,14 +63,14 @@ redips.init = function () {
 	// event handler invoked before DIV element is dropped to the table cell
 	rd.event.droppedBefore = function (targetCell) {
 		// set new width to the dropped DIV element
-		var width = targetCell.offsetWidth;
+		let width = targetCell.offsetWidth;
 		// set width and reset height value
 		rd.obj.style.width = (width - 2) + 'px';
 		rd.obj.style.height = '';
 	};
 	// event handler invoked in a moment when DIV element is dropped to the table
 	rd.event.dropped = function (targetCell) {
-		var st,		// source table
+		let st,		// source table
 			id;		// DIV id
 		// deselect target cell id needed
 		rt.mark(false, targetCell);
@@ -76,9 +80,9 @@ redips.init = function () {
 		if (redips.components === st.id) {
 			// define id of dropped DIV element (only first three characters because cloned element will have addition in id)
 			id = rd.obj.id.substring(0, 3);
-//			rd.obj.style.borderColor = 'white';
+			// rd.obj.style.borderColor = 'white';
 			// send AJAX request (input parameter is field id)
-			// div property is reference to the object where AJAX output will be displayed (inside dropped DIV element) 
+			// div property is reference to the object where AJAX output will be displayed (inside dropped DIV element)
 			rd.ajaxCall(redips.ajaxField + '?id=' + id, redips.handler1, {div: rd.obj});
 		}
 	};
@@ -90,7 +94,7 @@ redips.init = function () {
 // error handling is wrapped inside callback function
 redips.handler1 = function (xhr, obj) {
 	// prepare title and layout local variables
-	var title,
+	let title,
 		layout;
 	// if status is OK
 	if (xhr.status === 200) {
@@ -109,7 +113,7 @@ redips.handler1 = function (xhr, obj) {
 
 // delete DIV element from table editor
 redips.divDelete = function (el) {
-	var div = REDIPS.drag.findParent('DIV', el),	// set reference to the DIV element
+	let div = REDIPS.drag.findParent('DIV', el),	// set reference to the DIV element
 		rcell = el.parentNode.cells[1],				// set reference to the right cell of DIV element header
 		name = rcell.innerText || rcell.textContent;// set name in a cross-browser manner
 	// set name to lower case
@@ -122,9 +126,9 @@ redips.divDelete = function (el) {
 };
 
 
-// method shows/hides details of DIV elements sent as input parameter 
+// method shows/hides details of DIV elements sent as input parameter
 redips.details = function (el, type) {
-	var divDrag = REDIPS.drag.findParent('DIV', el),	// find parent DIV element
+	let divDrag = REDIPS.drag.findParent('DIV', el),	// find parent DIV element
 		tbl = divDrag.childNodes[0],	// first child node is table
 		div = divDrag.childNodes[1],	// second child node is hidden DIV (with containing component details)
 		td = tbl.rows[0].cells[0];		// set reference of the first cell in table header
@@ -137,7 +141,7 @@ redips.details = function (el, type) {
 		// http://www.quirksmode.org/css/position.html
 		div.style.position = 'absolute';
 		// http://foohack.com/2007/10/top-5-css-mistakes/ (how z-index works)
-		// setting z-index and opacity were messing things up (so opacity should be turned off) 
+		// setting z-index and opacity were messing things up (so opacity should be turned off)
 		divDrag.style.opacity = 1;
 	}
 	// hide component details
@@ -155,7 +159,7 @@ redips.details = function (el, type) {
 // save form
 redips.save = function () {
 	// declare local variables
-	var tblEditor = document.getElementById(redips.tableEditor),
+	let tblEditor = document.getElementById(redips.tableEditor),
 		divs = tblEditor.getElementsByTagName('DIV'),
 		frm,			// form reference inside component (it should be only one form)
 		JSONobj = [],	// prepare JSON object
@@ -199,7 +203,7 @@ redips.save = function () {
 // error handling is wrapped inside callback function
 redips.handler2 = function (xhr) {
 	// set reference to message element
-	var message = document.getElementById('message');
+	let message = document.getElementById('message');
 	// if status is OK
 	if (xhr.status === 200) {
 		message.innerHTML = xhr.responseText;
@@ -213,12 +217,12 @@ redips.handler2 = function (xhr) {
 
 // method scans form and returns object as result
 redips.form2obj = function (frm) {
-	var obj = [],	// result array initialization
+	let obj = [],	// result array initialization
 		type,		// form element type
 		name,		// form element name
 		value,		// form element value
 		idx,		// selected index
-		i, j;		// loop variables
+		i;			// loop variables
 	// loop through each element on form
 	for (i = 0; i < frm.elements.length; i++) {
 		// define element type and name
@@ -242,26 +246,26 @@ redips.form2obj = function (frm) {
 			break;
 		/*
 		case 'select-multiple':
-			for (j = 0; j < frm.elements[i].options.length; j++) {
+			for (let j = 0; j < frm.elements[i].options.length; j++) {
 				frm.elements[i].options[j].selected = false;
 			}
 			break;
 		*/
 		}
 		// push element form to the object
-		obj.push({'type' : type, 'name' : name, 'value' : value});
+		obj.push({'type': type, 'name': name, 'value': value});
 	}
 	return obj;
 };
 
 
-// function merge cells horizontally 
+// method merge cells horizontally
 redips.merge = function () {
 	REDIPS.table.merge('h');
 };
 
 
-// function splits cells horizontally
+// method splits cells horizontally
 redips.split = function () {
 	REDIPS.table.split('h');
 };
@@ -269,18 +273,18 @@ redips.split = function () {
 
 // insert row (below current row)
 redips.rowInsert = function (el) {
-	var row = REDIPS.drag.findParent('TR', el),	// find source row (skip inner row)
-		top_row,									// cells reference in top row of the table editor
-		nr,											// new table row
-		lc;											// last cell in newly inserted row
+	let row = REDIPS.drag.findParent('TR', el),	// find source row (skip inner row)
+		topRow,									// cells reference in top row of the table editor
+		nr,										// new table row
+		lc;										// last cell in newly inserted row
 	// set reference to the top row cells
-	top_row = row.parentNode.rows[0].cells;
+	topRow = row.parentNode.rows[0].cells;
 	// insert table row
 	nr = REDIPS.table.row(redips.tableEditor, 'insert', row.rowIndex + 1);
 	// define last cell in newly inserted table row
 	lc = nr.cells[nr.cells.length - 1];
 	// copy last cell content from the top row to the last cell of the newly inserted row
-	lc.innerHTML = top_row[top_row.length - 1].innerHTML;
+	lc.innerHTML = topRow[topRow.length - 1].innerHTML;
 	// ignore last cell (attached onmousedown event listener will be removed)
 	REDIPS.table.cell_ignore(lc);
 };
@@ -289,7 +293,7 @@ redips.rowInsert = function (el) {
 // remove table row from the table editor
 redips.rowDelete = function (el) {
 	// find source row (skip inner row)
-	var row = REDIPS.drag.findParent('TR', el);
+	let row = REDIPS.drag.findParent('TR', el);
 	// confirm deletion
 	if (confirm('Delete row?')) {
 		// delete row from table editor
