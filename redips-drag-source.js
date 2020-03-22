@@ -3014,7 +3014,7 @@ REDIPS.drag = (function () {
 
 
 	/**
-	 * Method returns a reference of the required parent element.
+	 * Method returns reference of parent DOM element.
 	 * @param {String} tagName Tag name of parent element.
 	 * @param {HTMLElement} el Start position to search.
 	 * @param {Integer} [skip] How many found nodes should be skipped. For example when start node is TD in inner table and findParent() should return reference of the outside table.
@@ -3030,7 +3030,7 @@ REDIPS.drag = (function () {
 	 * @name REDIPS.drag#findParent
 	 */
 	findParent = function (tagName, el, skip) {
-		// set "el" to the next node (to prevent finding node itself)
+		// set "el" to parent node (to prevent finding node itself)
 		el = el.parentNode;
 		// if skip parameter is not defined then set it to 0
 		if (skip === undefined) {

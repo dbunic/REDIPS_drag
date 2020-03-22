@@ -42,7 +42,7 @@ REDIPS.drag is a JavaScript drag and drop library focused on dragging table cont
 * REDIPS.drag.enableDrag() - enables / disables one or all DIV elements in tables
 * REDIPS.drag.enableTable() - enables / disables tables selected by class name
 * REDIPS.drag.findCell() - returns data for first or last table cell (cell reference, row index and column index)
-* REDIPS.drag.findParent() - returns a reference of the required parent element
+* REDIPS.drag.findParent() - returns reference of required parent element
 * REDIPS.drag.getPosition() - returns DIV element position as array (tableIndex, rowIndex and cellIndex)
 * REDIPS.drag.getScrollPosition() - returns scroll positions as array [ scrollX, scrollY ]
 * REDIPS.drag.getStyle() - returns style value of requested object and style name
