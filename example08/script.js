@@ -15,7 +15,7 @@ let redips = {};
 
 // redips initialization
 redips.init = function () {
-	var rd = REDIPS.drag;	// reference to the REDIPS.drag class
+	let rd = REDIPS.drag;	// reference to the REDIPS.drag class
 	// DIV container initialization
 	rd.init('drag1');
 	rd.init('drag2');

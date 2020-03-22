@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+	<head>
+		<meta name="author" content="Darko Bunic"/>
+		<meta name="description" content="Drag and drop table content with JavaScript"/>
+		<meta name="viewport" content="width=device-width, user-scalable=no"/><!-- "position: fixed" fix for Android 2.2+ -->
+		<link rel="stylesheet" href="style.css" type="text/css" media="screen"/>
+		<script type="text/javascript" src="../header.js"></script>
+		<script type="text/javascript" src="../redips-drag-min.js"></script>
+		<script type="text/javascript" src="script.js"></script>
+		<title>Example 29: Move more DIV in column</title>
+	</head>
+	<body>
+		<!-- drag container -->
+		<div id="redips-drag">
+			<table id="table1">
+				<colgroup>
+					<col width="50"/>
+					<col width="50"/>
+					<col width="50"/>
+					<col width="50"/>
+					<col width="50"/>
+					<col width="50"/>
+					<col width="50"/>
+					<col width="50"/>
+				</colgroup>
+				<tbody>
+					<tr>
+						<td></td>
+						<td><div id="a" class="redips-drag orange">A</div></td>
+						<td></td>
+						<td><div id="x" class="redips-drag green">X</div></td>
+						<td></td><td></td><td></td><td></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td><div id="b" class="redips-drag orange">B</div></td>
+						<td></td>
+						<td><div id="y" class="redips-drag green">Y</div></td>
+						<td></td><td></td><td></td><td></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td><div id="c" class="redips-drag orange">C</div></td>
+						<td></td>
+						<td><div id="z" class="redips-drag green">Z</div></td>
+						<td></td><td></td><td></td><td></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td><div id="d" class="redips-drag orange">D</div></td>
+						<td></td>
+						<td></td>
+						<td></td><td></td><td></td><td></td>
+					</tr>
+					<tr>
+						<td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+					</tr>
+					<tr>
+						<td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+					</tr>
+					<tr>
+						<td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<!-- instructions -->
+		<div class="instructions">
+			In this example after DIV element is dragged and dropped, JS code (actually event handler) will move all DIV elements below source DIV location.
+			Before moving DIV elements from source location, there will be shifting down elements on target location to make room.
+		</div>
+	</body>
+</html>

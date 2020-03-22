@@ -17,7 +17,7 @@ let redips = {};
 // redips initialization
 redips.init = function () {
 	// reference to the REDIPS.drag object
-	var	rd = REDIPS.drag;
+	let rd = REDIPS.drag;
 	// initialization
 	rd.init();
 	// REDIPS.drag settings
@@ -30,7 +30,7 @@ redips.init = function () {
 	redips.reportButton();
 	// element is dropped
 	rd.event.dropped = function () {
-		var	objOld = rd.objOld,					// original object
+		let	objOld = rd.objOld,					// original object
 			targetCell = rd.td.target,			// target cell
 			targetRow = targetCell.parentNode,	// target row
 			i, objNew;							// local variables
@@ -73,7 +73,7 @@ redips.init = function () {
 // save elements and their positions
 redips.save = function () {
 	// scan timetable content
-	var content = REDIPS.drag.saveContent('table2');
+	let content = REDIPS.drag.saveContent('table2');
 	// and save content
 	window.location.href = 'db_save.php?' + content;
 };
@@ -82,7 +82,7 @@ redips.save = function () {
 // method shows subject occurring in timetable
 redips.report = function (subject) {
 	// define day and time labels
-	var day = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+	let day = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
 		time = [
 			'08:00', '09:00', '10:00', '11:00', '12:00',
 			'13:00', '14:00', '15:00', '16:00'
@@ -102,7 +102,7 @@ redips.report = function (subject) {
 	}
 	// sort div elements by the cellIndex (days in week) and rowIndex (hours)
 	div.sort(function (a, b) {
-		var aCi = a.parentNode.cellIndex,				// a element cell index
+		let aCi = a.parentNode.cellIndex,				// a element cell index
 			aRi = a.parentNode.parentNode.rowIndex,		// a element row index
 			bCi = b.parentNode.cellIndex,				// b element cell index
 			bRi = b.parentNode.parentNode.rowIndex;		// b element row index
@@ -141,7 +141,7 @@ redips.report = function (subject) {
 
 // show/hide report buttons
 redips.reportButton = function () {
-	var	id,			// element id
+	let id,			// element id
 		i,			// loop variable
 		count,		// number of subjects in timetable
 		style,		// hidden or visible
@@ -184,7 +184,7 @@ redips.printMessage = function (message) {
 
 // function show all subjects in timetable
 redips.showAll = function () {
-	var	i; // loop variable
+	let i; // loop variable
 	for (i = 0; i < redips.divNodeList.length; i++) {
 		redips.divNodeList[i].style.visibility = 'visible';
 	}

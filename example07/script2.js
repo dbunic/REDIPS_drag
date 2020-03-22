@@ -17,7 +17,7 @@ let redips = {};
 // redips initialization
 redips.init = function () {
 	// reference to the REDIPS.drag library
-	var rd = REDIPS.drag;
+	let rd = REDIPS.drag;
 	// initialization
 	rd.init();
 	// set hover color
@@ -27,7 +27,7 @@ redips.init = function () {
 	// event handler invoked after element is cloned
 	rd.event.cloned = function () {
 		// set id of cloned DIV element
-		var clonedId = rd.obj.id;
+		let clonedId = rd.obj.id;
 		// if DIV id begins with "e" then make exception (allow dragged DIV to enter TD with class name "redips-mark")
 		if (clonedId.substr(0, 1) === 'e') {
 			rd.mark.exception[clonedId] = 'mark';

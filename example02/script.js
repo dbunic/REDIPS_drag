@@ -13,9 +13,10 @@
 // create redips container
 let redips = {};
 
+
 // redips initialization
 redips.init = function () {
-	var num = 0,			// number of successfully placed elements
+	let num = 0,			// number of successfully placed elements
 		rd = REDIPS.drag;	// reference to the REDIPS.drag lib
 	// set reference to message HTML elements
 	redips.msg = document.getElementById('message');
@@ -29,7 +30,7 @@ redips.init = function () {
 	rd.mark.exceptionClass.orange = 'orange_cell';
 	// event handler called after DIV element is dropped to TD
 	rd.event.dropped = function (targetCell) {
-		var	divClass = rd.mark.exceptionClass, // shorter notation for DIV exception class
+		let	divClass = rd.mark.exceptionClass, // shorter notation for DIV exception class
 			text;
 		// if the DIV element was dropped to allowed cell
 		if (targetCell.className.indexOf(divClass.green) > -1 ||

@@ -23,6 +23,7 @@ Number from class is read and displayed when user dblclicks on DIV element.
 */
 
 // create redips container
+// it should be var (not "let") because double click on "?" will not work
 var redips = {};
 
 

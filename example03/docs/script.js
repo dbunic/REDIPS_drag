@@ -1,8 +1,14 @@
-/*jslint white: true, browser: true, undef: true, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxerr: 14 */
-/*global window: false, REDIPS: true */
+/* eslint-env browser */
+/* eslint
+   semi: ["error", "always"],
+   indent: [2, "tab"],
+   no-tabs: 0,
+   no-multiple-empty-lines: ["error", {"max": 2, "maxEOF": 1}],
+   one-var: ["error", "always"] */
+/* global REDIPS */
 
 /* enable strict mode */
-"use strict";
+'use strict';
 
 /*
 
@@ -12,14 +18,14 @@ See checkColumn() function and where is called.
 
 */
 
-//create redips container
-var redips = {};
+// create redips container
+let redips = {};
 
 
 // redips initialization
 redips.init = function () {
 	// reference to the REDIPS.drag object
-	var	rd = REDIPS.drag;
+	let rd = REDIPS.drag;
 	// initialization
 	rd.init();
 	// REDIPS.drag settings
@@ -38,13 +44,13 @@ redips.init = function () {
 	rd.event.droppedBefore = function (targetCell) {
 		// call redips.checkColumn and return result (true or false)
 		// in case of false, REDIPS.drag will cancel DIV dropping
-		var column = redips.checkColumn(rd.obj, targetCell);
+		let column = redips.checkColumn(rd.obj, targetCell);
 		// return true / false
 		return column;
 	};
 	// element is dropped
 	rd.event.dropped = function () {
-		var	objOld = rd.objOld,					// original object
+		let objOld = rd.objOld,					// original object
 			targetCell = rd.td.target,			// target cell
 			targetRow = targetCell.parentNode,	// target row
 			i, objNew;							// local variables
@@ -67,7 +73,7 @@ redips.init = function () {
 			}
 		}
 		// print message only if target and source table cell differ
-		if (rd.td.target !== rd.td.source) { 
+		if (rd.td.target !== rd.td.source) {
 			redips.printMessage('Content has been changed!');
 		}
 		// show / hide report buttons
@@ -89,7 +95,7 @@ redips.init = function () {
 // save elements and their positions
 redips.save = function () {
 	// scan timetable content
-	var content = REDIPS.drag.saveContent('table2');
+	let content = REDIPS.drag.saveContent('table2');
 	// and save content
 	window.location.href = 'db_save.php?' + content;
 };
@@ -97,10 +103,12 @@ redips.save = function () {
 
 // function shows subject occurring in timetable
 redips.report = function (subject) {
-		// define day and time labels
-	var day = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
-		time = ['08:00', '09:00', '10:00', '11:00', '12:00',
-		        '13:00', '14:00', '15:00', '16:00'],
+	// define day and time labels
+	let day = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+		time = [
+			'08:00', '09:00', '10:00', '11:00', '12:00',
+			'13:00', '14:00', '15:00', '16:00'
+		],
 		div = [],	// define array
 		cellIndex,	// cell index
 		rowIndex,	// row index
@@ -116,11 +124,11 @@ redips.report = function (subject) {
 	}
 	// sort div elements by the cellIndex (days in week) and rowIndex (hours)
 	div.sort(function (a, b) {
-		var a_ci = a.parentNode.cellIndex,				// a element cell index
-			a_ri = a.parentNode.parentNode.rowIndex,	// a element row index
-			b_ci = b.parentNode.cellIndex,				// b element cell index
-			b_ri = b.parentNode.parentNode.rowIndex;	// b element row index
-		return a_ci * 100 + a_ri - (b_ci * 100 + b_ri);
+		let aCi = a.parentNode.cellIndex,				// a element cell index
+			aRi = a.parentNode.parentNode.rowIndex,	// a element row index
+			bCi = b.parentNode.cellIndex,				// b element cell index
+			bRi = b.parentNode.parentNode.rowIndex;	// b element row index
+		return aCi * 100 + aRi - (bCi * 100 + bRi);
 	});
 	// loop goes through all collected elements
 	for (i = 0; i < div.length; i++) {
@@ -128,10 +136,10 @@ redips.report = function (subject) {
 		// (cloned elements have appended c1, c2, c3 ...)
 		id = div[i].id.substr(0, 2);
 		// if id is equal to the passed subject then we have a match
-		if (id === subject) { 
+		if (id === subject) {
 			// define cell index
 			cellIndex = div[i].parentNode.cellIndex;
-			// table row is parent element of table cell 
+			// table row is parent element of table cell
 			rowIndex = div[i].parentNode.parentNode.rowIndex;
 			// add line with found element
 			str += day[cellIndex - 1] + '\t\t' + time[rowIndex - 1] + '\n';
@@ -155,7 +163,7 @@ redips.report = function (subject) {
 
 // show/hide report buttons
 redips.reportButton = function () {
-	var	id,			// element id
+	let id,			// element id
 		i,			// loop variable
 		count,		// number of subjects in timetable
 		style,		// hidden or visible
@@ -192,16 +200,11 @@ redips.reportButton = function () {
 
 // check column for the same school subjects (lessons)
 redips.checkColumn = function (obj, targetCell) {
-		// define reference to the REDIPS.drag library
-	var rd = REDIPS.drag,
-		// ID of dropped DIV element (only first two chars)
-		id = obj.id.substr(0, 2),
-		// reference to the target table
-		tbl = rd.findParent('TABLE', targetCell),
-		// set column where DIV element is dropped
-		col = targetCell.cellIndex,
-		// local variables
-		subject, cell, i;
+	let rd = REDIPS.drag,			// define reference to the REDIPS.drag library
+		id = obj.id.substr(0, 2),	// ID of dropped DIV element (only first two chars)
+		tbl = rd.findParent('TABLE', targetCell),	// reference to the target table
+		col = targetCell.cellIndex,	// set column where DIV element is dropped
+		subject, cell, i;			// local variables
 	// loop goes through all rows in target table
 	for (i = 0; i < tbl.rows.length; i++) {
 		// define cell in a target column

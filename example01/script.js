@@ -17,7 +17,7 @@ let redips = {};
 // redips initialization
 redips.init = function () {
 	// reference to the REDIPS.drag library and message line
-	var	rd = REDIPS.drag,
+	let	rd = REDIPS.drag,
 		msg = document.getElementById('message');
 	// how to display disabled elements
 	rd.style.borderDisabled = 'solid';	// border style for disabled element will not be changed (default is dotted)
@@ -76,7 +76,7 @@ redips.init = function () {
 	};
 	rd.event.changed = function () {
 		// get target and source position (method returns positions as array)
-		var pos = rd.getPosition();
+		let pos = rd.getPosition();
 		// display current row and current cell
 		msg.innerHTML = 'Changed: ' + pos[1] + ' ' + pos[2];
 	};
@@ -115,7 +115,7 @@ redips.setMode = function (radioButton) {
 // show prepared content for saving
 redips.save = function (type) {
 	// define tableContent variable
-	var tableContent;
+	let tableContent;
 	// prepare table content of first table in JSON format or as plain query string (depends on value of "type" variable)
 	tableContent = REDIPS.drag.saveContent('table1', type);
 	// if content doesn't exist

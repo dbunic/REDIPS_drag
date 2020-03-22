@@ -17,7 +17,7 @@ let redips = {};
 // redips initialization
 redips.init = function () {
 	// set REDIPS.drag reference
-	let	rd = REDIPS.drag;
+	let rd = REDIPS.drag;
 	// lib initialization
 	rd.init();
 	// set hover color for TR

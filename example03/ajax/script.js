@@ -17,7 +17,7 @@ let redips = {};
 // redips initialization
 redips.init = function () {
 	// reference to the REDIPS.drag object
-	var	rd = REDIPS.drag;
+	let rd = REDIPS.drag;
 	// REDIPS.drag initialization
 	rd.init();
 	rd.dropMode = 'single';			// dragged elements can be placed to the empty cells only
@@ -25,14 +25,14 @@ redips.init = function () {
 	// save - after element is dropped
 	rd.event.dropped = function () {
 		// get element position (method returns array with current and source positions - tableIndex, rowIndex and cellIndex)
-		var pos = rd.getPosition();
+		let pos = rd.getPosition();
 		// save DIV element (AJAX handler is not needed)
 		rd.ajaxCall('ajax/db_save.php?p=' + rd.obj.id + '_' + pos.join('_'));
 	};
 	// delete - after element is deleted
 	rd.event.deleted = function () {
 		// get element position
-		var pos = rd.getPosition(),
+		let pos = rd.getPosition(),
 			row = pos[4],
 			col = pos[5];
 		// delete element (AJAX handler is not needed)

@@ -17,7 +17,7 @@ let redips = {};
 // redips initialization
 redips.init = function () {
 	// reference to the REDIPS.drag library and message line
-	let	rd = REDIPS.drag,
+	let rd = REDIPS.drag,
 		msg = document.getElementById('msg');
 	// initialization
 	rd.init();
@@ -54,7 +54,7 @@ redips.init = function () {
 	// row changed
 	rd.event.rowChanged = function () {
 		// get target and source position (method returns positions as array)
-		var pos = rd.getPosition();
+		let pos = rd.getPosition();
 		// display current table and current row
 		msg.innerHTML = 'Changed: ' + pos[0] + ' ' + pos[1];
 	};

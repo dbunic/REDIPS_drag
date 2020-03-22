@@ -58,6 +58,10 @@ body {
 .t3 {
 	border: 2px solid #FF8A58;
 }
+/* light grey */
+.lgrey {
+	background-color: #e0e0e0;
+}
 /* allow / deny access to cells marked with 'mark' class name */
 .redips-mark {
 	color: white;
@@ -66,12 +70,12 @@ body {
 /* trash cell */
 .redips-trash {
 	color: white;
-	background-color: #2D4B7A;
+	background-color: SteelBlue;
 }
 
 /* tables */
 div#redips-drag table {
-	background-color: #e0e0e0;
+	background-color: #d6d6d6;
 	border-collapse: collapse;
 }
 

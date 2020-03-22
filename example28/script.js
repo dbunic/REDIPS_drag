@@ -17,7 +17,7 @@ let redips = {};
 // redips initialization
 redips.init = function () {
 	// reference to the REDIPS.drag library
-	var	rd = REDIPS.drag;
+	let rd = REDIPS.drag;
 	// initialization
 	rd.init();
 	// error handler called if error occured during loading table content
@@ -50,7 +50,7 @@ redips.button2 = function () {
 // string is read from text input field with id=textField
 redips.button3 = function () {
 	// prepare JSON data to place to the HTML table
-	var data = document.getElementById('textField').value;
+	let data = document.getElementById('textField').value;
 	// place content to the table
 	REDIPS.drag.loadContent(redips.targetTable, data);
 };

@@ -17,7 +17,7 @@ let redips = {};
 // redips initialization
 redips.init = function () {
 	// reference to the REDIPS.drag library
-	let	rd = REDIPS.drag;
+	let rd = REDIPS.drag;
 	// set button reference (needed in redips.buttonEnable() method)
 	redips.button1 = document.getElementById('btn_move1');
 	redips.button2 = document.getElementById('btn_move2');
@@ -37,7 +37,7 @@ redips.init = function () {
  * @param {Integer} tbl Table index.
  */
 redips.move = function (tbl) {
-	let	rd = REDIPS.drag,	// reference to the REDIPS.drag library
+	let rd = REDIPS.drag,	// reference to the REDIPS.drag library
 		row,				// returned value from move_object method (array with source row and mini table reference or false in case of moving "empty row")
 		idx;				// index of the last row in table
 	// last row index

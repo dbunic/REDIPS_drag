@@ -12,7 +12,7 @@
 
 
 // create redips container
-var redips = {};
+let redips = {};
 
 
 // REDIPS.drag initialization
@@ -24,7 +24,7 @@ redips.init = function () {
 // new table using AJAX/jQuery to the drag container
 redips.load_table = function (button) {
 	// parameter (example for ajax request)
-	var id = 1;
+	let id = 1;
 	// disable button (it can be clicked only once)
 	button.style.backgroundColor = '#c0c0c0';
 	button.disabled = true;

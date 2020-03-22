@@ -17,7 +17,7 @@ let redips = {};
 // redips initialization
 redips.init = function () {
 	// reference to the REDIPS.drag object
-	var	rd = REDIPS.drag;
+	let rd = REDIPS.drag;
 	// define border style (this should go before init() method)
 	rd.style.borderEnabled = 'none';
 	// initialization
@@ -42,6 +42,7 @@ redips.init = function () {
 		rd.enableTable(true, 'mini');
 	};
 };
+
 
 // add onload event listener
 if (window.addEventListener) {

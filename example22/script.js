@@ -145,7 +145,7 @@ redips.handler2 = function (xhr) {
 
 // method clears displayed message
 redips.clearMessage = function () {
-	var msg = document.getElementById('message');
+	let msg = document.getElementById('message');
 	// if message field exist then clear message
 	// it's possible that user will drop back DIV element before message is cleared
 	if (msg) {

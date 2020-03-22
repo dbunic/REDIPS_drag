@@ -17,7 +17,7 @@ let redips = {};
 // redips initialization
 redips.init = function () {
 	// reference to the REDIPS.drag lib
-	var rd = REDIPS.drag;
+	let rd = REDIPS.drag;
 	// initialization
 	rd.init();
 	// dragged elements can be placed to the empty cells only
@@ -26,7 +26,7 @@ redips.init = function () {
 	rd.clone.keyDiv = true;
 	// define dropped handler
 	rd.event.dropped = function (targetCell) {
-		var tbl,	// table reference of dropped element
+		let tbl,	// table reference of dropped element
 			id,		// id of scrollable container
 			msg;	// message
 		// find table of target cell

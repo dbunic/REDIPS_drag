@@ -1,0 +1,68 @@
+/*
+
+Darko Bunic
+http://www.redips.net/
+
+*/
+
+body {
+	font-family: arial;
+	margin: 0px; /* for IE6 / IE7 */
+}
+
+.redips-drag {
+	cursor: move;
+	margin: auto;
+	background-color: white;
+	text-align: center;
+	font-size: 22pt; /* needed for cloned object */
+	width: 38px;
+	height: 35px;
+	line-height: 35px;
+	/* round corners */
+	border-radius: 4px; /* Opera, Chrome */
+	-moz-border-radius: 4px; /* FF */
+}
+
+/* make drag container visible */
+#redips-drag {
+	border: 2px dashed LightBlue;
+	display: table;
+	margin: auto;
+	padding: 3px;
+}
+
+/* tables */
+div#redips-drag table {
+	background-color: #ddd;
+	border-collapse: collapse;
+	margin: 10px;
+}
+
+/* table cells */
+div#redips-drag td {
+	border: 1px white solid;
+	height: 50px;
+	text-align: center;
+	font-size: 10pt;
+	padding: 2px;
+}
+
+/* green objects */
+.green {
+	border: 2px solid #499B33;
+}
+
+/* orange objects */
+.orange {
+	border: 2px solid #BF6A30;
+}
+
+/* instructions at the bottom */
+.instructions {
+	width: 420px;
+	margin: 15px auto 0px auto;
+	color: #555;
+	font-size: 11px;
+	text-align: justify;
+}

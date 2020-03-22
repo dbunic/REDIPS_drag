@@ -11,7 +11,7 @@
 'use strict';
 
 
-var board = [[0, 0, 0], [0, 0, 0], [0, 0, 0]], // board array
+let board = [[0, 0, 0], [0, 0, 0], [0, 0, 0]], // board array
 	xo = {x: 1, o: -1},	// define values for X and O elements
 	redipsInit,		// define redipsInit variable
 	rd,				// reference to the REDIPS.drag library
@@ -38,7 +38,7 @@ redipsInit = function () {
 	toggleXO();
 	// declare tasks after element is dropped
 	rd.event.dropped = function () {
-		var obj = rd.obj,		// current element (cloned element)
+		let obj = rd.obj,		// current element (cloned element)
 			objOld = rd.objOld,	// previous element (this is clone element)
 			tac = rd.td.target;	// target cell
 		// disable dropped DIV element

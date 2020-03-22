@@ -18,7 +18,7 @@ let redips = {},
 // redips initialization
 redips.init = function () {
 	// reference to the REDIPS.drag library
-	var	rd = REDIPS.drag;
+	let rd = REDIPS.drag;
 	// initialization
 	rd.init();
 	// set mode option to "shift"
@@ -42,7 +42,7 @@ redips.init = function () {
 
 // set current table
 redips.setTable = function (e) {
-	var value = e.options[e.selectedIndex].value,
+	let value = e.options[e.selectedIndex].value,
 		tables = document.getElementById('redips-drag').getElementsByTagName('table'),
 		i;
 	// loop goes through all fetched tables within drag container
