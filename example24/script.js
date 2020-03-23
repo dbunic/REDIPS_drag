@@ -37,11 +37,11 @@ redips.init = function () {
 	// configuration
 	redips.configuration();
 	// attach onmousedown event handler to tblEditor
-	rt.onmousedown(redips.tableEditor, true);
+	rt.onMouseDown(redips.tableEditor, true);
 	// selected cell background color
 	rt.color.cell = redips.markedColor;
 	// disable marking not empty table cells
-	rt.mark_nonempty = false;
+	rt.markNonEmpty = false;
 	// initialize REDIPS.drag library
 	rd.init();
 	// set drop mode as "single" - DIV element can be dropped only to the empty cells
@@ -286,7 +286,7 @@ redips.rowInsert = function (el) {
 	// copy last cell content from the top row to the last cell of the newly inserted row
 	lc.innerHTML = topRow[topRow.length - 1].innerHTML;
 	// ignore last cell (attached onmousedown event listener will be removed)
-	REDIPS.table.cell_ignore(lc);
+	REDIPS.table.cellIgnore(lc);
 };
 
 
