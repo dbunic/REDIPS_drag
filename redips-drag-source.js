@@ -3468,7 +3468,6 @@ REDIPS.drag = (function () {
 			data = '',		// set "data" parameter needed for POST method
 			flag;			// return flag from event.ajaxError()
 		// if xhr object is undefined then create it (only first time)
-		// XMLHttpRequest object should be supported by all modern browsers
 		if (xhr === undefined) {
 			xhr = new XMLHttpRequest();
 		}
