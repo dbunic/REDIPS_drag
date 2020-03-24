@@ -10,21 +10,26 @@
 /* enable strict mode */
 'use strict';
 
-// define headerInit and default indexURL / redipsURL variable
-var headerInit,
-	redipsURL = redipsURL || '/javascript/drag-and-drop-table-content/', // eslint-disable-line no-use-before-define
-	indexURL = indexURL || '../'; // eslint-disable-line no-use-before-define
+// global variables
+var redipsURL = redipsURL || '/javascript/drag-and-drop-table-content/', // eslint-disable-line no-use-before-define
+	headerInit;
 
 // header initialization
 headerInit = function () {
-	var header = document.createElement('div'),
-		title = document.title;
+	let header = document.createElement('div'),
+		title = document.title,
+		href = window.location.href.split('/'),
+		indexLink = '<a href="..">index</a>';
+	// index link is not needed for main page
+	if (href[href.length - 2].startsWith('REDIPS')) {
+		indexLink = '';
+	}
 	// add "header" DIV element
 	document.body.insertBefore(header, document.body.firstChild);
 	// apply inner HTML
 	header.innerHTML = '<div style="color:white;background-color:#1e73be;padding:10px;text-align:center;font-size:20px">' + title + '</div>' +
 		'<div style="float:left;width:50%;padding-left:10px"><a href="http://www.redips.net' + redipsURL + '">www.redips.net</a></div>' +
-		'<div style="text-align:right;padding-right:10px;margin-bottom:10px"><a href="' + indexURL + '">index</a></div>';
+		'<div style="text-align:right;padding-right:10px;margin-bottom:10px">' + indexLink + '</div>';
 };
 
 // add onload event listener

@@ -1,11 +1,18 @@
 /*
 Darko Bunic
 http://www.redips.net/
-Jan, 2010.
+Mar, 2020.
 */
 
 body {
 	font-family: arial;
+	margin: 0px;
+}
+
+/* header */
+div#header {
+	text-align: center;
+	margin-top: 50px;
 }
 
 /* add bottom margin between tables */
