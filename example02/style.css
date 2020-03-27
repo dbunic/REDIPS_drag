@@ -46,7 +46,7 @@ body{
 
 /* tables */
 div#redips-drag table {
-	background-color: #eee;
+	background-color: #e6e6e6;
 	border-collapse: collapse;
 	margin: auto;
 }
@@ -76,12 +76,12 @@ div#redips-drag td {
 }
 
 /* green cell */
-.green_cell {
+.green-cell {
 	background-color: #AFD0A7;
 }
 
 /* orange cell */
-.orange_cell {
+.orange-cell {
 	background-color: #DDC5B5;
 }
 

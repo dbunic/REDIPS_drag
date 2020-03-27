@@ -25,9 +25,9 @@ redips.init = function () {
 	// set hover color
 	rd.hover.colorTd = '#9BB3DA';
 	// define "green" class name as exception for green cells
-	rd.mark.exceptionClass.green = 'green_cell';
+	rd.mark.exceptionClass.green = 'green-cell';
 	// define "orange" class name as exception for orange cells
-	rd.mark.exceptionClass.orange = 'orange_cell';
+	rd.mark.exceptionClass.orange = 'orange-cell';
 	// event handler called after DIV element is dropped to TD
 	rd.event.dropped = function (targetCell) {
 		let	divClass = rd.mark.exceptionClass, // shorter notation for DIV exception class
