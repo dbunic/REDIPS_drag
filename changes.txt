@@ -1,5 +1,9 @@
 Changes for REDIPS.drag library
 
+5.3.1 (2020-12-01)
+- removeChild() method replaced with remove()
+- with removing DOM elements now are unregistered event listeners as well
+
 5.3.0 (2020-03-21)
 - REDIPS.drag is checked with ESLint - cleaning and optimization (deleted some unused variables)
 - added example29 "Move more DIV in column"

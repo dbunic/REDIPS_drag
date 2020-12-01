@@ -2,8 +2,8 @@
 Copyright (c) 2008-2020, www.redips.net All rights reserved.
 Code licensed under the BSD License: http://www.redips.net/license/
 http://www.redips.net/javascript/drag-and-drop-table-content/
-Version 5.3.0
-Mar 21, 2020.
+Version 5.3.1
+Dec 1, 2020.
 */
 
 /* eslint-env browser */
@@ -39,7 +39,7 @@ var REDIPS = REDIPS || {}; // eslint-disable-line no-use-before-define
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-row/">Drag and drop table rows</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-table-content/">Drag and Drop table content</a>
  * <a href="http://www.redips.net/javascript/drag-and-drop-content-shift/">JavaScript drag and drop plus content shift</a>
- * @version 5.3.0 (2020-03-21)
+ * @version 5.3.1 (2020-12-01)
  */
 REDIPS.drag = (function () {
 	//
@@ -882,7 +882,7 @@ REDIPS.drag = (function () {
 		// set reference to the TR in mini table (mini table has only one row - first row)
 		trMini = tableMini.getElementsByTagName('tr')[0];
 		// destroy mini table (node still exists in memory)
-		tableMini.parentNode.removeChild(tableMini);
+		tableMini.remove();
 		// call event.rowDroppedBefore() - this handler can return "false" value
 		drop = REDIPS.drag.event.rowDroppedBefore(source.table, source.rowIndex);
 		// if handler returned false then row dropping will be canceled
@@ -1101,7 +1101,8 @@ REDIPS.drag = (function () {
 		edge.flag.x = edge.flag.y = 0;
 		// this could happen if "redips-clone" element is placed inside forbidden table cell
 		if (cloned && mode === 'cell' && (table === null || row === null || cell === null)) {
-			obj.parentNode.removeChild(obj);
+			obj.remove();
+			registerEvents(obj, false);
 			// decrease clonedId counter
 			clonedId[objOld.id] -= 1;
 			REDIPS.drag.event.notCloned();
@@ -1160,8 +1161,8 @@ REDIPS.drag = (function () {
 						for (i = 0; i < mtTr.cells.length; i++) {
 							objOld.cells[i].style.backgroundColor = mtTr.cells[i].style.backgroundColor;
 						}
-						// remove cloned mini table
-						obj.parentNode.removeChild(obj);
+						// remove cloned mini table from DOM tree
+						obj.remove();
 						// delete emptyRow property from source row because emptyRow will be set on next move
 						// otherwise row would be overwritten and that's no good
 						delete objOld.redips.emptyRow;
@@ -1187,7 +1188,8 @@ REDIPS.drag = (function () {
 			}
 			// delete cloned element if dropped on the start position
 			else if (cloned && tableSource === table && rowSource === row && cellSource === cell) {
-				obj.parentNode.removeChild(obj);
+				obj.remove();
+				registerEvents(obj, false);
 				// decrease clonedId counter
 				clonedId[objOld.id] -= 1;
 				REDIPS.drag.event.notCloned();
@@ -1196,7 +1198,8 @@ REDIPS.drag = (function () {
 			else if (cloned && REDIPS.drag.clone.drop === false &&
 					(X < targetTable.redips.offset[3] || X > targetTable.redips.offset[1] ||
 					Y < targetTable.redips.offset[0] || Y > targetTable.redips.offset[2])) {
-				obj.parentNode.removeChild(obj);
+				obj.remove();
+				registerEvents(obj, false);
 				// decrease clonedId counter
 				clonedId[objOld.id] -= 1;
 				REDIPS.drag.event.notCloned();
@@ -1204,12 +1207,14 @@ REDIPS.drag = (function () {
 			// remove object if destination cell has "redips-trash" in class name
 			else if (td.target.className.indexOf(REDIPS.drag.trash.className) > -1) {
 				// remove child from DOM (node still exists in memory)
-				obj.parentNode.removeChild(obj);
+				obj.remove();
 				// if public property trash.question is set then ask for confirmation
 				if (REDIPS.drag.trash.question) {
 					setTimeout(function () {
 						// Are you sure?
 						if (confirm(REDIPS.drag.trash.question)) {
+							// remove attached event handlers
+							registerEvents(obj, false);
 							// yes, do all actions needed after element is deleted
 							elementDeleted();
 						}
@@ -1229,6 +1234,7 @@ REDIPS.drag = (function () {
 				}
 				// element is deleted and do all actions needed after element is deleted
 				else {
+					registerEvents(obj, false);
 					elementDeleted();
 				}
 			}
@@ -1243,7 +1249,8 @@ REDIPS.drag = (function () {
 				// normal procedure for "switch" drag option
 				else {
 					// remove dragged element from DOM (source cell) - node still exists in memory
-					obj.parentNode.removeChild(obj);
+					obj.remove();
+					registerEvents(obj, false);
 					// move object from the destination to the source cell
 					targetElements = td.target.getElementsByTagName('div');
 					targetElementsLength = targetElements.length;
@@ -1335,8 +1342,9 @@ REDIPS.drag = (function () {
 				if (cloneSourceDiv) {
 					// update climit class (increment by 1)
 					cloneLimit(cloneSourceDiv, 1);
-					// delete dropped DIV element
-					obj.parentNode.removeChild(obj);
+					// delete dropped DIV element and remove attached listeners
+					obj.remove();
+					registerEvents(obj, false);
 					// return from the method (everything is done)
 					return;
 				}
@@ -1367,7 +1375,8 @@ REDIPS.drag = (function () {
 		}
 		// cloned element should be deleted (if not already deleted)
 		else if (cloned && obj.parentNode) {
-			obj.parentNode.removeChild(obj);
+			obj.remove();
+			registerEvents(obj, false);
 		}
 	};
 
@@ -2905,7 +2914,8 @@ REDIPS.drag = (function () {
 		var div;
 		// if "el" is DIV reference then remove DIV element
 		if (typeof (el) === 'object' && el.nodeName === 'DIV') {
-			el.parentNode.removeChild(el);
+			el.remove();
+			registerEvents(el, false);
 		}
 		// else try to delete DIV element with its ID
 		else if (typeof (el) === 'string') {
@@ -2913,7 +2923,8 @@ REDIPS.drag = (function () {
 			div = document.getElementById(el);
 			// if div element exists then it will be deleted
 			if (div) {
-				div.parentNode.removeChild(div);
+				div.remove();
+				registerEvents(div, false);
 			}
 		}
 	};
@@ -3649,9 +3660,10 @@ REDIPS.drag = (function () {
 	 * @name REDIPS.drag#emptyCell
 	 */
 	emptyCell = function (tdElement, mode) {
-		var cn,			// number of child nodes
+		let cn,			// number of child nodes
 			el = [],	// removed elements will be saved in array
 			flag,		// empty cell flag
+			tcn,		// TD child node
 			i;			// loop variable
 		// td should be table cell element otherwise return undefined
 		if (tdElement.nodeName !== 'TD') {
@@ -3672,15 +3684,18 @@ REDIPS.drag = (function () {
 			// return empty flag state
 			return flag;
 		}
-		// otherwise delete all child nodes from td
+		// otherwise delete all child nodes from TD
 		else {
 			for (i = 0; i < cn; i++) {
+				// set TD child node reference
+				tcn = tdElement.childNodes[0];
 				// save node reference
-				el.push(tdElement.childNodes[0]);
-				// delete node
-				tdElement.removeChild(tdElement.childNodes[0]);
+				el.push(tcn);
+				// remove node from DOM and unregister event listeners
+				tcn.remove();
+				registerEvents(tcn, false);
 			}
-			// return array with references od deleted nodes
+			// return array with deleted node references
 			return el;
 		}
 	};
